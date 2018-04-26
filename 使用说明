@@ -1,1 +1,13 @@
 # 使用说明
+### 文件结构
+本脚本由？个文件构成：
+- install 
+- uninstall
+- mount_script
+- umount_script
+- scripts/
+- - example_script1/
+- - - example_script1
+- usr/
+- - example_software1/
+- - - example_software1
