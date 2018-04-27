@@ -3,7 +3,7 @@ logger -st "($(basename $0))" $$ "*--------- VLMCSD SERVICE ---------*"
 #
 # Check if the software exists
 # 检查所需外部程序是否存在（本例中，外部程序为/tmp/mnt/sda1/usr/vlmcsd/vlmcsd）（使用时，删除下列所有行行首的#）
-#if [ -e "/tmp/mnt/sda1/usr/vlmcsd/vlmcsd" ] && [ -e "/tmp/mnt/sda1/usr/vlmcsd/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static" ]
+#if [ -e "/tmp/mnt/sda1/usr/vlmcsd/vlmcsd" ]
 #then
 #    logger -st "($(basename $0))" $$ "***** VLMCSD KMS SERVER EXISTS *****"
 #    # Load user's custom scripts
