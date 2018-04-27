@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+# 此脚本在卸载U盘前，强制结束从U盘中加载的可执行程序的进程，防止卸载U盘失败
+#
+logger -st "($(basename $0))" $$ "***** UMOUNT THE USB FLASH DRIVE *****"
+logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
+#
+# Kill all the relevant processes
+# 结束全部从U盘中加载的可执行程序的进程（本例中，该可执行程序为/tmp/mnt/sda1/usr/vlmcsd/vlmcsd）
+#
+# Kill /tmp/mnt/sda1/usr/vlmcsd/vlmcsd
+# 结束进程/tmp/mnt/sda1/usr/vlmcsd/vlmcsd，使用时，删除下一行行首的#
+#ps | grep "/tmp/mnt/sda1/usr/vlmcsd/vlmcsd" | grep -v 'grep' | awk '{print $1}' | xargs kill
+# Kill next process
+# 结束下一个进程XXXXX（假定该可执行程序为/tmp/mnt/sda1/usr/XXXXX/XXXXX），使用时，删除下一行行首的#
+#ps | grep "/tmp/mnt/sda1/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
+#
+logger -st "($(basename $0))" $$ "***** ALL THE RELEVANT PROCESSES HAVE BEEN KILLED *****"

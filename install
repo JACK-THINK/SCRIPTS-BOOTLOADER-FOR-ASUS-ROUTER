@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# 此脚本用于安装“华硕路由器官方固件&梅林固件开机自动运行脚本系统”
+# 
+# When a flash disk is mounted, the script "mount_script" will run automatically
+# 当U盘被挂载后，脚本mount_script会自动运行
+# 使用nvram对变量script_usbmount进行设置。当U盘被挂载后，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/sda1/mount_script
+nvram set script_usbmount="/tmp/mnt/sda1/mount_script"
+#
+# When a flash disk is umounted, the script "unmount_script" will run automatically
+# 当U盘被卸载前，脚本umount_script会自动运行
+# 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/sda1/umount_script
+nvram set script_usbumount="/tmp/mnt/sda1/umount_script"
+#
+# Commit the changes
+# 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
+nvram commit
+#
+# Reboot the router
+# 需使用reboot命令重启路由器，设置才能生效
+reboot
