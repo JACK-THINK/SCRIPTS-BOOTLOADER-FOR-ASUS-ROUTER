@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# 此脚本为用户自定义脚本列表，可按使用需求修改第15-28行
+#
+########## SET THE CUSTOM ENVIRONMENT VARIABLES ##########
+#
+# 设置环境变量（本例中，该环境变量为ADMINUSER）
+#
+# ADMINUSER: The admin user of this router.
+# 设置环境变量ADMINUSER为路由器的后台登陆用户名（本例中，用户名为routeradmin）
+logger -st "($(basename $0))" $$ "***** SET CUSTOM ENVIRONMENT VARIABLES *****"
+export ADMINUSER='routeradmin'
+#
+########## END ##########
+#
+#
+########## LIST OF USER'S CUSTOM SCRIPTS ##########
+#
+# 用户自定义脚本列表（遵循下述格式）
+#
+# 脚本名
+# 可执行脚本文件的绝对路径
+#
+# 例如：
+# SOFTWARE SERVICE（使用时，删除下一行行首的#）
+#/tmp/mnt/sda1/script_bootloader/user_scripts/software/software.service
+#
+# NEXT SERVICE
+#/tmp/mnt/sda1/script_bootloader/user_scripts/
+#
+########## END ##########
+#
+#
+########## UNSET THE CUSTOM ENVIRONMENT VARIABLES ##########
+#
+# 当所有用户自定义脚本加载后，取消之前设定的环境变量ADMINUSER
+#
+logger -st "($(basename $0))" $$ "***** UNSET CUSTOM ENVIRONMENT VARIABLES *****"
+unset ADMINUSER
+#
+########## END ##########
+#
+#
+logger -st "($(basename $0))" $$ "***** ALL THE USER'S CUSTOM SCRIPTS HAVE BEEN LOADED SUCCESSFULLY *****"

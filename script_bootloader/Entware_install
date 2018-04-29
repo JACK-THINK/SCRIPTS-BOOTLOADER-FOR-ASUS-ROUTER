@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+logger -st "($(basename $0))" $$ "*--------- ENTWARE FOR ASUS ROUTER INSTALLATION ---------*"
+#
+########## INSTALLATION PREPARATION ##########
+#
+# Check type of the ASUS Router
+# 检查华硕路由器型号
+router_type=$(nvram get model)
+#
+# Install Entware according to the type of the ASUS Router
+# 安装适合于特定型号路由器的Entware版本
+if [ $router_type == 'RT-AC68U' ] || [ $router_type == 'RT-AC56U' ] || [ $router_type == 'RT-AC87U' ] || [ $router_type == 'RT-AC3200' ] || [ $router_type == 'RT-AC88U' ] || [ $router_type == 'RT-AC3100' ] || [ $router_type == 'RT-AC5300' ]
+then
+    wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
+fi
+#
+if [ $router_type == 'RT-AC86U' ]
+then
+    wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
+fi
+#
+if [ $router_type == 'RT-AC66U' ] || [ $router_type == 'RT-N66U' ] || [ $router_type == 'RT-N16' ]
+then
+    wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
+fi
