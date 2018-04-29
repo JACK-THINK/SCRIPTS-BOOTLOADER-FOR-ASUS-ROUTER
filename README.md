@@ -1,4 +1,4 @@
-# 使用说明
+# SCRIPTS BOOTLOADER FOR ASUS ROUTER系统-使用说明
 
 ### 运行环境
 
