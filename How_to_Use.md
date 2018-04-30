@@ -94,7 +94,7 @@
 | `software.service`             | `script_bootloader_usb_mount` |
 |                                | `Entware_install`             |
 
-##### 安装
+##### 安装（按照下述顺序执行）
 
 1. 用ssh登陆路由器后台
 
