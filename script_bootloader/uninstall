@@ -18,11 +18,11 @@ logger -st "($(basename $0))" $$ "***** ANYTHING RELATED HAS BEEN TERMINATED ***
 #
 logger -st "($(basename $0))" $$ "***** RESTORE ASUS ROUTER SETTINGS *****"
 #
-# When a USB flash Drive is mounted, nothing will run automatically
+# When the USB flash drive is mounted, nothing will run automatically
 # 使用nvram对变量script_usbmount进行设置，将其恢复为默认状态
 nvram unset script_usbmount
 #
-# When a USB flash Drive is unmounted, nothing will run automatically
+# When the USB flash drive is unmounted, nothing will run automatically
 # 使用nvram对变量script_usbumount进行设置，将其恢复为默认状态
 nvram unset script_usbumount
 #
@@ -31,7 +31,7 @@ nvram unset script_usbumount
 nvram commit
 #
 # Reboot the router
-# 需使用reboot命令重启路由器，设置才能生效
+# 需使用reboot命令重启路由器，确保设置生效
 reboot
 #
 ########## END ##########
