@@ -22,9 +22,9 @@
 ## 版本2.0（2018-04-29）
 
 - **新增**
-  1. 新增[Entware](https://github.com/Entware/Entware)安装程序`Entware_install`，可根据路由器型号自动安装匹配的Entware版本，无需用户参与安装过程
+  1. 新增[Entware](https://github.com/Entware/Entware)安装程序`Entware_install`，可根据路由器型号自动安装匹配的Entware版本（暂不支持华硕官方固件），无需用户参与安装过程
   2. 本系统（含Entware）运行于U盘，完全脱离路由器`/jffs`分区
-  3. 本系统（含Entware）适用于华硕原厂固件和华硕梅林固件
+  3. 本系统（不含Entware）适用于华硕原厂固件和华硕梅林固件
 - **变更**
   1. 采用全新项目名称“SCRIPTS BOOTLOADER FOR ASUS ROUTER”
   2. 采用全新的目录结构及文件名，以兼容[Entware](https://github.com/Entware/Entware)
