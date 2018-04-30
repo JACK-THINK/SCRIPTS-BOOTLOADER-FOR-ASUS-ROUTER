@@ -102,7 +102,7 @@
 
 2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序将根据路由器型号，自动安装匹配的Entware
+3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序将根据路由器型号，自动安装匹配的Entware（暂不支持华硕官方固件）
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >
