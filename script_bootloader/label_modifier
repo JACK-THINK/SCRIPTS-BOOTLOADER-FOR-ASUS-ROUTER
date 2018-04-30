@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# 此脚本用于更改U盘卷标，并格式化U盘
+# 使用前务必：
+# 1. 备份U盘全部内容
+# 2. 拔掉路由器上的其它全部U盘
+# 3. 该脚本务必上传至路由器/tmp/目录
+#
+########## SET THE LABEL OF THE USB FLASH DRIVE ##########
+#
+# Default label of the USB flash drive: ASUS_ROUTER
+# U盘默认卷标：ASUS_ROUTER。可修改，但长度不可超过16字节
+LABEL="ASUS_ROUTER"
+#
+########## END ##########
+#
+#
+########## FORMAT THE USB FLASH DRIVE ##########
+#
+logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS $LABEL *****"
+umount /dev/sda1
+mkfs.ext3 -L ASUS_ROUTER /dev/sda1
+sleep 120
+reboot
+#
+########## END ##########

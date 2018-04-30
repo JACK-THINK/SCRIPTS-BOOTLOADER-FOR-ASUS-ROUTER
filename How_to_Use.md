@@ -7,18 +7,18 @@
 ## 开机自动运行原理
 
 1. 每次路由器启动时，都会自动挂载插入的U盘
-2. 通过设置script_usbmount参数，可使路由器在成功挂载U盘后，自动执行该参数指向的任何可执行脚本（本例中，该脚本为/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount）
-3. 设置被script_usbmount参数引用的脚本（本例中，该脚本为/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount），使其先确定路由器已经成功启动，然后调用用户自定义脚本列表（本例中，该脚本为/tmp/mnt/sda1/script_bootloader/user_scripts/list_of_user_custom_scripts），按顺序逐一执行用户的自定义脚本
+2. 通过设置script_usbmount参数，可使路由器在成功挂载U盘后，自动执行该参数指向的任何可执行脚本（本例中，该脚本为/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount）
+3. 设置被script_usbmount参数引用的脚本（本例中，该脚本为/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount），使其先确定路由器已经成功启动，然后调用用户自定义脚本列表（本例中，该脚本为/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts），按顺序逐一执行用户的自定义脚本
 
 ## 文件结构
 
-`sda1/`（U盘根目录）
+`ASUS_ROUTER/`（U盘根目录）
 
 | 权限      | 名称              | 属性 |
 | --------- | ----------------- | ---- |
 | rwxrwxrwx | script_bootloader | 目录 |
 
-`sda1/script_bootloader/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统目录）
+`ASUS_ROUTER/script_bootloader/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统目录）
 
 | 权限      | 名称                           | 属性     |
 | --------- | ------------------------------ | -------- |
@@ -27,29 +27,30 @@
 | rwxrwxrwx | `script_bootloader_usb_mount`  | 普通文件 |
 | rwxrwxrwx | `script_bootloader_usb_umount` | 普通文件 |
 | rwxrwxrwx | `Entware_install`              | 普通文件 |
+| rwxrwxrwx | `label_modifier`               | 普通文件 |
 | rwxrwxrwx | `user_scripts`                 | 目录     |
 | rwxrwxrwx | `usr`                          | 目录     |
 
-`sda1/script_bootloader/user_scripts/`（该目录存储自定义脚本列表`list_of_user_custom_scripts`和以`自定义脚本名`为名称的子目录）
+`ASUS_ROUTER/script_bootloader/user_scripts/`（该目录存储自定义脚本列表`list_of_user_custom_scripts`和以`自定义脚本名`为名称的子目录）
 
 | 权限      | 名称                               | 属性     |
 | --------- | ---------------------------------- | -------- |
 | rwxrwxrwx | `list_of_user_custom_scripts`      | 普通文件 |
 | rwxrwxrwx | `自定义脚本名（本例中为software）` | 目录     |
 
-`sda1/script_bootloader/user_scripts/自定义脚本名（本例中为software）/`（该目录存储相应的自定义可执行脚本）
+`ASUS_ROUTER/script_bootloader/user_scripts/自定义脚本名（本例中为software）/`（该目录存储相应的自定义可执行脚本）
 
 | 权限      | 名称                                       | 属性     |
 | --------- | ------------------------------------------ | -------- |
 | rwxrwxrwx | `自定义脚本名（本例中为software.service）` | 普通文件 |
 
-`sda1/script_bootloader/usr/`（该目录存储自定义脚本所需调用的外部程序，所有程序都必须是针对相应的路由器编译而成的。对于不需要调用外部程序的脚本，可无需关注此目录及其内容）
+`ASUS_ROUTER/script_bootloader/usr/`（该目录存储自定义脚本所需调用的外部程序，所有程序都必须是针对相应的路由器编译而成的。对于不需要调用外部程序的脚本，可无需关注此目录及其内容）
 
 | 权限      | 名称                             | 属性 |
 | --------- | -------------------------------- | ---- |
 | rwxrwxrwx | `外部程序名（本例中为software）` | 目录 |
 
-`sda1/script_bootloader/usr/外部程序名（本例中为software）/`（该目录存储相应的外部程序的文件）
+`ASUS_ROUTER/script_bootloader/usr/外部程序名（本例中为software）/`（该目录存储相应的外部程序的文件）
 
 | 权限      | 名称                             | 属性     |
 | --------- | -------------------------------- | -------- |
@@ -75,10 +76,10 @@
    - 什么都不输，直接按回车，设置最后柱面为最大值
    - 输入`w`，将分区表写入U盘
 5. 执行`umount /dev/sda1`卸载U盘
-6. 执行`mkfs.ext3 /dev/sda1`，格式化U盘分区
-7. 执行`mount /dev/sda1 /tmp/mnt/`，重新挂载U盘
-8. 使用scp将文件`script_bootloader.tar.gz`上传至路由器`/tmp/mnt/sda1/`目录中
-9. 执行`cd /tmp/mnt/sda1/`，进入该目录
+6. 执行`mkfs.ext3 -L ASUS_ROUTER /dev/sda1`，格式化U盘分区
+7. 格式化完成之后，执行`reboot`，重启路由器
+8. 使用scp将文件`script_bootloader.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中
+9. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
 10. 执行`tar xzvf script_bootloader.tar.gz`，将全部文件解压
 11. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
 12. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
@@ -93,14 +94,15 @@
 | `script_bootloader_usb_umount` | `uninstall`                   |
 | `software.service`             | `script_bootloader_usb_mount` |
 |                                | `Entware_install`             |
+|                                | `label_modifier`              |
 
 #### 安装（按照下述顺序执行）
 
 1. 用ssh登陆路由器后台
 
-2. 执行`/tmp/mnt/sda1/script_bootloader/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-3. （可选）执行`/tmp/mnt/sda1/script_bootloader/Entware_install`。程序将根据路由器型号，自动安装匹配的Entware
+3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序将根据路由器型号，自动安装匹配的Entware
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >
@@ -113,4 +115,4 @@
 #### 卸载
 
 1. 用ssh登陆路由器后台
-2. 执行`/tmp/mnt/sda1/script_bootloader/uninstall`。路由器自动重启后，卸载完毕
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/uninstall`。路由器自动重启后，卸载完毕

@@ -2,11 +2,16 @@
 #
 logger -st "($(basename $0))" $$ "*--------- ENTWARE FOR ASUS ROUTER INSTALLATION ---------*"
 #
-########## INSTALLATION PREPARATION ##########
+########## INSTALLATION CONFIGURATION ##########
 #
 # Check type of the ASUS Router
 # 检查华硕路由器型号
 router_type=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## INSTALL ENTWARE ##########
 #
 # Install Entware according to the type of the ASUS Router
 # 安装适合于特定型号路由器的Entware版本
@@ -24,3 +29,6 @@ if [ $router_type == 'RT-AC66U' ] || [ $router_type == 'RT-N66U' ] || [ $router_
 then
     wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
 fi
+reboot
+#
+########## END ##########

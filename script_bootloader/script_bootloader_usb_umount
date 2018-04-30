@@ -9,14 +9,14 @@ logger -st "($(basename $0))" $$ "***** UMOUNT THE USB FLASH DRIVE *****"
 logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
 #
 # Kill all the relevant processes loaded from the USB flash drive
-# 结束全部从U盘中加载的可执行程序的进程（本例中，该可执行程序为/tmp/mnt/sda1/script_bootloader/usr/software/software）
+# 结束全部从U盘中加载的可执行程序的进程（本例中，该可执行程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software）
 #
-# Kill /tmp/mnt/sda1/script_bootloader/usr/software/software
-# 结束进程/tmp/mnt/sda1/script_bootloader/usr/software/software。使用时，删除下一行行首的#
-#ps | grep "/tmp/mnt/sda1/script_bootloader/usr/software/software" | grep -v 'grep' | awk '{print $1}' | xargs kill
+# Kill /tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software
+# 结束进程/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software。使用时，删除下一行行首的#
+#ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software" | grep -v 'grep' | awk '{print $1}' | xargs kill
 # Kill next process
-# 结束下一个进程XXXXX（假定该可执行程序为/tmp/mnt/sda1/script_bootloader/usr/XXXXX/XXXXX）。使用时，删除下一行行首的#
-#ps | grep "/tmp/mnt/sda1/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
+# 结束下一个进程XXXXX（假定该可执行程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX）。使用时，删除下一行行首的#
+#ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
 #
 logger -st "($(basename $0))" $$ "***** ALL THE RELEVANT PROCESSES HAVE BEEN KILLED *****"
 #

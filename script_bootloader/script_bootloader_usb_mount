@@ -42,15 +42,15 @@ fi
 #
 ########## LOCATE AND LOAD THE LIST OF USER'S CUSTOM SCRIPTS ##########
 #
-# Check if /tmp/mnt/sda1/script_bootloader/user_scripts/list_of_user_custom_scripts exists
-# 检查用户自定义脚本列表（本例中，该脚本为/tmp/mnt/sda1/script_bootloader/user_scripts/list_of_user_custom_scripts）是否存在
-if [ -e "/tmp/mnt/sda1/script_bootloader/user_scripts/list_of_user_custom_scripts" ]
+# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts exists
+# 检查用户自定义脚本列表（本例中，该脚本为/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts）是否存在
+if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts" ]
 then
     logger -st "($(basename $0))" $$ "***** LIST OF USER'S CUSTOM SCRIPTS EXISTS *****"
     # Load user's custom scripts
     # 如果用户自定义脚本列表存在，则执行该脚本
     logger -st "($(basename $0))" $$ "***** LOAD THE LIST OF USER'S CUSTOM SCRIPTS *****"
-    /tmp/mnt/sda1/script_bootloader/user_scripts/list_of_user_custom_scripts
+    /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts
     #
 else
     # Stop and Exit
@@ -67,7 +67,7 @@ fi
 #
 # Prepare the environment for Entware
 # 准备Entware运行环境
-ln -sf /tmp/mnt/sda1 /tmp/opt
+ln -sf /tmp/mnt/ASUS_ROUTER /tmp/opt
 #
 # Check if /opt/etc/init.d/rc.unslung exists
 # 检查文件/opt/etc/init.d/rc.unslung是否存在

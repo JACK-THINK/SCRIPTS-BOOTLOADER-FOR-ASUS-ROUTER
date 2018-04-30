@@ -5,13 +5,13 @@ logger -st "($(basename $0))" $$ "*--------- SOFTWARE SERVICE ---------*"
 ########## CHECK AND ENABLE SOFTWARE ##########
 #
 # Check if the software exists
-# 检查所需外部程序是否存在（本例中，外部程序为/tmp/mnt/sda1/script_bootloader/usr/software/software）（使用时，删除下列所有行行首的#）
-#if [ -e "/tmp/mnt/sda1/script_bootloader/usr/software/software" ]
+# 检查所需外部程序是否存在（本例中，外部程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software）（使用时，删除9-23行行首的#）
+#if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software" ]
 #then
 #    logger -st "($(basename $0))" $$ "***** SOFTWARE EXISTS *****"
 #    # Load the defined external program
 #    # 如果外部程序存在，则执行该程序
-#    /tmp/mnt/sda1/script_bootloader/usr/software/software
+#    /tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software
 #    logger -st "($(basename $0))" $$ "***** SOFTWARE SERVICE HAS BEEN LOADED *****"
 #    #
 #else

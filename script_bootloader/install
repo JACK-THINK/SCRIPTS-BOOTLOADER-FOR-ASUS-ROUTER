@@ -6,9 +6,9 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS BOOTLOADER FOR ASUS ROUTER 
 #
 ########## ROUTER CONFIGURATION ##########
 #
-# Check if /tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount and /tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount exist
-# 检查/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount和/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount文件是否存在
-if [ -e "/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount" ] && [ -e "/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount" ]
+# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount and /tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount exist
+# 检查/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount和/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount文件是否存在
+if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount" ] && [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount" ]
 then
     logger -st "($(basename $0))" $$ "***** ALL THE ESSENTIAL FILES EXIST *****"
     logger -st "($(basename $0))" $$ "***** SETTING THE ROUTER *****"
@@ -18,13 +18,13 @@ then
     #
     # When the USB flash drive is mounted, the script "script_bootloader_usb_mount" will run automatically
     # 当U盘被挂载后，脚本script_bootloader_usb_mount会自动运行
-    # 使用nvram对变量script_usbmount进行设置。当U盘被挂载后，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount
-    nvram set script_usbmount="/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_mount"
+    # 使用nvram对变量script_usbmount进行设置。当U盘被挂载后，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount
+    nvram set script_usbmount="/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount"
     #
     # When the USB flash drive is unmounted, the script "script_bootloader_usb_umount" will run automatically
     # 当U盘被卸载前，脚本script_bootloader_usb_umount会自动运行
-    # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount
-    nvram set script_usbumount="/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount"
+    # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行脚本会自动执行。本例中，设置该变量引用脚本/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount
+    nvram set script_usbumount="/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount"
     #
     # Commit the changes
     # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器

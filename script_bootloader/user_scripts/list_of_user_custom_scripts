@@ -23,10 +23,10 @@ export ADMINUSER='routeradmin'
 #
 # 例如：
 # SOFTWARE SERVICE（使用时，删除下一行行首的#）
-#/tmp/mnt/sda1/script_bootloader/user_scripts/software/software.service
+#/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/software/software.service
 #
 # NEXT SERVICE
-#/tmp/mnt/sda1/script_bootloader/user_scripts/
+#/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/
 #
 ########## END ##########
 #

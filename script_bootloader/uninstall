@@ -6,9 +6,9 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS BOOTLOADER FOR ASUS ROUTER 
 #
 ########## TERMINATE ANYTHING RELATED ##########
 #
-# Load /tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount
-# 加载/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount
-/tmp/mnt/sda1/script_bootloader/script_bootloader_usb_umount
+# Load /tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount
+# 加载/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount
+/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount
 logger -st "($(basename $0))" $$ "***** ANYTHING RELATED HAS BEEN TERMINATED *****"
 #
 ########## END ##########
