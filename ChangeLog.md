@@ -33,5 +33,4 @@
   1. 删除系统中全部`vlmcsd`字样
 
 ## 版本1.0（2018-04-27）
-
-1. ASUSWRT-and-ASUS_MERLIN-Self-Starting-Scripts版本1.0发布
+  1. ASUSWRT-and-ASUS_MERLIN-Self-Starting-Scripts版本1.0发布
