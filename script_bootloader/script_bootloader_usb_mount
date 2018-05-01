@@ -25,7 +25,9 @@ fi
 #
 #
 ########## CHECK THE DEVICE NAME FOR THE LABEL ASUS_ROUTER ##########
+#
 DEV_NAME=$(blkid | grep -e 'ASUS_ROUTER' | cut -d ':' -f 1)
+#
 ########## END ##########
 #
 #
