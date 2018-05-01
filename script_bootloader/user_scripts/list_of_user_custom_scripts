@@ -7,9 +7,9 @@
 # 设置自定义环境变量（本例中，该环境变量为ADMINUSER）
 #
 # ADMINUSER: The administrator of the router
-# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号（本例中，帐号为homerouter）
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号（本例中，帐号为routeradmin）
 logger -st "($(basename $0))" $$ "***** SET CUSTOM ENVIRONMENT VARIABLES *****"
-export ADMINUSER='homerouter'
+export ADMINUSER='routeradmin'
 #
 ########## END ##########
 #
