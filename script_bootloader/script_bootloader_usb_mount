@@ -1,0 +1,136 @@
+#!/bin/sh
+#
+# 此脚本用于在确认路由器已经成功启动后，执行用户自定义脚本列表，并准备Entware运行环境
+#
+logger -st "($(basename $0))" $$ "***** BOOTING UP ASUS ROUTER (300 SECONDS) *****"
+#
+# Waiting 300s
+#sleep 300
+#
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUSWRT *****"
+    ROUTER_TYPE='ASUSWRT'
+    #
+else
+    # ASUS_MERLIN
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUS MERLIN *****"
+    ROUTER_TYPE='ASUS_MERLIN'
+fi
+#
+########## END ##########
+#
+#
+########## CHECK THE DEVICE NAME FOR THE LABEL ASUS_ROUTER ##########
+DEV_NAME=$(blkid | grep -e 'ASUS_ROUTER' | cut -d ':' -f 1)
+########## END ##########
+#
+#
+########## CHECK ASUS ROUTER STATUS ##########
+#
+# Check if the router is ready for running user's custom scripts
+# 检查路由器是否已经准备好执行用户自定义脚本
+#
+# Check it out every 30 seconds in 5 minutes
+# 每30秒检查1次，最多执行10次，最多用时5分钟
+i=1
+while [ $i -le 10 ]
+do
+    success_start_service=`nvram get success_start_service`
+    if [ "$success_start_service" == "1" ]
+    then
+        logger -st "($(basename $0))" $$ "***** ASUS ROUTER IS READY *****"
+        break
+    fi
+    i=$(($i+1))
+    logger -st "($(basename $0))" $$ "***** ASUS ROUTER IS NOT READY, WAIT 30 SECONDS MORE *****"
+    sleep 30
+done
+#
+# Stop and Exit
+# 如果10次检查均为路由器没准备好执行脚本，则该脚本终止
+if [ "$success_start_service" != "1" ]
+then
+    logger -st "($(basename $0))" $$ "***** ASUS ROUTER IS NOT READY *****"
+    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    exit 1
+fi
+#
+########## END ##########
+#
+#
+########## LOCATE AND LOAD THE LIST OF USER'S CUSTOM SCRIPTS ##########
+#
+# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts exists
+# 检查用户自定义脚本列表（本例中，该脚本为/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts）是否存在
+if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts" ]
+then
+    logger -st "($(basename $0))" $$ "***** LIST OF USER'S CUSTOM SCRIPTS EXISTS *****"
+    # Load user's custom scripts
+    # 如果用户自定义脚本列表存在，则执行该脚本
+    logger -st "($(basename $0))" $$ "***** LOAD THE LIST OF USER'S CUSTOM SCRIPTS *****"
+    /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts
+    #
+else
+    # Stop and Exit
+    # 如果用户自定义脚本列表不存在，则该脚本终止
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE THE LIST OF USER'S CUSTOM SCRIPTS *****"
+    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    exit 2
+fi
+#
+########## END ##########
+#
+#
+########## LOCATE AND ENABLE ENTWARE ##########
+#
+# Prepare the environment for Entware
+# 准备Entware运行环境
+#
+# 对于部分华硕官方固件，/opt目录中存在文件夹scripts，需将其复制到U盘中
+# 检查目录/opt/scripts/是否存在
+# 检查目录/tmp/mnt/ASUS_ROUTER/scripts/是否存在
+# 为防止日后梅林固件亦如此，故此段代码不并入下一段
+if [ -d '/opt/scripts/' ] && [ ! -d '/tmp/mnt/ASUS_ROUTER/scripts/' ]
+then
+    # Copy /opt/scripts/ to /tmp/mnt/ASUS_ROUTER/
+    # 如果目录/opt/scripts/存在，且目录/tmp/mnt/ASUS_ROUTER/scripts/不存在，则执行
+    cp -R /opt/scripts/ /tmp/mnt/ASUS_ROUTER/
+    logger -st "($(basename $0))" $$ "***** FOLDER SCRIPTS HAS BEEN COPIED *****"
+fi
+#
+# Take the appropriate way to make /opt available according to the type of firmware
+# 根据固件类型，采用适当方法使/opt可用
+if [ $ROUTER_TYPE == 'ASUS_MERLIN' ]
+then
+    # If it is ASUS_MERLIN, then create soft link file /tmp/opt
+    # 如果是梅林固件，则创建软链接文件/tmp/opt
+    ln -sf /tmp/mnt/ASUS_ROUTER /tmp/opt
+    #
+else
+    # If it is ASUSWRT, then mount the USB flash drive to /opt
+    # 如果是华硕官方固件，则挂载U盘至/opt
+    mount $DEV_NAME /opt
+fi
+#
+# Check if /opt/etc/init.d/rc.unslung exists
+# 检查文件/opt/etc/init.d/rc.unslung是否存在
+if [ -e '/opt/etc/init.d/rc.unslung' ]
+then
+    # Start /opt/etc/init.d/rc.unslung
+    # 如果文件/opt/etc/init.d/rc.unslung存在，则执行
+    /opt/etc/init.d/rc.unslung start
+    logger -st "($(basename $0))" $$ "***** ENTWARE HAS BEEN ENABLED *****"
+    #
+else
+    # Stop and Exit
+    # 如果文件/opt/etc/init.d/rc.unslung不存在，则该脚本终止
+    logger -st "($(basename $0))" $$ "***** ENTWARE CAN NOT BE ENABLED *****"
+    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    exit 3
+fi
+#
+########## END ##########
