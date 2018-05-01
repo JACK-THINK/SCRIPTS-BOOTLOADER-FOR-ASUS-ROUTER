@@ -4,6 +4,23 @@
 #
 logger -st "($(basename $0))" $$ "***** UMOUNT THE USB FLASH DRIVE *****"
 #
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUSWRT *****"
+    ROUTER_TYPE='ASUSWRT'
+    #
+else
+    # ASUS_MERLIN
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUS MERLIN *****"
+    ROUTER_TYPE='ASUS_MERLIN'
+fi
+#
+########## END ##########
+#
+#
 ########## KILL ALL THE RELEVANT PROCESSES ##########
 #
 logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
@@ -19,6 +36,20 @@ logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
 #ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
 #
 logger -st "($(basename $0))" $$ "***** ALL THE RELEVANT PROCESSES HAVE BEEN KILLED *****"
+#
+########## END ##########
+#
+#
+########## DISABLE SWAPFILE ##########
+#
+# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service exists
+# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service是否存在
+if [ -e '/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service' ]
+then
+    # Load /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service
+    # 如果/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service存在，则执行
+    /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service
+fi
 #
 ########## END ##########
 #
@@ -40,6 +71,22 @@ else
     logger -st "($(basename $0))" $$ "***** ENTWARE CAN NOT BE DISABLED *****"
     logger -st "($(basename $0))" $$ "***** EXIT *****"
     exit 1
+fi
+#
+# Take the appropriate way to disconnect /opt with the USB flash drive according to the type of firmware
+# 根据固件类型，使/opt不再占用U盘
+if [ $ROUTER_TYPE == 'ASUSWRT' ]
+then
+    # If it is ASUSWRT, then unmount /opt
+    # 如果是华硕官方固件，则卸载/opt
+    umount /opt
+    #
+else
+    # If it is ASUS_MERLIN, then remove the soft link file /tmp/opt
+    # 如果是梅林固件，则删除软链接文件/tmp/opt
+    # Never append a /. Otherwise all the files in the USB flash drive will be removed
+    # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
+    rm /tmp/opt
 fi
 #
 ########## END ##########
