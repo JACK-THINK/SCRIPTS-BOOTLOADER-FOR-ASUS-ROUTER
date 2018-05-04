@@ -19,7 +19,7 @@ LABEL="ASUS_ROUTER"
 #
 logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS $LABEL *****"
 umount /dev/sda1
-mkfs.ext3 -L ASUS_ROUTER /dev/sda1
+mkfs.ext3 -L $LABEL /dev/sda1
 sleep 120
 reboot
 #
