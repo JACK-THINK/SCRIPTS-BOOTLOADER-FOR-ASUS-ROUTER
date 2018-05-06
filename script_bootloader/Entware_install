@@ -33,7 +33,7 @@ fi
 ########## END ##########
 #
 #
-########## HOME CONFIGURATION ##########
+########## COPY HOME ##########
 #
 cp -R /tmp/home/root /tmp/mnt/ASUS_ROUTER/home/
 reboot
