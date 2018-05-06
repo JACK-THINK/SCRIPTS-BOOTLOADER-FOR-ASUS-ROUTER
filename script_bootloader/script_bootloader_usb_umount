@@ -105,6 +105,9 @@ fi
 #
 # Unmount /tmp/home/
 # 卸载/tmp/home/
-umount /tmp/home/
+if [ -d '/tmp/mnt/ASUS_ROUTER/home/root/' ]
+then
+    umount /tmp/home/
+fi
 #
 ########## END ##########
