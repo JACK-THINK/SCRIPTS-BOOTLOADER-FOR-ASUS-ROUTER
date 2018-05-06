@@ -29,6 +29,13 @@ if [ $router_type == 'RT-AC66U' ] || [ $router_type == 'RT-N66U' ] || [ $router_
 then
     wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
 fi
+#
+########## END ##########
+#
+#
+########## HOME CONFIGURATION ##########
+#
+cp -R /tmp/home/root /tmp/mnt/ASUS_ROUTER/home/
 reboot
 #
 ########## END ##########
