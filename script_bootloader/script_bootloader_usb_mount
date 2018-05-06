@@ -24,6 +24,15 @@ fi
 ########## END ##########
 #
 #
+########## SET WORKING DIRECTORY ##########
+#
+# Set working directory to /tmp/
+# 将工作目录设置为/tmp/
+cd /tmp/
+#
+########## END ##########
+#
+#
 ########## CHECK THE DEVICE NAME FOR THE LABEL ASUS_ROUTER ##########
 #
 DEV_NAME=$(blkid | grep -e 'ASUS_ROUTER' | cut -d ':' -f 1)
@@ -138,7 +147,7 @@ fi
 ########## END ##########
 #
 #
-########## CONFIGURE HOME ##########
+########## MOUNT HOME ##########
 #
 # Mount /tmp/mnt/ASUS_ROUTER/home/ to /tmp/home/ for Entware
 # 将目录/tmp/mnt/ASUS_ROUTER/home/挂载至/tmp/home/，以供Entware使用
