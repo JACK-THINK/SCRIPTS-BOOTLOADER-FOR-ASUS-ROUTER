@@ -21,6 +21,15 @@ fi
 ########## END ##########
 #
 #
+########## SET WORKING DIRECTORY ##########
+#
+# Set working directory to /tmp/
+# 将工作目录设置为/tmp/
+cd /tmp/
+#
+########## END ##########
+#
+#
 ########## KILL ALL THE RELEVANT PROCESSES ##########
 #
 logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
@@ -88,5 +97,14 @@ else
     # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
     rm /tmp/opt
 fi
+#
+########## END ##########
+#
+#
+########## UNMOUNT HOME ##########
+#
+# Unmount /tmp/home/
+# 卸载/tmp/home/
+umount /tmp/home/
 #
 ########## END ##########
