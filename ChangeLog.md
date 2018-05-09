@@ -5,7 +5,7 @@
 - **新增**
   1. 无
 - **变更**
-  1. 在使用过程中发现Entware的部分软件对/home目录没有写权限，本次更新将/home目录迁移至U盘中，以解决此问题
+  1. 在使用过程中发现Entware的部分软件对`/home`目录没有写权限，本次更新将`/home`目录迁移至U盘中，以解决此问题
 - **删除**
   1. 无
 
@@ -23,7 +23,7 @@
 
 - **新增**
   1. 提升兼容性，避免路由器上插2个及以上U盘时，`sda1`引用错误U盘的情况
-  2. 提供U盘卷标修改工具，默认会将U盘卷标修改为ASUS_ROUTER。**使用前必须做好内容备份，并拔掉路由器上的其它全部U盘**
+  2. 提供U盘卷标修改工具`label_modifier`，默认会修改U盘卷标为`ASUS_ROUTER`并格式化。**使用前必须做好内容备份，并拔掉路由器上的其它全部U盘**
 - **变更**
   1. 无
 - **删除**
@@ -45,7 +45,7 @@
   2. 本系统（含Entware）运行于U盘，完全脱离路由器`/jffs`分区
   3. 本系统（含Entware）适用于华硕原厂固件和华硕梅林固件
 - **变更**
-  1. 采用全新项目名称“SCRIPTS BOOTLOADER FOR ASUS ROUTER”
+  1. 采用全新项目名称**SCRIPTS BOOTLOADER FOR ASUS ROUTER**
   2. 采用全新的目录结构及文件名，以兼容[Entware](https://github.com/Entware/Entware)
   3. 重新编写每个脚本内容，统一编码及注释风格，便于用户阅读
 - **删除**
@@ -53,4 +53,4 @@
 
 ## 版本1.0（2018-04-27）
 
-1. ASUSWRT-and-ASUS_MERLIN-Self-Starting-Scripts版本1.0发布
+1. **ASUSWRT-and-ASUS_MERLIN-Self-Starting-Scripts**版本1.0发布
