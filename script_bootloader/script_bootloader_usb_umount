@@ -40,6 +40,7 @@ logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
 # Kill /tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software
 # 结束进程/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software。使用时，删除下一行行首的#
 #ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software" | grep -v 'grep' | awk '{print $1}' | xargs kill
+#
 # Kill next process
 # 结束下一个进程XXXXX（假定该可执行程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX）。使用时，删除下一行行首的#
 #ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
