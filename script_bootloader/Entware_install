@@ -5,7 +5,7 @@ logger -st "($(basename $0))" $$ "*--------- ENTWARE FOR ASUS ROUTER INSTALLATIO
 ########## INSTALLATION CONFIGURATION ##########
 #
 # Check type of the ASUS Router
-# 检查华硕路由器型号
+# 检查华硕路由器架构
 router_type=$(uname -m)
 #
 ########## END ##########
@@ -14,7 +14,7 @@ router_type=$(uname -m)
 ########## INSTALL ENTWARE ##########
 #
 # Install Entware according to the type of the ASUS Router
-# 根据路由器型号，安装适当版本的Entware
+# 根据路由器架构，安装适当版本的Entware
 if [ $router_type == 'armv7l' ]
 then
     wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
