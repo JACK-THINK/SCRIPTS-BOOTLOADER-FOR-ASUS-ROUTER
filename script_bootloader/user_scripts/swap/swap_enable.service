@@ -5,18 +5,18 @@ logger -st "($(basename $0))" $$ "*--------- SWAP_ENABLE SERVICE ---------*"
 ########## CHECK AND ENABLE SWAPFILE ##########
 #
 # Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile exists
-# 检查/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile是否存在
+# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile是否存在
 if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile" ]
 then
     logger -st "($(basename $0))" $$ "***** SWAPFILE EXISTS *****"
     # Load swapfile
-    # 如果/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile存在，则启用
+    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile存在，则执行
     swapon /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN LOADED *****"
     #
 else
     # Create /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
-    # 如果/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile不存在，则创建/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile不存在，则创建/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE SWAPFILE *****"
     logger -st "($(basename $0))" $$ "***** CREATE SWAPFILE *****"
     dd if=/dev/zero of=/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile bs=1024 count=524292
@@ -24,7 +24,8 @@ else
     chmod 600 /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN CREATED *****"
     #
-    # 启用SWAP
+    # Load /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # 加载文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
     swapon /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN LOADED *****"
 fi

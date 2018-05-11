@@ -7,7 +7,7 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS BOOTLOADER FOR ASUS ROUTER 
 ########## ROUTER CONFIGURATION ##########
 #
 # Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount and /tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount exist
-# 检查/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount和/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount文件是否存在
+# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount和/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount是否存在
 if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount" ] && [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_umount" ]
 then
     logger -st "($(basename $0))" $$ "***** ALL THE ESSENTIAL FILES EXIST *****"

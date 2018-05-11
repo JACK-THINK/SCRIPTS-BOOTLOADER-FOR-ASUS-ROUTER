@@ -6,7 +6,7 @@ logger -st "($(basename $0))" $$ "*--------- ENTWARE FOR ASUS ROUTER INSTALLATIO
 #
 # Check type of the ASUS Router
 # 检查华硕路由器型号
-router_type=$(nvram get model)
+router_type=$(uname -m)
 #
 ########## END ##########
 #
@@ -14,18 +14,18 @@ router_type=$(nvram get model)
 ########## INSTALL ENTWARE ##########
 #
 # Install Entware according to the type of the ASUS Router
-# 安装适合于特定型号路由器的Entware版本
-if [ $router_type == 'RT-AC68U' ] || [ $router_type == 'RT-AC56U' ] || [ $router_type == 'RT-AC87U' ] || [ $router_type == 'RT-AC3200' ] || [ $router_type == 'RT-AC88U' ] || [ $router_type == 'RT-AC3100' ] || [ $router_type == 'RT-AC5300' ]
+# 根据路由器型号，安装适当版本的Entware
+if [ $router_type == 'armv7l' ]
 then
     wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
 fi
 #
-if [ $router_type == 'RT-AC86U' ]
+if [ $router_type == 'aarch64' ]
 then
     wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
 fi
 #
-if [ $router_type == 'RT-AC66U' ] || [ $router_type == 'RT-N66U' ] || [ $router_type == 'RT-N16' ]
+if [ $router_type == 'mips' ]
 then
     wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
 fi
@@ -35,7 +35,22 @@ fi
 #
 ########## COPY HOME ##########
 #
-cp -R /tmp/home/root /tmp/mnt/ASUS_ROUTER/home/
+logger -st "($(basename $0))" $$ "*--------- COPY HOME TO USB FLASH DRIVE ---------*"
+#
+# Check if HOME is already in the USB flash drive
+# 检查目录/tmp/mnt/ASUS_ROUTER/home/root/是否存在
+if [ ! -d '/tmp/mnt/ASUS_ROUTER/home/root/' ]
+then
+    # Copy /tmp/home/root to /tmp/mnt/ASUS_ROUTER/home/
+    # 如果目录/tmp/mnt/ASUS_ROUTER/home/root/不存在，则执行
+    cp -R /tmp/home/root /tmp/mnt/ASUS_ROUTER/home/
+    logger -st "($(basename $0))" $$ "***** HOME HAS BEEN COPIED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果目录/tmp/mnt/ASUS_ROUTER/home/root/存在，则执行
+    logger -st "($(basename $0))" $$ "***** HOME EXISTS *****"
+fi
 reboot
 #
 ########## END ##########
