@@ -160,7 +160,7 @@ then
     #
 else
     # Do nothing but prompt the user
-    # 如果目录/tmp/mnt/ASUS_ROUTER/home/root/不存在，则执行
+    # 如果目录/tmp/mnt/ASUS_ROUTER/home/root/不存在，则执行ssss
     logger -st "($(basename $0))" $$ "***** HOME HAS NOT BEEN MOUNTED *****"
 fi
 #
