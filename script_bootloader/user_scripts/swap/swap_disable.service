@@ -2,16 +2,28 @@
 #
 logger -st "($(basename $0))" $$ "*--------- SWAP_DISABLE SERVICE ---------*"
 #
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_PATH: The mount point of the USB flash drive
+# 设置自定义变量USB_PATH为U盘挂载点
+USB_PATH=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+########## END ##########
+#
+#
 ########## DISABLE SWAPFILE ##########
 #
-# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile exists
-# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile是否存在
-if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile" ]
+# Check if ${USB_PATH}/script_bootloader/var/swapfile exists
+# 检查文件${USB_PATH}/script_bootloader/var/swapfile是否存在
+if [ -e "${USB_PATH}/script_bootloader/var/swapfile" ]
 then
     logger -st "($(basename $0))" $$ "***** SWAPFILE EXISTS *****"
     # Unload swapfile
-    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile存在，则执行
-    swapoff /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # 如果文件${USB_PATH}/script_bootloader/var/swapfile存在，则执行
+    swapoff ${USB_PATH}/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN UNLOADED *****"
 fi
 #

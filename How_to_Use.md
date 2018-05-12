@@ -30,7 +30,6 @@
 | rwxrwxrwx | `label_modifier`               | 普通文件 |
 | rwxrwxrwx | `user_scripts`                 | 目录     |
 | rwxrwxrwx | `usr`                          | 目录     |
-| rwxrwxrwx | `var`                          | 目录     |
 
 `ASUS_ROUTER/script_bootloader/user_scripts/`（该目录存储自定义程序列表`list_of_user_custom_scripts`和以`自定义程序名`为名称的子目录）
 
@@ -67,7 +66,7 @@
 
 ## 使用说明
 
-#### 安装前准备（已经能够访问插在路由器上U盘的用户，此节可跳过）
+#### 安装前准备
 
 1. 将一个空白U盘插入路由器的USB2.0插口
 2. 用ssh登陆路由器后台
@@ -87,11 +86,12 @@
 5. 执行`umount /dev/sda1`卸载U盘
 6. 执行`mkfs.ext3 -L ASUS_ROUTER /dev/sda1`，格式化U盘分区
 7. 格式化完成之后，执行`reboot`，重启路由器
-8. 使用scp将文件`script_bootloader.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中
+8. 使用scp将文件`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中
 9. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
-10. 执行`tar xzvf script_bootloader.tar.gz`，将全部文件解压
-11. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
-12. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
+10. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.tar.gz`，将全部文件解压
+11. 执行`mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/script_bootloader ../`
+12. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
+13. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
 
 #### 修改程序
 
@@ -113,14 +113,14 @@
 
 2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序将根据路由器型号，自动安装匹配的Entware
+3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序会根据路由器架构，自动安装适当版本的Entware
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >
    > | 架构        | 路由器型号                                                   |
    > | ----------- | ------------------------------------------------------------ |
    > | **aarch64** | RT-AC86U                                                     |
-   > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300 |
+   > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
    > | **mipsel**  | RT-N66U, RT-AC66U, RT-N16                                    |
 
 #### 卸载
@@ -130,9 +130,13 @@
 
 ## 虚拟内存
 
-1. 启用方法
+1. 允许/禁止开机自动加载方法
 
-   删除`list_of_user_custom_scripts`文件第29行行首的`#`，保存退出后，重启路由器即可获得512M虚拟内存
+   允许开机加载（默认允许）：
+   > 删除文件`script_bootloader_usb_mount`第116-121行行首的`#`。保存退出后，重启路由器即可获得512M虚拟内存
+   
+   禁止开机加载：
+   > 在文件`script_bootloader_usb_mount`第116-121行行首添加`#`。保存退出后，重启路由器即可
 
 2. 禁用方法
 

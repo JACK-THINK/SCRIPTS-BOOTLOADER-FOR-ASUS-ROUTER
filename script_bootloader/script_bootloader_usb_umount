@@ -4,19 +4,14 @@
 #
 logger -st "($(basename $0))" $$ "***** UMOUNT THE USB FLASH DRIVE *****"
 #
-########## CHECK THE TYPE OF FIRMWARE ##########
+########## SET THE CUSTOM VARIABLES ##########
 #
-if [ -z $(nvram show | grep -e '.*merlin.*') ]
-then
-    # ASUSWRT
-    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUSWRT *****"
-    ROUTER_TYPE='ASUSWRT'
-    #
-else
-    # ASUS_MERLIN
-    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUS MERLIN *****"
-    ROUTER_TYPE='ASUS_MERLIN'
-fi
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_PATH: The mount point of the USB flash drive
+# 设置自定义变量USB_PATH为U盘挂载点
+USB_PATH=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
 #
 ########## END ##########
 #
@@ -30,36 +25,39 @@ cd /tmp/
 ########## END ##########
 #
 #
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUSWRT *****"
+    ROUTER_TYPE="ASUSWRT"
+    #
+else
+    # ASUS_MERLIN
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ASUS MERLIN *****"
+    ROUTER_TYPE="ASUS_MERLIN"
+fi
+#
+########## END ##########
+#
+#
 ########## KILL ALL THE RELEVANT PROCESSES ##########
 #
 logger -st "($(basename $0))" $$ "***** KILL ALL THE RELEVANT PROCESSES *****"
 #
 # Kill all the relevant processes loaded from the USB flash drive
-# 结束全部从U盘中加载的可执行程序的进程（本例中，该可执行程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software）
+# 结束全部从U盘中加载的可执行程序的进程（本例中，该可执行程序为${USB_PATH}/script_bootloader/usr/software/software）
 #
-# Kill /tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software
-# 结束进程/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software。使用时，删除下一行行首的#
-#ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/software/software" | grep -v 'grep' | awk '{print $1}' | xargs kill
+# Kill ${USB_PATH}/script_bootloader/usr/software/software
+# 结束进程${USB_PATH}/script_bootloader/usr/software/software。使用时，删除下一行行首的#
+#ps | grep "${USB_PATH}/script_bootloader/usr/software/software" | grep -v "grep" | awk '{print $1}' | xargs kill
 #
 # Kill next process
-# 结束下一个进程XXXXX（假定该可执行程序为/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX）。使用时，删除下一行行首的#
-#ps | grep "/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
+# 结束下一个进程XXXXX（假定该可执行程序为${USB_PATH}/script_bootloader/usr/XXXXX/XXXXX）。使用时，删除下一行行首的#
+#ps | grep "${USB_PATH}/script_bootloader/usr/XXXXX/XXXXX" | grep -v 'grep' | awk '{print $1}' | xargs kill
 #
 logger -st "($(basename $0))" $$ "***** ALL THE RELEVANT PROCESSES HAVE BEEN KILLED *****"
-#
-########## END ##########
-#
-#
-########## DISABLE SWAPFILE ##########
-#
-# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service exists
-# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service是否存在
-if [ -e '/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service' ]
-then
-    # Load /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service
-    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service存在，则执行
-    /tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/swap/swap_disable.service
-fi
 #
 ########## END ##########
 #
@@ -68,7 +66,7 @@ fi
 #
 # Check if /opt/etc/init.d/rc.unslung exists
 # 检查文件/opt/etc/init.d/rc.unslung是否存在
-if [ -e '/opt/etc/init.d/rc.unslung' ]
+if [ -e "/opt/etc/init.d/rc.unslung" ]
 then
     # Stop /opt/etc/init.d/rc.unslung
     # 如果文件/opt/etc/init.d/rc.unslung存在，则执行
@@ -76,16 +74,14 @@ then
     logger -st "($(basename $0))" $$ "***** ENTWARE HAS BEEN DISABLED *****"
     #
 else
-    # Stop and Exit
-    # 如果文件/opt/etc/init.d/rc.unslung不存在，则该脚本终止
+    # Do nothing but prompt the user
+    # 如果文件/opt/etc/init.d/rc.unslung不存在，则执行
     logger -st "($(basename $0))" $$ "***** ENTWARE CAN NOT BE DISABLED *****"
-    logger -st "($(basename $0))" $$ "***** EXIT *****"
-    exit 1
 fi
 #
 # Take the appropriate way to disconnect /opt with the USB flash drive according to the type of firmware
 # 根据固件类型，使目录/opt不再占用U盘
-if [ $ROUTER_TYPE == 'ASUSWRT' ]
+if [ ${ROUTER_TYPE} == "ASUSWRT" ]
 then
     # If it is ASUSWRT, then unmount /opt
     # 如果是华硕官方固件，则卸载目录/opt
@@ -102,14 +98,28 @@ fi
 ########## END ##########
 #
 #
+########## DISABLE SWAPFILE ##########
+#
+# Check if ${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service exists
+# 检查文件${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service是否存在
+if [ -e "${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service" ]
+then
+    # Load ${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service
+    # 如果文件${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service存在，则执行
+    ${USB_PATH}/script_bootloader/user_scripts/swap/swap_disable.service
+fi
+#
+########## END ##########
+#
+#
 ########## UNMOUNT HOME ##########
 #
-# Check if /tmp/mnt/ASUS_ROUTER/home/root/ exists
-# 检查目录/tmp/mnt/ASUS_ROUTER/home/root/是否存在
-if [ -d '/tmp/mnt/ASUS_ROUTER/home/root/' ]
+# Check if ${USB_PATH}/home/root/ exists
+# 检查目录${USB_PATH}/home/root/是否存在
+if [ -d "${USB_PATH}/home/root/" ]
 then
     # Unmount /tmp/home/
-    # 如果目录/tmp/mnt/ASUS_ROUTER/home/root/存在，则执行
+    # 如果目录${USB_PATH}/home/root/存在，则执行
     umount /tmp/home/
     logger -st "($(basename $0))" $$ "***** HOME HAS BEEN UNMOUNTED *****"
 fi

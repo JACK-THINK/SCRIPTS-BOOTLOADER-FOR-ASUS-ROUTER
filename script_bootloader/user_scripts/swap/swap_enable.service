@@ -2,31 +2,55 @@
 #
 logger -st "($(basename $0))" $$ "*--------- SWAP_ENABLE SERVICE ---------*"
 #
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_PATH: The mount point of the USB flash drive
+# 设置自定义变量USB_PATH为U盘挂载点
+USB_PATH=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+########## END ##########
+#
+#
+########## CHECK DIRECTORY VAR ##########
+#
+# Check if ${USB_PATH}/script_bootloader/var/ exists
+# 检查目录${USB_PATH}/script_bootloader/var/是否存在
+if [ ! -d "${USB_PATH}/script_bootloader/var/" ]
+then
+    mkdir ${USB_PATH}/script_bootloader/var/
+fi
+#
+########## END ##########
+#
+#
 ########## CHECK AND ENABLE SWAPFILE ##########
 #
-# Check if /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile exists
-# 检查文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile是否存在
-if [ -e "/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile" ]
+# Check if ${USB_PATH}/script_bootloader/var/swapfile exists
+# 检查文件${USB_PATH}/script_bootloader/var/swapfile是否存在
+if [ -e "${USB_PATH}/script_bootloader/var/swapfile" ]
 then
     logger -st "($(basename $0))" $$ "***** SWAPFILE EXISTS *****"
     # Load swapfile
-    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile存在，则执行
-    swapon /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # 如果文件${USB_PATH}/script_bootloader/var/swapfile存在，则执行
+    swapon ${USB_PATH}/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN LOADED *****"
     #
 else
-    # Create /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
-    # 如果文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile不存在，则创建/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # Create ${USB_PATH}/script_bootloader/var/swapfile
+    # 如果文件${USB_PATH}/script_bootloader/var/swapfile不存在，则创建${USB_PATH}/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE SWAPFILE *****"
     logger -st "($(basename $0))" $$ "***** CREATE SWAPFILE *****"
-    dd if=/dev/zero of=/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile bs=1024 count=524292
-    mkswap -L ASUS_SWAP /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
-    chmod 600 /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    dd if=/dev/zero of=${USB_PATH}/script_bootloader/var/swapfile bs=1024 count=524292
+    mkswap -L ASUS_SWAP ${USB_PATH}/script_bootloader/var/swapfile
+    chmod 600 ${USB_PATH}/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN CREATED *****"
     #
-    # Load /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
-    # 加载文件/tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
-    swapon /tmp/mnt/ASUS_ROUTER/script_bootloader/var/swapfile
+    # Load ${USB_PATH}/script_bootloader/var/swapfile
+    # 加载文件${USB_PATH}/script_bootloader/var/swapfile
+    swapon ${USB_PATH}/script_bootloader/var/swapfile
     logger -st "($(basename $0))" $$ "***** SWAPFILE HAS BEEN LOADED *****"
 fi
 #
