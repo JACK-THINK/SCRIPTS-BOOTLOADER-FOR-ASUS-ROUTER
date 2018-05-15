@@ -3,7 +3,7 @@
 ## 版本5.0（2018-05-15）
 
 - **新增**
-  1. 新增插件[开发标准文档](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/Instruction_for_Add-on_Development.md)，并配有[示例](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/software)
+  1. 新增插件[开发标准文档](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/Instruction_for_Add-on_Development.md)，并配有[示例](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/software)
   2. 系统安装日志会表明路由器型号
   3. 自动维护插件程序结束列表，不再需要用户手动编写
 - **变更**
