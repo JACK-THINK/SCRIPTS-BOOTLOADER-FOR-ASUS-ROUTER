@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ENTWARE"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    FIRMWARE_TYPE="ASUSWRT"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+    #
+else
+    # ASUS_MERLIN
+    FIRMWARE_TYPE="ASUS_MERLIN"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+fi
+#
+########## END ##########
+#
+#
+########## DISABLE ENTWARE ##########
+#
+# Check if /opt/etc/init.d/rc.unslung exists
+# 检查文件/opt/etc/init.d/rc.unslung是否存在
+if [ -e "/opt/etc/init.d/rc.unslung" ]
+then
+    logger -st "($(basename $0))" $$ "***** /opt/etc/init.d/rc.unslung EXISTS *****"
+    # Stop /opt/etc/init.d/rc.unslung
+    # 如果文件/opt/etc/init.d/rc.unslung存在，则执行
+    /opt/etc/init.d/rc.unslung stop
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件/opt/etc/init.d/rc.unslung不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE /opt/etc/init.d/rc.unslung *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+# Take the appropriate way to disconnect /opt with the USB flash drive according to the type of firmware
+# 根据固件类型，使目录/opt不再占用U盘
+if [ ${FIRMWARE_TYPE} == "ASUSWRT" ]
+then
+    # If it is ASUSWRT, then unmount /opt
+    # 如果是华硕官方固件，则卸载目录/opt
+    umount /opt
+    #
+else
+    # If it is ASUS_MERLIN, then remove the soft link file /tmp/opt
+    # 如果是梅林固件，则删除软链接文件/tmp/opt
+    # Never append a /. Otherwise all the files in the USB flash drive will be removed
+    # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
+    rm /tmp/opt
+fi
+#
+########## END ##########

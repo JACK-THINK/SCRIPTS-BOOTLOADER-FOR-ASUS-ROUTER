@@ -1,5 +1,18 @@
 # 更新日志
 
+## 版本5.0（2018-05-15）
+
+- **新增**
+  1. 新增插件[开发标准文档](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/Instruction_for_Add-on_Development.md)，并配有[示例](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/software)
+  2. 系统安装日志会表明路由器型号
+  3. 自动维护插件程序结束列表，不再需要用户手动编写
+- **变更**
+  1. 重新调整程序执行逻辑
+  2. 进一步使用软编码，提高程序健壮性
+  3. 为便于插件开发，大幅调整目录结构。使用本版本必须全新安装，不能基于旧版升级
+- **删除**
+  1. 无
+
 ## 版本4.0（2018-05-12）
 
 - **新增**
@@ -60,7 +73,7 @@
 - **变更**
   1. 采用全新项目名称**SCRIPTS BOOTLOADER FOR ASUS ROUTER**
   2. 采用全新的目录结构及文件名，以兼容[Entware](https://github.com/Entware/Entware)
-  3. 重新编写每个脚本内容，统一编码及注释风格，便于用户阅读
+  3. 重新编写每个程序内容，统一编码及注释风格，便于用户阅读
 - **删除**
   1. 删除系统中全部`vlmcsd`字样
 

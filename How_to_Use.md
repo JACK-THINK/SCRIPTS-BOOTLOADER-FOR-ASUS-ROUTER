@@ -8,7 +8,7 @@
 
 1. 每次路由器启动时，都会自动挂载插入的U盘
 2. 通过设置`script_usbmount`参数，可使路由器在成功挂载U盘后，自动执行该参数指向的任何可执行程序（本例中，该程序为`/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount`）
-3. 设置被`script_usbmount`参数引用的程序（本例中，该程序为`/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount`），使其先确定路由器已经成功启动，然后调用用户自定义程序列表（本例中，该程序为`/tmp/mnt/ASUS_ROUTER/script_bootloader/user_scripts/list_of_user_custom_scripts`），按顺序逐一执行用户的自定义程序
+3. 设置被`script_usbmount`参数引用的程序（本例中，该程序为`/tmp/mnt/ASUS_ROUTER/script_bootloader/script_bootloader_usb_mount`），使其先确定路由器已经成功启动，然后调用用户自定义程序列表（本例中，该程序为`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/list_of_user_custom_scripts`），按顺序逐一执行用户的自定义程序
 
 ## 文件结构
 
@@ -18,7 +18,17 @@
 | --------- | ------------------- | ---- |
 | rwxrwxrwx | `script_bootloader` | 目录 |
 
-`ASUS_ROUTER/script_bootloader/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统目录）
+`ASUS_ROUTER/script_bootloader/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统根目录）
+
+| 权限      | 名称  | 属性 |
+| --------- | ----- | ---- |
+| rwxrwxrwx | `bin` | 目录 |
+| rwxrwxrwx | `etc` | 目录 |
+| rwxrwxrwx | `tmp` | 目录 |
+| rwxrwxrwx | `usr` | 目录 |
+| rwxrwxrwx | `var` | 目录 |
+
+`ASUS_ROUTER/script_bootloader/bin/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统可执行文件目录）
 
 | 权限      | 名称                           | 属性     |
 | --------- | ------------------------------ | -------- |
@@ -28,41 +38,83 @@
 | rwxrwxrwx | `script_bootloader_usb_umount` | 普通文件 |
 | rwxrwxrwx | `Entware_install`              | 普通文件 |
 | rwxrwxrwx | `label_modifier`               | 普通文件 |
-| rwxrwxrwx | `user_scripts`                 | 目录     |
-| rwxrwxrwx | `usr`                          | 目录     |
+| rwxrwxrwx | `list_of_user_custom_scripts` | 普通文件 |
 
-`ASUS_ROUTER/script_bootloader/user_scripts/`（该目录存储自定义程序列表`list_of_user_custom_scripts`和以`自定义程序名`为名称的子目录）
+`ASUS_ROUTER/script_bootloader/etc/`（SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录）
 
-| 权限      | 名称                               | 属性     |
-| --------- | ---------------------------------- | -------- |
-| rwxrwxrwx | `list_of_user_custom_scripts`      | 普通文件 |
-| rwxrwxrwx | `自定义程序名（本例中为software）` | 目录     |
-| rwxrwxrwx | `swap`                             | 目录     |
+`ASUS_ROUTER/script_bootloader/tmp/`（SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录）
 
-`ASUS_ROUTER/script_bootloader/user_scripts/自定义程序名（本例中为software）/`（该目录存储相应的自定义可执行程序）
+`ASUS_ROUTER/script_bootloader/var/`（SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录）
 
-| 权限      | 名称                                       | 属性     |
-| --------- | ------------------------------------------ | -------- |
-| rwxrwxrwx | `自定义脚本名（本例中为software.service）` | 普通文件 |
+`ASUS_ROUTER/script_bootloader/usr/`（SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录）
 
-`ASUS_ROUTER/script_bootloader/user_scripts/swap/`（该目录存储**虚拟内存**启用及禁用程序）
+| 权限      | 名称                               | 属性 |
+| --------- | ---------------------------------- | ---- |
+| rwxrwxrwx | `自定义程序名（本例中为software）` | 目录 |
+| rwxrwxrwx | `entware`                          | 目录 |
+| rwxrwxrwx | `swap`                             | 目录 |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/`（自定义程序，即插件的全部文件）
+
+| 权限      | 名称     | 属性     |
+| --------- | -------- | -------- |
+| rwxrwxrwx | `readme` | 普通文件 |
+| rwxrwxrwx | `bin`    | 目录     |
+| rwxrwxrwx | `etc`    | 目录     |
+| rwxrwxrwx | `tmp`    | 目录     |
+| rwxrwxrwx | `usr`    | 目录     |
+| rwxrwxrwx | `var`    | 目录     |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/bin/`（此程序可执行文件目录）
+
+| 权限      | 名称                       | 属性     |
+| --------- | -------------------------- | -------- |
+| rwxrwxrwx | `software_enable.service`  | 普通文件 |
+| rwxrwxrwx | `software_disable.service` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/etc/`（此程序配置文件目录）
+
+| 权限      | 名称            | 属性     |
+| --------- | --------------- | -------- |
+| rwxrwxrwx | `software.conf` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/tmp/`（此程序临时文件目录）
+
+| 权限      | 名称           | 属性     |
+| --------- | -------------- | -------- |
+| rwxrwxrwx | `software.tmp` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/usr/`（此程序外部软件资源目录）
+
+| 权限      | 名称       | 属性     |
+| --------- | ---------- | -------- |
+| rwxrwxrwx | `software` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/var/`（此程序可变文件目录）
+
+| 权限      | 名称           | 属性     |
+| --------- | -------------- | -------- |
+| rwxrwxrwx | `software.var` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/entware/bin/`（entware程序可执行文件目录）
+
+| 权限      | 名称                      | 属性     |
+| --------- | ------------------------- | -------- |
+| rwxrwxrwx | `entware_enable.service`  | 普通文件 |
+| rwxrwxrwx | `entware_disable.service` | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/swap/bin/`（该目录存储**虚拟内存**启用及禁用程序）
 
 | 权限      | 名称                   | 属性     |
 | --------- | ---------------------- | -------- |
 | rwxrwxrwx | `swap_enable.service`  | 普通文件 |
 | rwxrwxrwx | `swap_disable.service` | 普通文件 |
 
-`ASUS_ROUTER/script_bootloader/usr/`（该目录存储自定义程序所需调用的外部程序，所有程序都必须是针对相应的路由器编译而成的。对于不需要调用外部程序的程序，可无需关注此目录及其内容）
+`ASUS_ROUTER/script_bootloader/usr/swap/var/`（该目录存储**虚拟内存**文件）
 
-| 权限      | 名称                             | 属性 |
-| --------- | -------------------------------- | ---- |
-| rwxrwxrwx | `外部程序名（本例中为software）` | 目录 |
-
-`ASUS_ROUTER/script_bootloader/usr/外部程序名（本例中为software）/`（该目录存储相应的外部程序的文件）
-
-| 权限      | 名称                             | 属性     |
-| --------- | -------------------------------- | -------- |
-| rwxrwxrwx | `外部程序名（本例中为software）` | 普通文件 |
+| 权限      | 名称           | 属性     |
+| --------- | -------------- | -------- |
+| rwxrwxrwx | `swapfile.var` | 普通文件 |
 
 ## 使用说明
 
@@ -97,23 +149,26 @@
 
 阅读每个程序文件的中文注释，按个人需求对程序进行修改
 
-| 建议修改的文件                 | 不建议修改的文件              |
-| ------------------------------ | ----------------------------- |
-| `list_of_user_custom_scripts`  | `install`                     |
-| `script_bootloader_usb_umount` | `uninstall`                   |
-| `software.service`             | `script_bootloader_usb_mount` |
-|                                | `Entware_install`             |
-|                                | `label_modifier`              |
-|                                | `swap_enable.service`         |
-|                                | `swap_disable.service`        |
+| 建议修改的文件                | 不建议修改的文件               |
+| ----------------------------- | ------------------------------ |
+| `list_of_user_custom_scripts` | `install`                      |
+| `software_enable.service`     | `uninstall`                    |
+| `software_disable.service`    | `script_bootloader_usb_mount`  |
+| `software.conf`               | `script_bootloader_usb_umount` |
+| `software.tmp`                | `Entware_install`              |
+| `software.var`                | `label_modifier`               |
+| `software`                    | `entware_enable.service`       |
+|                               | `entware_disable.service`      |
+|                               | `swap_enable.service`          |
+|                               | `swap_disable.service`         |
 
 #### 安装（按照下述顺序执行）
 
 1. 用ssh登陆路由器后台
 
-2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/Entware_install`。程序会根据路由器架构，自动安装适当版本的Entware
+3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/Entware_install`。程序会根据路由器架构，自动安装适当版本的Entware
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >
@@ -126,19 +181,18 @@
 #### 卸载
 
 1. 用ssh登陆路由器后台
-2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/uninstall`。路由器自动重启后，卸载完毕
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/uninstall`。路由器自动重启后，卸载完毕
 
 ## 虚拟内存
 
 1. 允许/禁止开机自动加载方法
 
    允许开机加载（默认允许）：
-   > 删除文件`script_bootloader_usb_mount`第116-121行行首的`#`。保存退出后，重启路由器即可获得512M虚拟内存
+   > 删除文件`script_bootloader_usb_mount`第132-137行行首的`#`。保存退出后，重启路由器即可获得512M虚拟内存
    
    禁止开机加载：
-   > 在文件`script_bootloader_usb_mount`第116-121行行首添加`#`。保存退出后，重启路由器即可
+   > 在文件`script_bootloader_usb_mount`第132-137行行首添加`#`。保存退出后，重启路由器即可
 
 2. 禁用方法
 
    运行`swap_disable.service`即可
-

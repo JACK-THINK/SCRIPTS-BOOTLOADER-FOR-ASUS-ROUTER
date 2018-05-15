@@ -1,0 +1,102 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ENTWARE"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    FIRMWARE_TYPE="ASUSWRT"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+    #
+else
+    # ASUS_MERLIN
+    FIRMWARE_TYPE="ASUS_MERLIN"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+fi
+#
+########## END ##########
+#
+#
+########## CHECK THE DEVICE NAME ACCORDING TO THE MOUNT POINT OF THE USB FLASH DRIVE ##########
+#
+USB_DEVICE_NAME=$(df | grep -e ".*${USB_MOUNT_POINT}.*" | awk '{print $1}')
+#
+########## END ##########
+#
+#
+########## LOCATE AND ENABLE ENTWARE ##########
+#
+# Prepare the environment for Entware
+# 准备Entware运行环境
+#
+# 对于部分华硕官方固件，/opt目录中存在目录scripts，需将其复制到U盘中
+# 检查目录/opt/scripts/是否存在
+# 检查目录${USB_MOUNT_POINT}/scripts/是否存在
+# 为防止日后梅林固件亦如此，故此段代码不并入下一段
+if [ -d "/opt/scripts/" ] && [ ! -d "${USB_MOUNT_POINT}/scripts/" ]
+then
+    # Copy /opt/scripts/ to ${USB_MOUNT_POINT}/
+    # 如果目录/opt/scripts/存在，且目录${USB_MOUNT_POINT}/scripts/不存在，则执行
+    cp -R /opt/scripts/ ${USB_MOUNT_POINT}/
+    logger -st "($(basename $0))" $$ "***** FOLDER SCRIPTS HAS BEEN COPIED *****"
+fi
+#
+# Take the appropriate way to make /opt available according to the type of firmware
+# 根据固件类型，采用适当方法使目录/opt可用
+if [ ${FIRMWARE_TYPE} == "ASUS_MERLIN" ]
+then
+    # If it is ASUS_MERLIN, then create soft link file /tmp/opt
+    # 如果是梅林固件，则创建软链接文件/tmp/opt
+    ln -sf ${USB_MOUNT_POINT} /tmp/opt
+    #
+else
+    # If it is ASUSWRT, then mount the USB flash drive to /opt
+    # 如果是华硕官方固件，则挂载U盘至目录/opt
+    mount ${USB_DEVICE_NAME} /opt
+fi
+#
+# Check if /opt/etc/init.d/rc.unslung exists
+# 检查文件/opt/etc/init.d/rc.unslung是否存在
+if [ -e "/opt/etc/init.d/rc.unslung" ]
+then
+    logger -st "($(basename $0))" $$ "***** /opt/etc/init.d/rc.unslung EXISTS *****"
+    # Start /opt/etc/init.d/rc.unslung
+    # 如果文件/opt/etc/init.d/rc.unslung存在，则执行
+    /opt/etc/init.d/rc.unslung start
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件/opt/etc/init.d/rc.unslung不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE /opt/etc/init.d/rc.unslung *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# 此脚本用于更改U盘卷标，并格式化U盘
+# 此程序用于更改U盘卷标，并格式化U盘
 # 使用前务必：
 # 1. 备份U盘全部内容
 # 2. 拔掉路由器上的其它全部U盘并重启路由器
@@ -21,6 +21,15 @@ logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS $LABEL *
 umount /dev/sda1
 mkfs.ext3 -L $LABEL /dev/sda1
 sleep 120
+#
+########## END ##########
+#
+#
+########## REBOOT ##########
+#
+# Reboot the router
+# 需使用reboot命令重启路由器，确保设置生效
+logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
 reboot
 #
 ########## END ##########

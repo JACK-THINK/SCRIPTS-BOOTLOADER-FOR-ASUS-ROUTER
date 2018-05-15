@@ -1,0 +1,58 @@
+#!/bin/sh
+#
+# 此程序为用户自定义程序列表，可按使用需求修改第37-63行
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
+SBL_SYS_BIN=${USB_MOUNT_POINT}/script_bootloader/bin
+#
+# SBL_SYS_ETC: The directory which contains all the configuration files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
+SBL_SYS_ETC=${USB_MOUNT_POINT}/script_bootloader/etc
+#
+# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
+SBL_SYS_TMP=${USB_MOUNT_POINT}/script_bootloader/tmp
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
+SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
+#
+########## END ##########
+#
+#
+########## LIST OF USER'S CUSTOM SCRIPTS ##########
+#
+# 用户自定义程序列表（遵循下述格式）
+#
+# 程序名
+# 可执行程序文件的绝对路径
+#
+# 例如：
+# SOFTWARE SERVICE（使用时，删除下一行行首的#）
+#${SBL_SYS_USR}/software/bin/software_enable.service
+#
+# NEXT SERVICE
+#${SBL_SYS_USR}/
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ALL THE USER'S CUSTOM SCRIPTS HAVE BEEN LOADED SUCCESSFULLY *****"
+#
+########## END ##########

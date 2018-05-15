@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_VAR: The directory which contains all the variable files related to this program
+# 设置自定义变量PRIVATE_VAR为此程序可变文件目录
+PRIVATE_VAR=${SBL_SYS_USR}/swap/var
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SWAP"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE SWAPFILE ##########
+#
+# Check if ${PRIVATE_VAR}/swapfile.var exists
+# 检查文件${PRIVATE_VAR}/swapfile.var是否存在
+if [ -e "${PRIVATE_VAR}/swapfile.var" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    # Load swapfile.var
+    # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
+    swapon ${PRIVATE_VAR}/swapfile.var
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Create ${PRIVATE_VAR}/swapfile.var
+    # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则创建${PRIVATE_VAR}/swapfile.var
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    logger -st "($(basename $0))" $$ "***** CREATE ${SERVICE_NAME} *****"
+    dd if=/dev/zero of=${PRIVATE_VAR}/swapfile.var bs=1024 count=524292
+    mkswap -L ASUS_SWAP ${PRIVATE_VAR}/swapfile.var
+    chmod 600 ${PRIVATE_VAR}/swapfile.var
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} HAS BEEN CREATED *****"
+    #
+    # Load ${PRIVATE_VAR}/swapfile.var
+    # 加载文件${PRIVATE_VAR}/swapfile.var
+    swapon ${PRIVATE_VAR}/swapfile.var
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+fi
+#
+########## END ##########

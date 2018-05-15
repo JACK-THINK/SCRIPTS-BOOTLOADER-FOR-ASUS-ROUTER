@@ -1,0 +1,181 @@
+#!/bin/sh
+#
+# 此程序用于在确认路由器已经成功启动后，执行用户自定义程序列表，并准备Entware运行环境
+#
+########## CHECK ASUS ROUTER MODEL AND BOOT ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+logger -st "($(basename $0))" $$ "*--------- BOOTING UP SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${ROUTER_MODEL} (300 SECONDS) ---------*"
+#
+# Waiting 300s
+#sleep 300
+#
+########## END ##########
+#
+#
+########## CHECK ASUS ROUTER STATUS ##########
+#
+# Check if the router is ready for running user's custom scripts
+# 检查路由器是否已经准备好执行用户自定义程序
+#
+# Check it out every 30 seconds in 5 minutes
+# 每30秒检查1次，最多执行10次，最多用时5分钟
+I=1
+while [ ${I} -le 10 ]
+do
+    SUCCESS_START_SERVICE=$(nvram get success_start_service)
+    if [ "${SUCCESS_START_SERVICE}" == "1" ]
+    then
+        logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS READY *****"
+        break
+    fi
+    i=$((${I}+1))
+    logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS NOT READY, WAIT 30 SECONDS MORE *****"
+    sleep 30
+done
+#
+# Stop and Exit
+# 如果10次检查均为路由器没准备好执行程序，则该程序终止
+if [ "${SUCCESS_START_SERVICE}" != "1" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS NOT READY *****"
+    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    exit 1
+fi
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
+SBL_SYS_BIN=${USB_MOUNT_POINT}/script_bootloader/bin
+#
+# SBL_SYS_ETC: The directory which contains all the configuration files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
+SBL_SYS_ETC=${USB_MOUNT_POINT}/script_bootloader/etc
+#
+# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
+SBL_SYS_TMP=${USB_MOUNT_POINT}/script_bootloader/tmp
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
+SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
+#
+########## END ##########
+#
+#
+########## SET WORKING DIRECTORY ##########
+#
+# Set working directory to /tmp/
+# 将工作目录设置为/tmp/
+cd /tmp/
+#
+########## END ##########
+#
+#
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    FIRMWARE_TYPE="ASUSWRT"
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+    #
+else
+    # ASUS_MERLIN
+    FIRMWARE_TYPE="ASUS_MERLIN"
+    logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+fi
+#
+########## END ##########
+#
+#
+########## MOUNT HOME ##########
+#
+# Check if ${USB_MOUNT_POINT}/home/root/ exists
+# 检查目录${USB_MOUNT_POINT}/home/root/是否存在
+if [ -d "${USB_MOUNT_POINT}/home/root/" ]
+then
+    # Mount ${USB_MOUNT_POINT}/home/ to /tmp/home/
+    # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
+    mount ${USB_MOUNT_POINT}/home/ /tmp/home/
+    logger -st "($(basename $0))" $$ "***** HOME HAS BEEN MOUNTED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
+    logger -st "($(basename $0))" $$ "***** HOME HAS NOT BEEN MOUNTED *****"
+fi
+#
+########## END ##########
+#
+#
+########## ENABLE SWAPFILE ##########
+#
+# Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service exists
+# 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/swap/bin/swap_enable.service" ]
+then
+    # Load ${SBL_SYS_USR}/swap/bin/swap_enable.service
+    # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service存在，则执行
+    ${SBL_SYS_USR}/swap/bin/swap_enable.service
+fi
+#
+########## END ##########
+#
+#
+########## ENABLE ENTWARE ##########
+#
+# Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service exists
+# 检查文件${SBL_SYS_USR}/entware/bin/entware_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/entware/bin/entware_enable.service" ]
+then
+    # Load ${SBL_SYS_USR}/entware/bin/entware_enable.service
+    # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service存在，则执行
+    ${SBL_SYS_USR}/entware/bin/entware_enable.service
+fi
+#
+########## END ##########
+#
+#
+########## LOCATE AND LOAD THE LIST OF USER'S CUSTOM SCRIPTS ##########
+#
+# Check if ${SBL_SYS_BIN}/list_of_user_custom_scripts exists
+# 检查用户自定义程序列表（本例中，该程序为${SBL_SYS_BIN}/list_of_user_custom_scripts）是否存在
+if [ -e "${SBL_SYS_BIN}/list_of_user_custom_scripts" ]
+then
+    logger -st "($(basename $0))" $$ "***** LIST OF USER'S CUSTOM SCRIPTS EXISTS *****"
+    # Load user's custom scripts
+    # 如果用户自定义程序列表存在，则执行
+    logger -st "($(basename $0))" $$ "***** LOAD THE LIST OF USER'S CUSTOM SCRIPTS *****"
+    ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    #
+else
+    # Do nothing but prompt the user
+    # 如果用户自定义程序列表不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE THE LIST OF USER'S CUSTOM SCRIPTS *****"
+fi
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER HAS COMPLETED THE TASK *****"
+#
+########## END ##########
