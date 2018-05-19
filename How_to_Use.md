@@ -142,8 +142,9 @@
 9. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
 10. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.tar.gz`，将全部文件解压
 11. 执行`mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/script_bootloader ../`
-12. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
-13. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
+12. 执行`cd ..`
+13. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
+14. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
 
 #### 修改程序
 
