@@ -22,7 +22,7 @@
 
 | 权限      | 名称     | 属性     | 说明             |
 | --------- | -------- | -------- | ---------------- |
-| rwxrwxrwx | `readme` | 普通文件 | 说明文件         |
+| rwxrwxrwx | `README.md` | 普通文件 | 说明文件         |
 | rwxrwxrwx | `bin`    | 目录     | 可执行文件目录   |
 | rwxrwxrwx | `etc`    | 目录     | 配置文件目录     |
 | rwxrwxrwx | `tmp`    | 目录     | 临时文件目录     |

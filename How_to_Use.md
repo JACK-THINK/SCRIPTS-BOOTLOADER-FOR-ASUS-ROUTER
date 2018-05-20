@@ -58,7 +58,7 @@
 
 | 权限      | 名称     | 属性     |
 | --------- | -------- | -------- |
-| rwxrwxrwx | `readme` | 普通文件 |
+| rwxrwxrwx | `README.md` | 普通文件 |
 | rwxrwxrwx | `bin`    | 目录     |
 | rwxrwxrwx | `etc`    | 目录     |
 | rwxrwxrwx | `tmp`    | 目录     |
