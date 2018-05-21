@@ -13,7 +13,7 @@
 1. 路由器开机后自动运行U盘中的指定程序，允许用户自行扩展路由器功能
 2. 完全兼容[Entware](https://github.com/Entware/Entware)。程序会自动判断华硕路由器固件类型（官方固件/梅林固件）并配置Entware运行环境
 3. 全新编写Entware自动安装程序。程序会根据路由器架构，自动安装适当版本的Entware，无需用户参与安装过程
-4. 提供虚拟内存功能。默认提供512M虚拟内存（[需手动开启](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/tree/master/script_bootloader/usr/swap)），确保运行流畅
+4. 提供虚拟内存功能。默认提供512M虚拟内存（[需手动安装](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/swap/README.md)），确保运行流畅
 5. 允许用户在路由器上插入多个U盘，不会发生任何冲突
 
 ## 程序特色
