@@ -22,12 +22,12 @@
 
 | 权限      | 名称     | 属性     | 说明             |
 | --------- | -------- | -------- | ---------------- |
-| rwxrwxrwx | `README.md` | 普通文件 | 说明文件         |
-| rwxrwxrwx | `bin`    | 目录     | 可执行文件目录   |
-| rwxrwxrwx | `etc`    | 目录     | 配置文件目录     |
-| rwxrwxrwx | `tmp`    | 目录     | 临时文件目录     |
-| rwxrwxrwx | `usr`    | 目录     | 外部软件资源目录 |
-| rwxrwxrwx | `var`    | 目录     | 可变文件目录     |
+| rwxrwxrwx | README.md | 普通文件 | 说明文件         |
+| rwxrwxrwx | bin    | 目录     | 可执行文件目录   |
+| rwxrwxrwx | etc    | 目录     | 配置文件目录     |
+| rwxrwxrwx | tmp    | 目录     | 临时文件目录     |
+| rwxrwxrwx | usr    | 目录     | 外部软件资源目录 |
+| rwxrwxrwx | var    | 目录     | 可变文件目录     |
 
 `USB_ROOT_DIRECTORY/script_bootloader/usr/自定义程序名（本例中为software）/bin/`（此程序可执行文件目录）
 

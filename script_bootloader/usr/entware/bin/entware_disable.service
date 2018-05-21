@@ -5,6 +5,10 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# ENTWARE_ENVIRONMENT: The path to entware environment configuration
+# 设置自定义变量ENTWARE_ENVIRONMENT为entware环境配置文件
+ENTWARE_ENVIRONMENT="/opt/etc/init.d/rc.unslung"
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="ENTWARE"
@@ -42,20 +46,20 @@ fi
 #
 ########## DISABLE ENTWARE ##########
 #
-# Check if /opt/etc/init.d/rc.unslung exists
-# 检查文件/opt/etc/init.d/rc.unslung是否存在
-if [ -e "/opt/etc/init.d/rc.unslung" ]
+# Check if ${ENTWARE_ENVIRONMENT} exists
+# 检查文件${ENTWARE_ENVIRONMENT}是否存在
+if [ -e "${ENTWARE_ENVIRONMENT}" ]
 then
-    logger -st "($(basename $0))" $$ "***** /opt/etc/init.d/rc.unslung EXISTS *****"
-    # Stop /opt/etc/init.d/rc.unslung
-    # 如果文件/opt/etc/init.d/rc.unslung存在，则执行
-    /opt/etc/init.d/rc.unslung stop
+    logger -st "($(basename $0))" $$ "***** ${ENTWARE_ENVIRONMENT} EXISTS *****"
+    # Stop ${ENTWARE_ENVIRONMENT}
+    # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
+    ${ENTWARE_ENVIRONMENT} stop
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
     # Do nothing but prompt the user
-    # 如果文件/opt/etc/init.d/rc.unslung不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE /opt/etc/init.d/rc.unslung *****"
+    # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi
 #

@@ -35,7 +35,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## DISABLE SWAPFILE ##########
+########## CHECK AND DISABLE SWAPFILE ##########
 #
 # Check if ${PRIVATE_VAR}/swapfile.var exists
 # 检查文件${PRIVATE_VAR}/swapfile.var是否存在

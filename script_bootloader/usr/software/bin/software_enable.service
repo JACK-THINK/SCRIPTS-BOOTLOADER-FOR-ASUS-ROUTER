@@ -53,19 +53,19 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## CHECK AND ENABLE SOFTWARE ##########
 #
-# Check if the software exists
-# 检查外部程序是否存在
+# Check if ${PRIVATE_USR}/software exists
+# 检查${PRIVATE_USR}/software是否存在
 if [ -e "${PRIVATE_USR}/software" ]
 then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
-    # Load the defined external program
-    # 如果外部程序存在，则执行
+    # Load ${PRIVATE_USR}/software
+    # 如果${PRIVATE_USR}/software存在，则执行
     ${PRIVATE_USR}/software
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
     # Do nothing but prompt the user
-    # 如果外部程序不存在，则执行
+    # 如果${PRIVATE_USR}/software不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi

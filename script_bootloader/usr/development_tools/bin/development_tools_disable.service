@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# GCC_ENVIRONMENT: The path to gcc environment configuration
+# 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
+GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="DEVELOPMENT-TOOLS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## DISABLE DEVELOPMENT TOOLS ##########
+#
+sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
+sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

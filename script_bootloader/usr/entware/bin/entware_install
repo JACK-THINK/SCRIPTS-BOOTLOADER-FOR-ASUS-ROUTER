@@ -16,6 +16,21 @@ ROUTER_MODEL=$(nvram get model)
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ENTWARE"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
 ########## END ##########
 #
 #
@@ -29,8 +44,6 @@ ROUTER_ARCHITECTURE=$(uname -m)
 #
 #
 ########## INSTALL ENTWARE ##########
-#
-logger -st "($(basename $0))" $$ "*--------- ENTWARE ON ${ROUTER_MODEL} INSTALLATION ---------*"
 #
 # Install Entware according to the architecture of the ASUS Router
 # 根据路由器架构，自动安装适当版本的Entware

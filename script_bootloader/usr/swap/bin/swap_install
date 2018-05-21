@@ -1,5 +1,12 @@
 #!/bin/sh
 #
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
 ########## SET THE CUSTOM VARIABLES ##########
 #
 # 设置自定义变量
@@ -23,35 +30,49 @@ SERVICE_NAME="SWAP"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="ENABLE"
+SERVICE_FUNCTION="INSTALLATION"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
 #
-########## CHECK AND ENABLE SWAPFILE ##########
+########## INSTALL SWAP ##########
 #
 # Check if ${PRIVATE_VAR}/swapfile.var exists
 # 检查文件${PRIVATE_VAR}/swapfile.var是否存在
 if [ -e "${PRIVATE_VAR}/swapfile.var" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
-    # Load swapfile.var
+    logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var EXISTS *****"
+    # Do nothing but prompt the user
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
-    swapon ${PRIVATE_VAR}/swapfile.var
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"    
     #
 else
-    # Do nothing but prompt the user
-    # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则执行
+    # Create ${PRIVATE_VAR}/swapfile.var
+    # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则创建${PRIVATE_VAR}/swapfile.var
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${PRIVATE_VAR}/swapfile.var *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** CREATE ${PRIVATE_VAR}/swapfile.var *****"
+    dd if=/dev/zero of=${PRIVATE_VAR}/swapfile.var bs=1024 count=524292
+    mkswap -L ASUS_SWAP ${PRIVATE_VAR}/swapfile.var
+    chmod 600 ${PRIVATE_VAR}/swapfile.var
+    logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
+    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"        
 fi
+#
+########## END ##########
+#
+#
+########## REBOOT ##########
+#
+# Reboot the router
+# 需使用reboot命令重启路由器，确保设置生效
+logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
+reboot
 #
 ########## END ##########

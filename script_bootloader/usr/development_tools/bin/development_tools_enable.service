@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# GCC_ENVIRONMENT: The path to gcc environment configuration
+# 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
+GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="DEVELOPMENT-TOOLS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## ENABLE DEVELOPMENT TOOLS ##########
+#
+# Check if ${GCC_ENVIRONMENT} exists
+# 检查文件${GCC_ENVIRONMENT}是否存在
+if [ -e "${GCC_ENVIRONMENT}" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${GCC_ENVIRONMENT} EXISTS *****"
+    # Load ${GCC_ENVIRONMENT}
+    # 如果文件${GCC_ENVIRONMENT}存在，则执行
+    echo "source ${GCC_ENVIRONMENT}" >> /opt/etc/profile
+    echo "alias ls='ls --color=auto'" >> /opt/etc/profile
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${GCC_ENVIRONMENT}不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${GCC_ENVIRONMENT} *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########
