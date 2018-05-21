@@ -3,7 +3,7 @@
 ## 版本6.0（2018-05-21）
 
 - **新增**
-  1. 新增[开发工具插件]()（含gcc，python3，pip3，coreutils及全部include文件）。本插件安装的程序较多，对U盘空间要求较高
+  1. 新增[开发工具插件](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/tree/master/script_bootloader/usr/development_tools)（含gcc，python3，pip3，coreutils及全部include文件）。本插件安装的程序较多，对U盘空间要求较高
 - **变更**
   1. 取消强制开启虚拟内存功能。将swap功能做成插件，供有需要的用户手动安装
   2. 将entware安装程序及swap安装程序移至各自的bin目录
