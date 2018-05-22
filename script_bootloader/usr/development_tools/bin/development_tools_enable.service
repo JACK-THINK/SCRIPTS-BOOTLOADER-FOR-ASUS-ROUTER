@@ -33,6 +33,11 @@ then
     logger -st "($(basename $0))" $$ "***** ${GCC_ENVIRONMENT} EXISTS *****"
     # Load ${GCC_ENVIRONMENT}
     # 如果文件${GCC_ENVIRONMENT}存在，则执行
+    #
+    # 华硕官方固件在重启时，不能自动调用script_usbumount参数。因此加入下面两行，以防文件/opt/etc/profile无限增长
+    sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
+    sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
+    #
     echo "source ${GCC_ENVIRONMENT}" >> /opt/etc/profile
     echo "alias ls='ls --color=auto'" >> /opt/etc/profile
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
