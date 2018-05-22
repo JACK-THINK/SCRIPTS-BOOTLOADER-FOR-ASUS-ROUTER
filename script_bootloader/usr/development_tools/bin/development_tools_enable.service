@@ -24,6 +24,23 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
+########## CHECK THE TYPE OF FIRMWARE ##########
+#
+if [ -z $(nvram show | grep -e '.*merlin.*') ]
+then
+    # ASUSWRT
+    FIRMWARE_TYPE="ASUSWRT"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+    #
+else
+    # ASUS_MERLIN
+    FIRMWARE_TYPE="ASUS_MERLIN"
+    #logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
+fi
+#
+########## END ##########
+#
+#
 ########## ENABLE DEVELOPMENT TOOLS ##########
 #
 # Check if ${GCC_ENVIRONMENT} exists
@@ -36,8 +53,11 @@ then
     #
     # The argument script_usbumount won't be called when rebooting ASUSWRT. In order to prevent the file /opt/etc/profile from growing too large, add the 2 lines below
     # 华硕官方固件在重启时，不能自动调用script_usbumount参数。因此加入下面两行，以防文件/opt/etc/profile无限增长
-    sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
-    sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
+    if [ ${FIRMWARE_TYPE} == "ASUSWRT" ]
+    then
+        sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
+        sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
+    fi
     #
     echo "source ${GCC_ENVIRONMENT}" >> /opt/etc/profile
     echo "alias ls='ls --color=auto'" >> /opt/etc/profile
