@@ -34,6 +34,7 @@ then
     # Load ${GCC_ENVIRONMENT}
     # 如果文件${GCC_ENVIRONMENT}存在，则执行
     #
+    # The argument script_usbumount won't be called when rebooting ASUSWRT. In order to prevent the file /opt/etc/profile from growing too large, add the 2 lines below
     # 华硕官方固件在重启时，不能自动调用script_usbumount参数。因此加入下面两行，以防文件/opt/etc/profile无限增长
     sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
     sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile

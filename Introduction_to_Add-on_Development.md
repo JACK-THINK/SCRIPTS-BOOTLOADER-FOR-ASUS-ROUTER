@@ -69,3 +69,7 @@
 | <u>software</u>_disable.service | script_bootloader_usb_umount | 自动调用  |
 
 各插件私有目录内文件均由插件自身调用，与系统无关
+
+## 注意事项
+
+1. 重启时，华硕官方固件不会自动调用script_bootloader_usb_umount，因此全部software_disable.service都不会被调用。因此，所有修改了非易失性存储器中文件的插件，都必须在其software_enable.service中，首先撤销修改，而后再进行修改。否则，被修改文件将会出现很多问题。梅林固件会自动调用script_bootloader_usb_umount，无此问题
