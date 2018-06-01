@@ -134,6 +134,8 @@
 | rwxrwxrwx | entware_enable.service  | 普通文件 |
 | rwxrwxrwx | entware_disable.service | 普通文件 |
 
+`ASUS_ROUTER/script_bootloader/usr/entware/etc/`（插件entware配置文件目录）
+
 `ASUS_ROUTER/script_bootloader/usr/swap/`（插件swap目录）
 
 | 权限      | 名称      | 属性     |

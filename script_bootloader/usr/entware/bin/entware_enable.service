@@ -9,6 +9,14 @@
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
 #
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/entware/etc
+#
 # ENTWARE_ENVIRONMENT: The path to entware environment configuration
 # 设置自定义变量ENTWARE_ENVIRONMENT为entware环境配置文件
 ENTWARE_ENVIRONMENT="/opt/etc/init.d/rc.unslung"
@@ -20,6 +28,10 @@ SERVICE_NAME="ENTWARE"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="ENABLE"
+#
+# FILES_TO_COPY: The list of files that should be copied
+# 设置自定义变量FILES_TO_COPY为待复制文件列表
+FILES_TO_COPY="${PRIVATE_ETC}/files_to_copy.autosave"
 #
 ########## END ##########
 #
@@ -43,18 +55,6 @@ USB_DEVICE_NAME=$(df | grep -e ".*${USB_MOUNT_POINT}.*" | awk '{print $1}')
 # Prepare the environment for Entware
 # 准备Entware运行环境
 #
-# 对于部分华硕官方固件，/opt目录中存在目录scripts，需将其复制到U盘中
-# 检查目录/opt/scripts/是否存在
-# 检查目录${USB_MOUNT_POINT}/scripts/是否存在
-# 为防止日后梅林固件亦如此，故此段代码不并入下一段
-if [ -d "/opt/scripts/" ] && [ ! -d "${USB_MOUNT_POINT}/scripts/" ]
-then
-    # Copy /opt/scripts/ to ${USB_MOUNT_POINT}/
-    # 如果目录/opt/scripts/存在，且目录${USB_MOUNT_POINT}/scripts/不存在，则执行
-    cp -R /opt/scripts/ ${USB_MOUNT_POINT}/
-    logger -st "($(basename $0))" $$ "***** FOLDER SCRIPTS HAS BEEN COPIED *****"
-fi
-#
 # Take the appropriate way to make /opt available according to the type of /opt
 # 根据/opt的类型，采用适当方法使目录/opt可用
 if [ -L "/opt" ]
@@ -62,12 +62,30 @@ then
     # If it is a soft link file, then create soft link file /tmp/opt
     # 如果是软链接文件，则创建软链接文件/tmp/opt
     ln -sf ${USB_MOUNT_POINT} /tmp/opt
+    #
 else
+    #
     if [ -d "/opt" ]
     then
-        # If it is a directory, then mount the USB flash drive to /opt
-        # 如果是目录，则挂载U盘至目录/opt
+        # If it is a directory, then copy all files except soft link files in /opt to ${USB_MOUNT_POINT}/ and mount the USB flash drive to /opt
+        # 如果是目录，则将目录/opt下全部非软链接文件复制至${USB_MOUNT_POINT}/，之后挂载U盘至目录/opt
+        #
+        # Check if ${FILES_TO_COPY} exists
+        # 检查文件${FILES_TO_COPY}是否存在
+        if [ ! -e ${FILES_TO_COPY} ]
+        then
+            # Copy all files except soft link files in /opt to ${USB_MOUNT_POINT}/
+            # 如果文件${FILES_TO_COPY}不存在，则执行
+            ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F' ' '{print $9}' > ${FILES_TO_COPY}
+            sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
+            cp -R $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}/
+            logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
+        fi
+        #
+        # Mount the USB flash drive to /opt
+        # 挂载U盘至目录/opt
         mount ${USB_DEVICE_NAME} /opt
+        #
     else
         # Do nothing but prompt the user
         # 如果/opt的类型不符合上述两种情况，则执行

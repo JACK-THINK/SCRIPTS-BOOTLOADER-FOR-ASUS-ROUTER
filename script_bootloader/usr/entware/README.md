@@ -25,6 +25,8 @@
 | rwxrwxrwx | entware_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | entware_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
+`ASUS_ROUTER/script_bootloader/usr/entware/etc/`（插件entware配置文件目录）
+
 ## 安装方法
 
 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/bin/entware_install`。程序会根据路由器架构，自动安装适当版本的Entware
