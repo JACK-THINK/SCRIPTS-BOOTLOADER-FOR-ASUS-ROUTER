@@ -180,11 +180,11 @@
 5. 执行`umount /dev/sda1`卸载U盘
 6. 执行`mkfs.ext3 -L ASUS_ROUTER /dev/sda1`，格式化U盘分区
 7. 格式化完成之后，执行`reboot`，重启路由器
-8. 使用scp将文件`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中
+8. 使用scp将文件`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中（`N.N`是版本号，请自己替换成所下载的版本号）
 9. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
-10. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.tar.gz`，将全部文件解压
-11. 执行`mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/script_bootloader ../`
-12. 执行`cd ..`
+10. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`，将全部文件解压（`N.N`是版本号，请自己替换成所下载的版本号）
+11. 执行`mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N/script_bootloader ./`（`N.N`是版本号，请自己替换成所下载的版本号）
+12. 执行`rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N/`（`N.N`是版本号，请自己替换成所下载的版本号）
 13. 执行`chown -R 路由器登录名（例如routeradmin）:root script_bootloader/`改变全部文件属主
 14. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
 
