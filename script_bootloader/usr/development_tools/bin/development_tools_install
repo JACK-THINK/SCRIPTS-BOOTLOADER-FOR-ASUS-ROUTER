@@ -88,14 +88,14 @@ then
     # 备份文件/opt/etc/profile至/opt/etc/profile.bak
     cp /opt/etc/profile /opt/etc/profile.bak
     #    
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS NOT BEEN COMPLETE *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
 fi
 #
 ########## END ##########

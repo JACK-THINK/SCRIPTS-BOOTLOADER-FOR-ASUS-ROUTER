@@ -62,7 +62,7 @@ then
     wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
 fi
 #
-logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
+logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
 #
 ########## END ##########
 #

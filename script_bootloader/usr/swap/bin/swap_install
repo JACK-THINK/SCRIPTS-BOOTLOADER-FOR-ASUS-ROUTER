@@ -51,7 +51,7 @@ then
     logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var EXISTS *****"
     # Do nothing but prompt the user
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"    
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
 else
     # Create ${PRIVATE_VAR}/swapfile.var
@@ -62,7 +62,7 @@ else
     mkswap -L ASUS_SWAP ${PRIVATE_VAR}/swapfile.var
     chmod 600 ${PRIVATE_VAR}/swapfile.var
     logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"        
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
 fi
 #
 ########## END ##########
