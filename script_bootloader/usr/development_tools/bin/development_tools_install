@@ -105,10 +105,11 @@ fi
 ########## END ##########
 #
 #
-########## REBOOT ##########
+########## SYNC AND REBOOT ##########
 #
-# Reboot the router
-# 需使用reboot命令重启路由器，确保设置生效
+# Sync and reboot the router
+# 同步缓存后重启路由器，确保设置生效
+/opt/bin/sync
 logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
 reboot
 #
