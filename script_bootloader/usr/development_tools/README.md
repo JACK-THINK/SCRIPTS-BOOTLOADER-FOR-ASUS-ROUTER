@@ -2,7 +2,7 @@
 
 ## 概述
 
-1. 本插件用于安装、配置、启动和禁用development_tools
+1. 本插件用于安装、配置、启动和结束development_tools
 2. 安装本插件后，可直接使用全部coreutils、gcc、python3、pip3等，无需另行配置
 
 ## 安装前提
@@ -11,7 +11,7 @@
 
 ## 文件结构
 
-`development_tools/`
+`ASUS_ROUTER/script_bootloader/usr/development_tools/`
 
 | 权限      | 名称      | 属性     | 说明           |
 | --------- | --------- | -------- | -------------- |
@@ -19,7 +19,7 @@
 | rwxrwxrwx | bin       | 目录     | 可执行文件目录 |
 | rwxrwxrwx | etc       | 目录     | 配置文件目录   |
 
-`development_tools/bin/`
+`ASUS_ROUTER/script_bootloader/usr/development_tools/bin/`
 
 | 权限      | 名称                              | 属性     | 说明                                       |
 | --------- | --------------------------------- | -------- | ------------------------------------------ |
@@ -27,7 +27,7 @@
 | rwxrwxrwx | development_tools_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | development_tools_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
-`development_tools/etc/`
+`ASUS_ROUTER/script_bootloader/usr/development_tools/etc/`
 
 | 权限      | 名称                     | 属性     | 说明                              |
 | --------- | ------------------------ | -------- | --------------------------------- |

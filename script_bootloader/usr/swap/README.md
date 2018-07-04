@@ -2,7 +2,7 @@
 
 ## 概述
 
-1. 本插件用于安装，配置、启动和禁用虚拟内存（swap）
+1. 本插件用于安装、配置、启动和结束虚拟内存（swap）
 
 ## 安装前提
 
@@ -10,15 +10,15 @@
 
 ## 文件结构
 
-`ASUS_ROUTER/script_bootloader/usr/swap/`（插件swap目录）
+`ASUS_ROUTER/script_bootloader/usr/swap/`
 
 | 权限      | 名称      | 属性     | 说明           |
 | --------- | --------- | -------- | -------------- |
 | rwxrwxrwx | README.md | 普通文件 | 说明文件       |
 | rwxrwxrwx | bin       | 目录     | 可执行文件目录 |
-| rwxrwxrwx | var       | 目录     | 配置文件目录   |
+| rwxrwxrwx | var       | 目录     | 可变文件目录   |
 
-`ASUS_ROUTER/script_bootloader/usr/swap/bin/`（插件swap可执行文件目录）
+`ASUS_ROUTER/script_bootloader/usr/swap/bin/`
 
 | 权限      | 名称                 | 属性     | 说明                                       |
 | --------- | -------------------- | -------- | ------------------------------------------ |
@@ -26,7 +26,7 @@
 | rwxrwxrwx | swap_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | swap_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
-`ASUS_ROUTER/script_bootloader/usr/swap/var/`（插件swap可变文件目录）
+`ASUS_ROUTER/script_bootloader/usr/swap/var/`
 
 | 权限      | 名称         | 属性     | 说明                       |
 | --------- | ------------ | -------- | -------------------------- |

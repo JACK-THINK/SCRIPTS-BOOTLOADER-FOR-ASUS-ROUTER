@@ -47,22 +47,27 @@ ROUTER_ARCHITECTURE=$(uname -m)
 #
 # Install Entware according to the architecture of the ASUS Router
 # 根据路由器架构，自动安装适当版本的Entware
-if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
-then
-    wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
-fi
-#
 if [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
 then
     wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
-fi
-#
-if [ ${ROUTER_ARCHITECTURE} == "mips" ]
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+elif [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+then
+    wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
 then
     wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果路由器架构不符合上述三种情况，则执行
+    logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
 fi
-#
-logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
 #
 ########## END ##########
 #

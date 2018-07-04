@@ -2,7 +2,7 @@
 
 ## 概述
 
-1. 本插件用于安装、配置、启动和禁用entware
+1. 本插件用于安装、配置、启动和结束entware
 
 ## 安装前提
 
@@ -10,14 +10,15 @@
 
 ## 文件结构
 
-`ASUS_ROUTER/script_bootloader/usr/entware/`（插件entware目录）
+`ASUS_ROUTER/script_bootloader/usr/entware/`
 
 | 权限      | 名称      | 属性     | 说明           |
 | --------- | --------- | -------- | -------------- |
 | rwxrwxrwx | README.md | 普通文件 | 说明文件       |
 | rwxrwxrwx | bin       | 目录     | 可执行文件目录 |
+| rwxrwxrwx | etc       | 目录     | 配置文件目录 |
 
-`ASUS_ROUTER/script_bootloader/usr/entware/bin/`（插件entware可执行文件目录）
+`ASUS_ROUTER/script_bootloader/usr/entware/bin/`
 
 | 权限      | 名称                    | 属性     | 说明                                       |
 | --------- | ----------------------- | -------- | ------------------------------------------ |
@@ -25,7 +26,11 @@
 | rwxrwxrwx | entware_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | entware_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
-`ASUS_ROUTER/script_bootloader/usr/entware/etc/`（插件entware配置文件目录）
+`ASUS_ROUTER/script_bootloader/usr/entware/etc/`
+
+| 权限      | 名称         | 属性     | 说明                       |
+| --------- | ------------ | -------- | -------------------------- |
+| rwxrwxrwx | files_to_copy.autosave | 普通文件 | 启动时自动生成 |
 
 ## 安装方法
 

@@ -51,22 +51,22 @@ fi
 if [ -L "/opt" ]
 then
     # If it is a soft link file, then remove the soft link file /tmp/opt
-    # 如果是软链接文件，则删除软链接文件/tmp/opt
+    # 如果是符号链接文件，则删除符号链接文件/tmp/opt
     # Never append a /. Otherwise all the files in the USB flash drive will be removed
     # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
     rm /tmp/opt
+    #
+elif [ -d "/opt" ]
+then
+    # If it is a directory, then unmount /opt
+    # 如果是目录，则卸载目录/opt
+    umount /opt
+    #
 else
-    if [ -d "/opt" ]
-    then
-        # If it is a directory, then unmount /opt
-        # 如果是目录，则卸载目录/opt
-        umount /opt
-    else
-        # Do nothing but prompt the user
-        # 如果/opt的类型不符合上述两种情况，则执行
-        logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
-        logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE UNSET *****"
-    fi
+    # Do nothing but prompt the user
+    # 如果/opt的类型不符合上述两种情况，则执行
+    logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
+    logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE UNSET *****"
 fi
 #
 ########## END ##########

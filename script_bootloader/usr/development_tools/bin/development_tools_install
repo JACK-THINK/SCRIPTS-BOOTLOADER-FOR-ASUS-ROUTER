@@ -73,20 +73,16 @@ then
     #
     # Install all include files according to the architecture of the ASUS Router
     # 根据路由器架构，自动安装全部适当版本的include files
-    if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
-    then
-        wget -qO- http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz | tar xvz -C /opt/include
-    fi
-    #
     if [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
     then
         wget -qO- http://bin.entware.net/aarch64-k3.10/include/include.tar.gz | tar xvz -C /opt/include
-    fi
-    #
-    #if [ ${ROUTER_ARCHITECTURE} == "mips" ]
+    elif [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+    then
+        wget -qO- http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz | tar xvz -C /opt/include
+    #elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
     #then
     #    #
-    #fi
+    fi
     #
     # Back up /opt/etc/profile to /opt/etc/profile.bak
     # 备份文件/opt/etc/profile至/opt/etc/profile.bak
