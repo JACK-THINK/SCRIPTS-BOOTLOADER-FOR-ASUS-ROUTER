@@ -84,8 +84,9 @@ then
     #    #
     fi
     #
-    # Back up /opt/etc/profile to /opt/etc/profile.bak
-    # 备份文件/opt/etc/profile至/opt/etc/profile.bak
+    # Back up /opt/etc/profile to /opt/etc/profile.bak and ${PRIVATE_ETC}/profile.bak
+    # 备份文件/opt/etc/profile至/opt/etc/profile.bak和${PRIVATE_ETC}/profile.bak
+    cp /opt/etc/profile ${PRIVATE_ETC}/profile.bak
     cp /opt/etc/profile /opt/etc/profile.bak
     #    
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
