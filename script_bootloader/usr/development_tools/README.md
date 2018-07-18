@@ -33,6 +33,7 @@
 | --------- | ------------------------ | -------- | --------------------------------- |
 | rwxrwxrwx | aarch64_list_of_packages | 普通文件 | 适用于aarch64架构的程序包安装列表 |
 | rwxrwxrwx | armv7l_list_of_packages  | 普通文件 | 适用于armv7l架构的程序包安装列表  |
+| rwxrwxrwx | profile.bak  | 普通文件 | 安装时自动生成  |
 
 ## 安装方法
 
