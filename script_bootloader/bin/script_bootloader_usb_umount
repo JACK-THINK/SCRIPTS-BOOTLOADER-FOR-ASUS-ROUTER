@@ -77,6 +77,11 @@ fi
 #
 logger -st "($(basename $0))" $$ "***** DISABLE ALL THE SERVICES *****"
 #
+# Terminate all the services managed by monit
+# 结束所有由程序monit管理服务
+monit stop all
+monit quit
+#
 # Create ${SERVICES_TO_DISABLE} as the list of running services that should be disabled and store variable USB_MOUNT_POINT in it
 # 创建文件${SERVICES_TO_DISABLE}作为待结束服务列表文件，并将变量USB_MOUNT_POINT存入
 echo "SBL_SYS_USR=${SBL_SYS_USR}" > ${SERVICES_TO_DISABLE}
