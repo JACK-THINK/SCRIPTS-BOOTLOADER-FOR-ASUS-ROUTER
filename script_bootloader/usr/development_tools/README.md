@@ -50,5 +50,5 @@
 
 | 插件文件                          | 插件调用者                   | 调用位置  |
 | --------------------------------- | ---------------------------- | --------- |
-| development_tools_enable.service  | list_of_user_custom_scripts  | 第49行（安装后需手动配置开机加载。启用：删除行首`#`；禁用：恢复行首`#`） |
+| development_tools_enable.service  | list_of_user_custom_scripts | 第49行（安装后需手动配置开机加载。启用：删除行首`#`；禁用：恢复行首`#`） |
 | development_tools_disable.service | script_bootloader_usb_umount | 自动调用 |
