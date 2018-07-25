@@ -65,7 +65,7 @@
 
 | 插件文件                        | 插件调用者                   | 调用位置  |
 | ------------------------------- | ---------------------------- | --------- |
-| <u>software</u>_enable.service  | list_of_user_custom_scripts  | 37-49行间 |
+| <u>software</u>_enable.service  | list_of_user_custom_scripts | 37-49行间 |
 | <u>software</u>_disable.service | script_bootloader_usb_umount | 自动调用  |
 
 各插件私有目录内文件均由插件自身调用，与系统无关
