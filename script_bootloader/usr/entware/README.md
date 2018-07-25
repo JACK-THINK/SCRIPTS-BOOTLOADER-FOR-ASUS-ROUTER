@@ -49,4 +49,4 @@
 | 插件文件                | 插件调用者                   | 调用位置    |
 | ----------------------- | ---------------------------- | ----------- |
 | entware_enable.service  | script_bootloader_usb_mount  | 142-153行间（安装后默认开机加载） |
-| entware_disable.service | script_bootloader_usb_umount | 自动调用 |
+| entware_disable.service | script_bootloader_usb_umount | 117-128行间（安装后默认关机加载） |
