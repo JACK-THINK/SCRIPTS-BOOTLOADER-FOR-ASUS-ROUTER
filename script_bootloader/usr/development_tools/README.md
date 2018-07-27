@@ -3,7 +3,7 @@
 ## 概述
 
 1. 本插件用于安装、配置、启动和结束development_tools
-2. 安装本插件后，可直接使用全部coreutils、gcc、python3、pip3等，无需另行配置
+2. 安装本插件后，可直接使用全部coreutils、gcc、python2、python3、pip3等，无需另行配置
 
 ## 安装前提
 
