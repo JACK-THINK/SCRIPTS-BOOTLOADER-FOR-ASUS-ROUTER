@@ -258,13 +258,15 @@
 
    ![step9](./Documents_Assets/How_to_Use/pre-install/step9.png)
 
-10. 路由器重启后，重新用ssh登陆路由器后台，使用scp将文件`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中（`N.N`是版本号，请自己替换成所下载的版本号）
+10. 路由器重启后，执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
 
-11. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
+    ![step10](./Documents_Assets/How_to_Use/pre-install/step10.png)
+
+11. 执行`wget https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/archive/N.N.tar.gz`，下载安装包（`N.N`是版本号，请自己替换成所下载的版本号）
 
     ![step11](./Documents_Assets/How_to_Use/pre-install/step11.png)
 
-12. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`，将全部文件解压（`N.N`是版本号，请自己替换成所下载的版本号）
+12. 执行`tar xzvf N.N.tar.gz`，将全部文件解压（`N.N`是版本号，请自己替换成所下载的版本号）
 
     ![step12](./Documents_Assets/How_to_Use/pre-install/step12.png)
 
