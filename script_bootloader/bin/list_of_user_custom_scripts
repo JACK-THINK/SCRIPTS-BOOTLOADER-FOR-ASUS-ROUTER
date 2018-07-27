@@ -57,9 +57,6 @@ SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
 # WOL SERVICE
 #${SBL_SYS_USR}/wol/bin/wol_enable.service
 #
-# DDNS SERVICE
-#${SBL_SYS_USR}/ddns/bin/ddns_enable.service
-#
 # L2TP SERVICE
 #${SBL_SYS_USR}/l2tp/bin/l2tp_enable.service
 #

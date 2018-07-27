@@ -1,9 +1,18 @@
 # 更新日志
 
+## 版本7.1（2018-07-27）
+
+#### 新增
+1. 新增Monit进程监控系统
+#### 变更
+1. 修改[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)为图文版
+#### 删除
+1. 无
+
 ## 版本7.0（2018-07-24）
 
 #### 新增
-1. 增加python2环境
+1. 新增python2环境
 #### 变更
 1. 修改开机启动逻辑，使用monit插件管理服务类程序
 #### 删除

@@ -1,0 +1,4 @@
+check program ddns_home_china with path "/opt/script_bootloader/usr/ddns_monit/bin/ddns_home_china_start" every 20 cycles
+    start program = "/opt/script_bootloader/usr/ddns_monit/bin/ddns_home_china_start"
+    stop program = "/opt/script_bootloader/usr/ddns_monit/bin/ddns_home_china_stop"
+    if status == 1 then exec "/opt/script_bootloader/usr/ddns_monit/bin/ddns_home_china_stop"
