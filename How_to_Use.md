@@ -224,7 +224,7 @@
 
      ![step6_4](./Documents_Assets/How_to_Use/pre-install/step6_4.png)
 
-   - 输入`1`，设置主分区数量为1
+   - 输入`1`，设置主分区编号为1
 
      ![step6_5](./Documents_Assets/How_to_Use/pre-install/step6_5.png)
 
@@ -258,7 +258,7 @@
 
    ![step9](./Documents_Assets/How_to_Use/pre-install/step9.png)
 
-10. 路由器重启后，执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
+10. 路由器重启后，用ssh登陆路由器后台，执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
 
     ![step10](./Documents_Assets/How_to_Use/pre-install/step10.png)
 
