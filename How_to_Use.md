@@ -187,102 +187,102 @@
 
 1. 准备一个空白U盘
 
-   ![step1](./How_to_Use_Assets/pre-install/step1.png)
+   ![step1](./Documents_Assets/How_to_Use/pre-install/step1.png)
 
 2. 删除U盘上的全部分区
 
-   ![step2_1](./How_to_Use_Assets/pre-install/step2_1.png)
+   ![step2_1](./Documents_Assets/How_to_Use/pre-install/step2_1.png)
 
-   ![step2_2](./How_to_Use_Assets/pre-install/step2_2.png)
+   ![step2_2](./Documents_Assets/How_to_Use/pre-install/step2_2.png)
 
 3. 弹出U盘，将其插入路由器的USB2.0插口（确保路由器**唯一**插入了此U盘）
 
-   ![step3](./How_to_Use_Assets/pre-install/step3.png)
+   ![step3](./Documents_Assets/How_to_Use/pre-install/step3.png)
 
 4. 用ssh登陆路由器后台
 
-   ![step4](./How_to_Use_Assets/pre-install/step4.png)
+   ![step4](./Documents_Assets/How_to_Use/pre-install/step4.png)
 
 5. 执行`df`，查看磁盘挂载情况。很明显，由于该U盘没有分区，所以路由器没有挂载
 
-   ![step5](./How_to_Use_Assets/pre-install/step5.png)
+   ![step5](./Documents_Assets/How_to_Use/pre-install/step5.png)
 
 6. 对U盘分区
    - 执行`fdisk /dev/sda`
 
-     ![step6_1](./How_to_Use_Assets/pre-install/step6_1.png)
+     ![step6_1](./Documents_Assets/How_to_Use/pre-install/step6_1.png)
 
    - 输入`p`，查看分区表。很明显，由于该U盘没有分区
 
-     ![step6_2](./How_to_Use_Assets/pre-install/step6_2.png)
+     ![step6_2](./Documents_Assets/How_to_Use/pre-install/step6_2.png)
 
    - 输入`n`，创建新分区
 
-     ![step6_3](./How_to_Use_Assets/pre-install/step6_3.png)
+     ![step6_3](./Documents_Assets/How_to_Use/pre-install/step6_3.png)
 
    - 输入`p`，设置新分区类型为主分区
 
-     ![step6_4](./How_to_Use_Assets/pre-install/step6_4.png)
+     ![step6_4](./Documents_Assets/How_to_Use/pre-install/step6_4.png)
 
    - 输入`1`，设置主分区数量为1
 
-     ![step6_5](./How_to_Use_Assets/pre-install/step6_5.png)
+     ![step6_5](./Documents_Assets/How_to_Use/pre-install/step6_5.png)
 
    - 什么都不输，直接按回车，默认设置第一柱面为1
 
-     ![step6_6](./How_to_Use_Assets/pre-install/step6_6.png)
+     ![step6_6](./Documents_Assets/How_to_Use/pre-install/step6_6.png)
 
    - 什么都不输，直接按回车，默认设置最后柱面为最大值（取决于U盘容量）
 
-     ![step6_7](./How_to_Use_Assets/pre-install/step6_7.png)
+     ![step6_7](./Documents_Assets/How_to_Use/pre-install/step6_7.png)
 
    - 输入`w`，将分区表写入U盘
 
-     ![step6_8](./How_to_Use_Assets/pre-install/step6_8.png)
+     ![step6_8](./Documents_Assets/How_to_Use/pre-install/step6_8.png)
 
 7. 执行`umount /dev/sda1`卸载U盘
 
-   ![step7](./How_to_Use_Assets/pre-install/step7.png)
+   ![step7](./Documents_Assets/How_to_Use/pre-install/step7.png)
 
 8. 格式化U盘分区
 
    - 执行`mkfs.ext3 -L ASUS_ROUTER /dev/sda1`
 
-     ![step8_1](./How_to_Use_Assets/pre-install/step8_1.png)
+     ![step8_1](./Documents_Assets/How_to_Use/pre-install/step8_1.png)
 
    - 输入`y`，等待格式化完成
 
-     ![step8_2](./How_to_Use_Assets/pre-install/step8_2.png)
+     ![step8_2](./Documents_Assets/How_to_Use/pre-install/step8_2.png)
 
 9. 格式化完成之后，执行`reboot`，重启路由器
 
-   ![step9](./How_to_Use_Assets/pre-install/step9.png)
+   ![step9](./Documents_Assets/How_to_Use/pre-install/step9.png)
 
 10. 路由器重启后，重新用ssh登陆路由器后台，使用scp将文件`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`上传至路由器`/tmp/mnt/ASUS_ROUTER/`目录中（`N.N`是版本号，请自己替换成所下载的版本号）
 
 11. 执行`cd /tmp/mnt/ASUS_ROUTER/`，进入该目录
 
-    ![step11](./How_to_Use_Assets/pre-install/step11.png)
+    ![step11](./Documents_Assets/How_to_Use/pre-install/step11.png)
 
 12. 执行`tar xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N.tar.gz`，将全部文件解压（`N.N`是版本号，请自己替换成所下载的版本号）
 
-    ![step12](./How_to_Use_Assets/pre-install/step12.png)
+    ![step12](./Documents_Assets/How_to_Use/pre-install/step12.png)
 
 13. 执行`mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N/script_bootloader ./`（`N.N`是版本号，请自己替换成所下载的版本号）
 
-    ![step13](./How_to_Use_Assets/pre-install/step13.png)
+    ![step13](./Documents_Assets/How_to_Use/pre-install/step13.png)
 
 14. 执行`rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-N.N*`（`N.N`是版本号，请自己替换成所下载的版本号）
 
-    ![step14](./How_to_Use_Assets/pre-install/step14.png)
+    ![step14](./Documents_Assets/How_to_Use/pre-install/step14.png)
 
 15. 执行`chown -R 路由器登录名（例如homerouter）:root script_bootloader/`改变全部文件属主
 
-    ![step15](./How_to_Use_Assets/pre-install/step15.png)
+    ![step15](./Documents_Assets/How_to_Use/pre-install/step15.png)
 
 16. 执行`chmod -R 777 script_bootloader/`改变全部文件权限
 
-    ![step16](./How_to_Use_Assets/pre-install/step16.png)
+    ![step16](./Documents_Assets/How_to_Use/pre-install/step16.png)
 
 #### 修改程序
 
@@ -316,11 +316,11 @@
 
 1. 用ssh登陆路由器后台
 
-   ![step1](./How_to_Use_Assets/install/step1.png)
+   ![step1](./Documents_Assets/How_to_Use/install/step1.png)
 
 2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-   ![step2](./How_to_Use_Assets/install/step2.png)
+   ![step2](./Documents_Assets/How_to_Use/install/step2.png)
 
 3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/swap/bin/swap_install`。安装512M虚拟内存。[查看详情](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/swap/README.md)
 
@@ -355,12 +355,42 @@
 
 7. （可选）其余插件的安装方法请参阅各插件目录中的README.md文件，此处不另作说明
 
+#### 启用/禁用插件
+
+> 本系统插件管理由两个部分组成，如下表所示：
+>
+> | 插件管理者                  | 服务类型                                                 | 使用说明                                                     |
+> | --------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
+> | list_of_user_custom_scripts | 仅需在开机时调用一次且无需监控的服务，例如修改环境变量等 | 见下文                                                       |
+> | Monit进程管理系统           | 除上述类型外的全部服务                                   | [点击查看](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/monit/README.md) |
+
+1. 用ssh登陆路由器后台
+
+   ![step1](./Documents_Assets/How_to_Use/enable_services/step1.png)
+
+2. 执行`cd /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/`，进入该目录
+
+   ![step2](./Documents_Assets/How_to_Use/enable_services/step2.png)
+
+3. 使用`vi`或`nano`删除要启用的服务路径前的`#`（若要禁用某服务，仅需在要禁用的服务路径前插入`#`）
+
+   > 注意：
+   >
+   > 1. 此步也可在Windows下完成修改，将修改好的list_of_user_custom_scripts文件上传至路由器`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/`目录中
+   > 2. 各插件的README.md文件中已写明应删除`#`的具体行号，请参考
+
+4. 保存并退出
+
+5. 执行`reboot`，重启路由器，相应的服务将开机自动启动
+
+   ![step3](./Documents_Assets/How_to_Use/enable_services/step3.png)
+
 #### 卸载
 
 1. 用ssh登陆路由器后台
 
-   ![step1](./How_to_Use_Assets/uninstall/step1.png)
+   ![step1](./Documents_Assets/How_to_Use/uninstall/step1.png)
 
 2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/uninstall`。路由器自动重启后，卸载完毕
 
-   ![step2](./How_to_Use_Assets/uninstall/step2.png)
+   ![step2](./Documents_Assets/How_to_Use/uninstall/step2.png)
