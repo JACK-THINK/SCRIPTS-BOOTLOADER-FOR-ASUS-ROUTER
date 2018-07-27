@@ -1,9 +1,12 @@
 # 更新日志
 
-## 版本7.1（2018-07-27）
+## 版本8.0（2018-07-27）
 
 #### 新增
 1. 新增Monit进程监控系统
+   > **特别说明**
+   > 
+   > 此为重大变更，今后发布的插件，将尽可能使用Monit进程管理系统进行统一管理，不再兼容8.0版之前的系统
 #### 变更
 1. 修改[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)为图文版
 #### 删除
