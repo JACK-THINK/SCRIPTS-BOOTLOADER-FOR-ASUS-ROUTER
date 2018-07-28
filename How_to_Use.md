@@ -242,6 +242,16 @@
 
 7. 执行`umount /dev/sda1`卸载U盘
 
+   > 注意：
+   >
+   > 部分路由器固件会提示
+   >
+   > ```
+   > umount: can't unmount /dev/sda1: Invalid argument
+   > ```
+   > 
+   > 这不会影响后续步骤，无需理会
+
    ![step7](./Documents_Assets/How_to_Use/pre-install/step7.png)
 
 8. 格式化U盘分区
@@ -251,7 +261,11 @@
      ![step8_1](./Documents_Assets/How_to_Use/pre-install/step8_1.png)
 
    - 输入`y`，等待格式化完成
-
+     
+     > 注意：
+     > 
+     > 部分路由器固件会直接执行格式化，无需输入`y`
+     
      ![step8_2](./Documents_Assets/How_to_Use/pre-install/step8_2.png)
 
 9. 格式化完成之后，执行`reboot`，重启路由器
@@ -262,7 +276,20 @@
 
     ![step10](./Documents_Assets/How_to_Use/pre-install/step10.png)
 
-11. 执行`wget https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/archive/N.N.tar.gz`，下载安装包（`N.N`是版本号，请自己替换成所下载的版本号）
+11. 执行`wget --no-cookie --no-check-certificate https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/archive/N.N.tar.gz`，下载安装包（`N.N`是版本号，请自己替换成所下载的版本号）
+
+    > 注意：
+    >
+    > 部分路由器固件会提示
+    >
+    > ```
+    > OpenSSL: error:1409442E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version
+    > Unable to establish SSL connection.
+    > ```
+    >
+    > 无法完成下载
+    >
+    > 此种情况下，需通过浏览器下载安装包并使用scp上传至路由器
 
     ![step11](./Documents_Assets/How_to_Use/pre-install/step11.png)
 
