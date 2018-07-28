@@ -54,9 +54,6 @@ SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
 # IPTABLES-RULES SERVICE
 #${SBL_SYS_USR}/iptables_rules/bin/iptables_rules_primary_router_enable.service
 #
-# WOL SERVICE
-#${SBL_SYS_USR}/wol/bin/wol_enable.service
-#
 # L2TP SERVICE
 #${SBL_SYS_USR}/l2tp/bin/l2tp_enable.service
 #
