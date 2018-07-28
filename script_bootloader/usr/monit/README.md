@@ -62,7 +62,7 @@
 
 3. 执行`mv 要启用的服务（例如vlmcsd） 要启用的服务.awake`，启用相应的服务
 
-   > 执行`mv 要禁用的服务（例如vlmcsd.awake） 要禁用的服务`，禁用相应的服务
+   > 执行`mv 要禁用的服务.awake（例如vlmcsd.awake） 要禁用的服务`，禁用相应的服务
 
    ![step3](../../../Documents_Assets/monit/enable_services/step3.png)
 
