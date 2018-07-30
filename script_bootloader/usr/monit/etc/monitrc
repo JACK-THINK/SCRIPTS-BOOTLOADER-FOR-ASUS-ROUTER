@@ -306,5 +306,5 @@ set httpd port 35490 and
 ## directories.
 #
 #  include /etc/monit.d/*
-include /opt/etc/monit.d/*.awake
+include /opt/etc/monit.d/*.on
 #
