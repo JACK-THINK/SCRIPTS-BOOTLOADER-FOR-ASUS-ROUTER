@@ -62,15 +62,15 @@ then
     # 配置monit
     cp /opt/etc/init.d/S99monit ${PRIVATE_ETC}/S99monit.bak
     sed -i '/^ARGS/s/^/#/' /opt/etc/init.d/S99monit
-    sed -i '/^#ARGS/ a\ARGS="-c /opt/etc/monitrc"' /opt/etc/init.d/S99monit    
+    sed -i '/^#ARGS/ a\ARGS="-c /opt/etc/monitrc"' /opt/etc/init.d/S99monit
     cp /opt/etc/monitrc /opt/etc/monitrc.bak
     cp /opt/etc/monitrc ${PRIVATE_ETC}/monitrc.bak
     rm -f /opt/etc/monitrc
     cp ${PRIVATE_ETC}/monitrc /opt/etc/
     cp -r ${PRIVATE_ETC}/monit.d/ /opt/etc/
-    chmod 700 /opt/etc/monitrc
-    chmod 700 /opt/etc/monit.d/*
-    #   
+    chmod 600 /opt/etc/monitrc
+    chmod 600 /opt/etc/monit.d/*
+    #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
 else
