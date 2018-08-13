@@ -157,6 +157,13 @@ fi
 ########## END ##########
 #
 #
+########## REMOVE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER PID FILE ##########
+#
+rm -f /var/run/script_bootloader.pid
+#
+########## END ##########
+#
+#
 ########## NOTIFICATION ##########
 #
 logger -st "($(basename $0))" $$ "***** THE USB FLASH DRIVE IS READY TO BE UNMOUNTED *****"

@@ -2,6 +2,30 @@
 #
 # 此程序用于在确认路由器已经成功启动后，执行用户自定义程序列表，并准备Entware运行环境
 #
+########## PROHIBIT REDUNDANT INSTANCE ##########
+#
+# Check if /var/run/script_bootloader.pid exists
+# 检查文件/var/run/script_bootloader.pid是否存在
+if [ -e "/var/run/script_bootloader.pid" ]
+then
+    # Stop and Exit
+    # 如果文件/var/run/script_bootloader.pid存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER HAS BEEN EXECUTED *****"
+    logger -st "($(basename $0))" $$ "***** REDUNDANT INSTANCE IS NOT ALLOWED *****"
+    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    exit 1
+fi
+#
+########## END ##########
+#
+#
+########## CREATE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER PID FILE ##########
+#
+echo $$ > /var/run/script_bootloader.pid
+#
+########## END ##########
+#
+#
 ########## CHECK ASUS ROUTER MODEL AND BOOT ##########
 #
 ROUTER_MODEL=$(nvram get model)
@@ -41,7 +65,7 @@ if [ "${SUCCESS_START_SERVICE}" != "1" ]
 then
     logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS NOT READY *****"
     logger -st "($(basename $0))" $$ "***** EXIT *****"
-    exit 1
+    exit 2
 fi
 #
 ########## END ##########
