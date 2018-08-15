@@ -46,7 +46,7 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## CHECK THE TYPE OF FIRMWARE ##########
 #
-if [ -z $(nvram show | grep -e '.*merlin.*') ]
+if [ -z "$(nvram show | grep -e '.*merlin.*')" ]
 then
     # ASUSWRT
     FIRMWARE_TYPE="ASUSWRT"
