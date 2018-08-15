@@ -1,0 +1,4 @@
+check program FW_PORT_OPENING_V2RAY_SERVER with path "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_v2ray_server_enable.service" every 4 cycles
+    start program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_v2ray_server_enable.service"
+    stop program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_v2ray_server_disable.service"
+    if status == 1 then alert
