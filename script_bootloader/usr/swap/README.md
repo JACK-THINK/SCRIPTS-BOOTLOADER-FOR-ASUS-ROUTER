@@ -40,5 +40,5 @@
 
 | 插件文件             | 插件调用者                   | 调用位置    |
 | -------------------- | ---------------------------- | ----------- |
-| swap_enable.service  | script_bootloader_usb_mount  | 128-139行间（安装后默认开机加载） |
-| swap_disable.service | script_bootloader_usb_umount | 131-142行间（安装后默认关机加载） |
+| swap_enable.service  | script_bootloader_usb_mount  | 164-175行间（安装后默认开机加载） |
+| swap_disable.service | script_bootloader_usb_umount | 129-140行间（安装后默认关机加载） |

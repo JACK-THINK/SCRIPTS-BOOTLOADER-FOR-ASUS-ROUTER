@@ -48,15 +48,6 @@ SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
 # DEVELOPMENT-TOOLS SERVICE
 #${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
 #
-# TIMEZONE SERVICE
-#${SBL_SYS_USR}/timezone/bin/timezone_enable.service
-#
-# IPTABLES-RULES SERVICE
-#${SBL_SYS_USR}/iptables_rules/bin/iptables_rules_primary_router_enable.service
-#
-# L2TP SERVICE
-#${SBL_SYS_USR}/l2tp/bin/l2tp_enable.service
-#
 # NEXT SERVICE
 #${SBL_SYS_USR}/
 #

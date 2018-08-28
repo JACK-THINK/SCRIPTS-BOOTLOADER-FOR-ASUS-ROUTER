@@ -22,11 +22,11 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/monit/etc
+PRIVATE_ETC=${SBL_SYS_USR}/development_tools/etc
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="MONIT"
+SERVICE_NAME="DEVELOPMENT-TOOLS"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -42,7 +42,16 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALL MONIT ##########
+########## INSTALLATION CONFIGURATION ##########
+#
+# Check the architecture of the ASUS Router
+# 检查华硕路由器架构
+ROUTER_ARCHITECTURE=$(uname -m)
+#
+########## END ##########
+#
+#
+########## INSTALL DEVELOPMENT-TOOLS ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -54,21 +63,31 @@ then
     # 更新可用程序包列表
     opkg update
     #
-    # Install monit
-    # 安装monit
-    opkg install monit
+    # Install the development tools
+    # 安装development tools
+    opkg install $(cat ${PRIVATE_ETC}/${ROUTER_ARCHITECTURE}_list_of_packages)
+    pip3 install --upgrade pip setuptools
+    pip3 install certifi
+    pip3 install chardet
+    pip3 install urllib3
     #
-    # Configure monit
-    # 配置monit
-    cp /opt/etc/init.d/S99monit ${PRIVATE_ETC}/S99monit.bak
-    sed -i '/^ARGS/s/^/#/' /opt/etc/init.d/S99monit
-    sed -i '/^#ARGS/ a\ARGS="-c /opt/etc/monitrc"' /opt/etc/init.d/S99monit
-    cp /opt/etc/monitrc /opt/etc/monitrc.bak
-    cp /opt/etc/monitrc ${PRIVATE_ETC}/monitrc.bak
-    rm -f /opt/etc/monitrc
-    cp ${PRIVATE_ETC}/monitrc /opt/etc/
-    chmod 600 /opt/etc/monitrc
-    mkdir /opt/etc/monit.d/
+    # Install all include files according to the architecture of the ASUS Router
+    # 根据路由器架构，自动安装全部适当版本的include files
+    if [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
+    then
+        wget -qO- http://bin.entware.net/aarch64-k3.10/include/include.tar.gz | tar xvz -C /opt/include
+    elif [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+    then
+        wget -qO- http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz | tar xvz -C /opt/include
+    #elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
+    #then
+    #    #
+    fi
+    #
+    # Back up /opt/etc/profile to /opt/etc/profile.bak and ${PRIVATE_ETC}/profile.bak
+    # 备份文件/opt/etc/profile至/opt/etc/profile.bak和${PRIVATE_ETC}/profile.bak
+    cp /opt/etc/profile ${PRIVATE_ETC}/profile.bak
+    cp /opt/etc/profile /opt/etc/profile.bak
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
@@ -80,5 +99,16 @@ else
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
     exit 1
 fi
+#
+########## END ##########
+#
+#
+########## SYNC AND REBOOT ##########
+#
+# Sync and reboot the router
+# 同步缓存后重启路由器，确保设置生效
+/opt/bin/sync
+logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
+reboot
 #
 ########## END ##########

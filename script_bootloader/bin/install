@@ -20,87 +20,427 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER 
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(find / -name 'script_bootloader' | awk -F / '{print "/"$2"/"$3"/"$4}')
 #
-# USB_MOUNT_SCRIPT: The script runs automatically when the USB flash drive is mounted
-# 设置自定义变量USB_MOUNT_SCRIPT为U盘挂载时自动运行文件
-USB_MOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_mount"
+# SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
+SBL_SYS_BIN=${USB_MOUNT_POINT}/script_bootloader/bin
 #
-# USB_UMOUNT_SCRIPT: The script runs automatically when the USB flash drive is unmounted
-# 设置自定义变量USB_UMOUNT_SCRIPT为U盘卸载时自动运行文件
-USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_umount"
+# SBL_SYS_ETC: The directory which contains all the configuration files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
+SBL_SYS_ETC=${USB_MOUNT_POINT}/script_bootloader/etc
 #
-########## END ##########
+# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
+SBL_SYS_TMP=${USB_MOUNT_POINT}/script_bootloader/tmp
 #
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
-########## PREPARE DIRICTORIES ##########
+# SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
+SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
 #
-# Check if ${USB_MOUNT_POINT}/script_bootloader/bin/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/bin/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/bin/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/bin/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/etc/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/etc/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/etc/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/etc/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/tmp/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/tmp/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/tmp/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/tmp/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/usr/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/usr/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/usr/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/usr/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/var/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/var/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/var/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/var/
-fi
+# SBL_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量SBL_MONITD为monit配置文件目录
+SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 ########## END ##########
 #
 #
-########## ROUTER CONFIGURATION ##########
+########## STAGE 1 ##########
 #
-# Check if ${USB_MOUNT_SCRIPT} and ${USB_UMOUNT_SCRIPT} exist
-# 检查文件${USB_MOUNT_SCRIPT}和${USB_UMOUNT_SCRIPT}是否存在
-if [ -e "${USB_MOUNT_SCRIPT}" ] && [ -e "${USB_UMOUNT_SCRIPT}" ]
+echo -e "\033[1;45;37m***** STAGE 1: CONFIGURE THE ROUTER ${ROUTER_MODEL} *****\033[0m"
+#
+sleep 10
+#
+# Check if ${SBL_SYS_BIN}/sys_install exists
+# 检查文件${SBL_SYS_BIN}/sys_install是否存在
+if [ -e "${SBL_SYS_BIN}/sys_install" ]
 then
-    logger -st "($(basename $0))" $$ "***** ALL THE ESSENTIAL FILES EXIST *****"
-    logger -st "($(basename $0))" $$ "***** SETTING THE ROUTER *****"
+    # Invoke ${SBL_SYS_BIN}/sys_install
+    # 如果${SBL_SYS_BIN}/sys_install存在，则执行${SBL_SYS_BIN}/sys_install
+    ${SBL_SYS_BIN}/sys_install
     #
-    # Set nvram variable "script_usbmount" and "script_usbumount"
-    # 如果两个文件都存在，则设置nvram变量script_usbmount和script_usbumount
-    #
-    # 使用nvram对变量script_usbmount进行设置。当U盘被挂载后，任何被该变量引用的可执行程序会自动执行
-    nvram set script_usbmount="${USB_MOUNT_SCRIPT}"
-    #
-    # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行程序会自动执行
-    nvram set script_usbumount="${USB_UMOUNT_SCRIPT}"
-    #
-    # Commit the changes
-    # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
-    nvram commit
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
+    # Check if ${SBL_SYS_BIN}/sys_install returns 0
+    # 检查文件${SBL_SYS_BIN}/sys_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/sys_install *****"
+        echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
+        exit 1
+    else
+        # Continue
+        # 如果返回值为0，则继续
+        echo -e "\033[1;42;37m***** STAGE 1: SUCCEEDED *****\033[0m"
+    fi
     #
 else
     # Stop and Exit
-    # 如果两个文件不同时存在，则该程序终止
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
-    logger -st "($(basename $0))" $$ "***** INSTALLATION HAS NOT BEEN COMPLETE *****"
-    logger -st "($(basename $0))" $$ "***** EXIT *****"
-    exit 1
+    # 如果文件${SBL_SYS_BIN}/sys_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/sys_install *****"
+    echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
+    exit 2
+fi
+#
+########## END ##########
+#
+#
+########## STAGE 2 ##########
+#
+echo -e "\033[1;45;37m***** STAGE 2: INSTALL REQUISITE COMPONENTS *****\033[0m"
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/swap/bin/swap_install exists
+# 检查文件${SBL_SYS_USR}/swap/bin/swap_install是否存在
+if [ -e "${SBL_SYS_USR}/swap/bin/swap_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/swap/bin/swap_install
+    # 如果${SBL_SYS_USR}/swap/bin/swap_install存在，则执行
+    ${SBL_SYS_USR}/swap/bin/swap_install
+    #
+    # Check if ${SBL_SYS_USR}/swap/bin/swap_install returns 0
+    # 检查文件${SBL_SYS_USR}/swap/bin/swap_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/swap/bin/swap_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 3
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/swap/bin/swap_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 4
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service exists
+# 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/swap/bin/swap_enable.service" ]
+then
+    # Invoke ${SBL_SYS_USR}/swap/bin/swap_enable.service
+    # 如果${SBL_SYS_USR}/swap/bin/swap_enable.service存在，则执行
+    ${SBL_SYS_USR}/swap/bin/swap_enable.service
+    #
+    # Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service returns 0
+    # 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/swap/bin/swap_enable.service *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 5
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_enable.service *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 6
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service exists
+# 检查文件${SBL_SYS_USR}/entware/bin/entware_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/entware/bin/entware_enable.service" ]
+then
+    # Invoke ${SBL_SYS_USR}/entware/bin/entware_enable.service
+    # 如果${SBL_SYS_USR}/entware/bin/entware_enable.service存在，则执行
+    ${SBL_SYS_USR}/entware/bin/entware_enable.service
+    #
+    # Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service returns 1
+    # 检查文件${SBL_SYS_USR}/entware/bin/entware_enable.service的返回值是否为1
+    if [ $? == '1' ]
+    then
+        # Stop and Exit
+        # 如果返回值为1，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 7
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 8
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/entware/bin/entware_install exists
+# 检查文件${SBL_SYS_USR}/entware/bin/entware_install是否存在
+if [ -e "${SBL_SYS_USR}/entware/bin/entware_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/entware/bin/entware_install
+    # 如果${SBL_SYS_USR}/entware/bin/entware_install存在，则执行
+    ${SBL_SYS_USR}/entware/bin/entware_install
+    #
+    # Check if ${SBL_SYS_USR}/entware/bin/entware_install returns 0
+    # 检查文件${SBL_SYS_USR}/entware/bin/entware_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 9
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/entware/bin/entware_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 10
+fi
+#
+sleep 10
+#
+# Check if ${USB_MOUNT_POINT}/home/root/ exists
+# 检查目录${USB_MOUNT_POINT}/home/root/是否存在
+if [ -d "${USB_MOUNT_POINT}/home/root/" ]
+then
+    # Mount ${USB_MOUNT_POINT}/home/ to /tmp/home/
+    # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
+    mount ${USB_MOUNT_POINT}/home/ /tmp/home/
+    logger -st "($(basename $0))" $$ "***** HOME HAS BEEN MOUNTED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
+    logger -st "($(basename $0))" $$ "***** HOME HAS NOT BEEN MOUNTED *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 11
+fi
+#
+sleep 10
+#
+ENTWARE_ENVIRONMENT="/opt/etc/init.d/rc.unslung"
+#
+# Check if ${ENTWARE_ENVIRONMENT} exists
+# 检查文件${ENTWARE_ENVIRONMENT}是否存在
+if [ -e "${ENTWARE_ENVIRONMENT}" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${ENTWARE_ENVIRONMENT} EXISTS *****"
+    # Start ${ENTWARE_ENVIRONMENT}
+    # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
+    ${ENTWARE_ENVIRONMENT} start
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 12
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/timezone/bin/timezone_install exists
+# 检查文件${SBL_SYS_USR}/timezone/bin/timezone_install是否存在
+if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_install
+    # 如果${SBL_SYS_USR}/timezone/bin/timezone_install存在，则执行
+    ${SBL_SYS_USR}/timezone/bin/timezone_install
+    #
+    # Check if ${SBL_SYS_USR}/timezone/bin/timezone_install returns 0
+    # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 13
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 14
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service exists
+# 检查文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" ]
+then
+    # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
+    # 如果${SBL_SYS_USR}/timezone/bin/timezone_enable.service存在，则执行
+    ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
+    #
+    # Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service returns 0
+    # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 15
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 16
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_install exists
+# 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_install是否存在
+if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_install
+    # 如果${SBL_SYS_USR}/development_tools/bin/development_tools_install存在，则执行
+    ${SBL_SYS_USR}/development_tools/bin/development_tools_install
+    #
+    # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_install returns 0
+    # 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 17
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 18
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service exists
+# 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service" ]
+then
+    # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
+    # 如果${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service存在，则执行
+    ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
+    sed -i '/^#${SBL_SYS_USR}\/development_tools/s/#//' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    #
+    # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service returns 0
+    # 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 19
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 20
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/monit/bin/monit_install exists
+# 检查文件${SBL_SYS_USR}/monit/bin/monit_install是否存在
+if [ -e "${SBL_SYS_USR}/monit/bin/monit_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/monit/bin/monit_install
+    # 如果${SBL_SYS_USR}/monit/bin/monit_install存在，则执行
+    ${SBL_SYS_USR}/monit/bin/monit_install
+    #
+    # Check if ${SBL_SYS_USR}/monit/bin/monit_install returns 0
+    # 检查文件${SBL_SYS_USR}/monit/bin/monit_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/monit/bin/monit_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 21
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/monit/bin/monit_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/monit/bin/monit_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 22
+fi
+#
+sleep 10
+#
+# Enable monit
+# 启用monit
+/opt/etc/init.d/S*monit start
+#
+sleep 10
+#
+echo -e "\033[1;42;37m***** STAGE 2: SUCCEEDED *****\033[0m"
+#
+########## END ##########
+#
+#
+########## STAGE 3 ##########
+#
+echo -e "\033[1;45;37m***** STAGE 3: INSTALL ADDONS *****\033[0m"
+#
+# Check if ${SBL_SYS_BIN}/addons_install exists
+# 检查文件${SBL_SYS_BIN}/addons_install是否存在
+if [ -e "${SBL_SYS_BIN}/addons_install" ]
+then
+    # Invoke ${SBL_SYS_BIN}/addons_install
+    # 如果${SBL_SYS_BIN}/addons_install存在，则执行${SBL_SYS_BIN}/addons_install
+    ${SBL_SYS_BIN}/addons_install
+    #
+    # Check if ${SBL_SYS_BIN}/addons_install returns 0
+    # 检查文件${SBL_SYS_BIN}/addons_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/addons_install *****"
+        echo -e "\033[1;41;37m***** STAGE 3: FAILED *****\033[0m"
+        exit 1
+    else
+        # Continue
+        # 如果返回值为0，则继续
+        echo -e "\033[1;42;37m***** STAGE 3: SUCCEEDED *****\033[0m"
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_BIN}/addons_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/addons_install *****"
+    echo -e "\033[1;41;37m***** STAGE 3: PLEASE DOWNLOAD SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS *****\033[0m"
+    echo -e "\033[1;41;37m***** STAGE 3: FAILED *****\033[0m"
 fi
 #
 ########## END ##########
@@ -110,6 +450,7 @@ fi
 #
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
+logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
 logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
 reboot
 #

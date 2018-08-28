@@ -103,6 +103,18 @@ SBL_SYS_VAR=${USB_MOUNT_POINT}/script_bootloader/var
 ########## END ##########
 #
 #
+########## SET TIMEZONE ##########
+#
+# Set timezone by add-on timezone
+# 使用插件timezone设置时区
+if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" ]
+then
+    ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
+fi
+#
+########## END ##########
+#
+#
 ########## SET WORKING DIRECTORY ##########
 #
 # Set working directory to /tmp/

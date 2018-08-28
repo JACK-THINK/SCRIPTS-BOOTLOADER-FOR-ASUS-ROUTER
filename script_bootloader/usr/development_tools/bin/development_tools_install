@@ -97,17 +97,16 @@ else
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    exit 1
 fi
 #
 ########## END ##########
 #
 #
-########## SYNC AND REBOOT ##########
+########## SYNC ##########
 #
-# Sync and reboot the router
-# 同步缓存后重启路由器，确保设置生效
+# Sync
+# 同步缓存
 /opt/bin/sync
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
-reboot
 #
 ########## END ##########

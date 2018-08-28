@@ -1,4 +1,0 @@
-check process v2ray_server with pidfile '/var/run/v2ray_server.pid'
-    start program = "/opt/script_bootloader/usr/v2ray/bin/v2ray_server_enable.service"
-    stop program = "/bin/sh -c 'kill -15 $(cat /var/run/v2ray_server.pid)'"
-    if does not exist then restart

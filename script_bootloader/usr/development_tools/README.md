@@ -33,6 +33,7 @@
 | --------- | ------------------------ | -------- | --------------------------------- |
 | rwxrwxrwx | aarch64_list_of_packages | 普通文件 | 适用于aarch64架构的程序包安装列表 |
 | rwxrwxrwx | armv7l_list_of_packages  | 普通文件 | 适用于armv7l架构的程序包安装列表  |
+| rwxrwxrwx | mips_list_of_packages  | 普通文件 | 适用于mips架构的程序包安装列表  |
 | rwxrwxrwx | profile.bak  | 普通文件 | 安装时自动生成  |
 
 ## 安装方法
@@ -45,6 +46,7 @@
    > | ----------- | ------------------------------------------------------------ |
    > | **aarch64** | RT-AC86U                                                     |
    > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
+   > | **mipsel**  | RT-N66U, RT-AC66U, RT-N16                                    |
 
 ## 调用方法
 

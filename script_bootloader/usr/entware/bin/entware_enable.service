@@ -108,6 +108,7 @@ else
     # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    exit 2
 fi
 #
 ########## END ##########

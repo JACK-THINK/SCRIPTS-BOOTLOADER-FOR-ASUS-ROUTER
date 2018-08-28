@@ -1,4 +1,0 @@
-check process ss_local with pidfile '/var/run/ss_local.pid'
-    start program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_local_enable.service"
-    stop program = "/bin/sh -c 'kill -15 $(cat /var/run/ss_local.pid)'"
-    if does not exist then restart

@@ -1,4 +1,0 @@
-check process ss_redir with pidfile '/var/run/ss_redir.pid'
-    start program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_redir_enable.service"
-    stop program = "/bin/sh -c 'kill -15 $(cat /var/run/ss_redir.pid)'"
-    if does not exist then restart
