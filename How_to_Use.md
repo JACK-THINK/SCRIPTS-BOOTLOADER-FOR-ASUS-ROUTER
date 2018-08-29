@@ -30,14 +30,16 @@
 
 `ASUS_ROUTER/script_bootloader/bin/`（SCRIPTS BOOTLOADER FOR ASUS ROUTER系统可执行文件目录）
 
-| 权限      | 名称                           | 属性     |
-| --------- | ------------------------------ | -------- |
-| rwxrwxrwx | install                      | 普通文件 |
-| rwxrwxrwx | uninstall                    | 普通文件 |
-| rwxrwxrwx | script_bootloader_usb_mount  | 普通文件 |
-| rwxrwxrwx | script_bootloader_usb_umount | 普通文件 |
-| rwxrwxrwx | label_modifier               | 普通文件 |
-| rwxrwxrwx | list_of_user_custom_scripts | 普通文件 |
+| 权限      | 名称                           | 属性     | 功能 |
+| --------- | ------------------------------ | -------- | --------- |
+| rwxrwxrwx | install                      | 普通文件 | 一键安装本系统 |
+| rwxrwxrwx | uninstall                    | 普通文件 | 一键卸载本系统 |
+| rwxrwxrwx | restore | 普通文件 | 恢复程序。每次路由器更新固件后使用 |
+| rwxrwxrwx | label_modifier               | 普通文件 | U盘工具 |
+| rwxrwxrwx | list_of_user_custom_scripts | 普通文件 | 内部调用 |
+| rwxrwxrwx | script_bootloader_usb_mount  | 普通文件 | 内部调用 |
+| rwxrwxrwx | script_bootloader_usb_umount | 普通文件 | 内部调用 |
+| rwxrwxrwx | sys_install | 普通文件 | 内部调用 |
 
 `ASUS_ROUTER/script_bootloader/etc/`（SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录）
 
@@ -53,6 +55,7 @@
 | rwxrwxrwx | entware                          | 目录 |
 | rwxrwxrwx | monit                            | 目录 |
 | rwxrwxrwx | swap                             | 目录 |
+| rwxrwxrwx | timezone                         | 目录 |
 | rwxrwxrwx | 自定义程序名（本例中为software） | 目录 |
 
 `ASUS_ROUTER/script_bootloader/usr/development_tools/`（插件development_tools目录）
@@ -113,7 +116,6 @@
 
 | 权限      | 名称         | 属性     |
 | --------- | ------------ | -------- |
-| rwxrwxrwx | monit.d | 目录          |
 | rwxrwxrwx | mmonitrc | 普通文件     |
 | rwxrwxrwx | mmonitrc.bak | 普通文件 |
 
@@ -138,6 +140,24 @@
 | 权限      | 名称         | 属性     |
 | --------- | ------------ | -------- |
 | rwxrwxrwx | swapfile.var | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/timezone/`（插件timezone目录）
+
+| 权限      | 名称      | 属性     |
+| --------- | --------- | -------- |
+| rwxrwxrwx | README.md | 普通文件 |
+| rwxrwxrwx | bin       | 目录     |
+| rwxrwxrwx | var       | 目录     |
+
+`ASUS_ROUTER/script_bootloader/usr/timezone/bin/`（插件timezone可执行文件目录）
+
+| 权限      | 名称                     | 属性     |
+| --------- | ------------------------ | -------- |
+| rwxrwxrwx | timezone_install         | 普通文件 |
+| rwxrwxrwx | timezone_enable.service  | 普通文件 |
+| rwxrwxrwx | timezone_disable.service | 普通文件 |
+
+`ASUS_ROUTER/script_bootloader/usr/timezone/etc/`（插件timezone配置文件目录）
 
 `ASUS_ROUTER/script_bootloader/usr/自定义程序名（本例中为software）/`（自定义程序，即插件的全部文件）
 
@@ -322,67 +342,39 @@
 > - 在Windows下对程序进行修改，必须将编辑器的换行符设置为LF，否则程序将被损坏，无法运行
 > - 在Linux下对程序进行修改，无需特别设置
 
-| 建议修改的文件              | 不建议修改的文件                  |
-| --------------------------- | --------------------------------- |
-| list_of_user_custom_scripts | install                           |
-|                             | uninstall                         |
-|                             | script_bootloader_usb_mount       |
-|                             | script_bootloader_usb_umount      |
-|                             | label_modifier                    |
-|                             | entware_install                   |
-|                             | entware_enable.service            |
-|                             | entware_disable.service           |
-|                             | swap_install                      |
-|                             | swap_enable.service               |
-|                             | swap_disable.service              |
-|                             | development_tools_install         |
-|                             | development_tools_enable.service  |
-|                             | development_tools_disable.service |
-|                             | armv7l_list_of_packages           |
-|                             | aarch64_list_of_packages          |
-
 #### 安装（按照下述顺序执行）
 
 1. 用ssh登陆路由器后台
 
    ![step1](./Documents_Assets/How_to_Use/install/step1.png)
 
-2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
+2. 下载[插件库](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS])，按照[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS/blob/master/README.md)将各文件及目录放置在正确的位置
 
-   ![step2](./Documents_Assets/How_to_Use/install/step2.png)
+3. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
-3. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/swap/bin/swap_install`。安装512M虚拟内存。[查看详情](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/swap/README.md)
-
-4. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/bin/entware_install`。程序会根据路由器架构，自动安装适当版本的Entware。[查看详情](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/entware/README.md)
-
-   > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
+   > 说明：
    >
-   > | 架构        | 路由器型号                                                   |
-   > | ----------- | ------------------------------------------------------------ |
-   > | **aarch64** | RT-AC86U                                                     |
-   > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
-   > | **mipsel**  | RT-N66U, RT-AC66U, RT-N16                                    |
-
-5. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/monit/bin/monit_install`。安装进程管理器Monit。[查看详情](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/monit/README.md)
-
-   > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
+   > 安装过程分为三阶段：
    >
-   > | 架构        | 路由器型号                                                   |
-   > | ----------- | ------------------------------------------------------------ |
-   > | **aarch64** | RT-AC86U                                                     |
-   > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
-   > | **mipsel**  | RT-N66U, RT-AC66U, RT-N16                                    |
-
-6. （可选）执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/development_tools/bin/development_tools_install`。程序会根据路由器架构，自动安装适当版本的development_tools。[查看详情](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/script_bootloader/usr/development_tools/README.md)
-
-   > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
+   > 1. 阶段一：设置路由器
+   >    - 全自动安装，无需用户参与
    >
-   > | 架构        | 路由器型号                                                   |
-   > | ----------- | ------------------------------------------------------------ |
-   > | **aarch64** | RT-AC86U                                                     |
-   > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
-
-7. （可选）其余插件的安装方法请参阅各插件目录中的README.md文件，此处不另作说明
+   > 2. 阶段二：安装系统必备程序
+   >    - 全自动安装，无需用户参与
+   >    - 安装时间较长，请耐心等待
+   >    - 在部署Python相关程序时，会出现一次黄字警告，三次红字警告，这是正常现象，无需担心
+   >
+   > 3. 阶段三：安装用户可选插件（此处依赖[插件库](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS])中文件，详见插件库[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS/blob/master/README.md)
+   >    - 需用户按照屏幕所示插件列表，输入欲安装的插件序号，每次只能输入一个序号，*\<Enter\>*确认
+   >    - 所选插件安装完毕后，重复上述过程，继续安装下一个插件
+   >    - 所需插件全部安装完毕后，根据屏幕提示，键入`0`，结束可选插件安装
+   >
+   > 提示信息说明：
+   >
+   > 1. 紫底白字：安装阶段提示信息
+   > 2. 绿底白字：安装成功提示信息
+   > 3. 红底白字：安装失败提示信息
+   >    - 出现错误时，其上面一行即错误详情及相关文件，可根据此信息排错
 
 #### 启用/禁用插件
 
@@ -423,3 +415,9 @@
 2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/uninstall`。路由器自动重启后，卸载完毕
 
    ![step2](./Documents_Assets/How_to_Use/uninstall/step2.png)
+
+#### 恢复
+
+1. 执行路由器固件升级，需移除路由器上装有本系统的U盘
+2. 路由器固件升级成功后，将之前装有本系统的U盘重新插入路由器
+3. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/restore`即可在数秒内恢复本系统，无需费时全新安装

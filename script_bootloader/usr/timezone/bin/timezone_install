@@ -1,0 +1,72 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/timezone/etc
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="TIMEZONE"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALLATION CONFIGURATION ##########
+#
+# TARGET_TIME_ZONE: The target time zone of the system
+# 设置自定义变量TARGET_TIME_ZONE为系统目标时区
+TARGET_TIME_ZONE=$(find ${USB_MOUNT_POINT}/ -name 'Shanghai' | grep -e "${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai" | tail -n 1)
+#
+########## END ##########
+#
+#
+########## INSTALL TIMEZONE ##########
+#
+# Install timezone
+# 安装timezone
+if [ ! -z "${TARGET_TIME_ZONE}" ]
+then
+    # Create a symbolic link file named ${PRIVATE_ETC}/localtime
+    # 如果文件${TARGET_TIME_ZONE}存在，则执行
+    ln -s ${TARGET_TIME_ZONE} ${PRIVATE_ETC}/localtime
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${TARGET_TIME_ZONE}不存在，则执行
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    exit 1
+fi
+#
+########## END ##########
