@@ -1,0 +1,4 @@
+check file Wake_on_LAN path "/var/run/wol_enabled"
+    start program = "/opt/script_bootloader/usr/wol/bin/wol_enable.service"
+    stop program = "/opt/script_bootloader/usr/wol/bin/wol_disable.service"
+    if does not exist then restart

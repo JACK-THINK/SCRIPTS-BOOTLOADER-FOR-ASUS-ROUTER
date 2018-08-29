@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SYNCTHING"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE SYNCTHING ##########
+#
+# Check if /opt/etc/syncthing/config.xml exists
+# 检查文件/opt/etc/syncthing/config.xml是否存在
+if [ -e "/opt/etc/syncthing/config.xml" ]
+then
+    logger -st "($(basename $0))" $$ "***** SYNCTHING CONFIGURATION FILE EXISTS *****"
+    #
+    # Load syncthing
+    # 加载syncthing
+    nohup syncthing &> /dev/null &
+    #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件/opt/etc/syncthing/config.xml不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE SYNCTHING CONFIGURATION FILE *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

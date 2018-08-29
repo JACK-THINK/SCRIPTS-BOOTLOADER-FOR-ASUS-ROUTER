@@ -1,0 +1,95 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/mailx/etc
+#
+# SMTP_SERVER: The SMTP server
+# 设置自定义变量SMTP_SERVER为SMTP服务器地址
+SMTP_SERVER=''
+#
+# SENDER: The sender of the mail
+# 设置自定义变量SENDER为发件人
+SENDER=''
+#
+# PASSWORD: The password of sender
+# 设置自定义变量PASSWORD为发件人密码
+PASSWORD=''
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="MAILX"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL MAILX ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Update the list of available packages
+    # 更新可用程序包列表
+    opkg update
+    #
+    # Install nail
+    # 安装nail
+    opkg install nail
+    #   
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+    # Modify /opt/etc/nail.rc
+    # 修改文件/opt/etc/nail.rc
+    cp /opt/etc/nail.rc ${PRIVATE_ETC}/nail.rc.bak
+    cp /opt/etc/nail.rc /opt/etc/nail.rc.bak
+    sed -i '/^set from=.*/s/^/#/' /opt/etc/nail.rc
+    sed -i '/^set set smtp.*/s/^/#/' /opt/etc/nail.rc
+    echo "set from=${SENDER}" >> /opt/etc/nail.rc
+    echo "set smtp=${SMTP_SERVER}" >> /opt/etc/nail.rc
+    echo "set smtp-auth-user=${SENDER}" >> /opt/etc/nail.rc
+    echo "set smtp-auth-password=${PASSWORD}" >> /opt/etc/nail.rc
+    echo "set smtp-auth=login" >> /opt/etc/nail.rc
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+fi
+#
+########## END ##########

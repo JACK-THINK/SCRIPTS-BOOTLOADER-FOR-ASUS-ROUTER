@@ -348,9 +348,7 @@
 
    ![step1](./Documents_Assets/How_to_Use/install/step1.png)
 
-2. 下载[插件库](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS])，按照[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS/blob/master/README.md)将各文件及目录放置在正确的位置
-
-3. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install`。路由器自动重启后，SCRIPTS BOOTLOADER FOR ASUS ROUTER系统安装完毕
 
    > 说明：
    >
@@ -364,8 +362,8 @@
    >    - 安装时间较长，请耐心等待
    >    - 在部署Python相关程序时，会出现一次黄字警告，三次红字警告，这是正常现象，无需担心
    >
-   > 3. 阶段三：安装用户可选插件（此处依赖[插件库](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS])中文件，详见插件库[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-ADDONS/blob/master/README.md)
-   >    - 需用户按照屏幕所示插件列表，输入欲安装的插件序号，每次只能输入一个序号，*\<Enter\>*确认
+   > 3. 阶段三：安装用户可选插件
+   >    - 需用户按照屏幕所示插件列表，输入欲安装的插件序号，每次只能输入一个序号，\<Enter\>确认
    >    - 所选插件安装完毕后，重复上述过程，继续安装下一个插件
    >    - 所需插件全部安装完毕后，根据屏幕提示，键入`0`，结束可选插件安装
    >

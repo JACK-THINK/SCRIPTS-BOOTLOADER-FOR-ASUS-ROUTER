@@ -1,0 +1,4 @@
+check program DDNS with path "/opt/script_bootloader/usr/ddns/bin/ddns_enable.service" every 20 cycles
+    start program = "/opt/script_bootloader/usr/ddns/bin/ddns_enable.service"
+    stop program = "/opt/script_bootloader/usr/ddns/bin/ddns_disable.service"
+    if status == 1 then exec "/opt/script_bootloader/usr/ddns/bin/ddns_disable.service"

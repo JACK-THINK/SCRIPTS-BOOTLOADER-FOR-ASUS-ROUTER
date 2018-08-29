@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/v2ray/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${SBL_SYS_USR}/v2ray/usr
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="V2RAY-SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE V2RAY SERVER ##########
+#
+# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config_server.json exist
+# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config_server.json是否存在
+if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config_server.json" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    # Load ${PRIVATE_USR}/v2ray
+    # 如果文件${PRIVATE_USR}/v2ray存在，则执行
+    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config_server.json &> /dev/null &
+    PID=$(echo $!)
+    echo ${PID} > /var/run/v2ray_server.pid
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${PRIVATE_USR}/v2ray不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

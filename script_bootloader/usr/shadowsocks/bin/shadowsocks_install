@@ -1,0 +1,107 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# SBL_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量SBL_MONITD为monit配置文件目录
+SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SHADOWSOCKS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL SHADOWSOCKS ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Update the list of available packages
+        # 更新可用程序包列表
+        opkg update
+        #
+        # Install shadowsocks-libev and haveged
+        # 安装shadowsocks-libev和haveged
+        opkg install shadowsocks-libev-config
+        opkg install shadowsocks-libev-ss-local
+        opkg install shadowsocks-libev-ss-redir
+        opkg install shadowsocks-libev-ss-rules
+        opkg install shadowsocks-libev-ss-server
+        opkg install shadowsocks-libev-ss-tunnel
+        opkg install haveged
+        #
+        # Disable /opt/etc/init.d/S*shadowsocks
+        # 禁用/opt/etc/init.d/S*shadowsocks
+        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*shadowsocks
+        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*shadowsocks
+        #
+        # Configure monit
+        # 配置monit
+        cp ${PRIVATE_ETC}/monit.d/ss_local ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/ss_local
+        mv ${SBL_MONITD}/ss_local ${SBL_MONITD}/ss_local.on
+        monit reload
+        #
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+fi
+#
+########## END ##########

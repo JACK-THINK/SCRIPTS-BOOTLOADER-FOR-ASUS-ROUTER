@@ -1,0 +1,60 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="NTPD"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE NTPD ##########
+#
+# Only start the NTP server if router has itself synchronised with Internet
+# 仅当路由器与互联网成功同步时间后，才启动NTP服务器
+if [ "$(nvram get ntp_ready)" == "1" ]
+then
+    logger -st "($(basename $0))" $$ "***** NTP IS READY *****"
+    #
+    # Check if /opt/etc/ntp.conf exists
+    # 检查文件/opt/etc/ntp.conf是否存在
+    if [ -e "/opt/etc/ntp.conf" ]
+    then
+        logger -st "($(basename $0))" $$ "***** NTP CONFIGURATION FILE EXISTS *****"
+        #
+        # Load ntpd
+        # 加载ntpd
+        nohup ntpd -c /opt/etc/ntp.conf -p /var/run/ntpd.pid &> /dev/null &
+        #
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果文件/opt/etc/ntp.conf不存在，则执行
+        logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE NTP CONFIGURATION FILE *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果路由器不能与互联网成功同步时间，则执行
+    logger -st "($(basename $0))" $$ "***** NTP IS NOT READY *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

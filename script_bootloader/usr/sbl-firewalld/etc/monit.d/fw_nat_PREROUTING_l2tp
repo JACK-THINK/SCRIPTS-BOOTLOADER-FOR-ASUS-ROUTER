@@ -1,0 +1,4 @@
+check program FW_PORT_FORWARDING_L2TP with path "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_nat_PREROUTING_l2tp_enable.service" every 4 cycles
+    start program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_nat_PREROUTING_l2tp_enable.service"
+    stop program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_nat_PREROUTING_l2tp_disable.service"
+    if status == 1 then alert

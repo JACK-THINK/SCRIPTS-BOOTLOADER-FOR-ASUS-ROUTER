@@ -1,0 +1,119 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_TMP: The directory which contains all the temporary files related to this program
+# 设置自定义变量PRIVATE_TMP为此程序临时文件目录
+PRIVATE_TMP=${SBL_SYS_USR}/ddns/tmp
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${SBL_SYS_USR}/ddns/usr
+#
+# DDNS_HOSTNAME: The hostname of the target DDNS server
+# 设置自定义变量DDNS_HOSTNAME为目标DDNS服务器主机名
+DDNS_HOSTNAME=""
+#
+# DDNS_PASSWORD: The password of the hostname to update DNS record
+# 设置自定义变量DDNS_PASSWORD为用于更新该域名的DNS记录的密码
+DDNS_PASSWORD=""
+#
+# MAIL_SMTP_SERVER: The SMTP server of the sender
+# 设置自定义变量MAIL_SMTP_SERVER为通知邮件发件人的SMTP服务器地址
+MAIL_SMTP_SERVER=""
+#
+# MAIL_PASSWORD: The password of sender
+# 设置自定义变量MAIL_PASSWORD为通知邮件发件人密码
+MAIL_PASSWORD=""
+#
+# MAIL_FROM: The sender of the notification email
+# 设置自定义变量MAIL_FROM为通知邮件发件人
+MAIL_FROM=""
+#
+# MAIL_TO: The recipient of the notification email
+# 设置自定义变量MAIL_TO为通知邮件收件人
+MAIL_TO=""
+#
+# MAIL_SUBJECT: The subject of the notification email
+# 设置自定义变量MAIL_SUBJECT为通知邮件主题
+MAIL_SUBJECT=""
+#
+# MAIL_CONTENTS: The contents of the notification email
+# 设置自定义变量MAIL_CONTENTS为通知邮件内容
+MAIL_CONTENTS=""
+#
+########## END ##########
+#
+#
+########## GET PUBLIC IP ADDRESS ##########
+#
+PUBLIC_IPV4_ADDRESS=$(curl -4 ident.me)
+#PUBLIC_IPV6_ADDRESS=$(curl -6 ident.me)
+#
+########## END ##########
+#
+#
+########## GET WAN IP ADDRESS ##########
+#
+WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet' | awk '{print $2}' | tr -d 'addr:')
+#WAN_IPV6_ADDRESS=$()
+#
+########## END ##########
+#
+#
+########## UPDATE DNS RECORD ##########
+#
+# Check if ${WAN_IPV4_ADDRESS} is equal to ${PUBLIC_IPV4_ADDRESS}
+# 检查${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}是否相等
+if [ ${WAN_IPV4_ADDRESS} == ${PUBLIC_IPV4_ADDRESS} ]
+then
+    # Choose one of the following metheds to update DNS record
+    # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
+    #
+    # GET IPv4
+    # GET方法更新IPv4
+    curl -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}"
+    #
+    # GET IPv6
+    # GET方法更新IPv6
+    #curl "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV6_ADDRESS}"
+    #
+    # POST IPv4
+    # POST方法更新IPv4
+    #curl "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV4_ADDRESS}"
+    #
+    # POST IPv6
+    # POST方法更新IPv6
+    #curl "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}"
+    #
+    exit 0
+else
+    # Send an email as a notification
+    # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
+    logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
+    #
+    # Prepare mail contents
+    # 准备邮件内容
+    MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
+    MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
+    sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+    #
+    # Send
+    # 发送
+    curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}"
+    #
+    exit 1
+fi
+#
+########## END ##########
