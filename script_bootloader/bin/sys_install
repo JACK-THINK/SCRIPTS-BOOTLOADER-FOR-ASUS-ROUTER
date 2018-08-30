@@ -9,7 +9,18 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(find / -name 'script_bootloader' | awk -F / '{print "/"$2"/"$3"/"$4}')
+USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
+if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
+then
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
+    exit 1
+elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
+then
+    USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
+else
+    logger -st "($(basename $0))" $$ "***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
+    exit 2
+fi
 #
 # USB_MOUNT_SCRIPT: The script runs automatically when the USB flash drive is mounted
 # 设置自定义变量USB_MOUNT_SCRIPT为U盘挂载时自动运行文件
@@ -51,7 +62,7 @@ else
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
     logger -st "($(basename $0))" $$ "***** INSTALLATION HAS NOT BEEN COMPLETE *****"
     logger -st "($(basename $0))" $$ "***** EXIT *****"
-    exit 1
+    exit 3
 fi
 #
 ########## END ##########

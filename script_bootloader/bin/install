@@ -18,7 +18,18 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER 
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(find / -name 'script_bootloader' | awk -F / '{print "/"$2"/"$3"/"$4}')
+USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
+if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
+then
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
+    exit 1
+elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
+then
+    USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
+else
+    logger -st "($(basename $0))" $$ "***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
+    exit 2
+fi
 #
 # SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
@@ -69,7 +80,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/sys_install *****"
         echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
-        exit 1
+        exit 3
     else
         # Continue
         # 如果返回值为0，则继续
@@ -81,7 +92,7 @@ else
     # 如果文件${SBL_SYS_BIN}/sys_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/sys_install *****"
     echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
-    exit 2
+    exit 4
 fi
 #
 ########## END ##########
@@ -109,7 +120,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/swap/bin/swap_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 3
+        exit 5
     fi
     #
 else
@@ -117,7 +128,7 @@ else
     # 如果文件${SBL_SYS_USR}/swap/bin/swap_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 4
+    exit 6
 fi
 #
 sleep 10
@@ -138,7 +149,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/swap/bin/swap_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 5
+        exit 7
     fi
     #
 else
@@ -146,7 +157,7 @@ else
     # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 6
+    exit 8
 fi
 #
 sleep 10
@@ -167,7 +178,7 @@ then
         # 如果返回值为1，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 7
+        exit 9
     fi
     #
 else
@@ -175,7 +186,7 @@ else
     # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 8
+    exit 10
 fi
 #
 sleep 10
@@ -196,7 +207,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 9
+        exit 11
     fi
     #
 else
@@ -204,7 +215,7 @@ else
     # 如果文件${SBL_SYS_USR}/entware/bin/entware_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 10
+    exit 12
 fi
 #
 sleep 10
@@ -223,7 +234,7 @@ else
     # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
     logger -st "($(basename $0))" $$ "***** HOME HAS NOT BEEN MOUNTED *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 11
+    exit 13
 fi
 #
 sleep 10
@@ -246,7 +257,7 @@ else
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 12
+    exit 14
 fi
 #
 sleep 10
@@ -267,7 +278,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 13
+        exit 15
     fi
     #
 else
@@ -275,7 +286,7 @@ else
     # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 14
+    exit 16
 fi
 #
 sleep 10
@@ -296,7 +307,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 15
+        exit 17
     fi
     #
 else
@@ -304,7 +315,7 @@ else
     # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 16
+    exit 18
 fi
 #
 sleep 10
@@ -325,7 +336,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 17
+        exit 19
     fi
     #
 else
@@ -333,7 +344,7 @@ else
     # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 18
+    exit 20
 fi
 #
 sleep 10
@@ -355,7 +366,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 19
+        exit 21
     fi
     #
 else
@@ -363,7 +374,7 @@ else
     # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 20
+    exit 22
 fi
 #
 sleep 10
@@ -384,7 +395,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/monit/bin/monit_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 21
+        exit 23
     fi
     #
 else
@@ -392,7 +403,7 @@ else
     # 如果文件${SBL_SYS_USR}/monit/bin/monit_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/monit/bin/monit_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 22
+    exit 24
 fi
 #
 sleep 10
@@ -428,7 +439,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/addons_install *****"
         echo -e "\033[1;41;37m***** STAGE 3: FAILED *****\033[0m"
-        exit 1
+        exit 25
     else
         # Continue
         # 如果返回值为0，则继续

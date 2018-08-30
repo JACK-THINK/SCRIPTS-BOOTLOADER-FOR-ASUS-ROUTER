@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | awk -F / '{print "/"$2"/"$3"/"$4}')
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -45,7 +45,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## CHECK THE DEVICE NAME ACCORDING TO THE MOUNT POINT OF THE USB FLASH DRIVE ##########
 #
-USB_DEVICE_NAME=$(df | grep -e ".*${USB_MOUNT_POINT}.*" | awk '{print $1}')
+USB_DEVICE_NAME=$(df "${USB_MOUNT_POINT}" | awk '{print $1}' | tail -n 1)
 #
 ########## END ##########
 #
