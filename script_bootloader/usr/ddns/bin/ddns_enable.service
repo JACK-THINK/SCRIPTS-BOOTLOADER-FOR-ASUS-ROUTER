@@ -58,7 +58,8 @@ MAIL_CONTENTS=""
 #
 ########## GET PUBLIC IP ADDRESS ##########
 #
-PUBLIC_IPV4_ADDRESS=$(curl -4 ident.me)
+PUBLIC_IPV4_ADDRESS=$(curl -s -4 whatismyip.akamai.com)
+#PUBLIC_IPV4_ADDRESS=$(curl -4 ident.me)
 #PUBLIC_IPV6_ADDRESS=$(curl -6 ident.me)
 #
 ########## END ##########
@@ -83,7 +84,7 @@ then
     #
     # GET IPv4
     # GET方法更新IPv4
-    curl -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}"
+    curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
     #
     # GET IPv6
     # GET方法更新IPv6
@@ -97,7 +98,10 @@ then
     # POST方法更新IPv6
     #curl "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}"
     #
+    echo -e "SUCCEEDED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+    #
     exit 0
+    #
 else
     # Send an email as a notification
     # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
@@ -107,11 +111,13 @@ else
     # 准备邮件内容
     MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
     MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
-    sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+    sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
     #
     # Send
     # 发送
-    curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}"
+    curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
+    #
+    echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
     #
     exit 1
 fi
