@@ -42,7 +42,7 @@ TARGET_SERVER="192.168.1.104"
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IP_ADDRESS=$(ifconfig ppp0 | grep 'inet' | awk '{print $2}' | tr -d 'addr:')
+WAN_IP_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
 #
 ########## END ##########
 #

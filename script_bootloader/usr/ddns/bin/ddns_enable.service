@@ -59,6 +59,7 @@ MAIL_CONTENTS=""
 ########## GET PUBLIC IP ADDRESS ##########
 #
 PUBLIC_IPV4_ADDRESS=$(curl -s -4 whatismyip.akamai.com)
+#PUBLIC_IPV6_ADDRESS=$(curl -s -6 whatismyip.akamai.com)
 #PUBLIC_IPV4_ADDRESS=$(curl -4 ident.me)
 #PUBLIC_IPV6_ADDRESS=$(curl -6 ident.me)
 #
@@ -67,7 +68,7 @@ PUBLIC_IPV4_ADDRESS=$(curl -s -4 whatismyip.akamai.com)
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet' | awk '{print $2}' | tr -d 'addr:')
+WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
 #WAN_IPV6_ADDRESS=$()
 #
 ########## END ##########
