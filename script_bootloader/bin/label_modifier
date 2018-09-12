@@ -17,9 +17,9 @@ LABEL="ASUS_ROUTER"
 #
 ########## FORMAT THE USB FLASH DRIVE ##########
 #
-logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS $LABEL *****"
+logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS ${LABEL} *****"
 umount /dev/sda1
-mkfs.ext3 -L $LABEL /dev/sda1
+mkfs.ext3 -L ${LABEL} /dev/sda1
 sleep 120
 #
 ########## END ##########
