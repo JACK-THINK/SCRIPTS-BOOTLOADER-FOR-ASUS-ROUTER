@@ -74,26 +74,54 @@ then
         #
         # Install V2ray according to the architecture of the ASUS Router
         # 根据路由器架构，自动安装适当版本的V2ray
+        #
+        # For v2ray-v3.46 and previous versions
+        # 以下代码适用于v2ray-v3.46及之前的版本
+        #if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*arm.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #elif [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*arm64.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*mipsle.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #else
+        #    # Do nothing but prompt the user
+        #    # 如果路由器架构不符合上述三种情况，则执行
+        #    logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #    exit 1
+        #fi
+        #
+        # For v2ray-v3.47 and later versions
+        # 以下代码适用于v2ray-v3.47及之后的版本
         if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
         then
-            unzip ${PRIVATE_BIN}/v2ray*arm.zip -d ${SBL_SYS_USR}/v2ray/
-            mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*arm.zip -d ${PRIVATE_USR}/
             chmod -R 777 ${PRIVATE_USR}/
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #
         elif [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
         then
-            unzip ${PRIVATE_BIN}/v2ray*arm64.zip -d ${SBL_SYS_USR}/v2ray/
-            mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*arm64.zip -d ${PRIVATE_USR}/
             chmod -R 777 ${PRIVATE_USR}/
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #
         elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
         then
-            unzip ${PRIVATE_BIN}/v2ray*mipsle.zip -d ${SBL_SYS_USR}/v2ray/
-            mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*mipsle.zip -d ${PRIVATE_USR}/
             chmod -R 777 ${PRIVATE_USR}/
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #
         else
             # Do nothing but prompt the user
@@ -105,6 +133,9 @@ then
         #
         # Configure monit
         # 配置monit
+        cp ${PRIVATE_ETC}/monit.d/v2ray_bridge ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/v2ray_bridge
+        mv ${SBL_MONITD}/v2ray_bridge ${SBL_MONITD}/v2ray_bridge.on
         cp ${PRIVATE_ETC}/monit.d/v2ray_client ${SBL_MONITD}/
         chmod 600 ${SBL_MONITD}/v2ray_client
         mv ${SBL_MONITD}/v2ray_client ${SBL_MONITD}/v2ray_client.on
