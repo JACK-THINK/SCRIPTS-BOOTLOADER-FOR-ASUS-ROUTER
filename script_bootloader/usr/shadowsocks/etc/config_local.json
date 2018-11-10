@@ -1,8 +1,8 @@
 {
     "server":"",
-    "server_port":,
+    "server_port":"",
     "local_address":"0.0.0.0",
-    "local_port":,
+    "local_port":"",
     "password":"",
     "method":"aes-256-cfb",
     "timeout":60,
