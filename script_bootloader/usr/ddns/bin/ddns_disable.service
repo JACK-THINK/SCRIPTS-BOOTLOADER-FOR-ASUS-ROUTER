@@ -28,19 +28,19 @@ INVALID_IPV6_ADDRESS="2001:4860:4860::8888"
 #
 # GET IPv4
 # GET方法更新IPv4
-curl -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${INVALID_IPV4_ADDRESS}"
+curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${INVALID_IPV4_ADDRESS}" > /dev/null 2>&1
 #
 # GET IPv6
 # GET方法更新IPv6
-#curl "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${INVALID_IPV6_ADDRESS}"
+#curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${INVALID_IPV6_ADDRESS}" > /dev/null 2>&1
 #
 # POST IPv4
 # POST方法更新IPv4
-#curl "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${INVALID_IPV4_ADDRESS}"
+#curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${INVALID_IPV4_ADDRESS}" > /dev/null 2>&1
 #
 # POST IPv6
 # POST方法更新IPv6
-#curl "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${INVALID_IPV6_ADDRESS}"
+#curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${INVALID_IPV6_ADDRESS}" > /dev/null 2>&1
 #
 ########## END ##########
 #
