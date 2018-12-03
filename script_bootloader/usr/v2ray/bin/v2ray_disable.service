@@ -19,7 +19,7 @@ PRIVATE_USR=${SBL_SYS_USR}/v2ray/usr
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY-SERVER"
+SERVICE_NAME="V2RAY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -35,9 +35,9 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## DISABLE V2RAY SERVER ##########
+########## DISABLE V2RAY ##########
 #
-ps | grep -E 'v2ray.*config_server\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
+ps | grep -E 'v2ray.*config\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
 #
 ########## END ##########
 #

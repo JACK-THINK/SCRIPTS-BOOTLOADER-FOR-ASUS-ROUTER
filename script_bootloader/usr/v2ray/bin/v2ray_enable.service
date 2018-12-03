@@ -23,7 +23,7 @@ PRIVATE_USR=${SBL_SYS_USR}/v2ray/usr
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY-CLIENT"
+SERVICE_NAME="V2RAY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -39,18 +39,18 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## CHECK AND ENABLE V2RAY CLIENT ##########
+########## CHECK AND ENABLE V2RAY ##########
 #
-# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config_client.json exist
-# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config_client.json是否存在
-if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config_client.json" ]
+# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config.json exist
+# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config.json是否存在
+if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config.json" ]
 then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
     # Load ${PRIVATE_USR}/v2ray
     # 如果文件${PRIVATE_USR}/v2ray存在，则执行
-    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config_client.json &> /dev/null &
+    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config.json &> /dev/null &
     PID=$(echo $!)
-    echo ${PID} > /var/run/v2ray_client.pid
+    echo ${PID} > /var/run/v2ray.pid
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

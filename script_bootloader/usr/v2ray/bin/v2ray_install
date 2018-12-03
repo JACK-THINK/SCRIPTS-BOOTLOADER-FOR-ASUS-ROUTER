@@ -133,15 +133,9 @@ then
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/v2ray_bridge ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/v2ray_bridge
-        mv ${SBL_MONITD}/v2ray_bridge ${SBL_MONITD}/v2ray_bridge.on
-        cp ${PRIVATE_ETC}/monit.d/v2ray_client ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/v2ray_client
-        mv ${SBL_MONITD}/v2ray_client ${SBL_MONITD}/v2ray_client.on
-        cp ${PRIVATE_ETC}/monit.d/v2ray_server ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/v2ray_server
-        mv ${SBL_MONITD}/v2ray_server ${SBL_MONITD}/v2ray_server.on
+        cp ${PRIVATE_ETC}/monit.d/v2ray ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/v2ray
+        mv ${SBL_MONITD}/v2ray ${SBL_MONITD}/v2ray.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

@@ -19,7 +19,7 @@ PRIVATE_BIN=${SBL_SYS_USR}/sbl-firewalld/bin
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="IPSEC"
+SERVICE_NAME="SOFTETHER-VPN"
 #
 # NAME OF THE TABLE
 # 防火墙表名
@@ -31,7 +31,7 @@ BUILT_IN_CHAIN_NAME="PREROUTING"
 #
 # NAME OF THE USER-DEFINED CHAIN
 # 防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="IPSEC"
+USER_DEFINED_CHAIN_NAME="SOFTETHER_VPN"
 #
 # Target Server
 # 目标服务器
@@ -39,8 +39,7 @@ TARGET_SERVER=""
 #
 # PORTS
 # 端口
-PORT1=500
-PORT2=4500
+PORT1=15605
 #
 ########## END ##########
 #
@@ -76,24 +75,24 @@ fi
 # Check if the rule has been loaded
 # 检查防火墙规则是否已被加载
 if [ ${DESTINATION_IP_ADDRESS} != ${WAN_IP_ADDRESS} ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT1}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT2}")" ]
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT1}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT1}")" ]
 then
     # Delete all the relevant rules first and reload them again
     # 如果有任意规则不存在，则删除全部规则，然后重新加载
-    ${PRIVATE_BIN}/fw_nat_PREROUTING_ipsec_disable.service
+    ${PRIVATE_BIN}/fw_nat_PREROUTING_softether_vpn_disable.service
     #
     # Create chain ${USER_DEFINED_CHAIN_NAME}
     # 创建${USER_DEFINED_CHAIN_NAME}链
     iptables -t ${TABLE_NAME} -N ${USER_DEFINED_CHAIN_NAME}
     #
+    # Open ${PORT1}/tcp
+    # 打开${PORT1}/tcp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT1} -j DNAT --to-destination ${TARGET_SERVER}:${PORT1}
+    #
     # Open ${PORT1}/udp
     # 打开${PORT1}/udp
     iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT1} -j DNAT --to-destination ${TARGET_SERVER}:${PORT1}
-    #
-    # Open ${PORT2}/udp
-    # 打开${PORT2}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT2} -j DNAT --to-destination ${TARGET_SERVER}:${PORT2}
     #
     # Enable chain ${USER_DEFINED_CHAIN_NAME}
     # 启用${USER_DEFINED_CHAIN_NAME}链
@@ -106,7 +105,7 @@ then
 else
     # Everything is OK
     # 全部规则完好
-    echo "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/UDP, ${PORT2}/UDP)"
+    echo "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/BOTH)"
     #
     exit 0
 fi
