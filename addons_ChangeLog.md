@@ -8,7 +8,8 @@
 
 #### 变更
 
-1. 更新v2ray
+1. 增强sbl-firewalld
+2. 增强v2ray
 
 #### 删除
 
