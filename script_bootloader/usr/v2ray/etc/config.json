@@ -169,7 +169,7 @@
         {
             "1":
             {
-                "bufferSize":2048
+                "bufferSize":1024
             }
         }
     }

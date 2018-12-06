@@ -48,11 +48,9 @@ PORT4=22818
 # Check if the rule has been loaded
 # 检查防火墙规则是否已被加载
 if [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT1}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT1}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT2}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT2}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT3}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT3}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT4}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT4}")" ]
 then
@@ -68,10 +66,6 @@ then
     # 打开${PORT1}/tcp
     iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT1} -j ACCEPT
     #
-    # Open ${PORT1}/udp
-    # 打开${PORT1}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT1} -j ACCEPT
-    #
     # Open ${PORT2}/tcp
     # 打开${PORT2}/tcp
     iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT2} -j ACCEPT
@@ -83,10 +77,6 @@ then
     # Open ${PORT3}/tcp
     # 打开${PORT3}/tcp
     iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT3} -j ACCEPT
-    #
-    # Open ${PORT3}/udp
-    # 打开${PORT3}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT3} -j ACCEPT
     #
     # Open ${PORT4}/tcp
     # 打开${PORT4}/tcp
@@ -107,7 +97,7 @@ then
 else
     # Everything is OK
     # 全部规则完好
-    echo "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/BOTH, ${PORT2}/BOTH, ${PORT3}/BOTH, ${PORT4}/BOTH)"
+    echo "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/TCP, ${PORT2}/BOTH, ${PORT3}/TCP, ${PORT4}/BOTH)"
     #
     exit 0
 fi

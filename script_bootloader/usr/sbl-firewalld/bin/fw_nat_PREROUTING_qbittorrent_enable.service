@@ -77,7 +77,6 @@ fi
 # 检查防火墙规则是否已被加载
 if [ ${DESTINATION_IP_ADDRESS} != ${WAN_IP_ADDRESS} ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT1}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT1}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT2}")" ] || \
 [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT2}")" ]
 then
@@ -92,10 +91,6 @@ then
     # Open ${PORT1}/tcp
     # 打开${PORT1}/tcp
     iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT1} -j DNAT --to-destination ${TARGET_SERVER}:${PORT1}
-    #
-    # Open ${PORT1}/udp
-    # 打开${PORT1}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT1} -j DNAT --to-destination ${TARGET_SERVER}:${PORT1}
     #
     # Open ${PORT2}/tcp
     # 打开${PORT2}/tcp
@@ -116,7 +111,7 @@ then
 else
     # Everything is OK
     # 全部规则完好
-    echo "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/BOTH, ${PORT2}/BOTH)"
+    echo "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/TCP, ${PORT2}/BOTH)"
     #
     exit 0
 fi
