@@ -33,12 +33,12 @@ BUILT_IN_CHAIN_NAME="INPUT"
 # 防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="V2RAY"
 #
-# PORTS
-# 端口
-PORT1=22815
-PORT2=22816
-PORT3=22817
-PORT4=22818
+# Local Ports
+# 本地端口
+LOCAL_PORT_1="22815"
+LOCAL_PORT_2="22816"
+LOCAL_PORT_3="22817"
+LOCAL_PORT_4="22818"
 #
 ########## END ##########
 #
@@ -47,12 +47,12 @@ PORT4=22818
 #
 # Check if the rule has been loaded
 # 检查防火墙规则是否已被加载
-if [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT1}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT2}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT2}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT3}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${PORT4}")" ] || \
-[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${PORT4}")" ]
+if [ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_1}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_2}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${LOCAL_PORT_2}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_3}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_4}")" ] || \
+[ -z "$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${LOCAL_PORT_4}")" ]
 then
     # Delete all the relevant rules first and reload them again
     # 如果有任意规则不存在，则删除全部规则，然后重新加载
@@ -62,29 +62,29 @@ then
     # 创建${USER_DEFINED_CHAIN_NAME}链
     iptables -t ${TABLE_NAME} -N ${USER_DEFINED_CHAIN_NAME}
     #
-    # Open ${PORT1}/tcp
-    # 打开${PORT1}/tcp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT1} -j ACCEPT
+    # Open ${LOCAL_PORT_1}/tcp
+    # 打开${LOCAL_PORT_1}/tcp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_1} -j ACCEPT
     #
-    # Open ${PORT2}/tcp
-    # 打开${PORT2}/tcp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT2} -j ACCEPT
+    # Open ${LOCAL_PORT_2}/tcp
+    # 打开${LOCAL_PORT_2}/tcp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_2} -j ACCEPT
     #
-    # Open ${PORT2}/udp
-    # 打开${PORT2}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT2} -j ACCEPT
+    # Open ${LOCAL_PORT_2}/udp
+    # 打开${LOCAL_PORT_2}/udp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${LOCAL_PORT_2} -j ACCEPT
     #
-    # Open ${PORT3}/tcp
-    # 打开${PORT3}/tcp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT3} -j ACCEPT
+    # Open ${LOCAL_PORT_3}/tcp
+    # 打开${LOCAL_PORT_3}/tcp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_3} -j ACCEPT
     #
-    # Open ${PORT4}/tcp
-    # 打开${PORT4}/tcp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${PORT4} -j ACCEPT
+    # Open ${LOCAL_PORT_4}/tcp
+    # 打开${LOCAL_PORT_4}/tcp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_4} -j ACCEPT
     #
-    # Open ${PORT4}/udp
-    # 打开${PORT4}/udp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${PORT4} -j ACCEPT
+    # Open ${LOCAL_PORT_4}/udp
+    # 打开${LOCAL_PORT_4}/udp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${LOCAL_PORT_4} -j ACCEPT
     #
     # Enable chain ${USER_DEFINED_CHAIN_NAME}
     # 启用${USER_DEFINED_CHAIN_NAME}链
@@ -97,7 +97,7 @@ then
 else
     # Everything is OK
     # 全部规则完好
-    echo "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY (${PORT1}/TCP, ${PORT2}/BOTH, ${PORT3}/TCP, ${PORT4}/BOTH)"
+    echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP\nROUTER:${LOCAL_PORT_2}/BOTH\nROUTER:${LOCAL_PORT_3}/TCP\nROUTER:${LOCAL_PORT_4}/BOTH"
     #
     exit 0
 fi
