@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
+#
+# SERVER_DOMAIN: Domain of the SS-SERVER
+# 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
+SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+#
+# SERVER_IP: Domain of the SS-SERVER
+# 设置自定义变量SERVER_IP为SS-SERVER的IP地址
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+#
+# LOCAL_PORT: Port of the SS-SERVER
+# 设置自定义变量LOCAL_PORT为SS-SERVER的接收端口
+LOCAL_PORT=$(grep '"local_port":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+#
+# BUILT_IN_CHAIN_NAME: Name of the built-in chain
+# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
+BUILT_IN_CHAIN_NAME="PREROUTING"
+#
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+USER_DEFINED_CHAIN_NAME="SHADOWSOCKS"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SS_FW"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## SET IPTABLES RULES ##########
+#
+# Enable TPROXY
+# 启用TPROXY
+#modprobe xt_TPROXY
+#
+# Create new chain
+iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
+#iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
+#
+# Ignore your shadowsocks server's addresses
+# It's very IMPORTANT, just be careful.
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d ${SERVER_IP} -j RETURN
+#
+# Ignore LANs and any other addresses you'd like to bypass the proxy
+# See Wikipedia and RFC5735 for full list of reserved networks.
+# See ashi009/bestroutetb for a highly optimized CHN route list.
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 240.0.0.0/4 -j RETURN
+#
+# Anything else should be redirected to shadowsocks's local port
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
+#
+# Add any UDP rules
+#ip route add local default dev lo table 100
+#ip rule add fwmark 1 lookup 100
+#iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
+#
+# Apply the rules
+iptables -t nat -A ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+#iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

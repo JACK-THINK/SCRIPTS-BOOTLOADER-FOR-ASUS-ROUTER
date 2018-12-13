@@ -1,0 +1,11 @@
+{
+    "server":"",
+    "server_port":"",
+    "local_address":"0.0.0.0",
+    "local_port":"",
+    "password":"",
+    "method":"aes-256-cfb",
+    "timeout":60,
+    "tunnel_address":"8.8.8.8:53",
+    "mode":"tcp_and_udp"
+}

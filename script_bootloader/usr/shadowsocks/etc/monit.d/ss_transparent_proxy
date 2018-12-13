@@ -1,0 +1,4 @@
+check file TRANSPARENT_PROXY path "/var/run/ss_transparent_proxy_enable" every 4 cycles
+    start program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_transparent_proxy_enable.service" with timeout 120 seconds
+    stop program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_transparent_proxy_disable.service" with timeout 120 seconds
+    if does not exist then alert

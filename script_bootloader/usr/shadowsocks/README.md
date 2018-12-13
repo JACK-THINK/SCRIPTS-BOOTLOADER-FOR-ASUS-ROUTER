@@ -34,24 +34,30 @@
 | 权限      | 名称                 | 属性     | 说明                                       |
 | --------- | -------------------- | -------- | ------------------------------------------ |
 | rwxrwxrwx | shadowsocks_install         | 普通文件 | 安装文件                                   |
-| rwxrwxrwx | ss_iptables         | 普通文件 | 插件的可执行程序，用于配置防火墙（未完成）    |
+| rwxrwxrwx | ss_fw_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_fw_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_local_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ss_local_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_redir_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序（未完成） |
-| rwxrwxrwx | ss_redir_disable.service | 普通文件 | 插件的可执行程序，用于结束程序（未完成） |
+| rwxrwxrwx | ss_redir_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_redir_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_server_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序（未完成） |
 | rwxrwxrwx | ss_server_disable.service | 普通文件 | 插件的可执行程序，用于结束程序（未完成） |
-| rwxrwxrwx | ss_tunnel_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序（未完成） |
-| rwxrwxrwx | ss_tunnel_disable.service | 普通文件 | 插件的可执行程序，用于结束程序（未完成） |
+| rwxrwxrwx | ss_transparent_proxy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_tunnel_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_tunnel_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/shadowsocks/etc/`
 
 | 权限      | 名称         | 属性     | 说明                       |
 | --------- | ------------ | -------- | -------------------------- |
 | rwxrwxrwx | config_local.json | 普通文件 | ss_local_enable.service的配置文件 |
+| rwxrwxrwx | config_redir.json | 普通文件 | ss_redir_enable.service的配置文件 |
+| rwxrwxrwx | config_tunnel.json | 普通文件 | ss_tunnel_enable.service的配置文件 |
 | rwxrwxrwx | monit.d/ss_local | 普通文件 | monit.d配置文件 |
 | rwxrwxrwx | monit.d/ss_redir | 普通文件 | monit.d配置文件 |
 | rwxrwxrwx | monit.d/ss_server | 普通文件 | monit.d配置文件 |
+| rwxrwxrwx | monit.d/ss_transparent_proxy | 普通文件 | monit.d配置文件 |
 | rwxrwxrwx | monit.d/ss_tunnel | 普通文件 | monit.d配置文件 |
 
 ## 安装方法
@@ -64,14 +70,34 @@
 | -------------------      | ---------------- |
 | ss_local_enable.service  | monit.d/ss_local |
 | ss_local_disable.service | monit.d/ss_local |
+| ss_transparent_proxy_enable.service | monit.d/ss_transparent_proxy |
+| ss_transparent_proxy_disable.service | monit.d/ss_transparent_proxy |
 
 ## 需修改部分
 
 `shadowsocks/etc/config_local.json`
 
-| 行号 | 代码                         | 说明                   |
-| ---- | ---------------------------- | ---------------------- |
-| 29   | `"server":`  | Shadowsocks服务器IP地址        |
-| 33   | `"server_port":`           | Shadowsocks服务器监听端口  |
-| 37   | `"local_port":`           | 本地监听端口               |
-| 37   | `"password":`           | 密码               |
+| 行号 | 代码             | 说明                      |
+| ---- | -----------------| ------------------------- |
+| 2    | `"server":`      | Shadowsocks服务器IP地址   |
+| 3    | `"server_port":` | Shadowsocks服务器监听端口 |
+| 5    | `"local_port":`  | 本地监听端口              |
+| 6    | `"password":`    | 密码                      |
+
+`shadowsocks/etc/config_redir.json`
+
+| 行号 | 代码             | 说明                      |
+| ---- | -----------------| ------------------------- |
+| 2    | `"server":`      | Shadowsocks服务器IP地址   |
+| 3    | `"server_port":` | Shadowsocks服务器监听端口 |
+| 5    | `"local_port":`  | 本地监听端口              |
+| 6    | `"password":`    | 密码                      |
+
+`shadowsocks/etc/config_tunnel.json`
+
+| 行号 | 代码                 | 说明                      |
+| ---- | -------------------- | ------------------------- |
+| 2    | `"server":`          | Shadowsocks服务器IP地址   |
+| 3    | `"server_port":`     | Shadowsocks服务器监听端口 |
+| 5    | `"local_port":`      | 本地监听端口              |
+| 6    | `"password":`        | 密码                      |

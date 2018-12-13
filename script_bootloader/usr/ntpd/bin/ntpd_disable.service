@@ -25,7 +25,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE NTPD ##########
 #
-ps | grep "ntpd -c /opt/etc/ntp.conf" | grep -v "grep" | awk '{print $1}' | xargs kill
+kill $(cat /var/run/ntpd.pid) > /dev/null 2>&1
+rm -f /var/run/ntpd.pid > /dev/null 2>&1
 #
 ########## END ##########
 #

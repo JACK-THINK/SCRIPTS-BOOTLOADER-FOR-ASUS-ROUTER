@@ -1,0 +1,98 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${SBL_SYS_USR}/shadowsocks/bin
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
+#
+# BUILT_IN_CHAIN_NAME: Name of the built-in chain
+# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
+BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+#
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+#
+# DNS_PORT: Local port of ss-tunnel
+# 设置自定义变量DNS_PORT为ss-tunnel的本地端口
+DNS_PORT=$(grep '"local_port":' ${PRIVATE_ETC}/config_tunnel.json | awk -F '"' '{print $4}')
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+########## END ##########
+#
+#
+########## ENABLE SS-REDIR, SS-TUNNEL AND SS-FW ##########
+#
+# Check if ${PRIVATE_BIN}/ss_redir_enable.service, ${PRIVATE_BIN}/ss_tunnel_enable.service and ${PRIVATE_BIN}/ss_fw_enable.service have been loaded
+# 检查${PRIVATE_BIN}/ss_redir_enable.service，${PRIVATE_BIN}/ss_tunnel_enable.service和${PRIVATE_BIN}/ss_fw_enable.service是否被加载
+if [ -z "$(ps | grep -E 'ss-redir.*config_redir\.json' | grep -v 'grep')" ] || \
+[ -z "$(ps | grep -E 'ss-tunnel.*config_tunnel\.json' | grep -v 'grep')" ] || \
+[ -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | grep -E "${USER_DEFINED_CHAIN_NAME}")" ]
+then
+    # Stop all the relevant processes
+    # 如果有任意条件不符，则停止全部相关进程
+    ${PRIVATE_BIN}/ss_transparent_proxy_disable.service > /dev/null 2>&1
+    #
+    echo -e "LOAD TRANSPARENT PROXY"
+    #
+    # Start all the relevant processes
+    # 启动全部相关进程
+    ${PRIVATE_BIN}/ss_redir_enable.service > /dev/null 2>&1
+    sleep 2
+    ${PRIVATE_BIN}/ss_tunnel_enable.service > /dev/null 2>&1
+    sleep 2
+    ${PRIVATE_BIN}/ss_fw_enable.service > /dev/null 2>&1
+    sleep 2
+    #
+    # Update DNS server
+    # 更新DNS服务器
+    sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    echo "server=127.0.0.1#${DNS_PORT}" >> /tmp/resolv.dnsmasq
+    killall dnsmasq > /dev/null 2>&1
+    sleep 30
+    #
+    #
+    ########## ENABLE CRONTAB ##########
+    #
+    # Enable crontab because something is wrong with the poll time of monit
+    # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
+    echo "5 * * * * ${PRIVATE_BIN}/ss_transparent_proxy_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
+    chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+    #
+    # Create status file
+    # 创建状态文件
+    touch /var/run/ss_transparent_proxy_enable
+    #
+    ########## END ##########
+    #
+    #
+    exit 1
+    #
+else
+    # Everything is OK
+    # 满足全部条件
+    echo -e "TRANSPARENT PROXY IS ON"
+    #
+    exit 0
+fi
+#
+########## END ##########

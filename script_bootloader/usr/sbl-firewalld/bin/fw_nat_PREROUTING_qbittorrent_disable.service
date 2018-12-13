@@ -9,16 +9,16 @@
 # 服务名称
 SERVICE_NAME="QBITTORRENT"
 #
-# NAME OF THE TABLE
-# 防火墙表名
+# TABLE_NAME: Name of the table
+# 设置自定义变量TABLE_NAME为防火墙表名
 TABLE_NAME="nat"
 #
-# NAME OF THE BUILT-IN CHAIN
-# 防火墙默认链名
+# BUILT_IN_CHAIN_NAME: Name of the built-in chain
+# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
 BUILT_IN_CHAIN_NAME="PREROUTING"
 #
-# NAME OF THE USER-DEFINED CHAIN
-# 防火墙自定义链名
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="QBITTORRENT"
 #
 ########## END ##########

@@ -25,7 +25,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE SS-LOCAL ##########
 #
-ps | grep -E 'ss-local.*config_local\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
+kill $(cat /var/run/ss_local.pid) > /dev/null 2>&1
+rm -f /var/run/ss_local.pid > /dev/null 2>&1
 #
 ########## END ##########
 #

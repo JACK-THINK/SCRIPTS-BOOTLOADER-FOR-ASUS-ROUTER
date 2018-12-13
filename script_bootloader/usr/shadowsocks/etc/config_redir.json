@@ -1,0 +1,10 @@
+{
+    "server":"",
+    "server_port":"",
+    "local_address":"0.0.0.0",
+    "local_port":"",
+    "password":"",
+    "method":"aes-256-cfb",
+    "timeout":60,
+    "mode":"tcp_only"
+}

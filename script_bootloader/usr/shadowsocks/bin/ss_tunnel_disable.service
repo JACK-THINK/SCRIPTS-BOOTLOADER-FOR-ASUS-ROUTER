@@ -25,7 +25,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE SS-TUNNEL ##########
 #
-ps | grep -E 'ss-tunnel.*config_tunnel\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
+kill $(cat /var/run/ss_tunnel.pid) > /dev/null 2>&1
+rm -f /var/run/ss_tunnel.pid > /dev/null 2>&1
 #
 ########## END ##########
 #
