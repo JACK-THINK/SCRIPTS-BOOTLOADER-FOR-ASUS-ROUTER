@@ -4,7 +4,7 @@
 
 1. 本插件用于安装、配置、启动和结束shadowsocks
 2. ss_local客户端，用来连接远端shadowsocks服务器
-3. 客户端需安装socks5代理工具连接本插件
+3. 客户端需安装socks5代理工具连接ss_local
 
    | 客户端    | 代理工具      |
    | --------- | ---------     |
@@ -12,8 +12,7 @@
    | iOS       | Kitsunebi     |
    | Android   | BifrostV      |
 
-4. 暂不开发透明代理，直到华硕官方固件支持tproxy
-5. 远端端口：22816；本地端口：1081
+4. 支持全局透明代理（需手动在shell中执行ss_transparent_proxy_enable.service），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
 
 ## 安装前提
 
@@ -70,8 +69,8 @@
 | -------------------      | ---------------- |
 | ss_local_enable.service  | monit.d/ss_local |
 | ss_local_disable.service | monit.d/ss_local |
-| ss_transparent_proxy_enable.service | monit.d/ss_transparent_proxy |
-| ss_transparent_proxy_disable.service | monit.d/ss_transparent_proxy |
+| ss_transparent_proxy_enable.service | monit.d/ss_transparent_proxy（未启用，有BUG） |
+| ss_transparent_proxy_disable.service | monit.d/ss_transparent_proxy（未启用，有BUG） |
 
 ## 需修改部分
 
