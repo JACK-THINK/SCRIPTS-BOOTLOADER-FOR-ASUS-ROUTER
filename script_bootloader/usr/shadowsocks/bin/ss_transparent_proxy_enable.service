@@ -67,7 +67,7 @@ then
     # 更新DNS服务器
     sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
     echo "server=127.0.0.1#${DNS_PORT}" >> /tmp/resolv.dnsmasq
-    killall dnsmasq > /dev/null 2>&1
+    killall -q -1 dnsmasq > /dev/null 2>&1
     sleep 30
     #
     #
