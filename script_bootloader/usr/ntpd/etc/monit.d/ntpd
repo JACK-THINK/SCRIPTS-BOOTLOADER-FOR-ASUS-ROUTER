@@ -1,4 +1,4 @@
-check process NTP_Server with pidfile '/var/run/ntpd.pid'
+check process NTP_SERVER with pidfile '/var/run/ntpd.pid'
     start program = "/opt/script_bootloader/usr/ntpd/bin/ntpd_enable.service"
     stop program = "/bin/sh -c 'kill -15 $(cat /var/run/ntpd.pid)'"
     if does not exist then restart

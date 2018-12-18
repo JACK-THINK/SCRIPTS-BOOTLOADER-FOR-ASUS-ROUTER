@@ -1,4 +1,4 @@
-check process vlmcsd with matching 'vlmcsd'
+check process VLMCSD with matching 'vlmcsd'
     start program = "/opt/script_bootloader/usr/vlmcsd/bin/vlmcsd_enable.service"
     stop program = "/bin/sh -c 'kill -15 $(cat /var/run/vlmcsd.pid)'"
     if does not exist then restart

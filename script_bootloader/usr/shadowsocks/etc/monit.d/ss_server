@@ -1,4 +1,4 @@
-check process shadowsocks_server with pidfile '/var/run/ss_server.pid'
+check process SS_SERVER with pidfile '/var/run/ss_server.pid'
     start program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_server_enable.service"
     stop program = "/bin/sh -c 'kill -15 $(cat /var/run/ss_server.pid)'"
     if does not exist then restart

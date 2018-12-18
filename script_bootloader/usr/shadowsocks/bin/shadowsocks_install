@@ -87,7 +87,7 @@ then
         #
         cp ${PRIVATE_ETC}/monit.d/ss_transparent_proxy ${SBL_MONITD}/
         chmod 600 ${SBL_MONITD}/ss_transparent_proxy
-        #mv ${SBL_MONITD}/ss_transparent_proxy ${SBL_MONITD}/ss_transparent_proxy.on
+        mv ${SBL_MONITD}/ss_transparent_proxy ${SBL_MONITD}/ss_transparent_proxy.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
