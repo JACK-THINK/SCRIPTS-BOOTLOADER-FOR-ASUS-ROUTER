@@ -8,5 +8,5 @@
     "timeout":60,
     "mode":"tcp_and_udp",
     "plugin":"obfs-local",
-    "plugin_opts":"obfs=http;obfs-host=www.cctv.com"
+    "plugin_opts":"obfs=http;obfs-host=www.bing.com"
 }
