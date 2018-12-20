@@ -81,9 +81,9 @@
 | 行号 | 代码          | 说明                                  |
 | ---- | --------------| ------------------------------------- |
 | 26   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 42   | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 58   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 74   | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 92  | `"address":`  | VPS的IP地址或域名                     |
-| 93  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
-| 97  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
+| 113  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 129  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 21   | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 234  | `"address":`  | VPS的IP地址或域名                     |
+| 235  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
+| 239  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
