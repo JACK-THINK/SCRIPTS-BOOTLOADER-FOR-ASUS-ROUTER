@@ -1,0 +1,27 @@
+{
+    "BindAddress":":1953",
+    "PrimaryDNS":
+    [
+        {
+            "Name":"GoogleDNS",
+            "Address":"8.8.8.8:53",
+            "Protocol":"tcp",
+            "SOCKS5Address":"127.0.0.1:1081",
+            "Timeout":6,
+            "EDNSClientSubnet":
+            {
+                "Policy":"disable",
+                "ExternalIP":"",
+                "NoCookie":true
+            }
+        }
+    ],
+    "OnlyPrimaryDNS":true,
+    "IPv6UseAlternativeDNS":false,
+    "MinimumTTL":0,
+    "CacheSize":0,
+    "RejectQtype":
+    [
+        255
+    ]
+}

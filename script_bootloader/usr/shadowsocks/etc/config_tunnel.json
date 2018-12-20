@@ -7,5 +7,7 @@
     "method":"aes-256-cfb",
     "timeout":60,
     "tunnel_address":"8.8.8.8:53",
-    "mode":"tcp_and_udp"
+    "mode":"tcp_and_udp",
+    "plugin":"obfs-local",
+    "plugin_opts":"obfs=http;obfs-host=www.cctv.com"
 }

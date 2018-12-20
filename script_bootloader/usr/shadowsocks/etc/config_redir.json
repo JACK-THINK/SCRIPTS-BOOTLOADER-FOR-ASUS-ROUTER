@@ -6,5 +6,7 @@
     "password":"",
     "method":"aes-256-cfb",
     "timeout":60,
-    "mode":"tcp_only"
+    "mode":"tcp_and_udp",
+    "plugin":"obfs-local",
+    "plugin_opts":"obfs=http;obfs-host=www.cctv.com"
 }

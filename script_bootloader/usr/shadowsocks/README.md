@@ -12,7 +12,7 @@
    | iOS       | Kitsunebi     |
    | Android   | BifrostV      |
 
-4. 支持全局透明代理（需手动在shell中执行ss_transparent_proxy_enable.service），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
+4. 支持全局透明代理（需手动在shell中执行ss_transparent_proxy_enable.service（DNS无混淆）或ss_transparent_proxy_overture_enable.service（全混淆）），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
 
 ## 安装前提
 
@@ -43,6 +43,8 @@
 | rwxrwxrwx | ss_server_disable.service | 普通文件 | 插件的可执行程序，用于结束程序（未完成） |
 | rwxrwxrwx | ss_transparent_proxy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ss_transparent_proxy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_tunnel_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ss_tunnel_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -61,7 +63,8 @@
 
 ## 安装方法
 
-执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/shadowsocks/bin/shadowsocks_install`
+1. 必须首先按照说明修改全部配置文件
+2. 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/shadowsocks/bin/shadowsocks_install`
 
 ## 调用方法
 
@@ -69,8 +72,10 @@
 | -------------------      | ---------------- |
 | ss_local_enable.service  | monit.d/ss_local |
 | ss_local_disable.service | monit.d/ss_local |
-| ss_transparent_proxy_enable.service | monit.d/ss_transparent_proxy（未启用，有BUG） |
-| ss_transparent_proxy_disable.service | monit.d/ss_transparent_proxy（未启用，有BUG） |
+| ss_transparent_proxy_enable.service | monit.d/ss_transparent_proxy |
+| ss_transparent_proxy_disable.service | monit.d/ss_transparent_proxy |
+| ss_transparent_proxy_overture_enable.service | monit.d/ss_transparent_proxy_overture |
+| ss_transparent_proxy_overture_disable.service | monit.d/ss_transparent_proxy_overture |
 
 ## 需修改部分
 

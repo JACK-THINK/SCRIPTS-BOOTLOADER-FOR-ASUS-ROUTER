@@ -37,6 +37,14 @@ BUILT_IN_CHAIN_NAME="PREROUTING"
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="SHADOWSOCKS"
 #
+# NF_TPROXY_CORE: The path to nf_tproxy_core.ko
+# 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
+NF_TPROXY_CORE=$(find / -name "nf_tproxy_core.ko")
+#
+# XT_TPROXY: The path to xt_TPROXY.ko
+# 设置自定义变量XT_TPROXY为文件xt_TPROXY.ko的绝对路径
+XT_TPROXY=$(find / -name "xt_TPROXY.ko")
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SS_FW"
@@ -55,15 +63,10 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## SET IPTABLES RULES ##########
-#
-# Enable TPROXY
-# 启用TPROXY
-#modprobe xt_TPROXY
+########## SET UP TCP PROXY ##########
 #
 # Create new chain
 iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
-#iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
 #
 # Ignore your shadowsocks server's addresses
 # It's very IMPORTANT, just be careful.
@@ -84,14 +87,41 @@ iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 240.0.0.0/4 -j RETURN
 # Anything else should be redirected to shadowsocks's local port
 iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
 #
-# Add any UDP rules
-#ip route add local default dev lo table 100
-#ip rule add fwmark 1 lookup 100
-#iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
-#
 # Apply the rules
 iptables -t nat -A ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
-#iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+#
+########## END ##########
+#
+#
+########## SET UP UDP PROXY ##########
+#
+# Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist (Disable UDP proxy temporarily)
+# 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在（临时禁用UDP proxy）
+if [ ! -z "${NF_TPROXY_CORE}" ] && [ ! -z "${XT_TPROXY}" ] && false
+then
+    # Enable TPROXY
+    # 启用TPROXY
+    insmod ${NF_TPROXY_CORE}
+    insmod ${XT_TPROXY}
+    #
+    # Create new chain
+    iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
+    #
+    # Add any UDP rules
+    #ip route add local default dev lo table 100
+    #ip rule add fwmark 1 lookup 100
+    ip rule add fwmark 0x01/0x01 table 100
+    ip route add local 0.0.0.0/0 dev lo table 100
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
+    #
+    # Apply the rules
+    iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${NF_TPROXY_CORE}或${XT_TPROXY}不存在，则执行
+    echo -e "NO UDP PROXY"
+fi
 #
 ########## END ##########
 #
