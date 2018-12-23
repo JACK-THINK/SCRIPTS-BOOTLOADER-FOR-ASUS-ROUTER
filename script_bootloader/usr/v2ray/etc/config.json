@@ -15,6 +15,34 @@
             "tag":"LAN_inbound_socks_VPS"
         },
         {
+            "port":2053,
+            "listen":"0.0.0.0",
+            "protocol":"dokodemo-door",
+            "settings":
+            {
+                "address":"8.8.8.8",
+                "port":53,
+                "network":"tcp,udp",
+                "timeout":0,
+                "followRedirect":false,
+                "userLevel":1
+            },
+            "tag":"DNS_local_dokodemo_VPS"
+        },
+        {
+            "port":45154,
+            "listen":"0.0.0.0",
+            "protocol":"dokodemo-door",
+            "settings":
+            {
+                "network":"tcp,udp",
+                "timeout":30,
+                "followRedirect":true,
+                "userLevel":1
+            },
+            "tag":"LAN_local_dokodemo_VPS"
+        },
+        {
             "port":22815,
             "listen":"0.0.0.0",
             "protocol":"vmess",
@@ -339,6 +367,22 @@
                 "inboundTag":
                 [
                     "LAN_inbound_socks_VPS"
+                ],
+                "outboundTag":"VPS_outbound"
+            },
+            {
+                "type":"field",
+                "inboundTag":
+                [
+                    "DNS_local_dokodemo_VPS"
+                ],
+                "outboundTag":"VPS_outbound"
+            },
+            {
+                "type":"field",
+                "inboundTag":
+                [
+                    "LAN_local_dokodemo_VPS"
                 ],
                 "outboundTag":"VPS_outbound"
             },

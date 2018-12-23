@@ -15,31 +15,31 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${SBL_SYS_USR}/shadowsocks/bin
+PRIVATE_BIN=${SBL_SYS_USR}/v2ray/bin
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
+PRIVATE_ETC=${SBL_SYS_USR}/v2ray/etc
 #
-# SERVER_DOMAIN: Domain of the SS-SERVER
-# 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
-SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+# SERVER_DOMAIN: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
+SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config.json | grep 'address' | awk -F '"' '{print $4}')
 #
-# SERVER_IP: Domain of the SS-SERVER
-# 设置自定义变量SERVER_IP为SS-SERVER的IP地址
+# SERVER_IP: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
 SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/v2ray_fw_enable.service | awk -F '"' '{print $2}')
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/v2ray_fw_enable.service | awk -F '"' '{print $2}')
 #
-# DNS_PORT: Local port of ss-tunnel
-# 设置自定义变量DNS_PORT为ss-tunnel的本地端口
-DNS_PORT=$(grep '"local_port":' ${PRIVATE_ETC}/config_tunnel.json | awk -F '"' '{print $4}')
+# DNS_PORT: DNS port of the V2RAY-DOKODEMO-DOOR
+# 设置自定义变量DNS_PORT为V2RAY-DOKODEMO-DOOR的DNS端口
+DNS_PORT="2053"
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
@@ -48,18 +48,16 @@ ADMINUSER=$(nvram get http_username)
 ########## END ##########
 #
 #
-########## ENABLE SS-REDIR, SS-LOCAL, OVERTURE AND SS-FW ##########
+########## ENABLE V2RAY AND V2RAY-FW ##########
 #
-# Check if ${PRIVATE_BIN}/ss_redir_enable.service, ${PRIVATE_BIN}/ss_local_enable.service, overture and ${PRIVATE_BIN}/ss_fw_enable.service have been loaded
-# 检查${PRIVATE_BIN}/ss_redir_enable.service，${PRIVATE_BIN}/ss_local_enable.service，overture和${PRIVATE_BIN}/ss_fw_enable.service是否被加载
-if [ -z "$(ps | grep -E 'ss-redir.*config_redir\.json' | grep -v 'grep')" ] || \
-[ -z "$(ps | grep -E 'ss-local.*config_local\.json' | grep -v 'grep')" ] || \
-[ -z "$(ps | grep -E 'overture.*config\.json' | grep -v 'grep')" ] || \
+# Check if ${PRIVATE_BIN}/v2ray_enable.service and ${PRIVATE_BIN}/v2ray_fw_enable.service has been loaded
+# 检查${PRIVATE_BIN}/v2ray_enable.service和${PRIVATE_BIN}/v2ray_fw_enable.service是否被加载
+if [ -z "$(ps | grep -E 'v2ray.*config\.json' | grep -v 'grep')" ] || \
 [ -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | grep -E "${USER_DEFINED_CHAIN_NAME}")" ]
 then
     # Stop all the relevant processes
     # 如果有任意条件不符，则停止全部相关进程
-    ${PRIVATE_BIN}/ss_transparent_proxy_overture_disable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/v2ray_transparent_proxy_disable.service > /dev/null 2>&1
     #
     echo -e "LOAD TRANSPARENT PROXY"
     #
@@ -69,13 +67,9 @@ then
     #
     # Start all the relevant processes
     # 启动全部相关进程
-    ${PRIVATE_BIN}/ss_redir_enable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/v2ray_enable.service > /dev/null 2>&1
     sleep 2
-    ${PRIVATE_BIN}/ss_local_enable.service > /dev/null 2>&1
-    sleep 2
-    ${SBL_SYS_USR}/overture/bin/overture_enable.service > /dev/null 2>&1
-    sleep 2
-    ${PRIVATE_BIN}/ss_fw_enable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/v2ray_fw_enable.service > /dev/null 2>&1
     sleep 2
     #
     # Update DNS server
@@ -90,12 +84,12 @@ then
     #
     # Enable crontab because something is wrong with the poll time of monit
     # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
-    echo "*/5 * * * * ${PRIVATE_BIN}/ss_transparent_proxy_overture_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
+    echo "*/5 * * * * ${PRIVATE_BIN}/v2ray_transparent_proxy_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
     chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
     #
     # Create status file
     # 创建状态文件
-    touch /var/run/ss_transparent_proxy_overture_enable
+    touch /var/run/v2ray_transparent_proxy_enable
     #
     ########## END ##########
     #

@@ -15,19 +15,19 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
+PRIVATE_ETC=${SBL_SYS_USR}/v2ray/etc
 #
-# SERVER_DOMAIN: Domain of the SS-SERVER
-# 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
-SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+# SERVER_DOMAIN: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
+SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config.json | grep 'address' | awk -F '"' '{print $4}')
 #
-# SERVER_IP: Domain of the SS-SERVER
-# 设置自定义变量SERVER_IP为SS-SERVER的IP地址
+# SERVER_IP: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
 SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
 #
-# LOCAL_PORT: Local port of the SS-REDIR
-# 设置自定义变量LOCAL_PORT为SS-REDIR的接收端口
-LOCAL_PORT=$(grep '"local_port":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+# LOCAL_PORT: Port of the V2RAY-DOKODEMO-DOOR
+# 设置自定义变量LOCAL_PORT为V2RAY-DOKODEMO-DOOR的接收端口
+LOCAL_PORT="45154"
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
@@ -35,7 +35,7 @@ BUILT_IN_CHAIN_NAME="PREROUTING"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="SHADOWSOCKS"
+USER_DEFINED_CHAIN_NAME="V2RAY_TRANSPARENT"
 #
 # NF_TPROXY_CORE: The path to nf_tproxy_core.ko
 # 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
@@ -47,7 +47,7 @@ XT_TPROXY=$(find / -name "xt_TPROXY.ko")
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="SS_FW"
+SERVICE_NAME="V2RAY_FW"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -68,7 +68,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # Create new chain
 iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
 #
-# Ignore your shadowsocks server's addresses
+# Ignore your v2ray server's addresses
 # It's very IMPORTANT, just be careful.
 iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d ${SERVER_IP} -j RETURN
 #
@@ -84,7 +84,7 @@ iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 192.168.0.0/16 -j RETURN
 iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 224.0.0.0/4 -j RETURN
 iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 240.0.0.0/4 -j RETURN
 #
-# Anything else should be redirected to shadowsocks's local port
+# Anything else should be redirected to v2ray's local port
 iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
 #
 # Apply the rules
@@ -106,16 +106,19 @@ then
     #
     # Create new chain
     iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -N V2RAY_MARK
     #
     # Add any UDP rules
-    #ip route add local default dev lo table 100
-    #ip rule add fwmark 1 lookup 100
-    ip rule add fwmark 0x01/0x01 table 100
-    ip route add local 0.0.0.0/0 dev lo table 100
+    ip route add local default dev lo table 100
+    ip rule add fwmark 1 lookup 100
+    #ip rule add fwmark 0x01/0x01 table 100
+    #ip route add local 0.0.0.0/0 dev lo table 100
     iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
+    iptables -t mangle -A V2RAY_MARK -p udp --dport 53 -j MARK --set-mark 1
     #
     # Apply the rules
     iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j V2RAY_MARK
     #
 else
     # Do nothing but prompt the user

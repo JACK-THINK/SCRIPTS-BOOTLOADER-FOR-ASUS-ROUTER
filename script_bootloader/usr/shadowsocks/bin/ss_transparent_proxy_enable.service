@@ -21,6 +21,14 @@ PRIVATE_BIN=${SBL_SYS_USR}/shadowsocks/bin
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${SBL_SYS_USR}/shadowsocks/etc
 #
+# SERVER_DOMAIN: Domain of the SS-SERVER
+# 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
+SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+#
+# SERVER_IP: Domain of the SS-SERVER
+# 设置自定义变量SERVER_IP为SS-SERVER的IP地址
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+#
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
 BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
@@ -53,6 +61,10 @@ then
     ${PRIVATE_BIN}/ss_transparent_proxy_disable.service > /dev/null 2>&1
     #
     echo -e "LOAD TRANSPARENT PROXY"
+    #
+    # Update /etc/hosts
+    # 更新文件/etc/hosts
+    echo "${SERVER_IP} ${SERVER_DOMAIN}" >> /etc/hosts
     #
     # Start all the relevant processes
     # 启动全部相关进程

@@ -6,12 +6,12 @@
 2. 客户端需安装支持socks5协议/Vmess协议/Shadowsocks协议的代理工具连接本插件
 
    | 客户端    | 代理工具      |
-   | --------- | ---------     |
+   | --------- | ------------- |
    | Chrome    | SwitchyOmega  |
    | iOS       | Quantumult    |
    | Android   | BifrostV      |
 
-3. 暂不开发透明代理，直到华硕官方固件支持tproxy
+3. 支持全局透明代理（需手动在shell中执行v2ray_transparent_proxy_enable.service（全混淆）），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
 4. 监听端口：1080, 1081, 22815, 22816, 22817, 22818
    
    | 协议        | 端口号 | 代理   | 使用场景                        |
@@ -39,14 +39,18 @@
 
 `ASUS_ROUTER/script_bootloader/usr/v2ray/bin/`
 
-| 权限      | 名称                   | 属性     | 说明                                                      |
-| --------- | ---------------------- | -------- | --------------------------------------------------------- |
-| rwxrwxrwx | v2ray_install          | 普通文件 | 安装文件                                                  |
-| rwxrwxrwx | v2ray_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序（路由器启用全局VPN时使用） |
-| rwxrwxrwx | v2ray_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序（路由器启用全局VPN时使用） |
-| rwxrwxrwx | v2ray-linux-arm.zip    | 普通文件 | v2ray预编译文件，适用于arm架构                            |
-| rwxrwxrwx | v2ray-linux-arm64.zip  | 普通文件 | v2ray预编译文件，适用于arm64架构                          |
-| rwxrwxrwx | v2ray-linux-mipsle.zip | 普通文件 | v2ray预编译文件，适用于mipsle架构                         |
+| 权限      | 名称                                    | 属性     | 说明                                       |
+| --------- | --------------------------------------- | -------- | ------------------------------------------ |
+| rwxrwxrwx | v2ray_install                           | 普通文件 | 安装文件                                   |
+| rwxrwxrwx | v2ray_enable.service                    | 普通文件 | 插件的可执行程序，用于启动程序             |
+| rwxrwxrwx | v2ray_disable.service                   | 普通文件 | 插件的可执行程序，用于结束程序             |
+| rwxrwxrwx | v2ray_fw_enable.service                 | 普通文件 | 插件的可执行程序，用于启动程序             |
+| rwxrwxrwx | v2ray_fw_disable.service                | 普通文件 | 插件的可执行程序，用于结束程序             |
+| rwxrwxrwx | v2ray_transparent_proxy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序             |
+| rwxrwxrwx | v2ray_transparent_proxy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序             |
+| rwxrwxrwx | v2ray-linux-arm.zip                     | 普通文件 | v2ray预编译文件，适用于arm架构             |
+| rwxrwxrwx | v2ray-linux-arm64.zip                   | 普通文件 | v2ray预编译文件，适用于arm64架构           |
+| rwxrwxrwx | v2ray-linux-mipsle.zip                  | 普通文件 | v2ray预编译文件，适用于mipsle架构          |
 
 `ASUS_ROUTER/script_bootloader/usr/v2ray/etc/`
 
@@ -69,10 +73,12 @@
 
 ## 调用方法
 
-| 插件文件              | 插件调用者    |
-| ------------------    | ------------  |
-| v2ray_enable.service  | monit.d/v2ray |
-| v2ray_disable.service | monit.d/v2ray |
+| 插件文件                                | 插件调用者                      |
+| ------------------                      | ------------------------------- |
+| v2ray_enable.service                    | monit.d/v2ray                   |
+| v2ray_disable.service                   | monit.d/v2ray                   |
+| v2ray_transparent_proxy_enable.service  | monit.d/v2ray_transparent_proxy |
+| v2ray_transparent_proxy_disable.service | monit.d/v2ray_transparent_proxy |
 
 ## 需修改部分
 
@@ -80,10 +86,11 @@
 
 | 行号 | 代码          | 说明                                  |
 | ---- | --------------| ------------------------------------- |
-| 26   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 113  | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 129  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 21   | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 234  | `"address":`  | VPS的IP地址或域名                     |
-| 235  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
-| 239  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
+| 23   | `"address":`  | 上游DNS地址                           |
+| 54   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 141  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 157  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 244  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 262  | `"address":`  | VPS的IP地址或域名                     |
+| 263  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
+| 267  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |

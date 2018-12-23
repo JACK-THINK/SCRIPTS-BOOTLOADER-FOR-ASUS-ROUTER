@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# BUILT_IN_CHAIN_NAME: Name of the built-in chain
+# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
+BUILT_IN_CHAIN_NAME="PREROUTING"
+#
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+USER_DEFINED_CHAIN_NAME="V2RAY_TRANSPARENT"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="V2RAY_FW"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## UNSET TCP PROXY ##########
+#
+# Check if ${USER_DEFINED_CHAIN_NAME} exists
+# 检查${USER_DEFINED_CHAIN_NAME}是否存在
+if [ -z "$(iptables -t nat -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+then
+    # Stop and Exit
+    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
+    exit 1
+    #
+else
+    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
+    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
+    if [ ! -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}")" ]
+    then
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}
+        # 禁用${USER_DEFINED_CHAIN_NAME}链
+        iptables -t nat -D ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+    fi
+    #
+    # Flush chain ${USER_DEFINED_CHAIN_NAME}
+    # 清空${USER_DEFINED_CHAIN_NAME}链
+    iptables -t nat -F ${USER_DEFINED_CHAIN_NAME}
+    #
+    # Remove chain ${USER_DEFINED_CHAIN_NAME}
+    # 删除${USER_DEFINED_CHAIN_NAME}链
+    iptables -t nat -X ${USER_DEFINED_CHAIN_NAME}
+fi
+#
+########## END ##########
+#
+#
+########## UNSET UDP PROXY ##########
+#
+# Check if ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK exist
+# 检查${USER_DEFINED_CHAIN_NAME}和V2RAY_MARK是否存在
+if [ -z "$(iptables -t mangle -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ] && [ -z "$(iptables -t mangle -nvL | grep "Chain V2RAY_MARK")" ]
+then
+    # Stop and Exit
+    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
+    exit 2
+    #
+else
+    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
+    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
+    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}")" ]
+    then
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}
+        # 禁用${USER_DEFINED_CHAIN_NAME}链
+        iptables -t mangle -D ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+    fi
+    #
+    # Check if V2RAY_MARK is referenced by ${BUILT_IN_CHAIN_NAME}
+    # 检查V2RAY_MARK是否被${BUILT_IN_CHAIN_NAME}所引用
+    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | grep "V2RAY_MARK")" ]
+    then
+        # Disable chain V2RAY_MARK
+        # 禁用V2RAY_MARK链
+        iptables -t mangle -D ${BUILT_IN_CHAIN_NAME} -j V2RAY_MARK
+    fi
+    #
+    # Flush chain ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK
+    # 清空${USER_DEFINED_CHAIN_NAME}链和V2RAY_MARK链
+    iptables -t mangle -F ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -F V2RAY_MARK
+    #
+    # Remove chain ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK
+    # 删除${USER_DEFINED_CHAIN_NAME}链和V2RAY_MARK链
+    iptables -t mangle -X ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -X V2RAY_MARK
+    #
+    # Remove IP route and rules
+    # 删除IP路由及规则
+    ip route del local default dev lo table 100
+    ip rule del fwmark 1 lookup 100
+    #ip rule del fwmark 0x01/0x01 table 100
+    #ip route del local 0.0.0.0/0 dev lo table 100
+fi
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########
