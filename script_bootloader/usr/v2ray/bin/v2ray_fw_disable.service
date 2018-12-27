@@ -5,13 +5,29 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# BUILT_IN_CHAIN_NAME: Name of the built-in chain
-# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME="PREROUTING"
-#
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="V2RAY_TRANSPARENT"
+#
+# LOCAL_PORT: Port of the V2RAY-DOKODEMO-DOOR
+# 设置自定义变量LOCAL_PORT为V2RAY-DOKODEMO-DOOR的接收端口
+LOCAL_PORT="45154"
+#
+# INTRANET_SET: Set of intranet
+# 设置自定义变量INTRANET_SET为内网地址集
+INTRANET="192.168.0.0/16"
+#
+# ROUTING_MARK: Mark of PBR
+# 设置自定义变量ROUTING_MARK为策略路由标记
+ROUTING_MARK="0x2333"
+#
+# ROUTING_TABLE: Routing table of PBR
+# 设置自定义变量ROUTING_TABLE为策略路由表
+ROUTING_TABLE="100"
+#
+# UDP_STATUS: Status of the UDP proxy
+# 设置自定义变量UDP_STATUS为UDP代理状态
+UDP_STATUS=$(iptables -t mangle -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}_UDP")
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -31,33 +47,70 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
+########## UPDATE DNS SETTINGS ##########
+#
+# Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP exists
+# 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否存在
+if [ -z "${UDP_STATUS}" ]
+then
+    sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
+    sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+else
+    sed -i '/^server=8\.8\.8\.8/d' /tmp/resolv.dnsmasq
+    sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+fi
+#
+########## END ##########
+#
+#
 ########## UNSET TCP PROXY ##########
 #
-# Check if ${USER_DEFINED_CHAIN_NAME} exists
-# 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t nat -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+# Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP exists
+# 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否存在
+if [ -z "$(iptables -t nat -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}_TCP")" ]
 then
     # Stop and Exit
-    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
+    # 如果${USER_DEFINED_CHAIN_NAME}_TCP链不存在，则该程序终止
     exit 1
     #
 else
-    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
-    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}")" ]
+    #
+    # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP exists
+    # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否存在
+    if [ -z "${UDP_STATUS}" ]
     then
-        # Disable chain ${USER_DEFINED_CHAIN_NAME}
-        # 禁用${USER_DEFINED_CHAIN_NAME}链
-        iptables -t nat -D ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+        # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain PREROUTING
+        # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被PREROUTING链所引用
+        if [ ! -z "$(iptables -t nat -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        then
+            # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
+            # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
+            iptables -t nat -D PREROUTING -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
+        fi
+        #
+    else
+        # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain OUTPUT and chain PREROUTING
+        # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被OUTPUT链和PREROUTING链所引用
+        if [ ! -z "$(iptables -t nat -nvL OUTPUT | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ] || \
+        [ ! -z "$(iptables -t nat -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        then
+            # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
+            # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
+            iptables -t nat -D OUTPUT -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
+            iptables -t nat -D PREROUTING -p tcp -s ${INTRANET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
+        fi
+        #
+        # 对内网数据包取消SNAT操作
+        iptables -t nat -D POSTROUTING -s ${INTRANET} ! -d ${INTRANET} -j MASQUERADE
     fi
     #
-    # Flush chain ${USER_DEFINED_CHAIN_NAME}
-    # 清空${USER_DEFINED_CHAIN_NAME}链
-    iptables -t nat -F ${USER_DEFINED_CHAIN_NAME}
+    # Flush chain ${USER_DEFINED_CHAIN_NAME}_TCP
+    # 清空${USER_DEFINED_CHAIN_NAME}_TCP链
+    iptables -t nat -F ${USER_DEFINED_CHAIN_NAME}_TCP
     #
-    # Remove chain ${USER_DEFINED_CHAIN_NAME}
-    # 删除${USER_DEFINED_CHAIN_NAME}链
-    iptables -t nat -X ${USER_DEFINED_CHAIN_NAME}
+    # Remove chain ${USER_DEFINED_CHAIN_NAME}_TCP
+    # 删除${USER_DEFINED_CHAIN_NAME}_TCP链
+    iptables -t nat -X ${USER_DEFINED_CHAIN_NAME}_TCP
 fi
 #
 ########## END ##########
@@ -65,49 +118,48 @@ fi
 #
 ########## UNSET UDP PROXY ##########
 #
-# Check if ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK exist
-# 检查${USER_DEFINED_CHAIN_NAME}和V2RAY_MARK是否存在
-if [ -z "$(iptables -t mangle -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ] && [ -z "$(iptables -t mangle -nvL | grep "Chain V2RAY_MARK")" ]
+# Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP exists
+# 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否存在
+if [ -z "${UDP_STATUS}" ]
 then
     # Stop and Exit
-    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
+    # 如果${USER_DEFINED_CHAIN_NAME}_UDP链不存在，则该程序终止
     exit 2
     #
 else
-    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
-    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}")" ]
+    # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain OUTPUT
+    # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被OUTPUT链所引用
+    if [ ! -z "$(iptables -t mangle -nvL OUTPUT | grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
-        # Disable chain ${USER_DEFINED_CHAIN_NAME}
-        # 禁用${USER_DEFINED_CHAIN_NAME}链
-        iptables -t mangle -D ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
+        # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
+        iptables -t mangle -D OUTPUT -p udp -j ${USER_DEFINED_CHAIN_NAME}_UDP
     fi
     #
-    # Check if V2RAY_MARK is referenced by ${BUILT_IN_CHAIN_NAME}
-    # 检查V2RAY_MARK是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | grep "V2RAY_MARK")" ]
+    # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain PREROUTING
+    # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被PREROUTING链所引用
+    if [ ! -z "$(iptables -t mangle -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
-        # Disable chain V2RAY_MARK
-        # 禁用V2RAY_MARK链
-        iptables -t mangle -D ${BUILT_IN_CHAIN_NAME} -j V2RAY_MARK
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
+        # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
+        iptables -t mangle -D PREROUTING -p udp -s ${INTRANET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
     fi
     #
-    # Flush chain ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK
-    # 清空${USER_DEFINED_CHAIN_NAME}链和V2RAY_MARK链
-    iptables -t mangle -F ${USER_DEFINED_CHAIN_NAME}
-    iptables -t mangle -F V2RAY_MARK
+    # 取消处理打了MARK的UDP包
+    iptables -t mangle -D PREROUTING -m mark --mark ${ROUTING_MARK} -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${LOCAL_PORT}
     #
-    # Remove chain ${USER_DEFINED_CHAIN_NAME} and V2RAY_MARK
-    # 删除${USER_DEFINED_CHAIN_NAME}链和V2RAY_MARK链
-    iptables -t mangle -X ${USER_DEFINED_CHAIN_NAME}
-    iptables -t mangle -X V2RAY_MARK
+    # Flush chain ${USER_DEFINED_CHAIN_NAME}_UDP
+    # 清空${USER_DEFINED_CHAIN_NAME}_UDP链
+    iptables -t mangle -F ${USER_DEFINED_CHAIN_NAME}_UDP
+    #
+    # Remove chain ${USER_DEFINED_CHAIN_NAME}_UDP
+    # 删除${USER_DEFINED_CHAIN_NAME}_UDP链
+    iptables -t mangle -X ${USER_DEFINED_CHAIN_NAME}_UDP
     #
     # Remove IP route and rules
     # 删除IP路由及规则
-    ip route del local default dev lo table 100
-    ip rule del fwmark 1 lookup 100
-    #ip rule del fwmark 0x01/0x01 table 100
-    #ip route del local 0.0.0.0/0 dev lo table 100
+    ip route del local 0/0 dev lo table ${ROUTING_TABLE}
+    ip rule del fwmark ${ROUTING_MARK} table ${ROUTING_TABLE}
 fi
 #
 ########## END ##########

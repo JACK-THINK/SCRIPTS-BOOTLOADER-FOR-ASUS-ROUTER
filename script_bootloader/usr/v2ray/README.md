@@ -11,7 +11,7 @@
    | iOS       | Quantumult    |
    | Android   | BifrostV      |
 
-3. 支持全局透明代理（需手动在shell中执行v2ray_transparent_proxy_enable.service（全混淆）），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
+3. 支持全局透明代理（需手动在shell中执行v2ray_transparent_proxy_enable.service（全混淆））。华硕原厂固件仅能代理TCP流量，梅林固件可以代理TCP和UDP流量
 4. 监听端口：1080, 1081, 22815, 22816, 22817, 22818
    
    | 协议        | 端口号 | 代理   | 使用场景                        |
@@ -87,10 +87,10 @@
 | 行号 | 代码          | 说明                                  |
 | ---- | --------------| ------------------------------------- |
 | 23   | `"address":`  | 上游DNS地址                           |
-| 54   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 141  | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 157  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 244  | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 262  | `"address":`  | VPS的IP地址或域名                     |
-| 263  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
-| 267  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
+| 61   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 148  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 164  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 251  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 269  | `"address":`  | VPS的IP地址或域名                     |
+| 270  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
+| 274  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |

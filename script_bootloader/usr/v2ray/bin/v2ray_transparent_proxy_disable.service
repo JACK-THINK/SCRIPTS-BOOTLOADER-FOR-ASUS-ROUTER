@@ -47,8 +47,6 @@ sed -i '/'"${SERVER_DOMAIN}"'/d' /etc/hosts
 #
 # Update DNS server
 # 更新DNS服务器
-sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
-sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
 killall -q -1 dnsmasq > /dev/null 2>&1
 sleep 30
 #

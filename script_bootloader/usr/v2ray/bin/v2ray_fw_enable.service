@@ -29,13 +29,21 @@ SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
 # 设置自定义变量LOCAL_PORT为V2RAY-DOKODEMO-DOOR的接收端口
 LOCAL_PORT="45154"
 #
-# BUILT_IN_CHAIN_NAME: Name of the built-in chain
-# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME="PREROUTING"
-#
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="V2RAY_TRANSPARENT"
+#
+# INTRANET_SET: Set of intranet
+# 设置自定义变量INTRANET_SET为内网地址集
+INTRANET="192.168.0.0/16"
+#
+# ROUTING_MARK: Mark of PBR
+# 设置自定义变量ROUTING_MARK为策略路由标记
+ROUTING_MARK="0x2333"
+#
+# ROUTING_TABLE: Routing table of PBR
+# 设置自定义变量ROUTING_TABLE为策略路由表
+ROUTING_TABLE="100"
 #
 # NF_TPROXY_CORE: The path to nf_tproxy_core.ko
 # 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
@@ -63,41 +71,68 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
+########## CHECK TPROXY MODULES ##########
+#
+if [ ! -z "${NF_TPROXY_CORE}" ] && [ ! -z "${XT_TPROXY}" ]
+then
+    TPROXY_MODULES_STATUS=true
+else
+    TPROXY_MODULES_STATUS=false
+fi
+#
+########## END ##########
+#
+#
 ########## SET UP TCP PROXY ##########
 #
 # Create new chain
-iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
+iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}_TCP
 #
 # Ignore your v2ray server's addresses
 # It's very IMPORTANT, just be careful.
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d ${SERVER_IP} -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d ${SERVER_IP} -j RETURN
 #
 # Ignore LANs and any other addresses you'd like to bypass the proxy
 # See Wikipedia and RFC5735 for full list of reserved networks.
 # See ashi009/bestroutetb for a highly optimized CHN route list.
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 0.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 10.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 127.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 169.254.0.0/16 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 172.16.0.0/12 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 192.168.0.0/16 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 224.0.0.0/4 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 240.0.0.0/4 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 0.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 10.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 127.0.0.0/8 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 169.254.0.0/16 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 172.16.0.0/12 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 192.168.0.0/16 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 224.0.0.0/4 -j RETURN
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -d 240.0.0.0/4 -j RETURN
 #
 # Anything else should be redirected to v2ray's local port
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
+iptables -t nat -A ${USER_DEFINED_CHAIN_NAME}_TCP -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
 #
-# Apply the rules
-iptables -t nat -A ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+# Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist
+# 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在
+if ${TPROXY_MODULES_STATUS}
+then
+    # Apply the rules for router
+    iptables -t nat -A OUTPUT -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
+    #
+    # Apply the rules for LAN
+    iptables -t nat -A PREROUTING -p tcp -s ${INTRANET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
+    #
+    # 对内网数据包进行SNAT操作
+    iptables -t nat -A POSTROUTING -s ${INTRANET} ! -d ${INTRANET} -j MASQUERADE
+    #
+else
+    # Apply the rules for LAN
+    iptables -t nat -A PREROUTING -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
+fi
 #
 ########## END ##########
 #
 #
 ########## SET UP UDP PROXY ##########
 #
-# Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist (Disable UDP proxy temporarily)
-# 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在（临时禁用UDP proxy）
-if [ ! -z "${NF_TPROXY_CORE}" ] && [ ! -z "${XT_TPROXY}" ] && false
+# Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist
+# 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在
+if ${TPROXY_MODULES_STATUS}
 then
     # Enable TPROXY
     # 启用TPROXY
@@ -105,25 +140,60 @@ then
     insmod ${XT_TPROXY}
     #
     # Create new chain
-    iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
-    iptables -t mangle -N V2RAY_MARK
+    iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}_UDP
     #
-    # Add any UDP rules
-    ip route add local default dev lo table 100
-    ip rule add fwmark 1 lookup 100
-    #ip rule add fwmark 0x01/0x01 table 100
-    #ip route add local 0.0.0.0/0 dev lo table 100
-    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
-    iptables -t mangle -A V2RAY_MARK -p udp --dport 53 -j MARK --set-mark 1
+    # Ignore your v2ray server's addresses
+    # It's very IMPORTANT, just be careful.
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d ${SERVER_IP} -j RETURN
     #
-    # Apply the rules
-    iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
-    iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j V2RAY_MARK
+    # Ignore LANs and any other addresses you'd like to bypass the proxy
+    # See Wikipedia and RFC5735 for full list of reserved networks.
+    # See ashi009/bestroutetb for a highly optimized CHN route list.
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 0.0.0.0/8 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 10.0.0.0/8 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 127.0.0.0/8 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 169.254.0.0/16 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 172.16.0.0/12 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 192.168.0.0/16 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 224.0.0.0/4 -j RETURN
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -d 240.0.0.0/4 -j RETURN
+    #
+    # Set mark
+    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME}_UDP -j MARK --set-mark ${ROUTING_MARK}
+    #
+    # Apply the rules for router
+    iptables -t mangle -A OUTPUT -p udp -j ${USER_DEFINED_CHAIN_NAME}_UDP
+    #
+    # Apply the rules for LAN
+    iptables -t mangle -A PREROUTING -p udp -s ${INTRANET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
+    #
+    # 处理打了MARK的UDP包
+    iptables -t mangle -A PREROUTING -m mark --mark ${ROUTING_MARK} -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${LOCAL_PORT}
+    #
+    # 配置iproute2的策略路由规则
+    ip route add local 0/0 dev lo table ${ROUTING_TABLE}
+    ip rule add fwmark ${ROUTING_MARK} table ${ROUTING_TABLE}
     #
 else
     # Do nothing but prompt the user
     # 如果文件${NF_TPROXY_CORE}或${XT_TPROXY}不存在，则执行
     echo -e "NO UDP PROXY"
+fi
+#
+########## END ##########
+#
+#
+########## UPDATE DNS SETTINGS ##########
+#
+# Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist
+# 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在
+if ${TPROXY_MODULES_STATUS}
+then
+    sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    echo "server=8.8.8.8" >> /tmp/resolv.dnsmasq
+else
+    sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    echo "server=127.0.0.1#2053" >> /tmp/resolv.dnsmasq
 fi
 #
 ########## END ##########
