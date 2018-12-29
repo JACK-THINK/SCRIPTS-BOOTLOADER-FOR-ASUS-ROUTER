@@ -35,7 +35,7 @@ USER_DEFINED_CHAIN_NAME="IPSEC"
 #
 # TARGET_SERVER_IP: IP address of the target server
 # 设置自定义变量TARGET_SERVER_IP为目标服务器IP地址
-TARGET_SERVER_IP=""
+TARGET_SERVER_IP="192.168.1.104"
 #
 # Local Ports
 # 本地端口
@@ -115,3 +115,5 @@ else
     #
     exit 0
 fi
+#
+########## END ##########
