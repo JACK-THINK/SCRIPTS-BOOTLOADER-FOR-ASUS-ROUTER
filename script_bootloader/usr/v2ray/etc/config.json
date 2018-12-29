@@ -92,7 +92,9 @@
                                     "www.jd.com",
                                     "www.qq.com",
                                     "www.sina.com.cn",
-                                    "www.taobao.com"
+                                    "www.taobao.com",
+                                    "www.bing.com",
+                                    "www.alibaba.com"
                                 ],
                                 "User-Agent":
                                 [
@@ -195,7 +197,9 @@
                                     "www.jd.com",
                                     "www.qq.com",
                                     "www.sina.com.cn",
-                                    "www.taobao.com"
+                                    "www.taobao.com",
+                                    "www.bing.com",
+                                    "www.alibaba.com"
                                 ],
                                 "User-Agent":
                                 [
@@ -307,7 +311,9 @@
                                     "www.jd.com",
                                     "www.qq.com",
                                     "www.sina.com.cn",
-                                    "www.taobao.com"
+                                    "www.taobao.com",
+                                    "www.bing.com",
+                                    "www.alibaba.com"
                                 ],
                                 "User-Agent":
                                 [
