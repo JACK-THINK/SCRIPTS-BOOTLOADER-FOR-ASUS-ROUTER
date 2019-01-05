@@ -1,0 +1,168 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# SBL_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量SBL_MONITD为monit配置文件目录
+SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${SBL_SYS_USR}/v2ray/bin
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${SBL_SYS_USR}/v2ray/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${SBL_SYS_USR}/v2ray/usr
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="V2RAY"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UPGRADE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## UPGRADE V2RAY ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Check the architecture of the ASUS Router
+        # 检查华硕路由器架构
+        ROUTER_ARCHITECTURE=$(uname -m)
+        #
+        # Kill v2ray process
+        # 结束v2ray进程
+        ${PRIVATE_BIN}/v2ray_disable.service > /dev/null 2>&1
+        #
+        # Remove previous backup
+        # 删除旧备份
+        rm -rf ${SBL_SYS_USR}/v2ray/usr_prev/ > /dev/null 2>&1
+        #
+        # Back up previous edition
+        # 备份旧版本
+        mv ${PRIVATE_USR} ${SBL_SYS_USR}/v2ray/usr_prev/
+        #
+        # Install V2ray according to the architecture of the ASUS Router
+        # 根据路由器架构，自动安装适当版本的V2ray
+        #
+        # For v2ray-v3.46 and previous versions
+        # 以下代码适用于v2ray-v3.46及之前的版本
+        #if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*arm.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #elif [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*arm64.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
+        #then
+        #    unzip ${PRIVATE_BIN}/v2ray*mipsle.zip -d ${SBL_SYS_USR}/v2ray/
+        #    mv ${SBL_SYS_USR}/v2ray/v2ray*/ ${PRIVATE_USR}/
+        #    chmod -R 777 ${PRIVATE_USR}/
+        #    #
+        #else
+        #    # Do nothing but prompt the user
+        #    # 如果路由器架构不符合上述三种情况，则执行
+        #    logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #    exit 1
+        #fi
+        #
+        # For v2ray-v3.47 and later versions
+        # 以下代码适用于v2ray-v3.47及之后的版本
+        if [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
+        then
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*arm.zip -d ${PRIVATE_USR}/
+            chmod -R 777 ${PRIVATE_USR}/
+            #
+        elif [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
+        then
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*arm64.zip -d ${PRIVATE_USR}/
+            chmod -R 777 ${PRIVATE_USR}/
+            #
+        elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
+        then
+            mkdir ${PRIVATE_USR}/
+            unzip ${PRIVATE_BIN}/v2ray*mipsle.zip -d ${PRIVATE_USR}/
+            chmod -R 777 ${PRIVATE_USR}/
+            #
+        else
+            # Do nothing but prompt the user
+            # 如果路由器架构不符合上述三种情况，则执行
+            logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            exit 1
+        fi
+        #
+        # Configure monit
+        # 配置monit
+        monit reload
+        #
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+fi
+#
+########## END ##########

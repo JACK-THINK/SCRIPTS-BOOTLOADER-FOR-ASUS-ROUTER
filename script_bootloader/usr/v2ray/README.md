@@ -44,6 +44,7 @@
 | 权限      | 名称                                    | 属性     | 说明                                       |
 | --------- | --------------------------------------- | -------- | ------------------------------------------ |
 | rwxrwxrwx | v2ray_install                           | 普通文件 | 安装文件                                   |
+| rwxrwxrwx | v2ray_upgrade                           | 普通文件 | 升级文件                                   |
 | rwxrwxrwx | v2ray_enable.service                    | 普通文件 | 插件的可执行程序，用于启动程序             |
 | rwxrwxrwx | v2ray_disable.service                   | 普通文件 | 插件的可执行程序，用于结束程序             |
 | rwxrwxrwx | v2ray_fw_enable.service                 | 普通文件 | 插件的可执行程序，用于启动程序             |
@@ -90,9 +91,9 @@
 | ---- | --------------| ------------------------------------- |
 | 23   | `"address":`  | 上游DNS地址                           |
 | 61   | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 148  | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 164  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
-| 251  | `"password":` | 接入路由器所用的Shadowsocks密码       |
-| 269  | `"address":`  | VPS的IP地址或域名                     |
-| 270  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
-| 274  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
+| 150  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 166  | `"id":`       | 使用vmess协议接入路由器所用的用户主ID |
+| 255  | `"password":` | 接入路由器所用的Shadowsocks密码       |
+| 273  | `"address":`  | VPS的IP地址或域名                     |
+| 274  | `"port":`     | 使用vmess协议接入VPS所用的监听端口    |
+| 278  | `"id":`       | 使用vmess协议接入VPS所用的用户主ID    |
