@@ -51,9 +51,6 @@
 | rwxrwxrwx | v2ray_fw_disable.service                | 普通文件 | 插件的可执行程序，用于结束程序             |
 | rwxrwxrwx | v2ray_transparent_proxy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序             |
 | rwxrwxrwx | v2ray_transparent_proxy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序             |
-| rwxrwxrwx | v2ray-linux-arm.zip                     | 普通文件 | v2ray预编译文件，适用于arm架构             |
-| rwxrwxrwx | v2ray-linux-arm64.zip                   | 普通文件 | v2ray预编译文件，适用于arm64架构           |
-| rwxrwxrwx | v2ray-linux-mipsle.zip                  | 普通文件 | v2ray预编译文件，适用于mipsle架构          |
 
 `ASUS_ROUTER/script_bootloader/usr/v2ray/etc/`
 
