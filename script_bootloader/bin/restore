@@ -42,46 +42,6 @@ USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_us
 ########## END ##########
 #
 #
-########## PREPARE DIRICTORIES ##########
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/bin/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/bin/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/bin/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/bin/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/etc/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/etc/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/etc/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/etc/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/tmp/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/tmp/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/tmp/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/tmp/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/usr/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/usr/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/usr/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/usr/
-fi
-#
-# Check if ${USB_MOUNT_POINT}/script_bootloader/var/ exists
-# 检查目录${USB_MOUNT_POINT}/script_bootloader/var/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/script_bootloader/var/" ]
-then
-    mkdir ${USB_MOUNT_POINT}/script_bootloader/var/
-fi
-#
-########## END ##########
-#
-#
 ########## ROUTER CONFIGURATION ##########
 #
 # Check if ${USB_MOUNT_SCRIPT} and ${USB_UMOUNT_SCRIPT} exist

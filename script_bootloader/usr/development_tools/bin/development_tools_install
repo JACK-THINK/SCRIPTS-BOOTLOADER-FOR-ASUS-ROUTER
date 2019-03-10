@@ -20,9 +20,13 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/development_tools
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/development_tools/etc
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -88,6 +92,12 @@ then
     # 备份文件/opt/etc/profile至/opt/etc/profile.bak和${PRIVATE_ETC}/profile.bak
     cp /opt/etc/profile ${PRIVATE_ETC}/profile.bak
     cp /opt/etc/profile /opt/etc/profile.bak
+    #
+    # Create and enable bashrc
+    # 创建并启用bashrc
+    echo -e "# User specific aliases and functions\n" > /opt/etc/bashrc
+    echo -e "alias ls='ls --color=auto'\n" >> /opt/etc/bashrc
+    echo -e "\n# Get the aliases and functions\nif [ -f /opt/etc/bashrc ]\nthen\n    source /opt/etc/bashrc\nfi\n" >> /opt/etc/profile
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #

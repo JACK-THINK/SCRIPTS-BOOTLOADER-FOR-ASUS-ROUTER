@@ -24,13 +24,17 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 # 设置自定义变量SBL_MONITD为monit配置文件目录
 SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/vlmcsd
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/vlmcsd/etc
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${SBL_SYS_USR}/vlmcsd/usr
+PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # NAME OF THE SERVICE
 # 服务名称

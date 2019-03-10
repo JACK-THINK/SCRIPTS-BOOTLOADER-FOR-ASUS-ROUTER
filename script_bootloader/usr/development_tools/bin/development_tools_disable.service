@@ -27,7 +27,6 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## DISABLE DEVELOPMENT TOOLS ##########
 #
 sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
-sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
 #
 ########## END ##########
 #

@@ -16,13 +16,17 @@ ROUTER_MODEL=$(nvram get model)
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 #
+# SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
+SBL_SYS_ROOT=${USB_MOUNT_POINT}/script_bootloader
+#
 # SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
-SBL_SYS_TMP=${USB_MOUNT_POINT}/script_bootloader/tmp
+SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 #
 # SBL_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量SBL_MONITD为monit配置文件目录

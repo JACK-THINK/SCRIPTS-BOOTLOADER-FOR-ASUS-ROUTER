@@ -24,9 +24,13 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 # 设置自定义变量SBL_MONITD为monit配置文件目录
 SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/sbl-firewalld
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/sbl-firewalld/etc
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -64,17 +68,14 @@ then
         # 配置monit
         cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_v2ray ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec ${SBL_MONITD}/
-        cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_l2tp ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softether_vpn ${SBL_MONITD}/
         chmod 600 ${SBL_MONITD}/fw_filter_INPUT_v2ray
         chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_ipsec
-        chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_l2tp
         chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_qbittorrent
         chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_softether_vpn
         mv ${SBL_MONITD}/fw_filter_INPUT_v2ray ${SBL_MONITD}/fw_filter_INPUT_v2ray.on
         mv ${SBL_MONITD}/fw_nat_PREROUTING_ipsec ${SBL_MONITD}/fw_nat_PREROUTING_ipsec.on
-        mv ${SBL_MONITD}/fw_nat_PREROUTING_l2tp ${SBL_MONITD}/fw_nat_PREROUTING_l2tp.on
         #mv ${SBL_MONITD}/fw_nat_PREROUTING_qbittorrent ${SBL_MONITD}/fw_nat_PREROUTING_qbittorrent.on
         #mv ${SBL_MONITD}/fw_nat_PREROUTING_softether_vpn ${SBL_MONITD}/fw_nat_PREROUTING_softether_vpn.on
         monit reload

@@ -13,9 +13,13 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/swap
+#
 # PRIVATE_VAR: The directory which contains all the variable files related to this program
 # 设置自定义变量PRIVATE_VAR为此程序可变文件目录
-PRIVATE_VAR=${SBL_SYS_USR}/swap/var
+PRIVATE_VAR=${PRIVATE_ROOT}/var
 #
 # NAME OF THE SERVICE
 # 服务名称

@@ -42,11 +42,11 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest v2ray-core
 # 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(curl -s https://github.com/v2ray/v2ray-core/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/v2ray/v2ray-core/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/[A-Z]/\l&/g')
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
@@ -110,7 +110,7 @@ then
         #
         # Download v2ray-core
         # 下载v2ray-core
-        wget -q --no-cookie --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Create directory v2ray
         # 创建v2ray目录

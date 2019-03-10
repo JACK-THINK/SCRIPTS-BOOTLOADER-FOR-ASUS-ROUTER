@@ -54,11 +54,9 @@ then
     if [ ${FIRMWARE_TYPE} == "ASUSWRT" ]
     then
         sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
-        sed -i "/alias ls='ls --color=auto'/d" /opt/etc/profile
     fi
     #
     echo "source ${GCC_ENVIRONMENT}" >> /opt/etc/profile
-    echo "alias ls='ls --color=auto'" >> /opt/etc/profile
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

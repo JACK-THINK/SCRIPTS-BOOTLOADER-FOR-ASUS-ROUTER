@@ -42,11 +42,11 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest overture
 # 设置自定义变量LATEST_VERSION为最新版overture的版本号
-LATEST_VERSION=$(curl -s https://github.com/shawn1m/overture/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/shawn1m/overture/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/[A-Z]/\l&/g')
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
@@ -118,7 +118,7 @@ then
         #
         # Download overture
         # 下载overture
-        wget -q --no-cookie --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Create directory overture
         # 创建overture目录

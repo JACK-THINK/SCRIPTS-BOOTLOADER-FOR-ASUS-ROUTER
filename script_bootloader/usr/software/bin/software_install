@@ -24,25 +24,29 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 # 设置自定义变量SBL_MONITD为monit配置文件目录
 SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/software
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${SBL_SYS_USR}/software/bin
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${SBL_SYS_USR}/software/etc
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # PRIVATE_TMP: The directory which contains all the temporary files related to this program
 # 设置自定义变量PRIVATE_TMP为此程序临时文件目录
-PRIVATE_TMP=${SBL_SYS_USR}/software/tmp
+PRIVATE_TMP=${PRIVATE_ROOT}/tmp
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${SBL_SYS_USR}/software/usr
+PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # PRIVATE_VAR: The directory which contains all the variable files related to this program
 # 设置自定义变量PRIVATE_VAR为此程序可变文件目录
-PRIVATE_VAR=${SBL_SYS_USR}/software/var
+PRIVATE_VAR=${PRIVATE_ROOT}/var
 #
 # NAME OF THE SERVICE
 # 服务名称
