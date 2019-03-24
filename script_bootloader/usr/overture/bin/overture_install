@@ -118,7 +118,7 @@ then
         #
         # Download overture
         # 下载overture
-        /opt/bin/wget -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Create directory overture
         # 创建overture目录

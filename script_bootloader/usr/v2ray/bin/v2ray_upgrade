@@ -115,7 +115,7 @@ else
             #
             # Download v2ray-core
             # 下载v2ray-core
-            /opt/bin/wget -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+            /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
             # 删除旧备份

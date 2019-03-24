@@ -121,7 +121,6 @@ boost-python3
 boost-random
 boost-regex
 boost-serialization
-boost-signals
 boost-stacktrace
 boost-system
 boost-test
@@ -135,6 +134,7 @@ python-asn1crypto
 python-attrs
 python-automat
 python-base
+python-certifi
 python-cffi
 python-characteristic
 python-cheetah
@@ -169,6 +169,7 @@ python-multiprocessing
 python-mysql
 python-ncurses
 python-oauth
+python-oauthlib
 python-onedrive
 python-openssl
 python-pip
@@ -179,15 +180,18 @@ python-pyasn1
 python-pyasn1-modules
 python-pycparser
 python-pydoc
+python-pyjwt
 python-pyopenssl
+python-qrcode
 python-regex
 python-requests
+python-requests-oauthlib
 python-service-identity
 python-setuptools
 python-six
 python-smbus
-python-socksipychain
 python-sqlite3
+python-twisted
 python-unittest
 python-urllib3
 python-werkzeug
