@@ -38,7 +38,9 @@ LATEST_VERSION=$(/opt/bin/curl -s https://github.com/shawn1m/overture/releases/l
 #
 # CURRENT_VERSION: Version of the current overture
 # 设置自定义变量CURRENT_VERSION为当前overture的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/overture -V)
+#CURRENT_VERSION=$(${PRIVATE_USR}/overture -V)
+# 上述命令无法将版本号写入管道，以下为临时解决方案
+CURRENT_VERSION=$(${PRIVATE_USR}/overture -V 2>&1 | head -n 1)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
