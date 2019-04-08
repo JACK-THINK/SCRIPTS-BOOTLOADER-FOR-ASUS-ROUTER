@@ -41,9 +41,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## ENABLE ANKI-SERVER ##########
 #
+export LC_ALL="en_US.UTF-8"
 nohup ankiserverctl.py start ${PRIVATE_ETC}/production.ini &> /dev/null &
-PID=$(echo $!)
-echo ${PID} > /var/run/anki_server.pid
 #
 ########## END ##########
 #
