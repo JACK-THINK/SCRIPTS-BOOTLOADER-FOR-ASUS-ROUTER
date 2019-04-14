@@ -108,12 +108,12 @@ then
         # 删除遗留的v2ray-core包
         rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
-        # Download v2ray-core
-        # 下载v2ray-core
+        # Download v2ray-core package
+        # 下载v2ray-core包
         /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
-        # Create directory v2ray
-        # 创建v2ray目录
+        # Create directory ${PRIVATE_USR}
+        # 创建${PRIVATE_USR}目录
         mkdir ${PRIVATE_USR}/
         #
         # Unzip v2ray-core package

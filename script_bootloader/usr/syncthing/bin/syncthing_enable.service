@@ -5,6 +5,30 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/syncthing
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# SYNCTHING_PID_FILE: The path to syncthing.pid
+# 设置自定义变量SYNCTHING_PID_FILE为文件syncthing.pid的绝对路径
+SYNCTHING_PID_FILE=/var/run/syncthing.pid
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SYNCTHING"
@@ -27,13 +51,16 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 # Check if /opt/etc/syncthing/config.xml exists
 # 检查文件/opt/etc/syncthing/config.xml是否存在
-if [ -e "/opt/etc/syncthing/config.xml" ]
+if [ -e "${PRIVATE_USR}/syncthing" ] && [ -e "${PRIVATE_ETC}/config.xml" ]
 then
     logger -st "($(basename $0))" $$ "***** SYNCTHING CONFIGURATION FILE EXISTS *****"
     #
-    # Load syncthing
-    # 加载syncthing
+    # Load ${PRIVATE_USR}/syncthing
+    # 如果文件${PRIVATE_USR}/syncthing存在，则执行
     nohup syncthing &> /dev/null &
+    nohup ${PRIVATE_USR}/syncthing -home="${PRIVATE_ETC}" &> /dev/null &
+    PID=$(echo $!)
+    echo ${PID} > ${SYNCTHING_PID_FILE}
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #

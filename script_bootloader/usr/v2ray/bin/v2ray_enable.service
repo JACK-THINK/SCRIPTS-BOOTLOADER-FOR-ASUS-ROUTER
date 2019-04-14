@@ -54,11 +54,13 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config.json" ]
 then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    #
     # Load ${PRIVATE_USR}/v2ray
     # 如果文件${PRIVATE_USR}/v2ray存在，则执行
     nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config.json &> /dev/null &
     PID=$(echo $!)
     echo ${PID} > ${V2RAY_PID_FILE}
+    #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
