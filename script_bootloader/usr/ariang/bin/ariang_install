@@ -24,17 +24,41 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 # 设置自定义变量SBL_MONITD为monit配置文件目录
 SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
+# SBL_SITE: The directory which contains all the sites
+# 设置自定义变量SBL_SITE为站点目录
+SBL_SITE=${USB_MOUNT_POINT}/www
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/ntpd
+PRIVATE_ROOT=${SBL_SYS_USR}/ariang
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# PRIVATE_SITE: The directory which contains the site related to this program
+# 设置自定义变量PRIVATE_SITE为此程序站点目录
+PRIVATE_SITE=${SBL_SITE}/ariang
+#
+# LATEST_VERSION: Version of the latest ariang
+# 设置自定义变量LATEST_VERSION为最新版ariang的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/mayswind/AriaNg/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+#
+# DOWNLOAD_LINK: Download link of the latest ariang
+# 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接
+DOWNLOAD_LINK="https://github.com/mayswind/AriaNg/releases/download/${LATEST_VERSION}/AriaNg-${LATEST_VERSION}-AllInOne.zip"
+#
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="NTPD"
+SERVICE_NAME="ARIANG"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -50,7 +74,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALL NTPD ##########
+########## INSTALL ARIANG ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -64,33 +88,41 @@ then
     then
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
-        # Update the list of available packages
-        # 更新可用程序包列表
-        opkg update
+        # Remove vestigial ariang package
+        # 删除遗留的ariang包
+        rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
         #
-        # Install ntpd
-        # 安装ntpd
-        opkg install ntpd
+        # Download ariang
+        # 下载ariang
+        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
-        # Disable /opt/etc/init.d/S77ntpd
-        # 禁用/opt/etc/init.d/S77ntpd
-        cp /opt/etc/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S77ntpd
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S77ntpd
+        # Create directory ${PRIVATE_USR}
+        # 创建${PRIVATE_USR}目录
+        mkdir ${PRIVATE_USR}
         #
-        # Configure ntpd
-        # 配置ntpd
-        cp /opt/etc/ntp.conf /opt/etc/ntp.conf.bak
-        cp /opt/etc/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
-        rm -f /opt/etc/ntp.conf
-        cp ${PRIVATE_ETC}/ntp.conf /opt/etc/
-        chmod 600 /opt/etc/ntp.conf
+        # Unzip ariang package
+        # 解压ariang包
+        unzip ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip -d ${PRIVATE_USR}/
+        #
+        # Remove ariang package
+        # 删除ariang包
+        rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+        #
+        # Configure ariang
+        # 配置ariang
+        mkdir ${PRIVATE_SITE}
+        cp ${PRIVATE_USR}/index.html ${PRIVATE_SITE}/index.html > /dev/null 2>&1
+        echo -e 'server.document-root = "/opt/www/ariang/"' > ${PRIVATE_ETC}/ariang_lighttpd.conf
+        echo -e 'index-file.names = (\n  "index.php",\n  "index.htm",\n  "index.html",\n  "default.htm"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        echo -e 'server.port = 18914' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        echo -e 'server.pid-file = "/var/run/ariang.pid"' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        echo -e 'mimetype.assign = (\n  ".html" => "text/html",\n  ".txt" => "text/plain",\n  ".jpg" => "image/jpeg",\n  ".png" => "image/png"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ntpd ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/ntpd
-        mv ${SBL_MONITD}/ntpd ${SBL_MONITD}/ntpd.on
+        cp ${PRIVATE_ETC}/monit.d/ariang ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/ariang
+        mv ${SBL_MONITD}/ariang ${SBL_MONITD}/ariang.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

@@ -73,12 +73,16 @@ then
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
+        exit 0
+        #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
         logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
     fi
     #
 else
@@ -87,6 +91,8 @@ else
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
 fi
 #
 ########## END ##########

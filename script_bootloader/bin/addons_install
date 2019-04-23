@@ -56,6 +56,9 @@ ADDON8="${SBL_SYS_USR}/syncthing/bin/syncthing_install"
 ADDON9="${SBL_SYS_USR}/v2ray/bin/v2ray_install"
 ADDON10="${SBL_SYS_USR}/vlmcsd/bin/vlmcsd_install"
 ADDON11="${SBL_SYS_USR}/wol/bin/wol_install"
+ADDON12="${SBL_SYS_USR}/caddy/bin/caddy_install"
+ADDON13="${SBL_SYS_USR}/aria2/bin/aria2_install"
+ADDON14="${SBL_SYS_USR}/ariang/bin/ariang_install"
 #
 ########## END ##########
 #
@@ -78,6 +81,9 @@ do
     echo " 9. v2ray"
     echo "10. vlmcsd"
     echo "11. wol"
+    echo "12. caddy (only for arm64)"
+    echo "13. aria2"
+    echo "14. ariang"
     echo " 0. exit"
     #
     echo -n "Input ONE number every time: "
@@ -409,6 +415,93 @@ do
                 #
             else
                 echo -e "\033[1;41;37m***** ERROR: ${ADDON11} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+            fi
+            ;;
+        12)
+            # Check if ${ADDON12} exists
+            # 检查文件${ADDON12}是否存在
+            if [ ! -e ${SBL_SYS_TMP}/caddy ]
+            then
+                # Check if ${ADDON12} exists
+                # 检查文件${ADDON12}是否存在
+                if [ -e "${ADDON12}" ]
+                then
+                    touch ${SBL_SYS_TMP}/caddy
+                    ${ADDON12}
+                    #
+                    # Check if ${ADDON12} returns 0
+                    # 检查文件${ADDON12}的返回值是否为0
+                    if [ $? == '0' ]
+                    then
+                        echo -e "\033[1;42;37m***** ${ADDON12}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    else
+                        echo -e "\033[1;41;37m***** ${ADDON12}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    fi
+                    #
+                else
+                    echo -e "\033[1;41;37m***** ERROR: CAN'T LOCATE ${ADDON12} *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                fi
+                #
+            else
+                echo -e "\033[1;41;37m***** ERROR: ${ADDON12} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+            fi
+            ;;
+        13)
+            # Check if ${ADDON13} exists
+            # 检查文件${ADDON13}是否存在
+            if [ ! -e ${SBL_SYS_TMP}/aria2 ]
+            then
+                # Check if ${ADDON13} exists
+                # 检查文件${ADDON13}是否存在
+                if [ -e "${ADDON13}" ]
+                then
+                    touch ${SBL_SYS_TMP}/aria2
+                    ${ADDON13}
+                    #
+                    # Check if ${ADDON13} returns 0
+                    # 检查文件${ADDON13}的返回值是否为0
+                    if [ $? == '0' ]
+                    then
+                        echo -e "\033[1;42;37m***** ${ADDON13}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    else
+                        echo -e "\033[1;41;37m***** ${ADDON13}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    fi
+                    #
+                else
+                    echo -e "\033[1;41;37m***** ERROR: CAN'T LOCATE ${ADDON13} *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                fi
+                #
+            else
+                echo -e "\033[1;41;37m***** ERROR: ${ADDON13} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+            fi
+            ;;
+        14)
+            # Check if ${ADDON14} exists
+            # 检查文件${ADDON14}是否存在
+            if [ ! -e ${SBL_SYS_TMP}/ariang ]
+            then
+                # Check if ${ADDON14} exists
+                # 检查文件${ADDON14}是否存在
+                if [ -e "${ADDON14}" ]
+                then
+                    touch ${SBL_SYS_TMP}/ariang
+                    ${ADDON14}
+                    #
+                    # Check if ${ADDON14} returns 0
+                    # 检查文件${ADDON14}的返回值是否为0
+                    if [ $? == '0' ]
+                    then
+                        echo -e "\033[1;42;37m***** ${ADDON14}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    else
+                        echo -e "\033[1;41;37m***** ${ADDON14}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    fi
+                    #
+                else
+                    echo -e "\033[1;41;37m***** ERROR: CAN'T LOCATE ${ADDON14} *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                fi
+                #
+            else
+                echo -e "\033[1;41;37m***** ERROR: ${ADDON14} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
             fi
             ;;
         *)

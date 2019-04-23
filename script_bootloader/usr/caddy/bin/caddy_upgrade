@@ -22,7 +22,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+PRIVATE_ROOT=${SBL_SYS_USR}/caddy
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
@@ -32,13 +32,13 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# LATEST_VERSION: Version of the latest v2ray-core
-# 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/v2ray/v2ray-core/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+# LATEST_VERSION: Version of the latest caddy
+# 设置自定义变量LATEST_VERSION为最新版caddy的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/mholt/caddy/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
 #
-# CURRENT_VERSION: Version of the current v2ray-core
-# 设置自定义变量CURRENT_VERSION为当前v2ray-core的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | head -1 | awk '{print $2}' | sed 's/^/v/')
+# CURRENT_VERSION: Version of the current caddy
+# 设置自定义变量CURRENT_VERSION为当前caddy的版本号
+CURRENT_VERSION=$(${PRIVATE_USR}/caddy -version | head -1 | awk '{print $2}' | sed 's/^/v/')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -49,12 +49,18 @@ OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
 case $(uname -m) in
     "armv7l")
         ROUTER_ARCHITECTURE="arm"
+        # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
+        logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
+        exit 4
         ;;
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
+        # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
+        logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
+        exit 6
         ;;
     *)
         # Do nothing but prompt the user
@@ -64,13 +70,13 @@ case $(uname -m) in
         ;;
 esac
 #
-# DOWNLOAD_LINK: Download link of the latest v2ray-core
-# 设置自定义变量DOWNLOAD_LINK为最新版v2ray-core的下载链接
-DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+# DOWNLOAD_LINK: Download link of the latest caddy
+# 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
+DOWNLOAD_LINK="https://github.com/mholt/caddy/releases/download/${LATEST_VERSION}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="CADDY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -86,7 +92,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## UPGRADE V2RAY ##########
+########## UPGRADE CADDY ##########
 #
 if [ ${CURRENT_VERSION} == ${LATEST_VERSION} ]
 then
@@ -108,48 +114,37 @@ else
         then
             logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
             #
-            # Remove vestigial v2ray-core package
-            # 删除遗留的v2ray-core包
-            rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            # Remove vestigial caddy package
+            # 删除遗留的caddy包
+            rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
             #
-            # Download v2ray-core
-            # 下载v2ray-core
+            # Download caddy
+            # 下载caddy
             /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
             # 删除旧备份
             rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
             #
-            # Kill v2ray process
-            # 结束v2ray进程
-            ${PRIVATE_BIN}/v2ray_disable.service > /dev/null 2>&1
+            # Kill caddy process
+            # 结束caddy进程
+            ${PRIVATE_BIN}/caddy_disable.service > /dev/null 2>&1
             #
             # Back up previous edition
             # 备份旧版本
             mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
             #
-            # Create directory v2ray
-            # 创建v2ray目录
-            mkdir ${PRIVATE_USR}/
+            # Create directory ${PRIVATE_USR}
+            # 创建${PRIVATE_USR}目录
+            mkdir ${PRIVATE_USR}
             #
-            # Unzip v2ray-core package
-            # 解压v2ray-core包
-            unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+            # Unzip caddy package
+            # 解压caddy包
+            tar -xzvf ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz -C ${PRIVATE_USR}
             #
-            # Remove v2ray-core package
-            # 删除v2ray-core包
-            rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
-            #
-            # Change the mode of the files
-            # 更改文件权限
-            chmod 644 ${PRIVATE_USR}/vpoint*
-            chmod 555 ${PRIVATE_USR}/v2*
-            chmod 644 ${PRIVATE_USR}/geosite.dat
-            chmod 755 ${PRIVATE_USR}/geoip.dat
-            #
-            # Configure monit
-            # 配置monit
-            monit reload
+            # Remove caddy package
+            # 删除caddy包
+            rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

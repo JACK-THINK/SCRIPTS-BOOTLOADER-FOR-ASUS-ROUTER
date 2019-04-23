@@ -101,22 +101,20 @@ then
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
+    # Sync
+    # 同步缓存
+    /opt/bin/sync
+    #
+    exit 0
+    #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
     exit 1
 fi
-#
-########## END ##########
-#
-#
-########## SYNC ##########
-#
-# Sync
-# 同步缓存
-/opt/bin/sync
 #
 ########## END ##########

@@ -57,6 +57,8 @@ then
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
+    exit 0
+    #
 else
     # Create ${PRIVATE_VAR}/swapfile.var
     # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则创建${PRIVATE_VAR}/swapfile.var
@@ -67,6 +69,8 @@ else
     chmod 600 ${PRIVATE_VAR}/swapfile.var
     logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+    exit 0
 fi
 #
 ########## END ##########

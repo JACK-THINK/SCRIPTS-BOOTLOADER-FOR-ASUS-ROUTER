@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# ARIA2_PID_FILE: The path to aria2.pid
+# 设置自定义变量ARIA2_PID_FILE为文件aria2.pid的绝对路径
+ARIA2_PID_FILE=/var/run/aria2.pid
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ARIA2"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## DISABLE ARIA2 ##########
+#
+#ps | grep "aria2" | grep -v "grep" | awk '{print $1}' | xargs kill
+kill $(cat ${ARIA2_PID_FILE}) > /dev/null 2>&1
+rm -f ${ARIA2_PID_FILE} > /dev/null 2>&1
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

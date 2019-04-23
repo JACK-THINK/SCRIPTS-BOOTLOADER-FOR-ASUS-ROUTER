@@ -74,10 +74,8 @@ then
     # 安装nail
     opkg install nail
     #   
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-    #
-    # Modify /opt/etc/nail.rc
-    # 修改文件/opt/etc/nail.rc
+    # Configure nail
+    # 配置nail
     cp /opt/etc/nail.rc ${PRIVATE_ETC}/nail.rc.bak
     cp /opt/etc/nail.rc /opt/etc/nail.rc.bak
     sed -i '/^set from=.*/s/^/#/' /opt/etc/nail.rc
@@ -88,12 +86,18 @@ then
     echo "set smtp-auth-password=${PASSWORD}" >> /opt/etc/nail.rc
     echo "set smtp-auth=login" >> /opt/etc/nail.rc
     #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+    exit 0
+    #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
 fi
 #
 ########## END ##########
