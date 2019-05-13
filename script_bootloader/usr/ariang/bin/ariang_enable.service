@@ -15,7 +15,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+PRIVATE_ROOT=${SBL_SYS_USR}/ariang
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
@@ -25,13 +25,13 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# V2RAY_PID_FILE: The path to v2ray.pid
-# 设置自定义变量V2RAY_PID_FILE为文件v2ray.pid的绝对路径
-V2RAY_PID_FILE=/var/run/v2ray.pid
+# ARIANG_PID_FILE: The path to ariang.pid
+# 设置自定义变量ARIANG_PID_FILE为文件ariang.pid的绝对路径
+ARIANG_PID_FILE=/var/run/ariang.pid
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="ARIANG"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -47,26 +47,27 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## CHECK AND ENABLE V2RAY ##########
+########## CHECK AND ENABLE ARIANG ##########
 #
-# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config.json exist
-# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config.json是否存在
-if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config.json" ]
+# Check if ${PRIVATE_ETC}/ariang_lighttpd.conf exists
+# 检查文件${PRIVATE_ETC}/ariang_lighttpd.conf是否存在
+if [ -e "${PRIVATE_ETC}/ariang_lighttpd.conf" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    logger -st "($(basename $0))" $$ "***** ARIANG CONFIGURATION FILE EXISTS *****"
     #
-    # Load ${PRIVATE_USR}/v2ray
-    # 如果文件${PRIVATE_USR}/v2ray存在，则执行
-    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config.json &> /dev/null &
-    PID=$(echo $!)
-    echo ${PID} > ${V2RAY_PID_FILE}
+    # Load ariang
+    # 如果文件${PRIVATE_ETC}/ariang_lighttpd.conf存在，则执行
+    nohup lighttpd -f ${PRIVATE_ETC}/ariang_lighttpd.conf &> /dev/null &
+    #sleep 5
+    #PID=$(ps | grep 'ariang' | grep -v 'grep' | awk '{print $1}')
+    #echo ${PID} > ${ARIANG_PID_FILE}
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/v2ray不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    # 如果文件${PRIVATE_USR}/ariang或${PRIVATE_ETC}/config.xml不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ARIANG CONFIGURATION FILE *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi
 #

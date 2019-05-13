@@ -28,9 +28,49 @@ SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT=${SBL_SYS_USR}/syncthing
 #
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# LATEST_VERSION: Version of the latest syncthing
+# 设置自定义变量LATEST_VERSION为最新版syncthing的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/syncthing/syncthing/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case $(uname -m) in
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        exit 3
+        ;;
+esac
+#
+# DOWNLOAD_LINK: Download link of the latest syncthing
+# 设置自定义变量DOWNLOAD_LINK为最新版syncthing的下载链接
+DOWNLOAD_LINK="https://github.com/syncthing/syncthing/releases/download/${LATEST_VERSION}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -64,27 +104,30 @@ then
     then
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
-        # Update the list of available packages
-        # 更新可用程序包列表
-        opkg update
+        # Remove vestigial syncthing package
+        # 删除遗留的syncthing包
+        rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
         #
-        # Install syncthing
-        # 安装syncthing
-        opkg install syncthing
+        # Download syncthing
+        # 下载syncthing
+        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
-        # Disable /opt/etc/init.d/S92syncthing
-        # 禁用/opt/etc/init.d/S92syncthing
-        cp /opt/etc/init.d/S92syncthing ${PRIVATE_ETC}/S92syncthing.bak
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S92syncthing
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S92syncthing
+        # Unzip syncthing package
+        # 解压syncthing包
+        tar -xzvf ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz -C ${PRIVATE_ROOT}/
+        #
+        # Create directory ${PRIVATE_USR}
+        # 创建${PRIVATE_USR}目录
+        mv ${PRIVATE_ROOT}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION} ${PRIVATE_USR}
+        #
+        # Remove syncthing package
+        # 删除syncthing包
+        rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
         #
         # Configure syncthing
         # 配置syncthing
-        if [ ! -d /opt/etc/syncthing ]
-        then
-            syncthing -generate="/opt/etc/syncthing"
-            sed -i 's/127.0.0.1:8384/0.0.0.0:8384/' /opt/etc/syncthing/config.xml
-        fi
+        ${PRIVATE_USR}/syncthing -generate="${PRIVATE_ETC}"
+        sed -i 's/127.0.0.1:8384/0.0.0.0:8384/' ${PRIVATE_ETC}/config.xml
         #
         # Configure monit
         # 配置monit
@@ -95,12 +138,16 @@ then
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
+        exit 0
+        #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
         logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
     fi
     #
 else
@@ -109,6 +156,8 @@ else
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
 fi
 #
 ########## END ##########

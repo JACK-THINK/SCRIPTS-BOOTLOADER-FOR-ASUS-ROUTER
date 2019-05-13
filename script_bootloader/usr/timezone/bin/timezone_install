@@ -66,11 +66,13 @@ then
     ln -s ${TARGET_TIME_ZONE} ${PRIVATE_ETC}/localtime
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
+    exit 0
+    #
 else
     # Do nothing but prompt the user
     # 如果文件${TARGET_TIME_ZONE}不存在，则执行
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-    exit 1
+    exit 7
 fi
 #
 ########## END ##########

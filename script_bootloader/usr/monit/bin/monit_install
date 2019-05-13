@@ -76,12 +76,15 @@ then
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
+    exit 0
+    #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
     exit 1
 fi
 #

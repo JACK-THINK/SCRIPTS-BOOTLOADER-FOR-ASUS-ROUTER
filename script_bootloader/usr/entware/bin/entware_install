@@ -16,6 +16,10 @@ ROUTER_MODEL=$(nvram get model)
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 #
+# SBL_SITE: The directory which contains all the sites
+# 设置自定义变量SBL_SITE为站点目录
+SBL_SITE=${USB_MOUNT_POINT}/www
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="ENTWARE"
@@ -90,6 +94,29 @@ else
     # Do nothing but prompt the user
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
     logger -st "($(basename $0))" $$ "***** HOME EXISTS *****"
+fi
+#
+########## END ##########
+#
+#
+########## CREATE DIRECTORY ${SBL_SITE} ##########
+#
+logger -st "($(basename $0))" $$ "***** CREATE DIRECTORY ${SBL_SITE} *****"
+#
+# Check if directory ${SBL_SITE} exists
+# 检查目录${SBL_SITE}是否存在
+if [ ! -d "${SBL_SITE}" ]
+then
+    # Create directory ${SBL_SITE}
+    # 如果目录${SBL_SITE}不存在，则执行
+    mkdir ${SBL_SITE}
+    #
+    logger -st "($(basename $0))" $$ "***** ${SBL_SITE} HAS BEEN CREATED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果目录${SBL_SITE}存在，则执行
+    logger -st "($(basename $0))" $$ "***** ${SBL_SITE} EXISTS *****"
 fi
 #
 ########## END ##########

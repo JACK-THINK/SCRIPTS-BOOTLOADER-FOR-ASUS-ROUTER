@@ -47,13 +47,6 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## CHECK THE DEVICE NAME ACCORDING TO THE MOUNT POINT OF THE USB FLASH DRIVE ##########
-#
-USB_DEVICE_NAME=$(df "${USB_MOUNT_POINT}" | awk '{print $1}' | tail -n 1)
-#
-########## END ##########
-#
-#
 ########## LOCATE AND ENABLE ENTWARE ##########
 #
 # Prepare the environment for Entware
@@ -63,30 +56,34 @@ USB_DEVICE_NAME=$(df "${USB_MOUNT_POINT}" | awk '{print $1}' | tail -n 1)
 # 根据/opt的类型，采用适当方法使目录/opt可用
 if [ -L "/opt" ]
 then
-    # If it is a soft link file, then create soft link file /tmp/opt
-    # 如果是符号链接文件，则创建符号链接文件/tmp/opt
-    ln -sf ${USB_MOUNT_POINT} /tmp/opt
+    # OPT_TARGET: The target of the symbolic link /opt
+    # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
+    OPT_TARGET=$(ls -al /opt | awk -F ' ' '{print $11}' | sed 's/^/\//')
+    #
+    # Create symbolic link file ${OPT_TARGET}
+    # 创建符号链接文件${OPT_TARGET}
+    ln -sf ${USB_MOUNT_POINT} ${OPT_TARGET}
     #
 elif [ -d "/opt" ]
 then
-    # If it is a directory, then copy all files except soft link files in /opt to ${USB_MOUNT_POINT}/ and mount the USB flash drive to /opt
-    # 如果是目录，则将目录/opt下全部非符号链接文件复制至${USB_MOUNT_POINT}/，之后挂载U盘至目录/opt
+    # If it is a directory, then copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT} and mount ${USB_MOUNT_POINT} to /opt
+    # 如果是目录，则将目录/opt下全部非符号链接文件复制至目录${USB_MOUNT_POINT}，之后挂载目录${USB_MOUNT_POINT}至目录/opt
     #
     # Check if ${FILES_TO_COPY} exists
     # 检查文件${FILES_TO_COPY}是否存在
     if [ ! -e ${FILES_TO_COPY} ]
     then
-        # Copy all files except soft link files in /opt to ${USB_MOUNT_POINT}/
+        # Copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT}
         # 如果文件${FILES_TO_COPY}不存在，则执行
-        ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F' ' '{print $9}' > ${FILES_TO_COPY}
+        ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F ' ' '{print $9}' > ${FILES_TO_COPY}
         sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
-        cp -R $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}/
+        cp -R $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
         logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
     fi
     #
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
-    mount ${USB_DEVICE_NAME} /opt
+    mount ${USB_MOUNT_POINT} /opt
     #
 else
     # Do nothing but prompt the user

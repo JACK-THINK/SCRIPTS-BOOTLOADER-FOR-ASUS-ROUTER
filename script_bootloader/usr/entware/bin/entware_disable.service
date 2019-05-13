@@ -50,11 +50,15 @@ fi
 # 根据/opt的类型，使目录/opt不再占用U盘
 if [ -L "/opt" ]
 then
-    # If it is a soft link file, then remove the soft link file /tmp/opt
-    # 如果是符号链接文件，则删除符号链接文件/tmp/opt
+    # OPT_TARGET: The target of the symbolic link /opt
+    # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
+    OPT_TARGET=$(ls -al /opt | awk -F ' ' '{print $11}' | sed 's/^/\//')
+    #
+    # Remove symbolic link file ${OPT_TARGET}
+    # 删除符号链接文件${OPT_TARGET}
     # Never append a /. Otherwise all the files in the USB flash drive will be removed
     # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
-    rm /tmp/opt
+    rm ${OPT_TARGET}
     #
 elif [ -d "/opt" ]
 then

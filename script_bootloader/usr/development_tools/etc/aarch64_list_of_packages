@@ -246,3 +246,4 @@ gcc
 lrzsz
 curl
 wget
+openssh-client

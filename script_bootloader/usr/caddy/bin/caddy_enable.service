@@ -15,7 +15,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+PRIVATE_ROOT=${SBL_SYS_USR}/caddy
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
@@ -25,13 +25,13 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# V2RAY_PID_FILE: The path to v2ray.pid
-# 设置自定义变量V2RAY_PID_FILE为文件v2ray.pid的绝对路径
-V2RAY_PID_FILE=/var/run/v2ray.pid
+# CADDY_PID_FILE: The path to caddy.pid
+# 设置自定义变量CADDY_PID_FILE为文件caddy.pid的绝对路径
+CADDY_PID_FILE=/var/run/caddy.pid
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="CADDY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -47,26 +47,24 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## CHECK AND ENABLE V2RAY ##########
+########## CHECK AND ENABLE CADDY ##########
 #
-# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config.json exist
-# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config.json是否存在
-if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config.json" ]
+# Check if ${PRIVATE_USR}/caddy and ${PRIVATE_ETC}/Caddyfile exist
+# 检查文件${PRIVATE_USR}/caddy和${PRIVATE_ETC}/Caddyfile是否存在
+if [ -e "${PRIVATE_USR}/caddy" ] && [ -e "${PRIVATE_ETC}/Caddyfile" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    logger -st "($(basename $0))" $$ "***** CADDY CONFIGURATION FILE EXISTS *****"
     #
-    # Load ${PRIVATE_USR}/v2ray
-    # 如果文件${PRIVATE_USR}/v2ray存在，则执行
-    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config.json &> /dev/null &
-    PID=$(echo $!)
-    echo ${PID} > ${V2RAY_PID_FILE}
+    # Load ${PRIVATE_USR}/caddy
+    # 如果文件${PRIVATE_USR}/caddy和${PRIVATE_ETC}/Caddyfile存在，则执行
+    nohup ${PRIVATE_USR}/caddy -pidfile ${CADDY_PID_FILE} -conf ${PRIVATE_ETC}/Caddyfile &> /dev/null &
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/v2ray不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    # 如果文件${PRIVATE_USR}/caddy或${PRIVATE_ETC}/Caddyfile不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE CADDY CONFIGURATION FILE *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi
 #

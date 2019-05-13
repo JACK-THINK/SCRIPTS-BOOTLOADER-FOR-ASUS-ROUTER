@@ -5,13 +5,13 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# SYNCTHING_PID_FILE: The path to syncthing.pid
-# 设置自定义变量SYNCTHING_PID_FILE为文件syncthing.pid的绝对路径
-SYNCTHING_PID_FILE=/var/run/syncthing.pid
+# CADDY_PID_FILE: The path to caddy.pid
+# 设置自定义变量CADDY_PID_FILE为文件caddy.pid的绝对路径
+CADDY_PID_FILE=/var/run/caddy.pid
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="SYNCTHING"
+SERVICE_NAME="CADDY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -27,11 +27,11 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## DISABLE SYNCTHING ##########
+########## DISABLE CADDY ##########
 #
-#ps | grep "syncthing" | grep -v "grep" | awk '{print $1}' | xargs kill
-kill $(cat ${SYNCTHING_PID_FILE}) > /dev/null 2>&1
-rm -f ${SYNCTHING_PID_FILE} > /dev/null 2>&1
+#ps | grep "caddy" | grep -v "grep" | awk '{print $1}' | xargs kill
+kill $(cat ${CADDY_PID_FILE}) > /dev/null 2>&1
+rm -f ${CADDY_PID_FILE} > /dev/null 2>&1
 #
 ########## END ##########
 #

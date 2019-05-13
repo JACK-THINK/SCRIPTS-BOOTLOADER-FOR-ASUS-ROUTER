@@ -26,15 +26,23 @@ SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/ntpd
+PRIVATE_ROOT=${SBL_SYS_USR}/aria2
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
+# PRIVATE_VAR: The directory which contains all the variable files related to this program
+# 设置自定义变量PRIVATE_VAR为此程序可变文件目录
+PRIVATE_VAR=${PRIVATE_ROOT}/var
+#
+# DOWNLOADS: The directory which contains all the files downloaded from Internet
+# 设置自定义变量DOWNLOADS为下载目录
+DOWNLOADS=~/Downloads
+#
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="NTPD"
+SERVICE_NAME="ARIA2"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -50,7 +58,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALL NTPD ##########
+########## INSTALL ARIA2 ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -68,29 +76,41 @@ then
         # 更新可用程序包列表
         opkg update
         #
-        # Install ntpd
-        # 安装ntpd
-        opkg install ntpd
+        # Install aria2
+        # 安装aria2
+        opkg install aria2
         #
-        # Disable /opt/etc/init.d/S77ntpd
-        # 禁用/opt/etc/init.d/S77ntpd
-        cp /opt/etc/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S77ntpd
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S77ntpd
+        # Disable /opt/etc/init.d/S*aria2
+        # 禁用/opt/etc/init.d/S*aria2
+        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*aria2
+        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*aria2
+        sed -i '/^\[/s/^/#/' /opt/etc/init.d/S*aria2
         #
-        # Configure ntpd
-        # 配置ntpd
-        cp /opt/etc/ntp.conf /opt/etc/ntp.conf.bak
-        cp /opt/etc/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
-        rm -f /opt/etc/ntp.conf
-        cp ${PRIVATE_ETC}/ntp.conf /opt/etc/
-        chmod 600 /opt/etc/ntp.conf
+        # Create directory ${DOWNLOADS}
+        # 创建下载目录
+        mkdir ${DOWNLOADS}
+        #
+        # Create directory ${PRIVATE_VAR}
+        # 创建目录${PRIVATE_VAR}
+        mkdir ${PRIVATE_VAR}
+        #
+        # Configure aria2
+        # 配置aria2
+        cp /opt/etc/aria2.conf ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^dir=/s:/.*$:${DOWNLOADS}:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^input-file=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^log=/s:/.*$:${PRIVATE_VAR}/aria2.log:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^log=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^dht-file-path=/s:/.*$:${PRIVATE_VAR}/dht.dat:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^dht-file-path6=/s:/.*$:${PRIVATE_VAR}/dht6.dat:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^rpc-secret=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
+        sed -i "/^save-session=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ntpd ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/ntpd
-        mv ${SBL_MONITD}/ntpd ${SBL_MONITD}/ntpd.on
+        cp ${PRIVATE_ETC}/monit.d/aria2 ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/aria2
+        mv ${SBL_MONITD}/aria2 ${SBL_MONITD}/aria2.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
