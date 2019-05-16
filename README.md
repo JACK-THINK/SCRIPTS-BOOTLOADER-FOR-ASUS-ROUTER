@@ -25,6 +25,21 @@
 4. 程序组织逻辑清晰，程序命名清晰表达其功能，目录结构合理
 5. 所有程序（含Entware）仅使用U盘，完全不依赖路由器`/jffs`分区，延长路由器使用寿命
 
+## 在线安装
+
+1. 备份目标U盘全部数据并将其连接至路由器
+
+2. 移除其它全部U盘
+
+3. 登陆路由器并执行下述代码，按照屏幕提示完成安装（本地安装方法见[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)）
+
+   ```shell
+   cd /tmp
+   wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online"
+   chmod 777 /tmp/install_online
+   /tmp/install_online
+   ```
+
 ## 更多资料
 
 [使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)

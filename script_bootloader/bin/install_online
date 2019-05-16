@@ -1,0 +1,136 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+echo -e "\033[1;41;37m***** WARNING *****\033[0m"
+echo -e "This program will erase ALL THE DATA on the target USB flash drive and install SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.\nBefore the installation, you must:\n1. Back up all the data on the target USB flash drive.\n2. Unplug all the USB flash drives except the target one.\n "
+echo -e "\033[1;41;37m***** 警告 *****\033[0m"
+echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER。\n开始安装前，你必须：\n1. 备份目标U盘上的全部数据。\n2. 除目标U盘外，移除一切其它U盘。\n "
+#
+########## END ##########
+#
+#
+########## CONFIRMATION ##########
+#
+while [ 1 ]
+do
+    echo -ne "Do you want to start the installation right now? (YES/NO): "
+    #
+    # Read the input of user
+    # 读取用户输入值
+    read input_value
+    #
+    case ${input_value} in
+        "Y" | "y" | "YES" | "yes" | "Yes")
+            echo -e "Start installation ..."
+            break
+            ;;
+        "N" | "n" | "NO" | "no" | "No")
+            echo -e "Stop installation ..."
+            exit 1
+            ;;
+        *)
+            echo -e "Sorry, wrong selection."
+            ;;
+    esac
+done
+#
+########## END ##########
+#
+#
+########## PREPARE THE USB FLASH DRIVE ##########
+#
+# Download label_modifier
+# 下载文件label_modifier
+wget -O /tmp/label_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/label_modifier"
+#
+# Change the mode of /tmp/label_modifier
+# 更改文件/tmp/label_modifier权限
+chmod 777 /tmp/label_modifier
+#
+# Run /tmp/label_modifier
+# 执行/tmp/label_modifier
+/tmp/label_modifier
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# LABEL: Default label of the USB flash drive
+# 设置自定义变量LABEL为U盘默认卷标
+LABEL=$(grep 'LABEL=' /tmp/label_modifier | awk -F '"' '{print $2}')
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(mount | grep "${LABEL}" | awk -F ' ' '{print $3}')
+#
+# DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
+wget -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+DOWNLOAD_LINK=$(grep -E 'tarball_url' /tmp/sbl_download_link.html | cut -d '"' -f 4)
+rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
+#
+# NAME OF THE ARCHIVE
+# 设置自定义变量ARCHIVE_NAME为包文件名
+ARCHIVE_NAME="sbl_setup.tar.gz"
+#
+########## END ##########
+#
+#
+########## INSTALL SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
+#
+# Remove vestigial ${ARCHIVE_NAME} package
+# 删除遗留的${ARCHIVE_NAME}包
+rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+#
+# Download ${ARCHIVE_NAME} package
+# 下载${ARCHIVE_NAME}包
+wget -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
+#
+# Untar ${ARCHIVE_NAME} package
+# 解压${ARCHIVE_NAME}包
+tar -zvxf ${USB_MOUNT_POINT}/${ARCHIVE_NAME} -C ${USB_MOUNT_POINT}/ JACK*/script_bootloader/ > /dev/null 2>&1
+#
+sleep 30
+#
+# Move directory script_bootloader to directory ${USB_MOUNT_POINT}
+# 移动目录script_bootloader至目录${USB_MOUNT_POINT}
+mv ${USB_MOUNT_POINT}/JACK*/script_bootloader/ ${USB_MOUNT_POINT}/script_bootloader/ > /dev/null 2>&1
+#
+sleep 10
+#
+# Remove directory JACK*
+# 删除目录JACK*
+rm -rf ${USB_MOUNT_POINT}/JACK*/ > /dev/null 2>&1
+#
+# Remove ${ARCHIVE_NAME} package
+# 删除${ARCHIVE_NAME}包
+rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+#
+# Remove /tmp/label_modifier
+# 删除文件/tmp/label_modifier
+rm -f /tmp/label_modifier > /dev/null 2>&1
+#
+# Change the mode of the files
+# 更改文件权限
+chmod -R 777 ${USB_MOUNT_POINT}/script_bootloader/
+#
+sleep 10
+#
+# Start installation
+# 开始安装
+cd /tmp/
+${USB_MOUNT_POINT}/script_bootloader/bin/install
+#
+########## END ##########
