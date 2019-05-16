@@ -73,7 +73,7 @@ then
     # Install nail
     # 安装nail
     opkg install nail
-    #   
+    #
     # Configure nail
     # 配置nail
     cp /opt/etc/nail.rc ${PRIVATE_ETC}/nail.rc.bak
