@@ -15,21 +15,31 @@ LABEL="ASUS_ROUTER"
 ########## END ##########
 #
 #
-########## FORMAT THE USB FLASH DRIVE ##########
+########## PREPARE THE USB FLASH DRIVE ##########
 #
 logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS ${LABEL} *****"
+cd /tmp/
+#
+# Unmount /dev/sda1
+# 卸载/dev/sda1
 umount /dev/sda1
-mkfs.ext3 -L ${LABEL} /dev/sda1
+#
+# Format /dev/sda1 with ${LABEL}
+# 格式化/dev/sda1并创建卷标${LABEL}
+mkfs.ext3 -FL ${LABEL} /dev/sda1
+#
 sleep 120
 #
-########## END ##########
+# Create mount point /tmp/mnt/${LABEL}
+# 创建挂载点/tmp/mnt/${LABEL}
+mkdir -m 777 /tmp/mnt/${LABEL} > /dev/null 2>&1
 #
+# Mount /dev/sda1 to /tmp/mnt/${LABEL}
+# 挂载/dev/sda1至/tmp/mnt/${LABEL}
+mount /dev/sda1 /tmp/mnt/${LABEL}  > /dev/null 2>&1
 #
-########## REBOOT ##########
+sleep 30
 #
-# Reboot the router
-# 需使用reboot命令重启路由器，确保设置生效
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
-reboot
+logger -st "($(basename $0))" $$ "***** USB FLASH DRIVE IS READY *****"
 #
 ########## END ##########
