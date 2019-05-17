@@ -64,7 +64,19 @@ else
     # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则创建${PRIVATE_VAR}/swapfile.var
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${PRIVATE_VAR}/swapfile.var *****"
     logger -st "($(basename $0))" $$ "***** CREATE ${PRIVATE_VAR}/swapfile.var *****"
+    #
+    # Set the size of swapfile.var to 256M
+    # 设定文件swapfile.var的大小为256M
+    #dd if=/dev/zero of=${PRIVATE_VAR}/swapfile.var bs=1024 count=262148
+    #
+    # Set the size of swapfile.var to 512M
+    # 设定文件swapfile.var的大小为512M
     dd if=/dev/zero of=${PRIVATE_VAR}/swapfile.var bs=1024 count=524292
+    #
+    # Set the size of swapfile.var to 1G
+    # 设定文件swapfile.var的大小为1G
+    #dd if=/dev/zero of=${PRIVATE_VAR}/swapfile.var bs=1024 count=1024004
+    #
     mkswap -L ASUS_SWAP ${PRIVATE_VAR}/swapfile.var
     chmod 600 ${PRIVATE_VAR}/swapfile.var
     logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
