@@ -34,10 +34,7 @@
 3. 登陆路由器并执行下述代码，按照屏幕提示完成安装（本地安装方法见[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)）
 
    ```shell
-   cd /tmp
-   wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online"
-   chmod 777 /tmp/install_online
-   /tmp/install_online
+   cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
 ## 更多资料
