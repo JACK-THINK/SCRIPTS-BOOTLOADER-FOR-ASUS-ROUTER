@@ -11,11 +11,10 @@
 ## 功能介绍
 
 1. 路由器开机后自动运行U盘中的指定程序，允许用户自行扩展路由器功能
-2. 本程序可部署于U盘中的任何目录层级
-3. 全新编写Entware自动安装程序。程序会根据路由器架构，自动安装适当版本的Entware，无需用户参与安装过程
-4. 默认提供512M虚拟内存，自动安装，确保运行流畅
-5. 允许用户在路由器上插入多个U盘，不会发生任何冲突
-6. 配备一键安装程序（系统）和插件安装菜单，便于使用
+2. 全新编写Entware自动安装程序。程序会根据路由器架构，自动安装适当版本的Entware，无需用户参与安装过程
+3. 默认提供512M虚拟内存，自动安装，确保运行流畅
+4. 配备一键安装程序（系统）和插件安装菜单，便于使用
+5. 配备Web管理页面（基于Monit管理系统），方便进行插件的启停
 
 ## 程序特色
 
@@ -24,6 +23,8 @@
 3. 所有程序代码格式统一，均配有详尽的中、英文注释（中英文对照），几乎解释了全部代码，易读、易懂、易改、易用
 4. 程序组织逻辑清晰，程序命名清晰表达其功能，目录结构合理
 5. 所有程序（含Entware）仅使用U盘，完全不依赖路由器`/jffs`分区，延长路由器使用寿命
+6. 本程序可部署于U盘中的任何目录层级
+7. 允许用户在路由器上插入多个U盘，不会发生任何冲突
 
 ## 在线安装
 
@@ -36,6 +37,16 @@
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
+   
+4. 安装完毕路由器重启后，打开浏览器，访问
+
+   ```
+   http://<路由器IP地址>:35490
+   ```
+
+   管理已安装插件
+
+   ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.png)
 
 ## 更多资料
 
