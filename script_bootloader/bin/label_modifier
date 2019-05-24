@@ -8,35 +8,39 @@
 #
 ########## SET THE LABEL OF THE USB FLASH DRIVE ##########
 #
-# Default label of the USB flash drive: ASUS_ROUTER
-# U盘默认卷标：ASUS_ROUTER。可修改，但长度不可超过16字节
-LABEL="ASUS_ROUTER"
+# USB_DEVICE_FILE: Default device file of the USB flash drive
+# 设置自定义变量USB_DEVICE_FILE为U盘默认设备文件
+USB_DEVICE_FILE=$(blkid | head -n 1 | awk -F ':' '{print $1}')
+#
+# USB_DRIVE_LABEL: Default label of the USB flash drive
+# 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标ASUS_ROUTER。可修改，但长度不可超过16字节
+USB_DRIVE_LABEL="ASUS_ROUTER"
 #
 ########## END ##########
 #
 #
 ########## PREPARE THE USB FLASH DRIVE ##########
 #
-logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS ${LABEL} *****"
+logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS ${USB_DRIVE_LABEL} *****"
 cd /tmp/
 #
-# Unmount /dev/sda1
-# 卸载/dev/sda1
-umount /dev/sda1
+# Unmount ${USB_DEVICE_FILE}
+# 卸载${USB_DEVICE_FILE}
+umount ${USB_DEVICE_FILE}
 #
-# Format /dev/sda1 with ${LABEL}
-# 格式化/dev/sda1并创建卷标${LABEL}
-mkfs.ext3 -FL ${LABEL} /dev/sda1
+# Format ${USB_DEVICE_FILE} with ${USB_DRIVE_LABEL}
+# 格式化${USB_DEVICE_FILE}并创建卷标${USB_DRIVE_LABEL}
+mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_FILE}
 #
 sleep 120
 #
-# Create mount point /tmp/mnt/${LABEL}
-# 创建挂载点/tmp/mnt/${LABEL}
-mkdir -m 777 /tmp/mnt/${LABEL} > /dev/null 2>&1
+# Create mount point /tmp/mnt/${USB_DRIVE_LABEL}
+# 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
+mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
 #
-# Mount /dev/sda1 to /tmp/mnt/${LABEL}
-# 挂载/dev/sda1至/tmp/mnt/${LABEL}
-mount /dev/sda1 /tmp/mnt/${LABEL}  > /dev/null 2>&1
+# Mount ${USB_DEVICE_FILE} to /tmp/mnt/${USB_DRIVE_LABEL}
+# 挂载${USB_DEVICE_FILE}至/tmp/mnt/${USB_DRIVE_LABEL}
+mount ${USB_DEVICE_FILE} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
 #
 sleep 30
 #

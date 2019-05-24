@@ -67,13 +67,13 @@ chmod 777 /tmp/label_modifier
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# LABEL: Default label of the USB flash drive
-# 设置自定义变量LABEL为U盘默认卷标
-LABEL=$(grep 'LABEL=' /tmp/label_modifier | awk -F '"' '{print $2}')
+# USB_DRIVE_LABEL: Default label of the USB flash drive
+# 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
+USB_DRIVE_LABEL=$(grep 'USB_DRIVE_LABEL=' /tmp/label_modifier | awk -F '"' '{print $2}')
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(mount | grep "${LABEL}" | awk -F ' ' '{print $3}')
+USB_MOUNT_POINT=$(mount | grep "${USB_DRIVE_LABEL}" | awk -F ' ' '{print $3}')
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接

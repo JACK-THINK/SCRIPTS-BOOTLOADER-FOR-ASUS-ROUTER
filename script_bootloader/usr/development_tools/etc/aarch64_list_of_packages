@@ -247,3 +247,4 @@ lrzsz
 curl
 wget
 openssh-client
+psmisc
