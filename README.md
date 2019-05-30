@@ -49,11 +49,14 @@
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
-   
+
 4. 安装完毕路由器重启后，打开浏览器，访问
 
    ```
    http://<路由器IP地址>:35490
+   
+   用户名：admin
+   密码：monit
    ```
 
    管理已安装插件
