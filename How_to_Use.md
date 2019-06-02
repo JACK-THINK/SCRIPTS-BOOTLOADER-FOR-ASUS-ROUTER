@@ -296,7 +296,7 @@
 
     ![step10](./Documents_Assets/How_to_Use/pre-install/step10.png)
 
-11. 执行`wget --no-cookie --no-check-certificate https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/archive/N.N.tar.gz`，下载安装包（`N.N`是版本号，请自己替换成所下载的版本号）
+11. 执行`wget --no-cookies --no-check-certificate https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/archive/N.N.tar.gz`，下载安装包（`N.N`是版本号，请自己替换成所下载的版本号）
 
     > 注意：
     >
