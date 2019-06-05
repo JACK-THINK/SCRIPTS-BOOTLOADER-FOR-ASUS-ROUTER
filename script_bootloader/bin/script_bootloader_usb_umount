@@ -93,7 +93,8 @@ fi
 #
 # Create ${SERVICES_TO_DISABLE} as the list of running services that should be disabled and store variable USB_MOUNT_POINT in it
 # 创建文件${SERVICES_TO_DISABLE}作为待结束服务列表文件，并将变量USB_MOUNT_POINT存入
-echo "SBL_SYS_USR=${SBL_SYS_USR}" > ${SERVICES_TO_DISABLE}
+echo '!#/bin/sh' > ${SERVICES_TO_DISABLE}
+echo "SBL_SYS_USR=${SBL_SYS_USR}" >> ${SERVICES_TO_DISABLE}
 #
 # Find all the services enabled in ${SBL_SYS_BIN}/list_of_user_custom_scripts and store the paths of their disable files in ${SERVICES_TO_DISABLE}
 # 查找在文件${SBL_SYS_BIN}/list_of_user_custom_scripts中开启的所有服务，并将它们的结束文件路径存入文件${SERVICES_TO_DISABLE}

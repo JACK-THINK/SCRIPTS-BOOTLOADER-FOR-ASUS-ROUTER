@@ -32,6 +32,30 @@ PRIVATE_ROOT=${SBL_SYS_USR}/shadowsocks
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
+# PACKAGE_ARCHITECTURE: Architecture of alternative packages
+# 设置自定义变量PACKAGE_ARCHITECTURE为备用软件包架构
+case $(uname -m) in
+    "armv7l")
+        PACKAGE_ARCHITECTURE="armv7-2.6"
+        ;;
+    "aarch64")
+        PACKAGE_ARCHITECTURE="aarch64-3.10"
+        ;;
+    "mips")
+        PACKAGE_ARCHITECTURE="mipselsf"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        exit 3
+        ;;
+esac
+#
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE=${PRIVATE_ROOT}/alternative/${PACKAGE_ARCHITECTURE}
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SHADOWSOCKS"
@@ -68,14 +92,28 @@ then
         # 更新可用程序包列表
         opkg update
         #
-        # Install shadowsocks-libev and haveged
-        # 安装shadowsocks-libev和haveged
-        opkg install shadowsocks-libev-config
-        opkg install shadowsocks-libev-ss-local
-        opkg install shadowsocks-libev-ss-redir
-        opkg install shadowsocks-libev-ss-rules
-        opkg install shadowsocks-libev-ss-server
-        opkg install shadowsocks-libev-ss-tunnel
+        # Check if ${PRIVATE_ALTERNATIVE} exists
+        # 检查目录${PRIVATE_ALTERNATIVE}是否存在
+        if [ -e ${PRIVATE_ALTERNATIVE} ]
+        then
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-config_*.ipk
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-local_*.ipk
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-redir_*.ipk
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-rules_*.ipk
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-server_*.ipk
+            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-tunnel_*.ipk
+            #
+        else
+            # Install shadowsocks-libev and haveged
+            # 安装shadowsocks-libev和haveged
+            opkg install shadowsocks-libev-config
+            opkg install shadowsocks-libev-ss-local
+            opkg install shadowsocks-libev-ss-redir
+            opkg install shadowsocks-libev-ss-rules
+            opkg install shadowsocks-libev-ss-server
+            opkg install shadowsocks-libev-ss-tunnel
+        fi
+        #
         opkg install haveged
         opkg install simple-obfs
         opkg install simple-obfs-server
