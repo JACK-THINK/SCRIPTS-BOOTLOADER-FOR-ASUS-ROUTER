@@ -96,6 +96,8 @@ then
         # 检查目录${PRIVATE_ALTERNATIVE}是否存在
         if [ -e ${PRIVATE_ALTERNATIVE} ]
         then
+            # Install shadowsocks-libev offline
+            # 离线安装shadowsocks-libev
             opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-config_*.ipk
             opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-local_*.ipk
             opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-redir_*.ipk
@@ -104,8 +106,8 @@ then
             opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-tunnel_*.ipk
             #
         else
-            # Install shadowsocks-libev and haveged
-            # 安装shadowsocks-libev和haveged
+            # Install shadowsocks-libev online
+            # 在线安装shadowsocks-libev
             opkg install shadowsocks-libev-config
             opkg install shadowsocks-libev-ss-local
             opkg install shadowsocks-libev-ss-redir
@@ -114,6 +116,8 @@ then
             opkg install shadowsocks-libev-ss-tunnel
         fi
         #
+        # Install haveged and simple-obfs
+        # 安装haveged和simple-obfs
         opkg install haveged
         opkg install simple-obfs
         opkg install simple-obfs-server
