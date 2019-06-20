@@ -23,9 +23,11 @@ if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
 then
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
     exit 1
+    #
 elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
 then
     USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
+    #
 else
     logger -st "($(basename $0))" $$ "***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
     exit 2

@@ -25,6 +25,11 @@ PRIVATE_TMP=${PRIVATE_ROOT}/tmp
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
+# SOURCE_OF_PUBLIC_IP_ADDRESS: The source of public IP address
+# 设置自定义变量SOURCE_OF_PUBLIC_IP_ADDRESS为公网IP地址来源
+SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
+#SOURCE_OF_PUBLIC_IP_ADDRESS="ident.me"
+#
 # DDNS_HOSTNAME: The hostname of the target DDNS server
 # 设置自定义变量DDNS_HOSTNAME为目标DDNS服务器主机名
 DDNS_HOSTNAME=""
@@ -60,71 +65,86 @@ MAIL_CONTENTS=""
 ########## END ##########
 #
 #
-########## GET PUBLIC IP ADDRESS ##########
+########## TEST IP ADDRESS AND UPDATE DNS RECORD ##########
 #
-PUBLIC_IPV4_ADDRESS=$(curl -s -4 whatismyip.akamai.com)
-#PUBLIC_IPV6_ADDRESS=$(curl -s -6 whatismyip.akamai.com)
-#PUBLIC_IPV4_ADDRESS=$(curl -4 ident.me)
-#PUBLIC_IPV6_ADDRESS=$(curl -6 ident.me)
+# Check if the IP address of the router's WAN port is equal to the public IP address. If the answer is yes, update DNS record and exit. And if the answer is no, repeat the test up to 3 times. If all the answers are no, send an email as notification and exit.
+# 检查路由器WAN口IP地址是否为公网IP地址。如果是，则更新DNS记录，退出程序；如果不是，则重复测试三次。如三次全都不是，则发送通知邮件，退出程序
 #
-########## END ##########
+# FAIL_COUNT: The count of fail tests of IP address
+# 设置自定义变量FAIL_COUNT为IP地址测试失败计数
+FAIL_COUNT=0
+while [ ${FAIL_COUNT} -lt 3 ]
+do
+    # PUBLIC_IPV4_ADDRESS: The public IPv4 address
+    # 设置自定义变量PUBLIC_IPV4_ADDRESS为公网IPv4地址
+    PUBLIC_IPV4_ADDRESS=$(curl -s -4 ${SOURCE_OF_PUBLIC_IP_ADDRESS})
+    #
+    # PUBLIC_IPV6_ADDRESS: The public IPv6 address
+    # 设置自定义变量PUBLIC_IPV6_ADDRESS为公网IPv6地址
+    #PUBLIC_IPV6_ADDRESS=$(curl -s -6 ${SOURCE_OF_PUBLIC_IP_ADDRESS})
+    #
+    # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
+    # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
+    WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
+    #
+    # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
+    # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址
+    #WAN_IPV6_ADDRESS=$()
+    #
+    # Check if ${WAN_IPV4_ADDRESS} is equal to ${PUBLIC_IPV4_ADDRESS}
+    # 检查${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}是否相等
+    if [ "${WAN_IPV4_ADDRESS}" == "${PUBLIC_IPV4_ADDRESS}" ]
+    then
+        # Choose one of the following metheds to update DNS record
+        # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
+        #
+        # GET IPv4
+        # GET方法更新IPv4
+        curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
+        #
+        # GET IPv6
+        # GET方法更新IPv6
+        #curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
+        #
+        # POST IPv4
+        # POST方法更新IPv4
+        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
+        #
+        # POST IPv6
+        # POST方法更新IPv6
+        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
+        #
+        echo -e "SUCCEEDED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+        #
+        exit 0
+        #
+    else
+        # Add 1 to ${FAIL_COUNT}
+        # ${FAIL_COUNT}加1
+        FAIL_COUNT=$((${FAIL_COUNT} + 1))
+        #
+        # Wait for 5 seconds
+        # 等待5秒
+        sleep 5
+    fi
+done
 #
+# Send an email as notification
+# 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
+logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
 #
-########## GET WAN IP ADDRESS ##########
+# Prepare mail contents
+# 准备邮件内容
+MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
+MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
+sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
 #
-WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
-#WAN_IPV6_ADDRESS=$()
+# Send
+# 发送
+curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
 #
-########## END ##########
+echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
 #
-#
-########## UPDATE DNS RECORD ##########
-#
-# Check if ${WAN_IPV4_ADDRESS} is equal to ${PUBLIC_IPV4_ADDRESS}
-# 检查${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}是否相等
-if [ ${WAN_IPV4_ADDRESS} == ${PUBLIC_IPV4_ADDRESS} ]
-then
-    # Choose one of the following metheds to update DNS record
-    # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
-    #
-    # GET IPv4
-    # GET方法更新IPv4
-    curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
-    #
-    # GET IPv6
-    # GET方法更新IPv6
-    #curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
-    #
-    # POST IPv4
-    # POST方法更新IPv4
-    #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
-    #
-    # POST IPv6
-    # POST方法更新IPv6
-    #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
-    #
-    echo -e "SUCCEEDED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
-    #
-    exit 0
-    #
-else
-    # Send an email as a notification
-    # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
-    logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
-    #
-    # Prepare mail contents
-    # 准备邮件内容
-    MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
-    MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
-    sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
-    #
-    # Send
-    # 发送
-    curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
-    #
-    echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
-    #
-    exit 1
-fi
+exit 1
 #
 ########## END ##########

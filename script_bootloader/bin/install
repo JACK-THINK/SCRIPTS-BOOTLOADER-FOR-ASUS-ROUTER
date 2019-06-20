@@ -23,9 +23,11 @@ if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
 then
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
     exit 1
+    #
 elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
 then
     USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
+    #
 else
     logger -st "($(basename $0))" $$ "***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
     exit 2
@@ -85,6 +87,7 @@ then
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/sys_install *****"
         echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
         exit 3
+        #
     else
         # Continue
         # 如果返回值为0，则继续
@@ -444,6 +447,7 @@ then
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/addons_install *****"
         echo -e "\033[1;41;37m***** STAGE 3: FAILED *****\033[0m"
         exit 25
+        #
     else
         # Continue
         # 如果返回值为0，则继续
