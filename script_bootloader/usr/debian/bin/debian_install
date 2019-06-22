@@ -43,7 +43,9 @@ case $(uname -m) in
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
+        #
         # Prompt the user that debian doesn't support ${ROUTER_ARCHITECTURE}
+        # 提示用户debian不支持${ROUTER_ARCHITECTURE}
         logger -st "($(basename $0))" $$ "***** DEBIAN DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;

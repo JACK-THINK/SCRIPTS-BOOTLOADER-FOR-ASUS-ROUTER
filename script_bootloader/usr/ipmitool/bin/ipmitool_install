@@ -24,54 +24,24 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 # 设置自定义变量SBL_MONITD为monit配置文件目录
 SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
-# SBL_SITE: The directory which contains all the sites
-# 设置自定义变量SBL_SITE为站点目录
-SBL_SITE=${USB_MOUNT_POINT}/www
-#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/caddy
+PRIVATE_ROOT=${SBL_SYS_USR}/ipmitool
 #
-# PRIVATE_BIN: The directory which contains all the executable files related to this program
-# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${PRIVATE_ROOT}/bin
-#
-# PRIVATE_ETC: The directory which contains all the configuration files related to this program
-# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
-#
-# PRIVATE_USR: The directory which contains all the external software resources related to this program
-# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
-#
-# LATEST_VERSION: Version of the latest caddy
-# 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/mholt/caddy/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
-#
-# OPERATING_SYSTEM: Operating system of the ASUS Router
-# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
-#
-# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
-# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+# PACKAGE_ARCHITECTURE: Architecture of alternative packages
+# 设置自定义变量PACKAGE_ARCHITECTURE为备用软件包架构
 case $(uname -m) in
     "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        #
-        # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
-        # 提示用户caddy不支持${ROUTER_ARCHITECTURE}
-        logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
-        exit 4
+        PACKAGE_ARCHITECTURE="armv7-2.6"
         ;;
     "aarch64")
-        ROUTER_ARCHITECTURE="arm64"
+        PACKAGE_ARCHITECTURE="aarch64-3.10"
         ;;
     "mips")
-        ROUTER_ARCHITECTURE="mipsle"
+        PACKAGE_ARCHITECTURE="mipselsf"
         #
-        # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
-        # 提示用户caddy不支持${ROUTER_ARCHITECTURE}
-        logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
+        # Prompt the user that ipmitool doesn't support ${ROUTER_ARCHITECTURE}
+        logger -st "($(basename $0))" $$ "***** IPMITOOL DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;
     *)
@@ -82,13 +52,13 @@ case $(uname -m) in
         ;;
 esac
 #
-# DOWNLOAD_LINK: Download link of the latest caddy
-# 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
-DOWNLOAD_LINK="https://github.com/mholt/caddy/releases/download/${LATEST_VERSION}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE=${PRIVATE_ROOT}/alternative/${PACKAGE_ARCHITECTURE}
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="CADDY"
+SERVICE_NAME="IPMITOOL"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -104,7 +74,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALL CADDY ##########
+########## INSTALL IPMITOOL ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -118,29 +88,23 @@ then
     then
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
-        # Remove vestigial caddy package
-        # 删除遗留的caddy包
-        rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
+        # Update the list of available packages
+        # 更新可用程序包列表
+        opkg update
         #
-        # Download caddy
-        # 下载caddy
-        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
-        #
-        # Create directory ${PRIVATE_USR}
-        # 创建${PRIVATE_USR}目录
-        mkdir ${PRIVATE_USR}
-        #
-        # Unzip caddy package
-        # 解压caddy包
-        tar -xzvf ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz -C ${PRIVATE_USR}
-        #
-        # Remove caddy package
-        # 删除caddy包
-        rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
-        #
-        # Configure caddy
-        # 配置caddy
-        echo -e "0.0.0.0:2015 {\n    root ${SBL_SITE}/\n}" > ${PRIVATE_ETC}/Caddyfile
+        # Check if ${PRIVATE_ALTERNATIVE} exists
+        # 检查目录${PRIVATE_ALTERNATIVE}是否存在
+        if [ -e ${PRIVATE_ALTERNATIVE} ]
+        then
+            # Install ipmitool offline
+            # 离线安装ipmitool
+            opkg install ${PRIVATE_ALTERNATIVE}/ipmitool_*.ipk
+            #
+        else
+            # Install ipmitool online
+            # 在线安装ipmitool
+            opkg install ipmitool
+        fi
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

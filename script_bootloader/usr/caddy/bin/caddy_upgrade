@@ -49,7 +49,9 @@ OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
 case $(uname -m) in
     "armv7l")
         ROUTER_ARCHITECTURE="arm"
+        #
         # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
+        # 提示用户caddy不支持${ROUTER_ARCHITECTURE}
         logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 4
         ;;
@@ -58,7 +60,9 @@ case $(uname -m) in
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
+        #
         # Prompt the user that caddy doesn't support ${ROUTER_ARCHITECTURE}
+        # 提示用户caddy不支持${ROUTER_ARCHITECTURE}
         logger -st "($(basename $0))" $$ "***** CADDY DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;

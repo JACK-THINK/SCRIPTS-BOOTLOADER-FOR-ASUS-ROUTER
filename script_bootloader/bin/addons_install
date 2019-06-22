@@ -59,6 +59,7 @@ ADDON11="${SBL_SYS_USR}/wol/bin/wol_install"
 ADDON12="${SBL_SYS_USR}/caddy/bin/caddy_install"
 ADDON13="${SBL_SYS_USR}/aria2/bin/aria2_install"
 ADDON14="${SBL_SYS_USR}/ariang/bin/ariang_install"
+ADDON15="${SBL_SYS_USR}/ipmitool/bin/ipmitool_install"
 #
 ########## END ##########
 #
@@ -84,6 +85,7 @@ do
     echo "12. caddy (only for arm64)"
     echo "13. aria2"
     echo "14. ariang"
+    echo "15. ipmitool"
     echo " 0. exit"
     #
     echo -n "Input ONE number every time: "
@@ -115,6 +117,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON1}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON1}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -144,6 +147,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON2}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON2}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -173,6 +177,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON3}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON3}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -202,6 +207,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON4}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON4}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -231,6 +237,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON5}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON5}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -260,6 +267,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON6}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON6}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -289,6 +297,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON7}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON7}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -318,6 +327,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON8}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON8}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -347,6 +357,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON9}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON9}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -376,6 +387,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON10}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON10}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -405,6 +417,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON11}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON11}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -434,6 +447,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON12}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON12}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -463,6 +477,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON13}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON13}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -492,6 +507,7 @@ do
                     if [ $? == '0' ]
                     then
                         echo -e "\033[1;42;37m***** ${ADDON14}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
                     else
                         echo -e "\033[1;41;37m***** ${ADDON14}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
                     fi
@@ -502,6 +518,36 @@ do
                 #
             else
                 echo -e "\033[1;41;37m***** ERROR: ${ADDON14} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+            fi
+            ;;
+        15)
+            # Check if ${ADDON15} exists
+            # 检查文件${ADDON15}是否存在
+            if [ ! -e ${SBL_SYS_TMP}/ipmitool ]
+            then
+                # Check if ${ADDON15} exists
+                # 检查文件${ADDON15}是否存在
+                if [ -e "${ADDON15}" ]
+                then
+                    touch ${SBL_SYS_TMP}/ipmitool
+                    ${ADDON15}
+                    #
+                    # Check if ${ADDON15} returns 0
+                    # 检查文件${ADDON15}的返回值是否为0
+                    if [ $? == '0' ]
+                    then
+                        echo -e "\033[1;42;37m***** ${ADDON15}: SUCCEEDED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                        #
+                    else
+                        echo -e "\033[1;41;37m***** ${ADDON15}: FAILED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                    fi
+                    #
+                else
+                    echo -e "\033[1;41;37m***** ERROR: CAN'T LOCATE ${ADDON15} *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
+                fi
+                #
+            else
+                echo -e "\033[1;41;37m***** ERROR: ${ADDON15} HAS BEEN INSTALLED *****\033[0m" | tee -a ${SBL_SYS_TMP}/addons_installation_log
             fi
             ;;
         *)
