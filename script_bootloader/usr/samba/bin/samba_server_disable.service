@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SAMBA-SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## DISABLE SAMBA-SERVER ##########
+#
+# Stop Avahi service
+# 停止Avahi服务
+rm -f /tmp/avahi/services/smb.service > /dev/null 2>&1
+#
+# Stop smbd
+# 停止smbd
+kill -9 $(pidof smbd) > /dev/null 2>&1
+#
+# Stop wsdd2
+# 停止wsdd2
+kill -9 $(pidof wsdd2) > /dev/null 2>&1
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

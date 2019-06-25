@@ -1,0 +1,42 @@
+########## CUSTOMIZED CONFIGURATION ##########
+
+        smb ports = 445
+        disable netbios = yes
+        dns proxy = no
+        dns forwarder = 192.168.1.1
+        mdns name = netbios
+        multicast dns register = yes
+        name resolve order = host bcast
+        server role = standalone
+        ntlm auth = ntlmv2-only
+        client NTLMv2 auth = yes
+        encrypt passwords = yes
+        server min protocol = SMB2
+        client ipc min protocol = SMB2
+        client min protocol = SMB2
+        browseable = yes
+        browse list = yes
+        veto files = /.AppleDB/.AppleDouble/.AppleDesktop/.DS_Store/Network Trash Folder/Temporary Items/TheVolumeSettingsFolder/.@__thumb/.@__desc/
+        delete veto files = yes
+        case sensitive = auto
+        hide dot files = no
+        csc policy = disable
+        dos filetimes = yes
+        ea support = yes
+        spotlight = no
+        strict locking = no
+        aio read size = 1
+        aio write size = 1
+        kernel oplocks = no
+        use sendfile = yes
+        use sendfile = yes
+        strict sync = yes
+        sync always = no
+
+
+
+[ROUTER-SMB-SHARE]
+        comment = Samba Share on ROUTER
+        path = /home/root/samba_share
+        writable = yes
+        browseable = yes

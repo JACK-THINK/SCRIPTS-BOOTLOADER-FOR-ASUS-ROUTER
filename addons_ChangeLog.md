@@ -1,5 +1,41 @@
 # 更新日志
 
+## 版本8.0（2019-06-25）
+
+#### 新增
+
+1. 新增SAMBA4。大幅提高安全性和读写速度，仅支持SMB2及更高版本协议
+
+#### 变更
+
+1. 增强addons_install
+
+#### 删除
+
+1. 无
+
+#### 插件列表
+
+| 插件名称          | 版本       | 简介                                                         |
+| ----------------- | --------   | ------------------------------------------------------------ |
+| anki_server       | 2.0.6      | anki记忆系统私有服务器（官方停更，除专家外不要使用）         |
+| aria2             | 1.34.0     | aria2下载工具                                                |
+| ariang            | 1.0.3      | aria2图形界面                                                |
+| caddy             | 0.11.5     | Web服务器（仅适用于arm64架构路由器）                         |
+| ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
+| ipmitool          | 1.8.18-3   | IPMI管理工具（仅开通lan, lanplus接口）                       |
+| mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
+| ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
+| overture          | 1.4        | DNS服务器                                                    |
+| samba             | 4.9.7-1    | SAMBA服务器                                                  |
+| sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
+| shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
+| syncthing         | 1.1.1      | 开源分布式同步工具                                           |
+| v2ray             | v4.18      | 不用说了，你们懂的                                           |
+| vlmcsd            | 1112       | 给予巨硬套装活力                                             |
+| wol               |            | 定时开机                                                     |
+
 ## 版本7.0（2019-06-22）
 
 #### 新增
@@ -25,7 +61,7 @@
 | ariang            | 1.0.3      | aria2图形界面                                                |
 | caddy             | 0.11.5     | Web服务器（仅适用于arm64架构路由器）                         |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | ipmitool          | 1.8.18-3   | IPMI管理工具（仅开通lan, lanplus接口）                       |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
@@ -66,7 +102,7 @@
 | ariang            | 1.0.3      | aria2图形界面                                                |
 | caddy             | 0.11.5     | Web服务器（仅适用于arm64架构路由器）                         |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -98,7 +134,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器（官方停更，除专家外不要使用）         |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -129,7 +165,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -161,7 +197,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -193,7 +229,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -224,7 +260,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -256,7 +292,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -288,7 +324,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -320,7 +356,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | overture          | 1.4        | DNS服务器                                                    |
@@ -353,7 +389,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -383,7 +419,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -414,7 +450,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -445,7 +481,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -475,7 +511,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -506,7 +542,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -536,7 +572,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -566,7 +602,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -597,7 +633,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -627,7 +663,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -660,7 +696,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -690,7 +726,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -722,7 +758,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
 | ntpd              | 4.2.8p11-1 | 授时服务器                                                   |
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
@@ -752,7 +788,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |            | 防火墙规则固化插件                                           |
 | l2tp              |            | l2tp客户端                                                   |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -786,7 +822,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |            | 防火墙规则固化插件                                           |
 | l2tp              |            | l2tp客户端                                                   |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -823,7 +859,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |            | 防火墙规则固化插件                                           |
 | l2tp              |            | l2tp客户端                                                   |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -855,7 +891,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |            | 防火墙规则固化插件                                           |
 | l2tp              |            | l2tp客户端                                                   |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -886,7 +922,7 @@
 | ----------------- | --------   | ------------------------------------------------------------ |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器                                       |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |            | 防火墙规则固化插件                                           |
 | l2tp              |            | l2tp客户端                                                   |
 | mailx             | 12.5-2     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -919,7 +955,7 @@
 | ----------------- | -------- | ------------------------------------------------------------ |
 | anki_server       | 2.0.6    | anki记忆系统私有服务器                                       |
 | ddns              |          | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |          | 防火墙规则固化插件                                           |
 | l2tp              |          | l2tp客户端                                                   |
 | mailx             | 12.5-2   | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -950,7 +986,7 @@
 | ----------------- | -------- | ------------------------------------------------------------ |
 | anki_server       | 2.0.6    | anki记忆系统私有服务器                                       |
 | ddns              |          | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包           |
 | iptables_rules    |          | 防火墙规则固化插件                                           |
 | l2tp              |          | l2tp客户端                                                   |
 | mailx             | 12.5-2   | 邮件系统。可根据自定义事件自动发送邮件提醒                   |
@@ -972,7 +1008,7 @@
    | 插件名称          | 版本    | 简介                                                         |
    | ----------------- | ------- | ------------------------------------------------------------ |
    | ddns              |         | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
-   | debian            | Jessie  | Debian的chroot环境。可安装Debian系统下大部分软件包，软件数量远大于Entware |
+   | debian            | Jessie  | Debian的chroot环境。可安装Debian系统下大部分软件包           |
    | iptables_rules    |         | 防火墙规则固化插件                                           |
    | l2tp              |         | l2tp客户端                                                   |
    | mailx             | 12.5-2  | 邮件系统。可根据自定义事件自动发送邮件提醒                   |

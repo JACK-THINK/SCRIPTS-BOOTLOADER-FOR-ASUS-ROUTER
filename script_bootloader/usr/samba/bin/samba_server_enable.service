@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/samba
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SAMBA-SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE SAMBA-SERVER ##########
+#
+# Check if /opt/etc/samba/smb.conf exists
+# 检查文件/opt/etc/samba/smb.conf是否存在
+if [ -e "/opt/etc/samba/smb.conf" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    #
+    # Start smbd
+    # 启动smbd
+    /opt/sbin/smbd -D > /dev/null 2>&1
+    #
+    # Start wsdd2
+    # 启动wsdd2
+    if [ -e /usr/sbin/wsdd2 ]
+    then
+        # If /usr/sbin/wsdd2 exists, invoke it
+        # 如果文件/usr/sbin/wsdd2存在，则执行它
+        /usr/sbin/wsdd2 -d -w
+        #
+    else
+        # If /usr/sbin/wsdd2 doesn't exist, invoke /usr/sbin/wsdd2
+        # 如果文件/usr/sbin/wsdd2不存在，则执行/usr/sbin/wsdd2
+        /opt/bin/wsdd2 -d -w
+    fi
+    #
+    # Start Avahi service
+    # 启动Avahi服务
+    cp ${PRIVATE_ETC}/avahi/smb.service /tmp/avahi/services
+    #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件/opt/etc/samba/smb.conf不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########
