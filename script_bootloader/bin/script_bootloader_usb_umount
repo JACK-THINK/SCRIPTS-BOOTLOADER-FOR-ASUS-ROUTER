@@ -69,7 +69,7 @@ then
     logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
     #
 else
-    # ASUS_MERLIN
+    # ASUSWRT-MERLIN
     FIRMWARE_TYPE="ASUSWRT-MERLIN"
     logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
 fi
