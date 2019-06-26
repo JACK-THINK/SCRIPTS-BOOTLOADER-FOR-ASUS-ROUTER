@@ -1,72 +1,90 @@
-# SCRIPTS BOOTLOADER FOR ASUS ROUTER 介绍
+# Introduction to SCRIPTS BOOTLOADER FOR ASUS ROUTER
 
-## 开发背景
+[中文](./README_zh-CN.md) | [English](./README_en-US.md)
 
-1. 网上流传的关于华硕路由器官方固件开机自动运行程序的方法，或已经失效，或程序逻辑特别复杂，用起来非常麻烦且难以控制
+## Background
 
-2. 绝大部分方法都需要将至少一个程序写入路由器的`/jffs`分区。根据梅林固件的原作者，这样做会缩短路由器的寿命，因为其闪存芯片的写入次数很少，一旦写入次数太多，路由器将损坏！！！（参考：https://github.com/RMerl/asuswrt-merlin/wiki/JFFS）
+1. There are so many methods to boot scripts at startup for Asuswrt. Unfortunately, some of them are invalid and some of them are too complicated to use.
 
-3. 根据个人使用经验，梅林固件本身的稳定性并不算太高（比如经常出现web页面崩溃的问题），而且一些华硕原厂固件的特定功能并不能得到及时更新（例如AiMesh）
+2. Most of those methods need to write at least one piece of code to the partition `/jffs` of the router, which will shorten the life expectency of the router according to RMerlin, the author of [Asuswrt-Merlin](https://www.asuswrt-merlin.net/). Because the flash chip in router could bear a limited number of write cycles. Once the flash sectors get worn out, the router will die. [Reference](https://github.com/RMerl/asuswrt-merlin/wiki/JFFS)
 
-因此，本人写了一个可同时运行于华硕路由器官方固件和梅林固件的，且无需向/jffs分区写入任何内容的开机启动引导程序
+3. According to my experience, Merlin-Asuswrt does have some weak points. For example, some features in Asuswrt are not shipped in Merlin-Asuswrt, such as AiMesh.
 
-## 功能介绍
+As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER which could be deployed in both Asuswrt and Asuswrt-Merlin without anything written to the partition `/jffs` of the router.
 
-1. 路由器开机后自动运行U盘中的指定程序，允许用户自行扩展路由器功能
+## Features of Function
 
-2. 全新编写Entware自动安装程序。程序会根据路由器架构，自动安装适当版本的Entware，无需用户参与安装过程
+1. Customized scripts designated in USB flash drive will be loaded at startup automatically. In this way, you can enrich functions of the router at your will.
 
-3. 默认提供512M虚拟内存，自动安装，确保运行流畅
+2. Installation script of [Entware](https://entware.net/) has been rewritten thoroughly. It will deploy Entware matching the architecture of your router automatically in the USB flash drive with no attendence.
 
-4. 配备一键安装程序（系统）和插件安装菜单，便于使用
+3. 512M swap will be created during installation and mounted automatically at every startup.
 
-5. 配备Web管理页面（基于Monit管理系统），方便进行插件的启停
+4. One-key deploying script of this system and addon-installation script are offered, which are very easy to use.
 
-## 程序特色
+5. Management Webpage powered by [Monit](https://mmonit.com/monit/) is offered and you can start or stop your customized scripts, addons and services easily.
 
-1. 所有程序（含Entware）均可运行于华硕路由器官方固件和[梅林固件](https://asuswrt.lostrealm.ca/)
+## Features of code
 
-2. 所有程序均使用Shell Script编写，语言风格统一
+1. All the scripts can run perfectly on both Asuswrt and Asuswrt-Merlin.
 
-3. 所有程序代码格式统一，均配有详尽的中、英文注释（中英文对照），几乎解释了全部代码，易读、易懂、易改、易用
+2. All the scripts are written in shell script.
 
-4. 程序组织逻辑清晰，程序命名清晰表达其功能，目录结构合理
+3. All the scripts are formatted unified and equipped with bilingual comments in English and Chinese, which demonstrate almost every line of code. Unsurprisingly, they are very intelligible and easy to read, understand, modify and use.
 
-5. 所有程序（含Entware）仅使用U盘，完全不依赖路由器`/jffs`分区，延长路由器使用寿命
+4. All the scripts are organized clearly and logically by naming policy and directories, which demostrates the function of each script clearly.
 
-6. 本程序可部署于U盘中的任何目录层级
+5. All the scripts and binaries are only deployed in the USB flash drive connected to the router, writing nothing to the partition `/jffs` of the router, in order to make the router live longer.
 
-7. 允许用户在路由器上插入多个U盘，不会发生任何冲突
+6. This system can be placed in any level of directories in the USB flash drive.
 
-## 在线安装
+7. You can connect multiple USB flash drives to the router without any conflict, as long as there is **ONLY ONE** directory named `script_bootloader` in these USB flash drives.
 
-1. 备份目标U盘全部数据并将其连接至路由器
+## Online Installation
 
-2. 移除其它全部U盘
+1. Back up all the data on the target USB flash drive (no less then 4GB) and connect it to the router.
 
-3. 登陆路由器并执行下述代码，按照屏幕提示完成安装（本地安装方法见[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)）
+2. Unplug all the USB flash drives from the router except the target one.
+
+3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How_to_Use](./How_to_Use.md).
 
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
-4. 安装完毕路由器重启后，打开浏览器，访问
+   > There are 3 stages in the installation:
+   >
+   > 1. STAGE 1: Set the router.
+   >    - No attendance required.
+   >
+   > 2. STAGE 2: Deploy programs required by system.
+   >    - No attendance required.
+   >    - Long time needed, please wait patiently.
+   >    - less than 5 errors in red or yellow color will appear during the process of python deployment, which is no need to worry.
+   >
+   > 3. STAGE 3: Install optional addons.
+   >    - Choose the addon you want from the list shown on the screen by typing in its order number (just one addon every time) and pressing \<Enter\>.
+   >    - Repeat the process stated above to install next addon.
+   >    - When all the addons needed have been installed, type in `0` to finish installation.
+   >    - The router will reboot automatically.
+
+4. When the installation gets completed, visit
 
    ```
-   http://<路由器IP地址>:35490
+   http://<IP-Address of the router>:35490
    
-   用户名：admin
-   密码：monit
+   username:admin
+   password：monit
    ```
 
-   管理已安装插件
+   to manage the addons installed.
 
    ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.png)
 
-## 更多资料
+## More materials
 
-[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/How_to_Use.md)
+[How_to_Use](./How_to_Use_en-US.md)
 
-[更新日志](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/blob/master/ChangeLog.md)
+[ChangeLog](./ChangeLog_en-US.md)
 
-[下载地址](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases)
+[Download link](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases)

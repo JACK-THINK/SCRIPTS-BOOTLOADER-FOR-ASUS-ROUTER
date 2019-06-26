@@ -138,7 +138,7 @@ then
     #
 else
     # ASUS_MERLIN
-    FIRMWARE_TYPE="ASUS_MERLIN"
+    FIRMWARE_TYPE="ASUSWRT-MERLIN"
     logger -st "($(basename $0))" $$ "***** FIRMWARE: ${FIRMWARE_TYPE} *****"
 fi
 #

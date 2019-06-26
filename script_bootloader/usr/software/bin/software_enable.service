@@ -57,7 +57,7 @@ then
     #
 else
     # ASUS_MERLIN
-    FIRMWARE_TYPE="ASUS_MERLIN"
+    FIRMWARE_TYPE="ASUSWRT-MERLIN"
 fi
 #
 ########## END ##########
