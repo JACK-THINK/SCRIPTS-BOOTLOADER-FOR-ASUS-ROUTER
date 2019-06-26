@@ -1,6 +1,6 @@
 # SCRIPTS BOOTLOADER FOR ASUS ROUTER 介绍
 
-[中文](./README_zh-CN.md) | [English](./README_en-US.md)
+[中文](./README_zh-CN.md) | [English](./README.md)
 
 ## 开发背景
 
