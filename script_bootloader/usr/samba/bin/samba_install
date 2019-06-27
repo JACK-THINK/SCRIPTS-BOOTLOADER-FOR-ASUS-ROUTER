@@ -36,6 +36,14 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 # 设置自定义变量COMPUTER_NAME为nvram中定义的computer_name
 COMPUTER_NAME="$(nvram get computer_name)"
 #
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# ADMINPASSWORD: The administrator's password of the router
+# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
+ADMINPASSWORD=$(nvram get http_passwd)
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SAMBA"
@@ -118,6 +126,10 @@ then
         # Disable /opt/etc/init.d/S99wsdd2
         # 禁用/opt/etc/init.d/S99wsdd2
         mv /opt/etc/init.d/S99wsdd2 ${PRIVATE_ETC}/S99wsdd2.bak
+        #
+        # Create default samba user
+        # 创建默认samba用户
+        echo -ne "${ADMINPASSWORD}\n${ADMINPASSWORD}\n" | /opt/bin/pdbedit -a -u "${ADMINUSER}" -t
         #
         # Configure monit
         # 配置monit

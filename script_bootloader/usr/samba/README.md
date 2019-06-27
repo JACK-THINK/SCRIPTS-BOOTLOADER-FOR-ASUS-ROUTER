@@ -56,6 +56,15 @@
 | samba_server_enable.service  | monit.d/samba_server |
 | samba_server_disable.service | monit.d/samba_server |
 
-## 配置方法
+## 使用方法
 
-1. 执行`smbpasswd -a`。按照屏幕提示，添加新用户并设置密码
+> 默认共享目录：`/root/samba_share/`
+> 默认用户名：路由器管理页面登陆用户名
+> 默认密码：路由器管理页面登陆密码
+
+#### Windows
+
+1. 在“文件资源管理器”-“网络”中，找到路由器名称并双击，连接路由器共享
+2. 右击名称以“smb-share”结尾的文件夹，单击“映射网络驱动器”
+3. 按需求选择适当的驱动器号，并勾选“使用其它凭据连接”。单击“完成”
+4. 在弹出窗口中依次输入上述用户名和密码，并勾选“记住我的凭据”。单击“确定”
