@@ -446,7 +446,6 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_BIN}/addons_install *****"
         echo -e "\033[1;41;37m***** STAGE 3: FAILED *****\033[0m"
-        exit 25
         #
     else
         # Continue

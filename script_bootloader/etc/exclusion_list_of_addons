@@ -1,0 +1,34 @@
+########## WARNING ##########
+#
+# 1. NO BLANK LINE is permitted in this file.
+# 2. Components and flags in this file will be excluded.
+#
+########## END ##########
+#
+#
+########## SYSTEM COMPONENTS ##########
+#
+development
+entware
+monit
+swap
+timezone
+#
+########## END ##########
+#
+#
+########## SUBSIDIARY ADDONS ##########
+#
+overture
+#
+########## END ##########
+#
+#
+########## SPECIAL FLAGS ##########
+#
+software
+dev_
+old_
+deprecated
+#
+########## END ##########
