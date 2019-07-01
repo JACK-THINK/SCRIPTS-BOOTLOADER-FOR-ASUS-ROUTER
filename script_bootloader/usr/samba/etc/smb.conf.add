@@ -37,6 +37,6 @@
 
 [ROUTER-SMB-SHARE]
         comment = Samba Share on ROUTER
-        path = /home/root/samba_share
+        path = /home/root
         writable = yes
         browseable = yes

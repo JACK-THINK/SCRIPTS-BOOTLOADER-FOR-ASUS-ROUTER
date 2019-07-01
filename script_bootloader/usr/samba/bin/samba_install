@@ -121,7 +121,7 @@ then
         #
         # Create default shared directory
         # 创建默认共享目录
-        mkdir /home/root/samba_share
+        #mkdir /home/root/samba_share
         #
         # Disable /opt/etc/init.d/S99wsdd2
         # 禁用/opt/etc/init.d/S99wsdd2

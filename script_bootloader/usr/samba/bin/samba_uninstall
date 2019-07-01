@@ -100,7 +100,7 @@ then
         rm -rf ${PRIVATE_ROOT}
         rm -f ${SBL_SYS_TMP}/samba
         #
-        rmdir /home/root/samba_share
+        #rmdir /home/root/samba_share
         #
         # Configure monit
         # 配置monit
