@@ -3,7 +3,6 @@
         smb ports = 445
         disable netbios = yes
         dns proxy = no
-        dns forwarder = 192.168.1.1
         mdns name = netbios
         multicast dns register = yes
         name resolve order = host bcast
@@ -28,7 +27,6 @@
         aio read size = 1
         aio write size = 1
         kernel oplocks = no
-        use sendfile = yes
         use sendfile = yes
         strict sync = yes
         sync always = no
