@@ -7,7 +7,7 @@
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="HTTPS"
 #
 # TABLE_NAME: Name of the table
 # 设置自定义变量TABLE_NAME为防火墙表名
@@ -19,7 +19,7 @@ BUILT_IN_CHAIN_NAME="INPUT"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="V2RAY"
+USER_DEFINED_CHAIN_NAME="HTTPS"
 #
 ########## END ##########
 #

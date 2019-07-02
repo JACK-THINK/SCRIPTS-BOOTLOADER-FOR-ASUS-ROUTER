@@ -72,14 +72,14 @@ then
     #
     # TEST_REFERENCE: Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # TEST_REFERENCE: 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}引用
-    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}")
+    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})
     if [ ! -z "${CHECK_RULE}" ]
     then
         TEST_REFERENCE=true
         #
         # Get ${DESTINATION_IP_ADDRESS} from ${BUILT_IN_CHAIN_NAME}
         # 从${BUILT_IN_CHAIN_NAME}中获取${DESTINATION_IP_ADDRESS}
-        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep "${USER_DEFINED_CHAIN_NAME}" | awk '{print $9}')
+        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME} | awk '{print $9}')
         #
         # TEST_IP: Check if ${DESTINATION_IP_ADDRESS} is equivolent to ${WAN_IP_ADDRESS}
         # TEST_IP: ${USER_DEFINED_CHAIN_NAME}链内规则测试值

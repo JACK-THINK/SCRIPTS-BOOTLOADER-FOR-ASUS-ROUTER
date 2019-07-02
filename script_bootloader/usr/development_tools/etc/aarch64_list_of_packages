@@ -255,3 +255,6 @@ curl
 wget
 openssh-client
 psmisc
+vim-full
+vim-runtime
+vim-help

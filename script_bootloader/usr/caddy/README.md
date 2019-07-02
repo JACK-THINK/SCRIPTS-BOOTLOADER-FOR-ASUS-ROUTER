@@ -22,18 +22,18 @@
 
 `ASUS_ROUTER/script_bootloader/usr/caddy/bin/`
 
-| 权限      | 名称                   | 属性     | 说明                                                      |
-| --------- | ---------------------- | -------- | --------------------------------------------------------- |
-| rwxrwxrwx | caddy_install          | 普通文件 | 安装文件                                                  |
-| rwxrwxrwx | caddy_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序                            |
-| rwxrwxrwx | caddy_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序                            |
-| rwxrwxrwx | caddy_upgrade          | 普通文件 | 升级文件                                                  |
+| 权限      | 名称                  | 属性     | 说明                           |
+| --------- | --------------------- | -------- | ------------------------------ |
+| rwxrwxrwx | caddy_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | caddy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | caddy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | caddy_upgrade         | 普通文件 | 升级文件                       |
 
 `ASUS_ROUTER/script_bootloader/usr/caddy/etc/`
 
-| 权限      | 名称          | 属性     | 说明                           |
-| --------- | ------------- | -------- | ------------------------------ |
-| rwxrwxrwx | Caddyfile   | 普通文件 | caddy配置文件 |
+| 权限      | 名称      | 属性     | 说明          |
+| --------- | --------- | -------- | ------------- |
+| rwxrwxrwx | Caddyfile | 普通文件 | caddy配置文件 |
 
 ## 安装方法
 
@@ -41,13 +41,13 @@
 
    > 受支持的路由器型号：
    >
-   > | 架构        | 路由器型号                                                                         |
-   > | ----------- | ---------------------------------------------------------------------------------- |
-   > | **aarch64** | RT-AC86U                                                                           |
+   > | 架构        | 路由器型号 |
+   > | ----------- | ---------- |
+   > | **aarch64** | RT-AC86U   |
 
 ## 调用方法
 
 | 插件文件              | 插件调用者    |
-| ------------------    | ------------  |
+| --------------------- | ------------- |
 | caddy_enable.service  | monit.d/caddy |
 | caddy_disable.service | monit.d/caddy |

@@ -77,11 +77,11 @@ while [ ${FAIL_COUNT} -lt 3 ]
 do
     # PUBLIC_IPV4_ADDRESS: The public IPv4 address
     # 设置自定义变量PUBLIC_IPV4_ADDRESS为公网IPv4地址
-    PUBLIC_IPV4_ADDRESS=$(curl -s -4 ${SOURCE_OF_PUBLIC_IP_ADDRESS})
+    PUBLIC_IPV4_ADDRESS=$(curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
     #
     # PUBLIC_IPV6_ADDRESS: The public IPv6 address
     # 设置自定义变量PUBLIC_IPV6_ADDRESS为公网IPv6地址
-    #PUBLIC_IPV6_ADDRESS=$(curl -s -6 ${SOURCE_OF_PUBLIC_IP_ADDRESS})
+    #PUBLIC_IPV6_ADDRESS=$(curl -s -6 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
     #
     # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
     # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址

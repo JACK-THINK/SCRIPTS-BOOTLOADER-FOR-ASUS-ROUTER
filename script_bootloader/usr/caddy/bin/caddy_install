@@ -142,6 +142,13 @@ then
         # 配置caddy
         echo -e "0.0.0.0:2015 {\n    root ${SBL_SITE}/\n}" > ${PRIVATE_ETC}/Caddyfile
         #
+        # Configure monit
+        # 配置monit
+        cp ${PRIVATE_ETC}/monit.d/caddy ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/caddy
+        mv ${SBL_MONITD}/caddy ${SBL_MONITD}/caddy.on
+        monit reload
+        #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
         exit 0

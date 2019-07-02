@@ -66,10 +66,12 @@ then
         #
         # Configure monit
         # 配置monit
+        cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_https ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_v2ray ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent ${SBL_MONITD}/
         cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softether_vpn ${SBL_MONITD}/
+        chmod 600 ${SBL_MONITD}/fw_filter_INPUT_https
         chmod 600 ${SBL_MONITD}/fw_filter_INPUT_v2ray
         chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_ipsec
         chmod 600 ${SBL_MONITD}/fw_nat_PREROUTING_qbittorrent
