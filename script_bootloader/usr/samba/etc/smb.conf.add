@@ -30,6 +30,7 @@
         use sendfile = yes
         strict sync = yes
         sync always = no
+        pid directory = /var/run/
 
 
 
