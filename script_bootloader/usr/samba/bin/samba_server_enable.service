@@ -51,6 +51,13 @@ then
     # 启动smbd
     /opt/sbin/smbd -D > /dev/null 2>&1
     #
+    # Wait until smbd runs well
+    # 等待直至smbd运行正常
+    while  [ -z "$(cat /var/run/smbd.pid 2> /dev/null)" ]
+    do
+        sleep 5
+    done
+    #
     # Start wsdd2
     # 启动wsdd2
     if [ -e /usr/sbin/wsdd2 ]
