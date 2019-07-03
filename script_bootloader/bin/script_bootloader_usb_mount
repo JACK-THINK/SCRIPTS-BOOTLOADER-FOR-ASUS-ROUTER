@@ -45,8 +45,8 @@ logger -st "($(basename $0))" $$ "*--------- BOOTING UP SCRIPTS-BOOTLOADER-FOR-A
 #
 # Check it out every 30 seconds in 5 minutes
 # 每30秒检查1次，最多执行10次，最多用时5分钟
-I=1
-while [ ${I} -le 10 ]
+COUNT=1
+while [ ${COUNT} -le 10 ]
 do
     SUCCESS_START_SERVICE=$(nvram get success_start_service)
     if [ "${SUCCESS_START_SERVICE}" == "1" ]
@@ -54,7 +54,7 @@ do
         logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS READY *****"
         break
     fi
-    i=$((${I}+1))
+    COUNT=$((${COUNT}+1))
     logger -st "($(basename $0))" $$ "***** ${ROUTER_MODEL} IS NOT READY, WAIT 30 SECONDS MORE *****"
     sleep 30
 done
