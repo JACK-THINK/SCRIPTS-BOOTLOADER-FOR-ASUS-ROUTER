@@ -1,4 +1,4 @@
-check program FW_PORT_OPENING_HTTPS with path "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_https_enable.service" every 4 cycles
+check program FW_PORT_OPENING_HTTPS with path "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_https_enable.service" every 6 cycles
     start program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_https_enable.service"
     stop program = "/opt/script_bootloader/usr/sbl-firewalld/bin/fw_filter_INPUT_https_disable.service"
     if status == 1 then alert

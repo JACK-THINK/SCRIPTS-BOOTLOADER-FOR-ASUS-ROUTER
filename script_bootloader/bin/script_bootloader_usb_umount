@@ -88,7 +88,10 @@ then
     # Terminate all the services managed by monit
     # 结束所有由程序monit管理服务
     monit stop all
+    sleep 5
+    #
     monit quit
+    sleep 5
 fi
 #
 # Create ${SERVICES_TO_DISABLE} as the list of running services that should be disabled and store variable USB_MOUNT_POINT in it
@@ -107,6 +110,8 @@ chmod a+x ${SERVICES_TO_DISABLE}
 # Load ${SERVICES_TO_DISABLE}
 # 加载文件${SERVICES_TO_DISABLE}
 ${SERVICES_TO_DISABLE}
+#
+sleep 5
 #
 # Remove ${SERVICES_TO_DISABLE}
 # 删除文件${SERVICES_TO_DISABLE}
@@ -154,6 +159,8 @@ then
     # Unmount /tmp/home/
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
     umount /tmp/home/
+    sleep 5
+    #
     logger -st "($(basename $0))" $$ "***** HOME HAS BEEN UNMOUNTED *****"
 fi
 #

@@ -49,7 +49,7 @@ then
     #
     # Start smbd
     # 启动smbd
-    /opt/sbin/smbd -D > /dev/null 2>&1
+    /opt/sbin/smbd -D
     #
     # Wait until smbd runs well
     # 等待直至smbd运行正常
@@ -69,8 +69,8 @@ then
         echo ${WSDD2_PID} > /var/run/wsdd2.pid
         #
     else
-        # If /usr/sbin/wsdd2 doesn't exist, invoke /usr/sbin/wsdd2
-        # 如果文件/usr/sbin/wsdd2不存在，则执行/usr/sbin/wsdd2
+        # If /usr/sbin/wsdd2 doesn't exist, invoke /opt/bin/wsdd2
+        # 如果文件/usr/sbin/wsdd2不存在，则执行/opt/bin/wsdd2
         /opt/bin/wsdd2 -d -w
         WSDD2_PID=$(pidof wsdd2)
         echo ${WSDD2_PID} > /var/run/wsdd2.pid

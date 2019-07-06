@@ -158,6 +158,7 @@ then
     # Mount ${USB_MOUNT_POINT}/home/ to /tmp/home/
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
     mount ${USB_MOUNT_POINT}/home/ /tmp/home/
+    sleep 5
     logger -st "($(basename $0))" $$ "***** HOME HAS BEEN MOUNTED *****"
     #
 else
@@ -208,6 +209,7 @@ then
     # 如果用户自定义程序列表存在，则执行
     logger -st "($(basename $0))" $$ "***** LOAD THE LIST OF USER'S CUSTOM SCRIPTS *****"
     ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    sleep 5
     #
 else
     # Do nothing but prompt the user

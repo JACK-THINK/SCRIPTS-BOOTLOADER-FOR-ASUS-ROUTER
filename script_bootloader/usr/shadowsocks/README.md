@@ -33,8 +33,8 @@
 | 权限      | 名称                 | 属性     | 说明                                       |
 | --------- | -------------------- | -------- | ------------------------------------------ |
 | rwxrwxrwx | shadowsocks_install         | 普通文件 | 安装文件                                   |
-| rwxrwxrwx | ss_fw_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_fw_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | fw_ss_transparent_proxy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | fw_ss_transparent_proxy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_local_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ss_local_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_redir_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |

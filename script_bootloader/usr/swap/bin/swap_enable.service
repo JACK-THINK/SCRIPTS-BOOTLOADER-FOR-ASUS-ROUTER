@@ -49,6 +49,7 @@ then
     # Load swapfile.var
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
     swapon ${PRIVATE_VAR}/swapfile.var
+    sleep 5
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

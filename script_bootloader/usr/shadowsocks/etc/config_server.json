@@ -1,0 +1,10 @@
+{
+    "server":"0.0.0.0",
+    "server_port":"18145",
+    "password":"",
+    "method":"aes-256-gcm",
+    "timeout":60,
+    "mode":"tcp_and_udp",
+    "plugin":"obfs-server",
+    "plugin_opts":"obfs=http"
+}

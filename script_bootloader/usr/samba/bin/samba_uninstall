@@ -28,9 +28,9 @@ SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 #
-# SBL_MONITD: The directory which contains all the configuration files used by monit
-# 设置自定义变量SBL_MONITD为monit配置文件目录
-SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -104,7 +104,7 @@ then
         #
         # Configure monit
         # 配置monit
-        rm -f ${SBL_MONITD}/samba_server.on
+        rm -f ${ENTWARE_MONITD}/samba_server.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

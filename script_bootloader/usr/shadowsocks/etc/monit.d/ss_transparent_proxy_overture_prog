@@ -1,0 +1,4 @@
+check program SS_TRANSPARENT_PROXY_OVERTURE with path "/opt/script_bootloader/usr/shadowsocks/bin/ss_transparent_proxy_overture_enable_prog.service" every 6 cycles
+    start program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_transparent_proxy_overture_enable_prog.service" with timeout 120 seconds
+    stop program = "/opt/script_bootloader/usr/shadowsocks/bin/ss_transparent_proxy_overture_disable_prog.service" with timeout 120 seconds
+    if status == 1 then alert

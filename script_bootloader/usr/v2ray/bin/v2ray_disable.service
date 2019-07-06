@@ -45,7 +45,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE V2RAY ##########
 #
-#ps | grep -E 'v2ray.*config\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
+#ps | grep -E 'v2ray.*config_proxy\.json' | grep -v 'grep' | awk '{print $1}' | xargs kill
 kill $(cat ${V2RAY_PID_FILE}) > /dev/null 2>&1
 rm -f ${V2RAY_PID_FILE} > /dev/null 2>&1
 #

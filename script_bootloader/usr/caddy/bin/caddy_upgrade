@@ -34,7 +34,7 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest caddy
 # 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/mholt/caddy/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/caddyserver/caddy/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
 #
 # CURRENT_VERSION: Version of the current caddy
 # 设置自定义变量CURRENT_VERSION为当前caddy的版本号
@@ -76,7 +76,7 @@ esac
 #
 # DOWNLOAD_LINK: Download link of the latest caddy
 # 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
-DOWNLOAD_LINK="https://github.com/mholt/caddy/releases/download/${LATEST_VERSION}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
+DOWNLOAD_LINK="https://github.com/caddyserver/caddy/releases/download/${LATEST_VERSION}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称

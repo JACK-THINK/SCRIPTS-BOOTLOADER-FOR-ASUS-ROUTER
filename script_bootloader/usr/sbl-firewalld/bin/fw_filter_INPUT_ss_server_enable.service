@@ -23,38 +23,23 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="SOFTETHER_VPN"
+SERVICE_NAME="SS_SERVER"
 #
 # TABLE_NAME: Name of the table
 # 设置自定义变量TABLE_NAME为防火墙表名
-TABLE_NAME="nat"
+TABLE_NAME="filter"
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME="PREROUTING"
+BUILT_IN_CHAIN_NAME="INPUT"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="SOFTETHER_VPN"
-#
-# TARGET_SERVER_IP: IP address of the target server
-# 设置自定义变量TARGET_SERVER_IP为目标服务器IP地址
-TARGET_SERVER_IP=""
+USER_DEFINED_CHAIN_NAME="SS_SERVER"
 #
 # Local Ports
 # 本地端口
-LOCAL_PORT_1="15605"
-#
-# Destination Ports
-# 目的端口
-DESTINATION_PORT_1="15605"
-#
-########## END ##########
-#
-#
-########## GET WAN IP ADDRESS ##########
-#
-WAN_IP_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
+LOCAL_PORT_1="18145"
 #
 ########## END ##########
 #
@@ -75,40 +60,31 @@ then
     then
         TEST_REFERENCE=true
         #
-        # Get ${DESTINATION_IP_ADDRESS} from ${BUILT_IN_CHAIN_NAME}
-        # 从${BUILT_IN_CHAIN_NAME}中获取${DESTINATION_IP_ADDRESS}
-        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME} | awk '{print $9}')
-        #
-        # TEST_IP: Check if ${DESTINATION_IP_ADDRESS} is equivolent to ${WAN_IP_ADDRESS}
-        # TEST_IP: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-        if [ "${DESTINATION_IP_ADDRESS}" == "${WAN_IP_ADDRESS}" ]
+        # TEST_TCP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
+        # TEST_TCP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
+        CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_1}")
+        if [ ! -z "${CHECK_RULE}" ]
         then
-            TEST_IP=true
-            #
-            # TEST_TCP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
-            # TEST_TCP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-            CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_1}")
-            if [ ! -z "${CHECK_RULE}" ]
-            then
-                TEST_TCP_LOCAL_PORT_1=true
-            else
-                TEST_TCP_LOCAL_PORT_1=false
-                echo -e "ERROR: ${LOCAL_PORT_1}/TCP"
-            fi
-            #
+            TEST_TCP_LOCAL_PORT_1=true
         else
-            TEST_IP=false
-            echo -e "ERROR: NO IP CONSISTENCY"
+            TEST_TCP_LOCAL_PORT_1=false
+            echo -e "ERROR: ${LOCAL_PORT_1}/TCP"
+        fi
+        #
+        # TEST_UDP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
+        # TEST_UDP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
+        CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${LOCAL_PORT_1}")
+        if [ ! -z "${CHECK_RULE}" ]
+        then
+            TEST_UDP_LOCAL_PORT_1=true
+        else
+            TEST_UDP_LOCAL_PORT_1=false
+            echo -e "ERROR: ${LOCAL_PORT_1}/UDP"
         fi
         #
     else
         #
         TEST_REFERENCE=false
-        #
-        # Make ${DESTINATION_IP_ADDRESS} 'NULL'
-        # 如果未被引用，则令${DESTINATION_IP_ADDRESS}为'NULL'
-        DESTINATION_IP_ADDRESS='NULL'
-        #
         echo -e "ERROR: ${USER_DEFINED_CHAIN_NAME} IS NOT REFERENCED BY ${BUILT_IN_CHAIN_NAME}"
     fi
     #
@@ -127,19 +103,18 @@ fi
 # 检查防火墙规则是否已被加载
 if ${TEST_USER_DEFINED_CHAIN_NAME} && \
 ${TEST_REFERENCE} && \
-${TEST_IP} && \
-${TEST_TCP_LOCAL_PORT_1}
+${TEST_TCP_LOCAL_PORT_1} && ${TEST_UDP_LOCAL_PORT_1}
 then
     # Everything is OK
     # 全部规则完好
-    echo -e "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP\tTO\t${TARGET_SERVER_IP}:${DESTINATION_PORT_1}/TCP"
+    echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/BOTH"
     #
     exit 0
     #
 else
     # Delete all the relevant rules first and reload them again
     # 如果有任意规则不存在，则删除全部规则，然后重新加载
-    ${PRIVATE_BIN}/fw_nat_PREROUTING_softether_vpn_disable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/fw_filter_INPUT_ss_server_disable.service > /dev/null 2>&1
     #
     # Create chain ${USER_DEFINED_CHAIN_NAME}
     # 创建${USER_DEFINED_CHAIN_NAME}链
@@ -147,13 +122,17 @@ else
     #
     # Open ${LOCAL_PORT_1}/tcp
     # 打开${LOCAL_PORT_1}/tcp
-    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_1} -j DNAT --to-destination ${TARGET_SERVER_IP}:${DESTINATION_PORT_1}
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m tcp -p tcp --dport ${LOCAL_PORT_1} -j ACCEPT
+    #
+    # Open ${LOCAL_PORT_1}/udp
+    # 打开${LOCAL_PORT_1}/udp
+    iptables -t ${TABLE_NAME} -I ${USER_DEFINED_CHAIN_NAME} 1 -m udp -p udp --dport ${LOCAL_PORT_1} -j ACCEPT
     #
     # Enable chain ${USER_DEFINED_CHAIN_NAME}
     # 启用${USER_DEFINED_CHAIN_NAME}链
-    iptables -t ${TABLE_NAME} -I ${BUILT_IN_CHAIN_NAME} 1 -d ${WAN_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME}
+    iptables -t ${TABLE_NAME} -I ${BUILT_IN_CHAIN_NAME} 1 -j ${USER_DEFINED_CHAIN_NAME}
     #
-    echo "LOAD PORT FORWARDING RULE ${SERVICE_NAME}"
+    echo "LOAD PORT OPENING RULE ${SERVICE_NAME}"
     #
     exit 1
     #

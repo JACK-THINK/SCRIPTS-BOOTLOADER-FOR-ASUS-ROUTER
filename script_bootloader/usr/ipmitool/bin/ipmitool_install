@@ -20,10 +20,6 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
-# SBL_MONITD: The directory which contains all the configuration files used by monit
-# 设置自定义变量SBL_MONITD为monit配置文件目录
-SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
-#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT=${SBL_SYS_USR}/ipmitool

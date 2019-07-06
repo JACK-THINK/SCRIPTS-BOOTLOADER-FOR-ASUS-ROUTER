@@ -23,7 +23,7 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # SERVER_DOMAIN: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
-SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config.json | grep 'address' | awk -F '"' '{print $4}')
+SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | grep 'address' | awk -F '"' '{print $4}')
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
@@ -35,7 +35,7 @@ LOCAL_PORT="45154"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="V2RAY_TRANSPARENT"
+USER_DEFINED_CHAIN_NAME="V2RAY_TPROXY"
 #
 # INTRANET_SET: Set of intranet
 # 设置自定义变量INTRANET_SET为内网地址集
@@ -59,7 +59,7 @@ XT_TPROXY=$(find / -name "xt_TPROXY.ko")
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY_FW"
+SERVICE_NAME="FW_V2RAY_TRANSPARENT_PROXY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能

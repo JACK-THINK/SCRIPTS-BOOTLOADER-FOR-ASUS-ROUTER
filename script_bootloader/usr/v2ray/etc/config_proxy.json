@@ -444,8 +444,7 @@
                 "uplinkOnly":2,
                 "downlinkOnly":5,
                 "statsUserUplink":false,
-                "statsUserDownlink":false,
-                "bufferSize":1024
+                "statsUserDownlink":false
             }
         }
     }

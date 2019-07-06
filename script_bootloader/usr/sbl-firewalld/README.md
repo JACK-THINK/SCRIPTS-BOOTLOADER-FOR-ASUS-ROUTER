@@ -24,8 +24,8 @@
 | 权限      | 名称                                | 属性     | 说明               |
 | --------- | ---------------------------------   | -------- | ------------------ |
 | rwxrwxrwx | sbl-firewalld_install | 普通文件 | 安装文件 |
-| rwxrwxrwx | fw_filter_INPUT_v2ray_enable.service | 普通文件 | 防火墙打开端口规则启用程序 |
-| rwxrwxrwx | fw_filter_INPUT_v2ray_disable.service | 普通文件 | 防火墙打开端口规则禁用程序 |
+| rwxrwxrwx | fw_filter_INPUT_v2ray_proxy_enable.service | 普通文件 | 防火墙打开端口规则启用程序 |
+| rwxrwxrwx | fw_filter_INPUT_v2ray_proxy_disable.service | 普通文件 | 防火墙打开端口规则禁用程序 |
 | rwxrwxrwx | fw_nat_PREROUTING_ipsec_enable.service | 普通文件 | 防火墙端口转发规则启用程序 |
 | rwxrwxrwx | fw_nat_PREROUTING_ipsec_disable.service | 普通文件 | 防火墙端口转发规则禁用程序 |
 | rwxrwxrwx | fw_nat_PREROUTING_l2tp_enable.service | 普通文件 | 防火墙端口转发规则启用程序 |
@@ -53,8 +53,8 @@
 
 | 插件文件                          | 插件调用者                   |
 | --------------------------------- | ---------------------------- |
-| fw_filter_INPUT_v2ray_enable.service  | monit.d/fw_filter_INPUT_v2ray |
-| fw_filter_INPUT_v2ray_disable.service | fw_filter_INPUT_v2ray_enable.service和monit.d/fw_filter_INPUT_v2ray |
+| fw_filter_INPUT_v2ray_proxy_enable.service  | monit.d/fw_filter_INPUT_v2ray |
+| fw_filter_INPUT_v2ray_proxy_disable.service | fw_filter_INPUT_v2ray_proxy_enable.service和monit.d/fw_filter_INPUT_v2ray |
 | fw_nat_PREROUTING_ipsec_enable.service  | monit.d/fw_nat_PREROUTING_ipsec |
 | fw_nat_PREROUTING_ipsec_disable.service | fw_nat_PREROUTING_ipsec_enable.service和monit.d/fw_nat_PREROUTING_ipsec |
 | fw_nat_PREROUTING_l2tp_enable.service  | monit.d/fw_nat_PREROUTING_l2tp |

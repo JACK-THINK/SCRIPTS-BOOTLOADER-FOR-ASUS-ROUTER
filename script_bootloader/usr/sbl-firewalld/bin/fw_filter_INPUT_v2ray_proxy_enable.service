@@ -23,7 +23,7 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="V2RAY_PROXY"
 #
 # TABLE_NAME: Name of the table
 # 设置自定义变量TABLE_NAME为防火墙表名
@@ -35,7 +35,7 @@ BUILT_IN_CHAIN_NAME="INPUT"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="V2RAY"
+USER_DEFINED_CHAIN_NAME="V2RAY_PROXY"
 #
 # Local Ports
 # 本地端口
@@ -164,7 +164,7 @@ then
 else
     # Delete all the relevant rules first and reload them again
     # 如果有任意规则不存在，则删除全部规则，然后重新加载
-    ${PRIVATE_BIN}/fw_filter_INPUT_v2ray_disable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/fw_filter_INPUT_v2ray_proxy_disable.service > /dev/null 2>&1
     #
     # Create chain ${USER_DEFINED_CHAIN_NAME}
     # 创建${USER_DEFINED_CHAIN_NAME}链

@@ -48,7 +48,7 @@ then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
     # Load the defined external program
     # 如果两个文件都存在，则执行
-    nohup ${PRIVATE_USR}/vlmcsd -p /var/run/vlmcsd.pid &> /dev/null &
+    ${PRIVATE_USR}/vlmcsd -p /var/run/vlmcsd.pid
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

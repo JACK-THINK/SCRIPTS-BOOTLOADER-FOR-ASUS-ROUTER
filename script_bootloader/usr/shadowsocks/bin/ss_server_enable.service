@@ -48,7 +48,8 @@ then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
     # Load ss-server
     # 如果文件${PRIVATE_ETC}/config_server.json存在，则执行
-    nohup ss-server -c ${PRIVATE_ETC}/config_server.json -f /var/run/ss_server.pid &> /dev/null &
+    ss-server -c ${PRIVATE_ETC}/config_server.json -f /var/run/ss_server.pid
+    #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

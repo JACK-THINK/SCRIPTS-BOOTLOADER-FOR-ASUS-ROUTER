@@ -84,6 +84,7 @@ then
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
     mount ${USB_MOUNT_POINT} /opt
+    sleep 5
     #
 else
     # Do nothing but prompt the user
@@ -102,6 +103,7 @@ then
     # Start ${ENTWARE_ENVIRONMENT}
     # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
     ${ENTWARE_ENVIRONMENT} start
+    sleep 5
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

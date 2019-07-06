@@ -1,0 +1,131 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# V2RAY_PID_FILE: The path to v2ray.pid
+# 设置自定义变量V2RAY_PID_FILE为文件v2ray.pid的绝对路径
+V2RAY_PID_FILE=/var/run/v2ray.pid
+#
+# SERVER_DOMAIN: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
+SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | grep 'address' | awk -F '"' '{print $4}')
+#
+# SERVER_IP: Domain of the V2RAY-SERVER
+# 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+#
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service | awk -F '"' '{print $2}')
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# TEST_V2RAY: Test for v2ray process
+# 设置环境变量TEST_V2RAY为v2ray进程测试值
+# 特殊说明：monit不能检查过长的字符串，故不能使用TEST_V2RAY=$(ps | grep -E 'v2ray.*config_proxy\.json' | grep -v 'grep')，必须使用PID法解决该问题
+if [ -f "${V2RAY_PID_FILE}" ]
+then
+    PID_NUM=$(cat ${V2RAY_PID_FILE})
+    if [ ! -z "$(ps | grep -E ${PID_NUM} | grep -v 'grep')" ]
+    then
+        TEST_V2RAY=true
+    else
+        TEST_V2RAY=false
+    fi
+else
+    TEST_V2RAY=false
+fi
+#
+# TEST_FW: Test for firewall rules
+# 设置环境变量TEST_FW为防火墙规则测试值
+# 特殊说明：必须避免双引号多重嵌套
+CHECK_RULES=$(iptables -t nat -nvL PREROUTING | grep -E "${USER_DEFINED_CHAIN_NAME}")
+if [ ! -z "${CHECK_RULES}" ]
+then
+    TEST_FW=true
+else
+    TEST_FW=false
+fi
+#
+########## END ##########
+#
+#
+########## ENABLE V2RAY AND V2RAY-FW ##########
+#
+# Check if ${PRIVATE_BIN}/v2ray_enable.service and ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service has been loaded
+# 检查${PRIVATE_BIN}/v2ray_enable.service和${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service是否被加载
+if ${TEST_V2RAY} && ${TEST_FW}
+then
+    # Everything is OK
+    # 满足全部条件
+    echo -e "TRANSPARENT PROXY IS ON"
+    #
+    exit 0
+else
+    # Stop all the relevant processes
+    # 如果有任意条件不符，则停止全部相关进程
+    ${PRIVATE_BIN}/v2ray_transparent_proxy_disable_prog.service > /dev/null 2>&1
+    #
+    echo -e "LOAD TRANSPARENT PROXY"
+    #
+    # Update /etc/hosts
+    # 更新文件/etc/hosts
+    echo "${SERVER_IP} ${SERVER_DOMAIN}" >> /etc/hosts
+    #
+    # Start all the relevant processes
+    # 启动全部相关进程
+    ${PRIVATE_BIN}/v2ray_enable.service > /dev/null 2>&1
+    sleep 2
+    ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service > /dev/null 2>&1
+    sleep 2
+    #
+    # Update DNS server
+    # 更新DNS服务器
+    killall -q -1 dnsmasq > /dev/null 2>&1
+    sleep 30
+    #
+    #
+    ########## ENABLE CRONTAB ##########
+    #
+    # Enable crontab because something is wrong with the poll time of monit
+    # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
+    #echo "*/5 * * * * ${PRIVATE_BIN}/v2ray_transparent_proxy_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
+    #chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+    #
+    # Create status file
+    # 创建状态文件
+    #touch /var/run/v2ray_transparent_proxy_enable
+    #
+    ########## END ##########
+    #
+    #
+    exit 1
+    #
+fi
+#
+########## END ##########

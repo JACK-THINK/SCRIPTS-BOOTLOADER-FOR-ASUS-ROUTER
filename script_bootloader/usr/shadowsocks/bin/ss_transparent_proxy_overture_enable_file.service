@@ -47,11 +47,11 @@ SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+BUILT_IN_CHAIN_NAME=$(grep '^BUILT_IN_CHAIN_NAME=' ${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service | awk -F '"' '{print $2}')
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/ss_fw_enable.service | awk -F '"' '{print $2}')
+USER_DEFINED_CHAIN_NAME=$(grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service | awk -F '"' '{print $2}')
 #
 # DNS_PORT: Local port of ss-tunnel
 # 设置自定义变量DNS_PORT为ss-tunnel的本地端口
@@ -122,8 +122,8 @@ fi
 #
 ########## ENABLE SS-REDIR, SS-LOCAL, OVERTURE AND SS-FW ##########
 #
-# Check if ${PRIVATE_BIN}/ss_redir_enable.service, ${PRIVATE_BIN}/ss_local_enable.service, overture and ${PRIVATE_BIN}/ss_fw_enable.service have been loaded
-# 检查${PRIVATE_BIN}/ss_redir_enable.service，${PRIVATE_BIN}/ss_local_enable.service，overture和${PRIVATE_BIN}/ss_fw_enable.service是否被加载
+# Check if ${PRIVATE_BIN}/ss_redir_enable.service, ${PRIVATE_BIN}/ss_local_enable.service, overture and ${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service have been loaded
+# 检查${PRIVATE_BIN}/ss_redir_enable.service，${PRIVATE_BIN}/ss_local_enable.service，overture和${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service是否被加载
 if ${TEST_SS_REDIR} && ${TEST_SS_LOCAL} && ${TEST_OVERTURE} && ${TEST_FW}
 then
     # Everything is OK
@@ -134,7 +134,7 @@ then
 else
     # Stop all the relevant processes
     # 如果有任意条件不符，则停止全部相关进程
-    ${PRIVATE_BIN}/ss_transparent_proxy_overture_disable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/ss_transparent_proxy_overture_disable_file.service > /dev/null 2>&1
     #
     echo -e "LOAD TRANSPARENT PROXY"
     #
@@ -150,7 +150,7 @@ else
     sleep 2
     ${SBL_SYS_USR}/overture/bin/overture_enable.service > /dev/null 2>&1
     sleep 2
-    ${PRIVATE_BIN}/ss_fw_enable.service > /dev/null 2>&1
+    ${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service > /dev/null 2>&1
     sleep 2
     #
     # Update DNS server
@@ -165,12 +165,12 @@ else
     #
     # Enable crontab because something is wrong with the poll time of monit
     # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
-    echo "*/5 * * * * ${PRIVATE_BIN}/ss_transparent_proxy_overture_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
+    echo "*/5 * * * * ${PRIVATE_BIN}/ss_transparent_proxy_overture_enable_file.service" >> /var/spool/cron/crontabs/${ADMINUSER}
     chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
     #
     # Create status file
     # 创建状态文件
-    touch /var/run/ss_transparent_proxy_overture_enable
+    touch /var/run/ss_transparent_proxy_overture_enable_file
     #
     ########## END ##########
     #

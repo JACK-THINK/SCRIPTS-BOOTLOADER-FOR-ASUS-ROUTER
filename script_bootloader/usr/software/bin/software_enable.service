@@ -13,6 +13,30 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ENTWARE_SBIN: The directory which contains all the priviliged executable files with installed by Entware
+# 设置自定义变量ENTWARE_SBIN为Entware安装的特权可执行文件目录
+ENTWARE_SBIN=${USB_MOUNT_POINT}/sbin
+#
+# ENTWARE_TMP: The directory which contains all the temporary files installed by Entware
+# 设置自定义变量ENTWARE_TMP为Entware安装的临时文件目录
+ENTWARE_TMP=${USB_MOUNT_POINT}/tmp
+#
+# ENTWARE_USR: The directory which contains all the external software resources installed by Entware
+# 设置自定义变量ENTWARE_USR为Entware安装的外部软件资源目录
+ENTWARE_USR=${USB_MOUNT_POINT}/usr
+#
+# ENTWARE_VAR: The directory which contains all the variable files installed by Entware
+# 设置自定义变量ENTWARE_VAR为Entware安装的可变文件目录
+ENTWARE_VAR=${USB_MOUNT_POINT}/var
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT=${SBL_SYS_USR}/software

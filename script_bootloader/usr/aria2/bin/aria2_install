@@ -20,9 +20,9 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
-# SBL_MONITD: The directory which contains all the configuration files used by monit
-# 设置自定义变量SBL_MONITD为monit配置文件目录
-SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -108,9 +108,9 @@ then
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/aria2 ${SBL_MONITD}/
-        chmod 600 ${SBL_MONITD}/aria2
-        mv ${SBL_MONITD}/aria2 ${SBL_MONITD}/aria2.on
+        cp ${PRIVATE_ETC}/monit.d/aria2 ${ENTWARE_MONITD}/
+        chmod 600 ${ENTWARE_MONITD}/aria2
+        mv ${ENTWARE_MONITD}/aria2 ${ENTWARE_MONITD}/aria2.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

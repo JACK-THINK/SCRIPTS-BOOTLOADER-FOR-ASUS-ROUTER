@@ -65,9 +65,9 @@ then
         touch ${PRIVATE_VAR}/session.dat
     fi
     #
-    nohup aria2c --conf-path=${PRIVATE_ETC}/aria2.conf &> /dev/null &
+    aria2c --conf-path=${PRIVATE_ETC}/aria2.conf --daemon true
     sleep 5
-    PID=$(ps | grep 'aria2c' | grep -v 'grep' | awk '{print $1}')
+    PID=$(pidof aria2c)
     echo ${PID} > ${ARIA2_PID_FILE}
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"

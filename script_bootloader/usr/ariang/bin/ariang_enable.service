@@ -57,10 +57,8 @@ then
     #
     # Load ariang
     # 如果文件${PRIVATE_ETC}/ariang_lighttpd.conf存在，则执行
-    nohup lighttpd -f ${PRIVATE_ETC}/ariang_lighttpd.conf &> /dev/null &
-    #sleep 5
-    #PID=$(ps | grep 'ariang' | grep -v 'grep' | awk '{print $1}')
-    #echo ${PID} > ${ARIANG_PID_FILE}
+    lighttpd -f ${PRIVATE_ETC}/ariang_lighttpd.conf
+    sleep 5
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #

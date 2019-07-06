@@ -37,6 +37,8 @@ then
     # Stop ${ENTWARE_ENVIRONMENT}
     # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
     ${ENTWARE_ENVIRONMENT} stop
+    sleep 5
+    #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
@@ -65,6 +67,8 @@ then
     # If it is a directory, then unmount /opt
     # 如果是目录，则卸载目录/opt
     umount /opt
+    #
+    sleep 5
     #
 else
     # Do nothing but prompt the user

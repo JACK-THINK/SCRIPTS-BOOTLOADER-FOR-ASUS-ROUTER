@@ -49,15 +49,15 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## CHECK AND ENABLE V2RAY ##########
 #
-# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config.json exist
-# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config.json是否存在
-if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config.json" ]
+# Check if ${PRIVATE_USR}/v2ray and ${PRIVATE_ETC}/config_proxy.json exist
+# 检查文件${PRIVATE_USR}/v2ray和文件${PRIVATE_ETC}/config_proxy.json是否存在
+if [ -e "${PRIVATE_USR}/v2ray" ] && [ -e "${PRIVATE_ETC}/config_proxy.json" ]
 then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
     #
     # Load ${PRIVATE_USR}/v2ray
     # 如果文件${PRIVATE_USR}/v2ray存在，则执行
-    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config.json &> /dev/null &
+    nohup ${PRIVATE_USR}/v2ray -config ${PRIVATE_ETC}/config_proxy.json &> /dev/null &
     PID=$(echo $!)
     echo ${PID} > ${V2RAY_PID_FILE}
     #

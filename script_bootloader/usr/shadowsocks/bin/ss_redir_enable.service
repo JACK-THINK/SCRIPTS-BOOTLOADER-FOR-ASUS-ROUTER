@@ -48,7 +48,8 @@ then
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
     # Load ss-redir
     # 如果文件${PRIVATE_ETC}/config_redir.json存在，则执行
-    nohup ss-redir -c ${PRIVATE_ETC}/config_redir.json -f /var/run/ss_redir.pid &> /dev/null &
+    ss-redir -c ${PRIVATE_ETC}/config_redir.json -f /var/run/ss_redir.pid
+    #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else

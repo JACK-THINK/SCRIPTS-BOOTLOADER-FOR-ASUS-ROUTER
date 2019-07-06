@@ -57,9 +57,9 @@ SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 # 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
 SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 #
-# SBL_MONITD: The directory which contains all the configuration files used by monit
-# 设置自定义变量SBL_MONITD为monit配置文件目录
-SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 ########## END ##########
 #

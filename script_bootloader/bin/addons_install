@@ -32,10 +32,6 @@ SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 #
-# SBL_MONITD: The directory which contains all the configuration files used by monit
-# 设置自定义变量SBL_MONITD为monit配置文件目录
-SBL_MONITD=${USB_MOUNT_POINT}/etc/monit.d
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="ADDONS"
