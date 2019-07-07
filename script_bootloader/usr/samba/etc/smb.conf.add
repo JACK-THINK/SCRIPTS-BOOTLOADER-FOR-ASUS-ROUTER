@@ -17,6 +17,8 @@
         browse list = yes
         veto files = /.AppleDB/.AppleDouble/.AppleDesktop/.DS_Store/Network Trash Folder/Temporary Items/TheVolumeSettingsFolder/.@__thumb/.@__desc/
         delete veto files = yes
+        dos charset = ASCII
+        unix charset = UTF8
         case sensitive = auto
         hide dot files = no
         csc policy = disable
@@ -30,8 +32,9 @@
         use sendfile = yes
         strict sync = yes
         sync always = no
-        pid directory = /var/run/
-
+        pid directory = /var/run
+        deadtime = 30
+        max connections = 5
 
 
 [ROUTER-SMB-SHARE]
