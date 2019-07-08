@@ -92,6 +92,18 @@ then
         # 安装wsdd2
         opkg install wsdd2
         #
+        # Configure dbus-daemon
+        # 配置dbus-daemon
+        mv /opt/etc/dbus-1/system.d/avahi-dbus.conf /opt/etc/dbus-1/system.d/avahi-dbus.conf.bak
+        sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/avahi-dbus.conf
+        cp ${PRIVATE_ETC}/dbus/avahi-dbus.conf /opt/etc/dbus-1/system.d/
+        chmod 644 /opt/etc/dbus-1/system.d/avahi-dbus.conf
+        #
+        mv /opt/share/dbus-1/system.conf /opt/share/dbus-1/system.conf.bak
+        sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/system.conf
+        cp ${PRIVATE_ETC}/dbus/system.conf /opt/share/dbus-1/
+        chmod 644 /opt/share/dbus-1/system.conf
+        #
         # Disable /opt/etc/init.d/S91smb
         # 禁用/opt/etc/init.d/S91smb
         mv /opt/etc/init.d/S91smb ${PRIVATE_ETC}/S91smb.bak
