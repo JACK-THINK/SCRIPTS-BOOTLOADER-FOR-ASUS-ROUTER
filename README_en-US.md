@@ -46,7 +46,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 2. Unplug all the USB flash drives from the router except the target one.
 
-3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How_to_Use](./How_to_Use.md).
+3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How_to_Use](./How_to_Use_en-US.md).
 
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
