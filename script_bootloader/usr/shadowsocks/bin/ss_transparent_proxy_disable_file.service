@@ -65,10 +65,10 @@ sleep 30
 #
 # Disable crontab because something is wrong with the poll time of monit
 # 因为monit的执行周期BUG，故禁用crontab进行进程周期执行
-sed -i '/ss_transparent_proxy_enable.service/d' /var/spool/cron/crontabs/${ADMINUSER}
+sed -i '/ss_transparent_proxy_enable_file.service/d' /var/spool/cron/crontabs/${ADMINUSER}
 #
 # Remove status file
 # 删除状态文件
-rm -f /var/run/ss_transparent_proxy_enable > /dev/null 2>&1
+rm -f /var/run/ss_transparent_proxy_enable_file > /dev/null 2>&1
 #
 ########## END ##########
