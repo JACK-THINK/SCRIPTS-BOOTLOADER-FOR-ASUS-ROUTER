@@ -114,12 +114,12 @@ else
     #
     # Enable crontab because something is wrong with the poll time of monit
     # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
-    #echo "*/5 * * * * ${PRIVATE_BIN}/v2ray_transparent_proxy_enable.service" >> /var/spool/cron/crontabs/${ADMINUSER}
+    #echo "*/5 * * * * ${PRIVATE_BIN}/v2ray_transparent_proxy_enable_file.service" >> /var/spool/cron/crontabs/${ADMINUSER}
     #chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
     #
     # Create status file
     # 创建状态文件
-    #touch /var/run/v2ray_transparent_proxy_enable
+    #touch /var/run/v2ray_transparent_proxy_enable_file
     #
     ########## END ##########
     #
