@@ -39,7 +39,7 @@ SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '
 #
 # SERVER_IP: Domain of the SS-SERVER
 # 设置自定义变量SERVER_IP为SS-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | sed -n '/Name/,+1p' | tail -n 1 | awk '{print $3}')
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名

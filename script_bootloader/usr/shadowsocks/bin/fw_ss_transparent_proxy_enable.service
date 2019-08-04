@@ -27,7 +27,7 @@ SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '
 #
 # SERVER_IP: Domain of the SS-SERVER
 # 设置自定义变量SERVER_IP为SS-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | sed -n '/Name/,+1p' | tail -n 1 | awk '{print $3}')
 #
 # LOCAL_PORT: Local port of the SS-REDIR
 # 设置自定义变量LOCAL_PORT为SS-REDIR的接收端口

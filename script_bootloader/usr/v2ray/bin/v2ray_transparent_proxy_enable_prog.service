@@ -35,7 +35,7 @@ SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | 
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | sed -n '/Name/,+1p' | tail -n 1 | awk '{print $3}')
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名

@@ -27,7 +27,7 @@ SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | 
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | tail -n 1 | awk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | sed -n '/Name/,+1p' | tail -n 1 | awk '{print $3}')
 #
 # LOCAL_PORT: Port of the V2RAY-DOKODEMO-DOOR
 # 设置自定义变量LOCAL_PORT为V2RAY-DOKODEMO-DOOR的接收端口
