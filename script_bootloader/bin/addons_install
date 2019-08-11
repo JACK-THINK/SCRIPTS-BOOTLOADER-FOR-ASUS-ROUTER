@@ -56,7 +56,7 @@ else
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons不存在，则执行
     echo -e "\033[1;41;37m***** ERROR: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons *****\033[0m\n\033[1;41;37m***** EXCLUDE SYSTEM COMPONENTS AND SPECIAL FLAGS INSTEAD *****\033[0m\n" | tee -a ${SBL_SYS_TMP}/addon_installation_log
     #
-    find ${SBL_SYS_USR} -name "*_install" | grep -vE '(development|entware|monit|swap|timezone|software|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addon_install_list
+    find ${SBL_SYS_USR} -name "*_install" | grep -vE '(development_tools|dnsmasq.d|entware|monit|swap|timezone|software|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addon_install_list
 fi
 #
 ########## END ##########

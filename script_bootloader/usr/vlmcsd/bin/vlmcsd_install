@@ -20,9 +20,17 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD=${ENTWARE_ETC}/dnsmasq.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -116,6 +124,34 @@ then
             logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
             exit 3
+        fi
+        #
+        # Check if ${PRIVATE_ETC}/dnsmasq.d exists
+        # 检查目录${PRIVATE_ETC}/dnsmasq.d是否存在
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            # Create ${PRIVATE_ETC}/dnsmasq.d
+            # 创建目录${PRIVATE_ETC}/dnsmasq.d
+            mkdir ${PRIVATE_ETC}/dnsmasq.d
+        fi
+        #
+        LOCAL_DOMAIN_A=$(sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)
+        LOCAL_DOMAIN_B=$(sed -n -e 's/^domain=//p' ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf)
+        #
+        if [ ! -z "${LOCAL_DOMAIN_A}" ]
+        then
+            LOCAL_DOMAIN="${LOCAL_DOMAIN_A}"
+            echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
+            cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            #
+        elif [ ! -z "${LOCAL_DOMAIN_B}" ]
+        then
+            LOCAL_DOMAIN="${LOCAL_DOMAIN_B}"
+            echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
+            cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            #
+        else
+            echo -ne "\033[1;41;37m***** ERROR: DOMAIN OF DNSMASQ IS MISSING *****\033[0m\n"
         fi
         #
         # Configure monit

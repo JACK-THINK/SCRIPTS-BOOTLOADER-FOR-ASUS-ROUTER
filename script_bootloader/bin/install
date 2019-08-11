@@ -75,7 +75,7 @@ sleep 10
 if [ -e "${SBL_SYS_BIN}/sys_install" ]
 then
     # Invoke ${SBL_SYS_BIN}/sys_install
-    # 如果${SBL_SYS_BIN}/sys_install存在，则执行${SBL_SYS_BIN}/sys_install
+    # 如果文件${SBL_SYS_BIN}/sys_install存在，则执行${SBL_SYS_BIN}/sys_install
     ${SBL_SYS_BIN}/sys_install
     #
     # Check if ${SBL_SYS_BIN}/sys_install returns 0
@@ -116,7 +116,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/swap/bin/swap_install" ]
 then
     # Invoke ${SBL_SYS_USR}/swap/bin/swap_install
-    # 如果${SBL_SYS_USR}/swap/bin/swap_install存在，则执行
+    # 如果文件${SBL_SYS_USR}/swap/bin/swap_install存在，则执行
     ${SBL_SYS_USR}/swap/bin/swap_install
     #
     # Check if ${SBL_SYS_USR}/swap/bin/swap_install returns 0
@@ -145,7 +145,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/swap/bin/swap_enable.service" ]
 then
     # Invoke ${SBL_SYS_USR}/swap/bin/swap_enable.service
-    # 如果${SBL_SYS_USR}/swap/bin/swap_enable.service存在，则执行
+    # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service存在，则执行
     ${SBL_SYS_USR}/swap/bin/swap_enable.service
     #
     # Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service returns 0
@@ -174,7 +174,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/entware/bin/entware_enable.service" ]
 then
     # Invoke ${SBL_SYS_USR}/entware/bin/entware_enable.service
-    # 如果${SBL_SYS_USR}/entware/bin/entware_enable.service存在，则执行
+    # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service存在，则执行
     ${SBL_SYS_USR}/entware/bin/entware_enable.service
     #
     # Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service returns 1
@@ -203,7 +203,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/entware/bin/entware_install" ]
 then
     # Invoke ${SBL_SYS_USR}/entware/bin/entware_install
-    # 如果${SBL_SYS_USR}/entware/bin/entware_install存在，则执行
+    # 如果文件${SBL_SYS_USR}/entware/bin/entware_install存在，则执行
     ${SBL_SYS_USR}/entware/bin/entware_install
     #
     # Check if ${SBL_SYS_USR}/entware/bin/entware_install returns 0
@@ -274,7 +274,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_install" ]
 then
     # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_install
-    # 如果${SBL_SYS_USR}/timezone/bin/timezone_install存在，则执行
+    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install存在，则执行
     ${SBL_SYS_USR}/timezone/bin/timezone_install
     #
     # Check if ${SBL_SYS_USR}/timezone/bin/timezone_install returns 0
@@ -303,7 +303,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" ]
 then
     # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
-    # 如果${SBL_SYS_USR}/timezone/bin/timezone_enable.service存在，则执行
+    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service存在，则执行
     ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
     #
     # Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service returns 0
@@ -332,7 +332,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_install" ]
 then
     # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_install
-    # 如果${SBL_SYS_USR}/development_tools/bin/development_tools_install存在，则执行
+    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_install存在，则执行
     ${SBL_SYS_USR}/development_tools/bin/development_tools_install
     #
     # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_install returns 0
@@ -361,9 +361,8 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service" ]
 then
     # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
-    # 如果${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service存在，则执行
+    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service存在，则执行
     ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
-    sed -i '/^#${SBL_SYS_USR}\/development_tools/s/#//' ${SBL_SYS_BIN}/list_of_user_custom_scripts
     #
     # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service returns 0
     # 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service的返回值是否为0
@@ -391,7 +390,7 @@ sleep 10
 if [ -e "${SBL_SYS_USR}/monit/bin/monit_install" ]
 then
     # Invoke ${SBL_SYS_USR}/monit/bin/monit_install
-    # 如果${SBL_SYS_USR}/monit/bin/monit_install存在，则执行
+    # 如果文件${SBL_SYS_USR}/monit/bin/monit_install存在，则执行
     ${SBL_SYS_USR}/monit/bin/monit_install
     #
     # Check if ${SBL_SYS_USR}/monit/bin/monit_install returns 0
@@ -421,6 +420,85 @@ sleep 10
 #
 sleep 10
 #
+# Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install exists
+# 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install是否存在
+if [ -e "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install
+    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install存在，则执行
+    ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install
+    #
+    # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install returns 0
+    # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 25
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 26
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service exists
+# 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service" ]
+then
+    # Invoke ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service
+    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service存在，则执行
+    ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service
+    #
+    # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service returns 0
+    # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 27
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 28
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_BIN}/list_of_user_custom_scripts exists
+# 检查文件${SBL_SYS_BIN}/list_of_user_custom_scripts是否存在
+if [ -e "${SBL_SYS_BIN}/list_of_user_custom_scripts" ]
+then
+    logger -st "($(basename $0))" $$ "***** LIST OF USER'S CUSTOM SCRIPTS EXISTS *****"
+    #
+    # Modify ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    # 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
+    sed -i '/^#${SBL_SYS_USR}\/development_tools/s/#//' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    sed -i '/^#${SBL_SYS_USR}\/dnsmasq.d/s/#//' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_BIN}/list_of_user_custom_scripts不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/list_of_user_custom_scripts *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 30
+fi
+#
+sleep 10
+#
 echo -e "\033[1;42;37m***** STAGE 2: SUCCEEDED *****\033[0m"
 #
 ########## END ##########
@@ -435,7 +513,7 @@ echo -e "\033[1;45;37m***** STAGE 3: INSTALL ADDONS *****\033[0m"
 if [ -e "${SBL_SYS_BIN}/addons_install" ]
 then
     # Invoke ${SBL_SYS_BIN}/addons_install
-    # 如果${SBL_SYS_BIN}/addons_install存在，则执行${SBL_SYS_BIN}/addons_install
+    # 如果文件${SBL_SYS_BIN}/addons_install存在，则执行${SBL_SYS_BIN}/addons_install
     ${SBL_SYS_BIN}/addons_install
     #
     # Check if ${SBL_SYS_BIN}/addons_install returns 0

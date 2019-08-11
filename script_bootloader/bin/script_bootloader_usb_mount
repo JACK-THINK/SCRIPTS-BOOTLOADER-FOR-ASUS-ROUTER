@@ -205,6 +205,7 @@ fi
 if [ -e "${SBL_SYS_BIN}/list_of_user_custom_scripts" ]
 then
     logger -st "($(basename $0))" $$ "***** LIST OF USER'S CUSTOM SCRIPTS EXISTS *****"
+    #
     # Load user's custom scripts
     # 如果用户自定义程序列表存在，则执行
     logger -st "($(basename $0))" $$ "***** LOAD THE LIST OF USER'S CUSTOM SCRIPTS *****"

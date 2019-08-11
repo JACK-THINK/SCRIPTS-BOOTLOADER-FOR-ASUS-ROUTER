@@ -1,0 +1,177 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD=${ENTWARE_ETC}/dnsmasq.d
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/dnsmasq.d
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="DNSMASQ.D"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL DNSMASQ ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Check if ${PRIVATE_ETC}/dnsmasq.d exists
+        # 检查目录${PRIVATE_ETC}/dnsmasq.d是否存在
+        if [ -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            # Copy ${PRIVATE_ETC}/dnsmasq.d to ${ENTWARE_DNSMASQD}
+            # 复制目录${PRIVATE_ETC}/dnsmasq.d至目录${ENTWARE_DNSMASQD}
+            cp -r ${PRIVATE_ETC}/dnsmasq.d ${ENTWARE_DNSMASQD}
+            #
+        else
+            # Create ${ENTWARE_DNSMASQD}
+            # 创建目录${ENTWARE_DNSMASQD}
+            mkdir ${ENTWARE_DNSMASQD}
+        fi
+        #
+        # Check if ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf exists
+        # 检查文件${ENTWARE_DNSMASQD}/dnsmasq_extended.conf是否存在
+        if [ ! -e "${ENTWARE_DNSMASQD}/dnsmasq_extended.conf" ]
+        then
+            # Create ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            # 如果文件${ENTWARE_DNSMASQD}/dnsmasq_extended.conf不存在，则执行
+            if [ -z "$(grep -e '^domain-needed' /etc/dnsmasq.conf)" ]
+            then
+                echo "domain-needed" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^bogus-priv' /etc/dnsmasq.conf)" ]
+            then
+                echo "bogus-priv" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^local=' /etc/dnsmasq.conf)" ]
+            then
+                echo "local=/lan/" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^addn-hosts=' /etc/dnsmasq.conf)" ]
+            then
+                echo "addn-hosts=/opt/etc/hosts.dnsmasq" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^expand-hosts' /etc/dnsmasq.conf)" ]
+            then
+                echo "expand-hosts" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^domain=' /etc/dnsmasq.conf)" ]
+            then
+                echo "domain=lan" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+            if [ -z "$(grep -e '^dhcp-option=[^0-9]*15[^0-9]' /etc/dnsmasq.conf)" ]
+            then
+                echo "dhcp-option=15,lan" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            fi
+            #
+        fi
+        #
+        # Check if ${ENTWARE_DNSMASQD}/hosts.dnsmasq exists
+        # 检查文件${ENTWARE_DNSMASQD}/hosts.dnsmasq是否存在
+        if [ -e "${ENTWARE_DNSMASQD}/hosts.dnsmasq" ]
+        then
+            # Move ${ENTWARE_DNSMASQD}/hosts.dnsmasq to ${ENTWARE_ETC}
+            # 如果文件${ENTWARE_DNSMASQD}/hosts.dnsmasq存在，则执行
+            mv ${ENTWARE_DNSMASQD}/hosts.dnsmasq ${ENTWARE_ETC}
+            #
+        else
+            # Create ${ENTWARE_DNSMASQD}/hosts.dnsmasq
+            # 如果文件${ENTWARE_DNSMASQD}/hosts.dnsmasq不存在，则执行
+            echo -ne "$(nvram get lan_ipaddr) ${ROUTER_MODEL}\n" > "${ENTWARE_ETC}/hosts.dnsmasq"
+        fi
+        #
+        # Configure monit
+        # 配置monit
+        cp ${PRIVATE_ETC}/monit.d/dnsmasq.d ${ENTWARE_MONITD}/
+        chmod 600 ${ENTWARE_MONITD}/dnsmasq.d
+        mv ${ENTWARE_MONITD}/dnsmasq.d ${ENTWARE_MONITD}/dnsmasq.d.on
+        monit reload
+        #
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
+fi
+#
+########## END ##########

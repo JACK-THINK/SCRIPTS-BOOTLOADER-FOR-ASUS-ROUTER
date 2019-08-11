@@ -8,7 +8,8 @@
 #
 ########## SYSTEM COMPONENTS ##########
 #
-development
+development_tools
+dnsmasq.d
 entware
 monit
 swap

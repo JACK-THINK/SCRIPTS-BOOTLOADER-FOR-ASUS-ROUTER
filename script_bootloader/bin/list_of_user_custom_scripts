@@ -52,6 +52,9 @@ SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 # DEVELOPMENT-TOOLS SERVICE
 #${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
 #
+# DNSMASQ.D SERVICE
+#${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service
+#
 # NEXT SERVICE
 #${SBL_SYS_USR}/
 #
