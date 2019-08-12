@@ -4,7 +4,7 @@
 
 #### 新增
 
-1. 新增dnsmasq.d
+1. 新增dnsmasq.d，通过自动监控/opt/etc/dnsmasq.d目录，允许dnsmasq加载该目录中的用户自定义配置文件
 
 #### 变更
 
@@ -25,7 +25,6 @@
 | caddy             | 1.0.1      | Web服务器（仅适用于arm64架构路由器）                         |
 | ddns              |            | DDNS插件（DNS服务商为[HE.NET](https://dns.he.net/)）         |
 | debian            | Jessie     | Debian的chroot环境。可安装Debian系统下大部分软件包           |
-| dnsmasq.d         |            | dnsmasq自定义配置加载程序                                    |
 | freemem           |            | 自动清理内存工具                                             |
 | ipmitool          | 1.8.18-3   | IPMI管理工具（仅开通lan, lanplus接口）                       |
 | mailx             | 12.5-5     | 邮件系统。可根据自定义事件自动发送邮件提醒                   |

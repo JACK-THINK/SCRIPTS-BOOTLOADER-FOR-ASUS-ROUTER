@@ -4,11 +4,12 @@
 
 #### 新增
 
-1. 新增dnsmasq.d
+1. 新增dnsmasq.d，通过自动监控/opt/etc/dnsmasq.d目录，允许dnsmasq加载该目录中的用户自定义配置文件
 
 #### 变更
 
-1. 规范代码
+1. 更新Install，加入dnsmasq.d
+2. 规范代码
 
 #### 删除
 
