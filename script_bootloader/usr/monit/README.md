@@ -37,7 +37,7 @@
 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/monit/bin/monit_install`
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
-   > 
+   >
    > | 架构        | 路由器型号                                                   |
    > | ----------- | ------------------------------------------------------------ |
    > | **aarch64** | RT-AC86U                                                     |

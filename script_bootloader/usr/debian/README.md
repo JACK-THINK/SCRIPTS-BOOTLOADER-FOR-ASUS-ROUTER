@@ -45,7 +45,7 @@
 执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/debian/bin/debian_install`
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
-   > 
+   >
    > | 架构        | 路由器型号                                                   |
    > | ----------- | ------------------------------------------------------------ |
    > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |

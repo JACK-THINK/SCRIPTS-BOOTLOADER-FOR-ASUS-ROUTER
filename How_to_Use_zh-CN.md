@@ -269,7 +269,7 @@
    > ```
    > umount: can't unmount /dev/sda1: Invalid argument
    > ```
-   > 
+   >
    > 这不会影响后续步骤，无需理会
 
    ![step7](./Documents_Assets/How_to_Use/pre-install/step7.png)
@@ -281,11 +281,11 @@
      ![step8_1](./Documents_Assets/How_to_Use/pre-install/step8_1.png)
 
    - 输入`y`，等待格式化完成
-     
+
      > 注意：
-     > 
+     >
      > 部分路由器固件会直接执行格式化，无需输入`y`
-     
+
      ![step8_2](./Documents_Assets/How_to_Use/pre-install/step8_2.png)
 
 9. 格式化完成之后，执行`reboot`，重启路由器

@@ -45,7 +45,8 @@ then
     # 如果目录${ENTWARE_DNSMASQD}存在，则执行
     service restart_dnsmasq
     sleep 5
-    echo "conf-dir=${ENTWARE_DNSMASQD},.bak" >> /etc/dnsmasq.conf
+    sed -i '/^conf-dir=/s/^/#/' /etc/dnsmasq.conf
+    echo "conf-dir=${ENTWARE_DNSMASQD},*.conf" >> /etc/dnsmasq.conf
     killall dnsmasq > /dev/null 2>&1
     sleep 1
     dnsmasq --log-async --conf-file=/etc/dnsmasq.conf
