@@ -40,8 +40,8 @@ PRIVATE_ROOT=${SBL_SYS_USR}/dnsmasq.d
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
-# LOCAL_DOMAIN: The local-only domain
-# 设置自定义变量LOCAL_DOMAIN为本地专用域名
+# FMW_DNSMASQ_CONF: The file /etc/dnsmasq.conf from firmware
+# 设置自定义变量FMW_DNSMASQ_CONF为固件内/etc/dnsmasq.conf
 FMW_DNSMASQ_CONF="/etc/dnsmasq.conf"
 #
 # LOCAL_DOMAIN: The local-only domain
@@ -150,16 +150,11 @@ then
         #
         # Check if ${ENTWARE_DNSMASQD}/hosts.dnsmasq exists
         # 检查文件${ENTWARE_DNSMASQD}/hosts.dnsmasq是否存在
-        if [ -e "${ENTWARE_DNSMASQD}/hosts.dnsmasq" ]
+        if [ ! -e "${ENTWARE_DNSMASQD}/hosts.dnsmasq" ]
         then
-            # Move ${ENTWARE_DNSMASQD}/hosts.dnsmasq to ${ENTWARE_ETC}
-            # 如果文件${ENTWARE_DNSMASQD}/hosts.dnsmasq存在，则执行
-            mv ${ENTWARE_DNSMASQD}/hosts.dnsmasq ${ENTWARE_ETC}
-            #
-        else
             # Create ${ENTWARE_DNSMASQD}/hosts.dnsmasq
             # 如果文件${ENTWARE_DNSMASQD}/hosts.dnsmasq不存在，则执行
-            echo -ne "$(nvram get lan_ipaddr) ${ROUTER_MODEL}\n" > "${ENTWARE_ETC}/hosts.dnsmasq"
+            echo -ne "$(nvram get lan_ipaddr) ${ROUTER_MODEL}\n" > "${ENTWARE_DNSMASQD}/hosts.dnsmasq"
         fi
         #
         # Configure monit

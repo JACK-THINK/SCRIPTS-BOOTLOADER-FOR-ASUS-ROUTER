@@ -53,3 +53,7 @@
 | ------------------------- | ----------------- |
 | dnsmasq.d_enable.service  | monit.d/dnsmasq.d |
 | dnsmasq.d_disable.service | monit.d/dnsmasq.d |
+
+## 注意事项
+
+1. 支持tag功能，但要直接写tag的值，不能出现“tag:”标头
