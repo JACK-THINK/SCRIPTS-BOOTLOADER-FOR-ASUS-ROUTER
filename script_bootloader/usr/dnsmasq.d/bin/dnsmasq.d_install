@@ -127,7 +127,7 @@ then
                 echo "local=/${LOCAL_DOMAIN}/" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            echo "addn-hosts=/opt/etc/hosts.dnsmasq" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            echo "addn-hosts=${ENTWARE_DNSMASQD}/hosts.dnsmasq" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             #
             if [ -z "$(grep -e '^expand-hosts' ${FMW_DNSMASQ_CONF})" ]
             then

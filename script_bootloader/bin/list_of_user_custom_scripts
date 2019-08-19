@@ -49,12 +49,6 @@ SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 # SOFTWARE SERVICE（使用时，删除下一行行首的#）
 #${SBL_SYS_USR}/software/bin/software_enable.service
 #
-# DEVELOPMENT-TOOLS SERVICE
-#${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
-#
-# DNSMASQ.D SERVICE
-#${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service
-#
 # NEXT SERVICE
 #${SBL_SYS_USR}/
 #
