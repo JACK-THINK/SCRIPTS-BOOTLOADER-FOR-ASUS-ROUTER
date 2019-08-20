@@ -42,3 +42,8 @@
         path = /home/root
         writable = yes
         browseable = yes
+        #
+        # Recycle Configuration
+        vfs objects = recycle
+        recycle:keeptree = yes
+        recycle:versions = yes

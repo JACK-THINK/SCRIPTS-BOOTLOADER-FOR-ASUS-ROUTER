@@ -6,6 +6,7 @@
 2. 为提高安全性，仅支持SMB2及更高版本协议
 3. 不支持nmbd
 4. 特别感谢[KOOLSHARE论坛](https://koolshare.cn/forum.php)**坛友JACK-**的[作品](https://github.com/JackMerlin/USBAccelerator)及[SNBForums论坛](https://www.snbforums.com/forums/)**众多网友**关于[提升USB性能的讨论](https://www.snbforums.com/threads/ac86u-smb-tweaking.44729/)，本插件中关于提高SAMBA性能参数的部分参考了他们的方案及讨论内容，在此**特别提出感谢**
+5. 新增回收站功能
 
 ## 安装前提
 
@@ -60,6 +61,8 @@
 ## 使用方法
 
 > 默认共享目录：`/home/root`
+>
+> 默认回收站目录：`/home/root/.recycle`
 >
 > 默认用户名：路由器管理页面登陆用户名
 >
