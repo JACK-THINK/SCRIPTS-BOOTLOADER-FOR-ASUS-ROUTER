@@ -486,8 +486,9 @@ then
     #
     # Modify ${SBL_SYS_BIN}/list_of_user_custom_scripts
     # 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
-    sed -i -e '/# NEXT SERVICE/i\# DEVELOPMENT-TOOLS SERVICE\n${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
-    sed -i -e '/# NEXT SERVICE/i\# DNSMASQ.D SERVICE\n${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    ${USB_MOUNT_POINT}/bin/sed -i -e '/# NEXT SERVICE/i\# DEVELOPMENT-TOOLS SERVICE\n${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    #
+    ${USB_MOUNT_POINT}/bin/sed -i -e '/# NEXT SERVICE/i\# DNSMASQ.D SERVICE\n${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
     #
 else
     # Stop and Exit
