@@ -72,7 +72,6 @@ then
     sed -i '/^conf-dir=/s/^/#/' ${FMW_DNSMASQ_CONF}
     echo "conf-dir=${ENTWARE_DNSMASQD},*.conf" >> ${FMW_DNSMASQ_CONF}
     killall dnsmasq > /dev/null 2>&1
-    sleep 1
     dnsmasq --log-async --conf-file=${FMW_DNSMASQ_CONF}
     #
     logger -st "($(basename $0))" $$ "***** RULES IN ${ENTWARE_DNSMASQD} HAVE BEEN APPLIED *****"
