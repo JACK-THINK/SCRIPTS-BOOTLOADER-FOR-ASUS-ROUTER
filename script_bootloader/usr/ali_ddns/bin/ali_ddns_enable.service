@@ -1,0 +1,162 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/ali_ddns
+#
+# PRIVATE_TMP: The directory which contains all the temporary files related to this program
+# 设置自定义变量PRIVATE_TMP为此程序临时文件目录
+PRIVATE_TMP=${PRIVATE_ROOT}/tmp
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# SOURCE_OF_PUBLIC_IP_ADDRESS: The source of public IP address
+# 设置自定义变量SOURCE_OF_PUBLIC_IP_ADDRESS为公网IP地址来源
+SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
+#SOURCE_OF_PUBLIC_IP_ADDRESS="ident.me"
+#
+# Public parameters
+# 公共参数
+MODE="AK"
+ACCESS_KEY_ID=""
+ACCESS_KEY_SECRET=""
+LANGUAGE="en"
+REGION="cn-hangzhou"
+#
+# Parameters for DescribeDomainRecords
+# DescribeDomainRecords所需参数
+DOMAIN_NAME=""
+RR_KEY_WORD=""
+TYPE="A"
+#
+# Parameters for UpdateDomainRecord
+# UpdateDomainRecord所需参数
+RR="${RR_KEY_WORD}"
+RECORD_ID="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | grep 'RecordId' | cut -d '"' -f 4)"
+TYPE="A"
+VALUE=$(curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
+#
+# DDNS_HOSTNAME: The hostname of the target DDNS server
+# 设置自定义变量DDNS_HOSTNAME为目标DDNS服务器主机名
+DDNS_HOSTNAME="${RR_KEY_WORD}.${DOMAIN_NAME}"
+#
+# MAIL_SMTP_SERVER: The SMTP server of the sender
+# 设置自定义变量MAIL_SMTP_SERVER为通知邮件发件人的SMTP服务器地址
+MAIL_SMTP_SERVER="smtp://"
+#
+# MAIL_PASSWORD: The password of sender
+# 设置自定义变量MAIL_PASSWORD为通知邮件发件人密码
+MAIL_PASSWORD=""
+#
+# MAIL_FROM: The sender of the notification email
+# 设置自定义变量MAIL_FROM为通知邮件发件人
+MAIL_FROM=""
+#
+# MAIL_TO: The recipient of the notification email
+# 设置自定义变量MAIL_TO为通知邮件收件人
+MAIL_TO=""
+#
+# MAIL_SUBJECT: The subject of the notification email
+# 设置自定义变量MAIL_SUBJECT为通知邮件主题
+MAIL_SUBJECT=""
+#
+# MAIL_CONTENTS: The contents of the notification email
+# 设置自定义变量MAIL_CONTENTS为通知邮件内容
+MAIL_CONTENTS=""
+#
+########## END ##########
+#
+#
+########## TEST IP ADDRESS AND UPDATE DNS RECORD ##########
+#
+# Check if the IP address of the router's WAN port is equal to the public IP address. If the answer is yes, update DNS record and exit. And if the answer is no, repeat the test up to 3 times. If all the answers are no, send an email as notification and exit.
+# 检查路由器WAN口IP地址是否为公网IP地址。如果是，则更新DNS记录，退出程序；如果不是，则重复测试三次。如三次全都不是，则发送通知邮件，退出程序
+#
+# FAIL_COUNT: The count of fail tests of IP address
+# 设置自定义变量FAIL_COUNT为IP地址测试失败计数
+FAIL_COUNT=0
+while [ ${FAIL_COUNT} -lt 3 ]
+do
+    # PUBLIC_IPV4_ADDRESS: The public IPv4 address
+    # 设置自定义变量PUBLIC_IPV4_ADDRESS为公网IPv4地址
+    PUBLIC_IPV4_ADDRESS=${VALUE}
+    #
+    # PUBLIC_IPV6_ADDRESS: The public IPv6 address
+    # 设置自定义变量PUBLIC_IPV6_ADDRESS为公网IPv6地址
+    #PUBLIC_IPV6_ADDRESS=$(curl -s -6 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
+    #
+    # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
+    # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
+    WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
+    #
+    # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
+    # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址
+    #WAN_IPV6_ADDRESS=$()
+    #
+    # Check if ${WAN_IPV4_ADDRESS} is equal to ${PUBLIC_IPV4_ADDRESS}
+    # 检查${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}是否相等
+    if [ "${WAN_IPV4_ADDRESS}" == "${PUBLIC_IPV4_ADDRESS}" ]
+    then
+        # Choose one of the following metheds to update DNS record
+        # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
+        #
+        RECORD_IPV4_ADDRESS="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | grep 'Value' | cut -d '"' -f 4)"
+        #
+        if [ "${PUBLIC_IPV4_ADDRESS}" != "${RECORD_IPV4_ADDRESS}" ]
+        then
+            # Update Domain Record in type A
+            # 更新域名A记录
+            aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} > /dev/null 2>&1
+            #
+            echo -e "UPDATED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+        else
+            echo -e "NO CHANGES!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+        fi
+        #
+        exit 0
+        #
+    else
+        # Add 1 to ${FAIL_COUNT}
+        # ${FAIL_COUNT}加1
+        FAIL_COUNT=$((${FAIL_COUNT} + 1))
+        #
+        # Wait for 5 seconds
+        # 等待5秒
+        sleep 5
+    fi
+done
+#
+# Send an email as notification
+# 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
+logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
+#
+# Prepare mail contents
+# 准备邮件内容
+MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
+MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
+sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+#
+# Send
+# 发送
+curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
+#
+echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
+#
+exit 1
+#
+########## END ##########

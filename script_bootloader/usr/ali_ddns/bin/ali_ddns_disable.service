@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# Public parameters
+# 公共参数
+MODE="AK"
+ACCESS_KEY_ID=""
+ACCESS_KEY_SECRET=""
+LANGUAGE="en"
+REGION="cn-hangzhou"
+#
+# Parameters for DescribeDomainRecords
+# DescribeDomainRecords所需参数
+DOMAIN_NAME=""
+RR_KEY_WORD=""
+TYPE="A"
+#
+# Parameters for UpdateDomainRecord
+# UpdateDomainRecord所需参数
+RR="${RR_KEY_WORD}"
+RECORD_ID="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | grep 'RecordId' | cut -d '"' -f 4)"
+TYPE="A"
+VALUE="8.8.8.8"
+#
+########## END ##########
+#
+#
+########## UPDATE DNS RECORD ##########
+#
+# Update Domain Record in type A
+# 更新域名A记录
+aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} > /dev/null 2>&1
+#
+########## END ##########
+#
+#
+########## STOP SERVICE ##########
+#
+/opt/bin/monit stop ALI_DDNS
+#
+########## END ##########

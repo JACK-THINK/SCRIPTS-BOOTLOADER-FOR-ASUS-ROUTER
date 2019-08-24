@@ -1,0 +1,155 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/aliyun
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# LATEST_VERSION: Version of the latest aliyun-cli
+# 设置自定义变量LATEST_VERSION为最新版aliyun-cli的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://github.com/JACK-THINK/aliyun-cli/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case $(uname -m) in
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        exit 3
+        ;;
+esac
+#
+# DOWNLOAD_LINK: Download link of the latest aliyun-cli
+# 设置自定义变量DOWNLOAD_LINK为最新版aliyun-cli的下载链接
+DOWNLOAD_LINK="https://github.com/JACK-THINK/aliyun-cli/releases/download/${LATEST_VERSION}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ALIYUN"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL ALIYUN ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Remove vestigial aliyun-cli package
+        # 删除遗留的aliyun-cli包
+        rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        #
+        # Download aliyun-cli package
+        # 下载aliyun-cli包
+        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        #
+        # Create directory ${PRIVATE_USR}
+        # 创建${PRIVATE_USR}目录
+        mkdir ${PRIVATE_USR}/
+        #
+        # Unzip aliyun-cli package
+        # 解压aliyun-cli包
+        unzip ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+        #
+        # Remove aliyun-cli package
+        # 删除aliyun-cli包
+        rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        #
+        # Change the mode of the files
+        # 更改文件权限
+        chmod 777 ${PRIVATE_USR}/aliyun*
+        #
+        # Create symbolic link ${ENTWARE_BIN}/aliyun to ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
+        # 创建符号链接${ENTWARE_BIN}/aliyun至${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
+        ln -s ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} ${ENTWARE_BIN}/aliyun
+        #
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
+fi
+#
+########## END ##########
