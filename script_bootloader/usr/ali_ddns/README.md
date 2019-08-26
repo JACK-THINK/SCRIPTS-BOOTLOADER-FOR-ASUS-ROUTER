@@ -15,13 +15,13 @@
 
 `ASUS_ROUTER/script_bootloader/usr/ali_ddns/`
 
-| 权限      | 名称             | 属性     | 说明             |
-| --------- | ---------------- | -------- | ---------------- |
-| rwxrwxrwx | README.md        | 普通文件 | 说明文件         |
-| rwxrwxrwx | bin              | 目录     | 可执行文件目录   |
-| rwxrwxrwx | etc              | 目录     | 配置文件目录     |
-| rwxrwxrwx | tmp              | 目录     | 临时文件目录     |
-| rwxrwxrwx | usr              | 目录     | 外部软件资源目录 |
+| 权限      | 名称      | 属性     | 说明             |
+| --------- | --------- | -------- | ---------------- |
+| rwxrwxrwx | README.md | 普通文件 | 说明文件         |
+| rwxrwxrwx | bin       | 目录     | 可执行文件目录   |
+| rwxrwxrwx | etc       | 目录     | 配置文件目录     |
+| rwxrwxrwx | tmp       | 目录     | 临时文件目录     |
+| rwxrwxrwx | usr       | 目录     | 外部软件资源目录 |
 
 `ASUS_ROUTER/script_bootloader/usr/ali_ddns/bin/`
 
@@ -66,20 +66,20 @@
 
 | 行号 | 代码                         | 说明                                                                   |
 | ---- | ---------------------------- | ---------------------------------------------------------------------- |
-| 36   | `ACCESS_KEY_ID=""`           | 你的ACCESS_KEY_ID                                                      |
-| 37   | `ACCESS_KEY_SECRET=""`       | 你的ACCESS_KEY_SECRET                                                  |
-| 43   | `DOMAIN_NAME=""`             | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
-| 44   | `RR_KEY_WORD=""`             | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |
-| 60   | `MAIL_SMTP_SERVER="smtp://"` | 发件人的SMTP服务器地址                                                 |
-| 64   | `MAIL_PASSWORD=""`           | 发件人密码                                                             |
-| 68   | `MAIL_FROM=""`               | 发件人邮箱地址                                                         |
-| 72   | `MAIL_TO=""`                 | 收件人邮箱地址                                                         |
+| 40   | `ACCESS_KEY_ID=""`           | 你的ACCESS_KEY_ID                                                      |
+| 41   | `ACCESS_KEY_SECRET=""`       | 你的ACCESS_KEY_SECRET                                                  |
+| 47   | `DOMAIN_NAME=""`             | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
+| 48   | `RR_KEY_WORD=""`             | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |
+| 64   | `MAIL_SMTP_SERVER="smtp://"` | 发件人的SMTP服务器地址                                                 |
+| 68   | `MAIL_PASSWORD=""`           | 发件人密码                                                             |
+| 72   | `MAIL_FROM=""`               | 发件人邮箱地址                                                         |
+| 76   | `MAIL_TO=""`                 | 收件人邮箱地址                                                         |
 
 `ddns/bin/ali_ddns_disable.service`
 
-| 行号 | 代码                         | 说明                                                                   |
-| ---- | ---------------------------- | ---------------------------------------------------------------------- |
-| 11   | `ACCESS_KEY_ID=""`           | 你的ACCESS_KEY_ID                                                      |
-| 12   | `ACCESS_KEY_SECRET=""`       | 你的ACCESS_KEY_SECRET                                                  |
-| 18   | `DOMAIN_NAME=""`             | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
-| 19   | `RR_KEY_WORD=""`             | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |
+| 行号 | 代码                   | 说明                                                                   |
+| ---- | ---------------------- | ---------------------------------------------------------------------- |
+| 15   | `ACCESS_KEY_ID=""`     | 你的ACCESS_KEY_ID                                                      |
+| 16   | `ACCESS_KEY_SECRET=""` | 你的ACCESS_KEY_SECRET                                                  |
+| 22   | `DOMAIN_NAME=""`       | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
+| 23   | `RR_KEY_WORD=""`       | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |

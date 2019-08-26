@@ -15,7 +15,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/ddns
+PRIVATE_ROOT=${SBL_SYS_USR}/he_ddns
 #
 # PRIVATE_TMP: The directory which contains all the temporary files related to this program
 # 设置自定义变量PRIVATE_TMP为此程序临时文件目录
@@ -30,12 +30,12 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
 #SOURCE_OF_PUBLIC_IP_ADDRESS="ident.me"
 #
-# DDNS_HOSTNAME: The hostname of the target DDNS server
-# 设置自定义变量DDNS_HOSTNAME为目标DDNS服务器主机名
-DDNS_HOSTNAME=""
+# FQDN: The FQDN of the target server
+# 设置自定义变量FQDN为目标服务器FQDN
+FQDN=""
 #
-# DDNS_PASSWORD: The password of the hostname to update DNS record
-# 设置自定义变量DDNS_PASSWORD为用于更新该域名的DNS记录的密码
+# DDNS_PASSWORD: The password to update the target DNS record
+# 设置自定义变量DDNS_PASSWORD为用于更新目标DNS记录的密码
 DDNS_PASSWORD=""
 #
 # MAIL_SMTP_SERVER: The SMTP server of the sender
@@ -100,21 +100,21 @@ do
         #
         # GET IPv4
         # GET方法更新IPv4
-        curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
+        curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
         #
         # GET IPv6
         # GET方法更新IPv6
-        #curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${DDNS_HOSTNAME}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
+        #curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
         #
         # POST IPv4
         # POST方法更新IPv4
-        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
+        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV4_ADDRESS}" > /dev/null 2>&1
         #
         # POST IPv6
         # POST方法更新IPv6
-        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${DDNS_HOSTNAME}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
+        #curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${PUBLIC_IPV6_ADDRESS}" > /dev/null 2>&1
         #
-        echo -e "SUCCEEDED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+        echo -e "SUCCEEDED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         #
         exit 0
         #
@@ -137,13 +137,13 @@ logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
 # 准备邮件内容
 MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
 MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
-sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nFQDN: ${FQDN}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
 #
 # Send
 # 发送
 curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
 #
-echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
+echo -e "FAILED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
 #
 exit 1
 #

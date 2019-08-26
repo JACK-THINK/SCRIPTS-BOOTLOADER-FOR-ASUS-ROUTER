@@ -5,6 +5,10 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# The environment variables needed by aliyun
+# aliyun所需的环境变量
+export HOME='/root'
+#
 # Public parameters
 # 公共参数
 MODE="AK"
@@ -33,7 +37,7 @@ VALUE="8.8.8.8"
 #
 # Update Domain Record in type A
 # 更新域名A记录
-aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} > /dev/null 2>&1
+aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
 #
 ########## END ##########
 #

@@ -30,6 +30,10 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
 #SOURCE_OF_PUBLIC_IP_ADDRESS="ident.me"
 #
+# The environment variables needed by aliyun
+# aliyun所需的环境变量
+export HOME='/root'
+#
 # Public parameters
 # 公共参数
 MODE="AK"
@@ -51,9 +55,9 @@ RECORD_ID="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --R
 TYPE="A"
 VALUE=$(curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
 #
-# DDNS_HOSTNAME: The hostname of the target DDNS server
-# 设置自定义变量DDNS_HOSTNAME为目标DDNS服务器主机名
-DDNS_HOSTNAME="${RR_KEY_WORD}.${DOMAIN_NAME}"
+# FQDN: The FQDN of the target server
+# 设置自定义变量FQDN为目标服务器FQDN
+FQDN="${RR_KEY_WORD}.${DOMAIN_NAME}"
 #
 # MAIL_SMTP_SERVER: The SMTP server of the sender
 # 设置自定义变量MAIL_SMTP_SERVER为通知邮件发件人的SMTP服务器地址
@@ -121,11 +125,11 @@ do
         then
             # Update Domain Record in type A
             # 更新域名A记录
-            aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} > /dev/null 2>&1
+            aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
             #
-            echo -e "UPDATED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            echo -e "UPDATED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         else
-            echo -e "NO CHANGES!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            echo -e "NO CHANGES!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         fi
         #
         exit 0
@@ -149,13 +153,13 @@ logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
 # 准备邮件内容
 MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
 MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
-sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nHOSTNAME: ${DDNS_HOSTNAME}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nFQDN: ${FQDN}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
 #
 # Send
 # 发送
 curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
 #
-echo -e "FAILED!\n${DDNS_HOSTNAME}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
+echo -e "FAILED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
 #
 exit 1
 #

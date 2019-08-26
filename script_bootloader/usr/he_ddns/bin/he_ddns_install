@@ -26,15 +26,19 @@ ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/ddns
+PRIVATE_ROOT=${SBL_SYS_USR}/he_ddns
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
+# PRIVATE_TMP: The directory which contains all the temporary files related to this program
+# 设置自定义变量PRIVATE_TMP为此程序临时文件目录
+PRIVATE_TMP=${PRIVATE_ROOT}/tmp
+#
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="DDNS"
+SERVICE_NAME="HE_DDNS"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -50,7 +54,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALL DDNS ##########
+########## INSTALL HE_DDNS ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -64,11 +68,15 @@ then
     then
         logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
+        # Create directory ${PRIVATE_TMP}
+        # 创建目录${PRIVATE_TMP}
+        mkdir ${PRIVATE_TMP}
+        #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ddns ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ddns
-        mv ${ENTWARE_MONITD}/ddns ${ENTWARE_MONITD}/ddns.on
+        cp ${PRIVATE_ETC}/monit.d/he_ddns ${ENTWARE_MONITD}/
+        chmod 600 ${ENTWARE_MONITD}/he_ddns
+        mv ${ENTWARE_MONITD}/he_ddns ${ENTWARE_MONITD}/he_ddns.on
         monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
