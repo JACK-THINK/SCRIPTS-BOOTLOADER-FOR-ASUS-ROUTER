@@ -127,9 +127,9 @@ do
             # 更新域名A记录
             aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
             #
-            echo -e "UPDATED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            echo -e "UPDATED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         else
-            echo -e "NO CHANGES!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            echo -e "NO CHANGES\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         fi
         #
         exit 0
@@ -159,7 +159,7 @@ sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nFQDN: ${
 # 发送
 curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
 #
-echo -e "FAILED!\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
+echo -e "FAILED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
 #
 exit 1
 #
