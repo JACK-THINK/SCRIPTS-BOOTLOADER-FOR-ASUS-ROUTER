@@ -20,9 +20,13 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -72,19 +76,17 @@ then
         # 安装ntpd
         opkg install ntpd
         #
-        # Disable /opt/etc/init.d/S77ntpd
-        # 禁用/opt/etc/init.d/S77ntpd
-        cp /opt/etc/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S77ntpd
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S77ntpd
+        # Disable ${ENTWARE_ETC}/init.d/S77ntpd
+        # 禁用${ENTWARE_ETC}/init.d/S77ntpd
+        cp ${ENTWARE_ETC}/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
+        sed -i '/^ENABLED.*/s/^/#/' ${ENTWARE_ETC}/init.d/S77ntpd
+        sed -i '/^#ENABLED.*/a\ENABLED=no' ${ENTWARE_ETC}/init.d/S77ntpd
         #
         # Configure ntpd
         # 配置ntpd
-        cp /opt/etc/ntp.conf /opt/etc/ntp.conf.bak
-        cp /opt/etc/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
-        rm -f /opt/etc/ntp.conf
-        cp ${PRIVATE_ETC}/ntp.conf /opt/etc/
-        chmod 600 /opt/etc/ntp.conf
+        mv ${ENTWARE_ETC}/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
+        cp ${PRIVATE_ETC}/ntp.conf ${ENTWARE_ETC}/ntp.conf
+        chmod 600 ${ENTWARE_ETC}/ntp.conf
         #
         # Configure monit
         # 配置monit

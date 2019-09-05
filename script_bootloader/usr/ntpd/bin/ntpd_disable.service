@@ -5,6 +5,10 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NTPD_PID_FILE: The path to ntpd.pid
+# 设置自定义变量NTPD_PID_FILE为文件ntpd.pid的绝对路径
+NTPD_PID_FILE=/var/run/ntpd.pid
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="NTPD"
@@ -25,8 +29,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE NTPD ##########
 #
-kill $(cat /var/run/ntpd.pid) > /dev/null 2>&1
-rm -f /var/run/ntpd.pid > /dev/null 2>&1
+kill $(cat ${NTPD_PID_FILE}) > /dev/null 2>&1
+rm -f ${NTPD_PID_FILE} > /dev/null 2>&1
 #
 ########## END ##########
 #
