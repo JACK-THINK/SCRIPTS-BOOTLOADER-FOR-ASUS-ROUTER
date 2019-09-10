@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -66,31 +70,31 @@ then
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_https ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_https
-        #mv ${ENTWARE_MONITD}/fw_filter_INPUT_https ${ENTWARE_MONITD}/fw_filter_INPUT_https.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_https ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_https
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_filter_INPUT_https ${ENTWARE_MONITD}/fw_filter_INPUT_https.on
         #
-        cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_ss_server ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server
-        #mv ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_ss_server ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server ${ENTWARE_MONITD}/fw_filter_INPUT_ss_server.on
         #
-        cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_v2ray_proxy ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy
-        #mv ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_v2ray_proxy ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy ${ENTWARE_MONITD}/fw_filter_INPUT_v2ray_proxy.on
         #
-        cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec
-        #mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec.on
         #
-        cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent
-        #mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent.on
         #
-        cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn
-        #mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn.on
         #
-        monit reload
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

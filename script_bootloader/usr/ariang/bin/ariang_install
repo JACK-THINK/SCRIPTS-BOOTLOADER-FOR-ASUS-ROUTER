@@ -14,19 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
-#
-# SBL_SITE: The directory which contains all the sites
-# 设置自定义变量SBL_SITE为站点目录
-SBL_SITE=${USB_MOUNT_POINT}/www
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -46,11 +46,11 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # PRIVATE_SITE: The directory which contains the site related to this program
 # 设置自定义变量PRIVATE_SITE为此程序站点目录
-PRIVATE_SITE=${SBL_SITE}/ariang
+PRIVATE_SITE=${USB_MOUNT_POINT}/www/ariang
 #
 # LATEST_VERSION: Version of the latest ariang
 # 设置自定义变量LATEST_VERSION为最新版ariang的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/mayswind/AriaNg/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/mayswind/AriaNg/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # DOWNLOAD_LINK: Download link of the latest ariang
 # 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接
@@ -90,7 +90,7 @@ then
         #
         # Remove vestigial ariang package
         # 删除遗留的ariang包
-        rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
         #
         # Download ariang
         # 下载ariang
@@ -98,32 +98,32 @@ then
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
-        mkdir ${PRIVATE_USR}
+        /opt/bin/mkdir ${PRIVATE_USR}
         #
         # Unzip ariang package
         # 解压ariang包
-        unzip ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip -d ${PRIVATE_USR}/
+        /opt/bin/unzip ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip -d ${PRIVATE_USR}/
         #
         # Remove ariang package
         # 删除ariang包
-        rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
         #
         # Configure ariang
         # 配置ariang
-        mkdir ${PRIVATE_SITE}
-        cp ${PRIVATE_USR}/index.html ${PRIVATE_SITE}/index.html > /dev/null 2>&1
-        echo -e 'server.document-root = "/opt/www/ariang/"' > ${PRIVATE_ETC}/ariang_lighttpd.conf
-        echo -e 'index-file.names = (\n  "index.php",\n  "index.htm",\n  "index.html",\n  "default.htm"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
-        echo -e 'server.port = 18914' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
-        echo -e 'server.pid-file = "/var/run/ariang.pid"' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
-        echo -e 'mimetype.assign = (\n  ".html" => "text/html",\n  ".txt" => "text/plain",\n  ".jpg" => "image/jpeg",\n  ".png" => "image/png"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        /opt/bin/mkdir ${PRIVATE_SITE}
+        /opt/bin/cp ${PRIVATE_USR}/index.html ${PRIVATE_SITE}/index.html > /dev/null 2>&1
+        /opt/bin/echo -e "server.document-root = \"${PRIVATE_SITE}/\"" > ${PRIVATE_ETC}/ariang_lighttpd.conf
+        /opt/bin/echo -e 'index-file.names = (\n  "index.php",\n  "index.htm",\n  "index.html",\n  "default.htm"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        /opt/bin/echo -e 'server.port = 18914' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        /opt/bin/echo -e 'server.pid-file = "/var/run/ariang.pid"' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
+        /opt/bin/echo -e 'mimetype.assign = (\n  ".html" => "text/html",\n  ".txt" => "text/plain",\n  ".jpg" => "image/jpeg",\n  ".png" => "image/png"\n)' >> ${PRIVATE_ETC}/ariang_lighttpd.conf
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ariang ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ariang
-        mv ${ENTWARE_MONITD}/ariang ${ENTWARE_MONITD}/ariang.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ariang ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ariang
+        /opt/bin/mv ${ENTWARE_MONITD}/ariang ${ENTWARE_MONITD}/ariang.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

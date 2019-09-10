@@ -27,7 +27,7 @@ ROUTING_TABLE="100"
 #
 # UDP_STATUS: Status of the UDP proxy
 # 设置自定义变量UDP_STATUS为UDP代理状态
-UDP_STATUS=$(iptables -t mangle -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}_UDP")
+UDP_STATUS=$(iptables -t mangle -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}_UDP")
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -53,11 +53,11 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否存在
 if [ -z "${UDP_STATUS}" ]
 then
-    sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
-    sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
 else
-    sed -i '/^server=8\.8\.8\.8/d' /tmp/resolv.dnsmasq
-    sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^server=8\.8\.8\.8/d' /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
 fi
 #
 ########## END ##########
@@ -67,7 +67,7 @@ fi
 #
 # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP exists
 # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否存在
-if [ -z "$(iptables -t nat -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+if [ -z "$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}_TCP")" ]
 then
     # Stop and Exit
     # 如果${USER_DEFINED_CHAIN_NAME}_TCP链不存在，则该程序终止
@@ -81,7 +81,7 @@ else
     then
         # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain PREROUTING
         # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被PREROUTING链所引用
-        if [ ! -z "$(iptables -t nat -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        if [ ! -z "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
         then
             # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
             # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
@@ -91,8 +91,8 @@ else
     else
         # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain OUTPUT and chain PREROUTING
         # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被OUTPUT链和PREROUTING链所引用
-        if [ ! -z "$(iptables -t nat -nvL OUTPUT | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ] || \
-        [ ! -z "$(iptables -t nat -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        if [ ! -z "$(iptables -t nat -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ] || \
+        [ ! -z "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
         then
             # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
             # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
@@ -129,7 +129,7 @@ then
 else
     # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain OUTPUT
     # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被OUTPUT链所引用
-    if [ ! -z "$(iptables -t mangle -nvL OUTPUT | grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
+    if [ ! -z "$(iptables -t mangle -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
         # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
@@ -138,7 +138,7 @@ else
     #
     # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain PREROUTING
     # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被PREROUTING链所引用
-    if [ ! -z "$(iptables -t mangle -nvL PREROUTING | grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
+    if [ ! -z "$(iptables -t mangle -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
         # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链

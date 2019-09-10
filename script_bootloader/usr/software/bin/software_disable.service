@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -74,7 +74,7 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## CHECK THE TYPE OF FIRMWARE ##########
 #
-if [ -z "$(nvram show | grep -e '.*merlin.*')" ]
+if [ -z "$(nvram show | /opt/bin/grep -e '.*merlin.*')" ]
 then
     # ASUSWRT
     FIRMWARE_TYPE="ASUSWRT"
@@ -96,14 +96,14 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE SOFTWARE ##########
 #
-ps | grep "${PRIVATE_USR}/software" | grep -v "grep" | awk '{print $1}' | xargs kill
+ps | /opt/bin/grep "${PRIVATE_USR}/software" | /opt/bin/grep -v "grep" | /opt/bin/gawk '{print $1}' | xargs kill
 #
 ########## END ##########
 #
 #
 ########## EMPTY TMP ##########
 #
-rm -rf ${PRIVATE_TMP}/*
+/opt/bin/rm -rf ${PRIVATE_TMP}/*
 #
 ########## END ##########
 #

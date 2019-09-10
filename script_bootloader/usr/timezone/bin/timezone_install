@@ -63,7 +63,8 @@ if [ ! -z "${TARGET_TIME_ZONE}" ]
 then
     # Create a symbolic link file named ${PRIVATE_ETC}/localtime
     # 如果文件${TARGET_TIME_ZONE}存在，则执行
-    ln -s ${TARGET_TIME_ZONE} ${PRIVATE_ETC}/localtime
+    mkdir ${PRIVATE_ETC}
+    cp -s ${TARGET_TIME_ZONE} ${PRIVATE_ETC}/localtime
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
     exit 0
@@ -72,7 +73,8 @@ else
     # Do nothing but prompt the user
     # 如果文件${TARGET_TIME_ZONE}不存在，则执行
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-    exit 7
+    #
+    exit 1
 fi
 #
 ########## END ##########

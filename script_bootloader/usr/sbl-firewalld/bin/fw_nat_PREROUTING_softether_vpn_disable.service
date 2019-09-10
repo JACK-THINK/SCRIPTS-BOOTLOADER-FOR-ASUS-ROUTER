@@ -28,7 +28,7 @@ USER_DEFINED_CHAIN_NAME="SOFTETHER_VPN"
 #
 # Check if ${USER_DEFINED_CHAIN_NAME} exists
 # 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t ${TABLE_NAME} -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+if [ -z "$(iptables -t ${TABLE_NAME} -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
 then
     # Stop and Exit
     # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
@@ -37,11 +37,11 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ ! -z "$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Get ${DESTINATION_IP_ADDRESS} from ${BUILT_IN_CHAIN_NAME}
         # 如果${USER_DEFINED_CHAIN_NAME}被${BUILT_IN_CHAIN_NAME}所引用，则从${BUILT_IN_CHAIN_NAME}中获取${DESTINATION_IP_ADDRESS}
-        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME} | awk '{print $9}')
+        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $9}')
         #
         # Disable chain ${USER_DEFINED_CHAIN_NAME}
         # 禁用${USER_DEFINED_CHAIN_NAME}链

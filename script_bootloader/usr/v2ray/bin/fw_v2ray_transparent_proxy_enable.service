@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -23,11 +23,11 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # SERVER_DOMAIN: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
-SERVER_DOMAIN=$(sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | grep 'address' | awk -F '"' '{print $4}')
+SERVER_DOMAIN=$(/opt/bin/sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | /opt/bin/grep 'address' | /opt/bin/cut -d '"' -f 4)
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | sed -n '/Name/,+1p' | tail -n 1 | awk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -n '/Name/,+1p' | /opt/bin/tail -n 1 | /opt/bin/gawk '{print $3}')
 #
 # LOCAL_PORT: Port of the V2RAY-DOKODEMO-DOOR
 # 设置自定义变量LOCAL_PORT为V2RAY-DOKODEMO-DOOR的接收端口
@@ -51,11 +51,11 @@ ROUTING_TABLE="100"
 #
 # NF_TPROXY_CORE: The path to nf_tproxy_core.ko
 # 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
-NF_TPROXY_CORE=$(find / -name "nf_tproxy_core.ko")
+NF_TPROXY_CORE=$(/opt/bin/find /lib/modules/ -name "nf_tproxy_core.ko")
 #
 # XT_TPROXY: The path to xt_TPROXY.ko
 # 设置自定义变量XT_TPROXY为文件xt_TPROXY.ko的绝对路径
-XT_TPROXY=$(find / -name "xt_TPROXY.ko")
+XT_TPROXY=$(/opt/bin/find /lib/modules/ -name "xt_TPROXY.ko")
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -181,7 +181,7 @@ then
 else
     # Do nothing but prompt the user
     # 如果文件${NF_TPROXY_CORE}或${XT_TPROXY}不存在，则执行
-    echo -e "NO UDP PROXY"
+    /opt/bin/echo -e "NO UDP PROXY"
 fi
 #
 ########## END ##########
@@ -193,11 +193,11 @@ fi
 # 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在
 if ${TPROXY_MODULES_STATUS}
 then
-    sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
-    echo "server=8.8.8.8" >> /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    /opt/bin/echo "server=8.8.8.8" >> /tmp/resolv.dnsmasq
 else
-    sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
-    echo "server=127.0.0.1#2053" >> /tmp/resolv.dnsmasq
+    /opt/bin/sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    /opt/bin/echo "server=127.0.0.1#2053" >> /tmp/resolv.dnsmasq
 fi
 #
 ########## END ##########

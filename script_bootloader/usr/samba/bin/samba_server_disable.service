@@ -27,17 +27,17 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 # Stop Avahi service
 # 停止Avahi服务
-rm -f /tmp/avahi/services/smb.service > /dev/null 2>&1
+/opt/bin/rm -f /tmp/avahi/services/smb.service > /dev/null 2>&1
 #
 # Stop smbd
 # 停止smbd
-kill $(cat /var/run/smbd.pid) > /dev/null 2>&1
-rm -f /var/run/smbd.pid > /dev/null 2>&1
+/opt/bin/kill $(/opt/bin/cat /var/run/smbd.pid) > /dev/null 2>&1
+/opt/bin/rm -f /var/run/smbd.pid > /dev/null 2>&1
 #
 # Stop wsdd2
 # 停止wsdd2
-kill $(cat /var/run/wsdd2.pid) > /dev/null 2>&1
-rm -f /var/run/wsdd2.pid > /dev/null 2>&1
+/opt/bin/kill $(/opt/bin/cat /var/run/wsdd2.pid) > /dev/null 2>&1
+/opt/bin/rm -f /var/run/wsdd2.pid > /dev/null 2>&1
 #
 ########## END ##########
 #

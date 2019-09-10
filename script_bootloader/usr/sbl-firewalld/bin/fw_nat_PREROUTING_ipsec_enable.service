@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -56,7 +56,7 @@ DESTINATION_PORT_2="4500"
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IP_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
+WAN_IP_ADDRESS=$(ifconfig ppp0 | /opt/bin/grep 'inet addr' | /opt/bin/gawk '{print $2}' | /opt/bin/tr -d 'addr:')
 #
 ########## END ##########
 #
@@ -65,21 +65,21 @@ WAN_IP_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'ad
 #
 # TEST_USER_DEFINED_CHAIN_NAME: Check if ${USER_DEFINED_CHAIN_NAME} exists
 # TEST_USER_DEFINED_CHAIN_NAME: 测试${USER_DEFINED_CHAIN_NAME}是否存在
-CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")
+CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")
 if [ ! -z "${CHECK_RULE}" ]
 then
     TEST_USER_DEFINED_CHAIN_NAME=true
     #
     # TEST_REFERENCE: Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # TEST_REFERENCE: 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}引用
-    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})
+    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})
     if [ ! -z "${CHECK_RULE}" ]
     then
         TEST_REFERENCE=true
         #
         # Get ${DESTINATION_IP_ADDRESS} from ${BUILT_IN_CHAIN_NAME}
         # 从${BUILT_IN_CHAIN_NAME}中获取${DESTINATION_IP_ADDRESS}
-        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME} | awk '{print $9}')
+        DESTINATION_IP_ADDRESS=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $9}')
         #
         # TEST_IP: Check if ${DESTINATION_IP_ADDRESS} is equivolent to ${WAN_IP_ADDRESS}
         # TEST_IP: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
@@ -89,29 +89,29 @@ then
             #
             # TEST_UDP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
             # TEST_UDP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-            CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${LOCAL_PORT_1}")
+            CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^udp#.*:${LOCAL_PORT_1}")
             if [ ! -z "${CHECK_RULE}" ]
             then
                 TEST_UDP_LOCAL_PORT_1=true
             else
                 TEST_UDP_LOCAL_PORT_1=false
-                echo -e "ERROR: ${LOCAL_PORT_1}/UDP"
+                /opt/bin/echo -e "ERROR: ${LOCAL_PORT_1}/UDP"
             fi
             #
             # TEST_UDP_LOCAL_PORT_2: Test the rules in ${USER_DEFINED_CHAIN_NAME}
             # TEST_UDP_LOCAL_PORT_2: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-            CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^udp#.*:${LOCAL_PORT_2}")
+            CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^udp#.*:${LOCAL_PORT_2}")
             if [ ! -z "${CHECK_RULE}" ]
             then
                 TEST_UDP_LOCAL_PORT_2=true
             else
                 TEST_UDP_LOCAL_PORT_2=false
-                echo -e "ERROR: ${LOCAL_PORT_2}/UDP"
+                /opt/bin/echo -e "ERROR: ${LOCAL_PORT_2}/UDP"
             fi
             #
         else
             TEST_IP=false
-            echo -e "ERROR: NO IP CONSISTENCY"
+            /opt/bin/echo -e "ERROR: NO IP CONSISTENCY"
         fi
         #
     else
@@ -122,13 +122,13 @@ then
         # 如果未被引用，则令${DESTINATION_IP_ADDRESS}为'NULL'
         DESTINATION_IP_ADDRESS='NULL'
         #
-        echo -e "ERROR: ${USER_DEFINED_CHAIN_NAME} IS NOT REFERENCED BY ${BUILT_IN_CHAIN_NAME}"
+        /opt/bin/echo -e "ERROR: ${USER_DEFINED_CHAIN_NAME} IS NOT REFERENCED BY ${BUILT_IN_CHAIN_NAME}"
     fi
     #
 else
     #
     TEST_USER_DEFINED_CHAIN_NAME=false
-    echo -e "ERROR: NO CHAIN ${USER_DEFINED_CHAIN_NAME}"
+    /opt/bin/echo -e "ERROR: NO CHAIN ${USER_DEFINED_CHAIN_NAME}"
 fi
 #
 ########## END ##########
@@ -145,7 +145,7 @@ ${TEST_UDP_LOCAL_PORT_1} && ${TEST_UDP_LOCAL_PORT_2}
 then
     # Everything is OK
     # 全部规则完好
-    echo -e "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/UDP\tTO\t${TARGET_SERVER_IP}:${DESTINATION_PORT_1}/UDP\nROUTER:${LOCAL_PORT_2}/UDP\tTO\t${TARGET_SERVER_IP}:${DESTINATION_PORT_2}/UDP"
+    /opt/bin/echo -e "PORT FORWARDING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/UDP\tTO\t${TARGET_SERVER_IP}:${DESTINATION_PORT_1}/UDP\nROUTER:${LOCAL_PORT_2}/UDP\tTO\t${TARGET_SERVER_IP}:${DESTINATION_PORT_2}/UDP"
     #
     exit 0
     #
@@ -170,7 +170,7 @@ else
     # 启用${USER_DEFINED_CHAIN_NAME}链
     iptables -t ${TABLE_NAME} -I ${BUILT_IN_CHAIN_NAME} 1 -d ${WAN_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME}
     #
-    echo "LOAD PORT FORWARDING RULE ${SERVICE_NAME}"
+    /opt/bin/echo "LOAD PORT FORWARDING RULE ${SERVICE_NAME}"
     #
     exit 1
     #

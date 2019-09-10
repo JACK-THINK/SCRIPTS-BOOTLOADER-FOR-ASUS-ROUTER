@@ -48,11 +48,21 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 #
 ########## INSTALL SWAP ##########
 #
+# Check if ${PRIVATE_VAR} exists
+# 检查目录${PRIVATE_VAR}是否存在
+if [ ! -d "${PRIVATE_VAR}" ]
+then
+    # Create directory ${PRIVATE_VAR}
+    # 如果目录${PRIVATE_VAR}不存在，则执行
+    mkdir ${PRIVATE_VAR}
+fi
+#
 # Check if ${PRIVATE_VAR}/swapfile.var exists
 # 检查文件${PRIVATE_VAR}/swapfile.var是否存在
 if [ -e "${PRIVATE_VAR}/swapfile.var" ]
 then
     logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var EXISTS *****"
+    #
     # Do nothing but prompt the user
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

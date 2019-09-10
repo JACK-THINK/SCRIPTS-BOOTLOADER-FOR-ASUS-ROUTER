@@ -31,21 +31,21 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 # Free memory every 30 minutes
 # 每30分钟清理内存一次
-echo "*/30 * * * * /bin/echo 1 > /proc/sys/vm/drop_caches" >> /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/echo "*/30 * * * * /bin/echo 1 > /proc/sys/vm/drop_caches" >> /var/spool/cron/crontabs/${ADMINUSER}
 #
 ########## END ##########
 #
 #
 ########## ENABLE CRONTAB ##########
 #
-chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
 #
 ########## END ##########
 #
 #
 ########## CREATE STATUS FILE ##########
 #
-touch /var/run/freemem_enabled
+/opt/bin/touch /var/run/freemem_enabled
 #
 ########## END ##########
 #

@@ -5,6 +5,22 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/ntpd
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
 # NTPD_PID_FILE: The path to ntpd.pid
 # 设置自定义变量NTPD_PID_FILE为文件ntpd.pid的绝对路径
 NTPD_PID_FILE=/var/run/ntpd.pid
@@ -40,15 +56,15 @@ do
     then
         logger -st "($(basename $0))" $$ "***** NTP IS READY *****"
         #
-        # Check if /opt/etc/ntp.conf exists
-        # 检查文件/opt/etc/ntp.conf是否存在
-        if [ -e "/opt/etc/ntp.conf" ]
+        # Check if ${PRIVATE_ETC}/ntp.conf exists
+        # 检查文件${PRIVATE_ETC}/ntp.conf是否存在
+        if [ -e "${PRIVATE_ETC}/ntp.conf" ]
         then
             logger -st "($(basename $0))" $$ "***** NTP CONFIGURATION FILE EXISTS *****"
             #
-            # Load ntpd
-            # 加载ntpd
-            ntpd -4 -c /opt/etc/ntp.conf -p ${NTPD_PID_FILE}
+            # Load /opt/sbin/ntpd
+            # 加载/opt/sbin/ntpd
+            /opt/sbin/ntpd -4 -c ${PRIVATE_ETC}/ntp.conf -p ${NTPD_PID_FILE}
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
             #
@@ -56,7 +72,7 @@ do
             #
         else
             # Do nothing but prompt the user
-            # 如果文件/opt/etc/ntp.conf不存在，则执行
+            # 如果文件${PRIVATE_ETC}/ntp.conf不存在，则执行
             logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE NTP CONFIGURATION FILE *****"
             logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
             #

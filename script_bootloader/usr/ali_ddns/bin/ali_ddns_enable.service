@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -51,9 +51,9 @@ TYPE="A"
 # Parameters for UpdateDomainRecord
 # UpdateDomainRecord所需参数
 RR="${RR_KEY_WORD}"
-RECORD_ID="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | grep 'RecordId' | cut -d '"' -f 4)"
+RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/grep 'RecordId' | /opt/bin/cut -d '"' -f 4)"
 TYPE="A"
-VALUE=$(curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
+VALUE=$(/opt/bin/curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
 #
 # FQDN: The FQDN of the target server
 # 设置自定义变量FQDN为目标服务器FQDN
@@ -102,11 +102,11 @@ do
     #
     # PUBLIC_IPV6_ADDRESS: The public IPv6 address
     # 设置自定义变量PUBLIC_IPV6_ADDRESS为公网IPv6地址
-    #PUBLIC_IPV6_ADDRESS=$(curl -s -6 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
+    #PUBLIC_IPV6_ADDRESS=$(/opt/bin/curl -s -6 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
     #
     # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
     # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
-    WAN_IPV4_ADDRESS=$(ifconfig ppp0 | grep 'inet addr' | awk '{print $2}' | tr -d 'addr:')
+    WAN_IPV4_ADDRESS=$(ifconfig ppp0 | /opt/bin/grep 'inet addr' | /opt/bin/gawk '{print $2}' | /opt/bin/tr -d 'addr:')
     #
     # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
     # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址
@@ -119,17 +119,17 @@ do
         # Choose one of the following metheds to update DNS record
         # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
         #
-        RECORD_IPV4_ADDRESS="$(aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | grep 'Value' | cut -d '"' -f 4)"
+        RECORD_IPV4_ADDRESS="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/grep 'Value' | /opt/bin/cut -d '"' -f 4)"
         #
         if [ "${PUBLIC_IPV4_ADDRESS}" != "${RECORD_IPV4_ADDRESS}" ]
         then
             # Update Domain Record in type A
             # 更新域名A记录
-            aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
+            /opt/bin/aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
             #
-            echo -e "UPDATED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            /opt/bin/echo -e "UPDATED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         else
-            echo -e "NO CHANGES\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            /opt/bin/echo -e "NO CHANGES\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
         fi
         #
         exit 0
@@ -153,13 +153,13 @@ logger -st "($(basename $0))" $$ "***** DDNS ERROR: NO PUBLIC IP ADDRESS *****"
 # 准备邮件内容
 MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
 MAIL_CONTENTS=${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS
-sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nFQDN: ${FQDN}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
+/opt/bin/sed -e "1i\From:${MAIL_FROM}\nTo:${MAIL_TO}\nSubject:${MAIL_SUBJECT}\n\nFQDN: ${FQDN}\nWAN_IPV4_ADDRESS: ${WAN_IPV4_ADDRESS}\nPUBLIC_IPV4_ADDRESS: ${PUBLIC_IPV4_ADDRESS}" ${MAIL_CONTENTS} > ${PRIVATE_TMP}/mail.tmp
 #
 # Send
 # 发送
-curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
+/opt/bin/curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file ${PRIVATE_TMP}/mail.tmp --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
 #
-echo -e "FAILED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
+/opt/bin/echo -e "FAILED\n\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
 #
 exit 1
 #

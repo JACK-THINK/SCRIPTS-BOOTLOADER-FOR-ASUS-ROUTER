@@ -8,7 +8,7 @@
 #
 ########## SYSTEM COMPONENTS ##########
 #
-development_tools
+dependency
 dnsmasq.d
 entware
 monit

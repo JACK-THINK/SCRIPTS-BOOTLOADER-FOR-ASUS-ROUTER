@@ -14,15 +14,11 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
-#
-# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
-# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -38,20 +34,20 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest aliyun-cli
 # 设置自定义变量LATEST_VERSION为最新版aliyun-cli的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/JACK-THINK/aliyun-cli/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/JACK-THINK/aliyun-cli/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -60,6 +56,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -102,7 +99,7 @@ then
         #
         # Remove vestigial aliyun-cli package
         # 删除遗留的aliyun-cli包
-        rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Download aliyun-cli package
         # 下载aliyun-cli包
@@ -110,23 +107,23 @@ then
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
-        mkdir ${PRIVATE_USR}/
+        /opt/bin/mkdir ${PRIVATE_USR}/
         #
         # Unzip aliyun-cli package
         # 解压aliyun-cli包
-        unzip ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+        /opt/bin/unzip ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
         #
         # Remove aliyun-cli package
         # 删除aliyun-cli包
-        rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Change the mode of the files
         # 更改文件权限
-        chmod 777 ${PRIVATE_USR}/aliyun*
+        /opt/bin/chmod 777 ${PRIVATE_USR}/aliyun*
         #
-        # Create symbolic link ${ENTWARE_BIN}/aliyun to ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
-        # 创建符号链接${ENTWARE_BIN}/aliyun至${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
-        ln -s ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} ${ENTWARE_BIN}/aliyun
+        # Create symbolic link /opt/bin/aliyun to ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
+        # 创建符号链接/opt/bin/aliyun至${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}
+        /opt/bin/cp -s ${PRIVATE_USR}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} /opt/bin/aliyun
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

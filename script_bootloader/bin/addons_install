@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
@@ -49,14 +49,14 @@ SERVICE_FUNCTION="INSTALLATION"
 # 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons是否存在
 if [ -e "${SBL_SYS_ETC}/exclusion_list_of_addons" ]
 then
-    find ${SBL_SYS_USR} -name "*_install" | grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons > ${SBL_SYS_TMP}/addon_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons > ${SBL_SYS_TMP}/addon_install_list
     #
 else
     # Exclude system components and special flags
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons不存在，则执行
-    echo -e "\033[1;41;37m***** ERROR: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons *****\033[0m\n\033[1;41;37m***** EXCLUDE SYSTEM COMPONENTS AND SPECIAL FLAGS INSTEAD *****\033[0m\n" | tee -a ${SBL_SYS_TMP}/addon_installation_log
+    /opt/bin/echo -e "\033[1;41;37m***** ERROR: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons *****\033[0m\n\033[1;41;37m***** EXCLUDE SYSTEM COMPONENTS AND SPECIAL FLAGS INSTEAD *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
     #
-    find ${SBL_SYS_USR} -name "*_install" | grep -vE '(development_tools|dnsmasq.d|entware|monit|swap|timezone|software|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addon_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|monit|software|swap|timezone|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addon_install_list
 fi
 #
 ########## END ##########
@@ -68,18 +68,18 @@ while [ 1 ]
 do
     # Print the menu for addons
     # 打印插件菜单
-    ADDON_COUNT=$(cat ${SBL_SYS_TMP}/addon_install_list | wc -l)
+    ADDON_COUNT=$(/opt/bin/cat ${SBL_SYS_TMP}/addon_install_list | /opt/bin/wc -l)
     ADDON_ORDER=1
-    echo -e "Choose the addon you want to install:\n"
-    echo -e "\033[1;31m0. exit\033[0m"
+    /opt/bin/echo -e "Choose the addon you want to install:\n"
+    /opt/bin/echo -e "\033[1;31m0. exit\033[0m"
     while [ ${ADDON_ORDER} -le ${ADDON_COUNT} ]
     do
-        echo -n "${ADDON_ORDER}. "
-        sed -e 's/.*\///' -e 's/_install//' -ne "${ADDON_ORDER}p" ${SBL_SYS_TMP}/addon_install_list
+        /opt/bin/echo -n "${ADDON_ORDER}. "
+        /opt/bin/sed -e 's/.*\///' -e 's/_install//' -ne "${ADDON_ORDER}p" ${SBL_SYS_TMP}/addon_install_list
         ADDON_ORDER=$((${ADDON_ORDER} + 1))
     done
     #
-    echo -en "\nInput ONE INTEGER every time: "
+    /opt/bin/echo -en "\nInput ONE INTEGER every time: "
     #
     # Read the input of user
     # 读取用户输入值
@@ -89,14 +89,14 @@ do
     # 检查值${INPUT_VALUE}是否有效
     if [ ${INPUT_VALUE} -lt 0 ] || [ ${INPUT_VALUE} -gt ${ADDON_COUNT} ]
     then
-        echo -e "\033[1;41;37m***** ERROR: INVALID INPUT VALUE *****\033[0m\n"
+        /opt/bin/echo -e "\033[1;41;37m***** ERROR: INVALID INPUT VALUE *****\033[0m\n"
         #
     else
         if [ ${INPUT_VALUE} -eq 0 ]
         then
             break
         fi
-        ADDON_TO_INSTALL=$(sed -e 's/.*\///' -e 's/_install//' -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
+        ADDON_TO_INSTALL=$(/opt/bin/sed -e 's/.*\///' -e 's/_install//' -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
         #
         # Check if ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} exists
         # 检查文件${SBL_SYS_TMP}/${ADDON_TO_INSTALL}是否存在
@@ -104,21 +104,21 @@ do
         then
             # Install the addon chosen by user
             # 安装用户选择的插件
-            touch ${SBL_SYS_TMP}/${ADDON_TO_INSTALL}
-            $(sed -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
+            /opt/bin/touch ${SBL_SYS_TMP}/${ADDON_TO_INSTALL}
+            $(/opt/bin/sed -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
             #
             # Check if return value is 0
             # 检查返回值是否为0
             if [ $? == '0' ]
             then
-                echo -e "\033[1;42;37m***** ${ADDON_TO_INSTALL}: SUCCEEDED *****\033[0m\n" | tee -a ${SBL_SYS_TMP}/addon_installation_log
+                /opt/bin/echo -e "\033[1;42;37m***** ${ADDON_TO_INSTALL}: SUCCEEDED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
                 #
             else
-                echo -e "\033[1;41;37m***** ${ADDON_TO_INSTALL}: FAILED *****\033[0m\n" | tee -a ${SBL_SYS_TMP}/addon_installation_log
+                /opt/bin/echo -e "\033[1;41;37m***** ${ADDON_TO_INSTALL}: FAILED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
             fi
             #
         else
-            echo -e "\033[1;41;37m***** ERROR: ${ADDON_TO_INSTALL} HAS BEEN INSTALLED *****\033[0m\n" | tee -a ${SBL_SYS_TMP}/addon_installation_log
+            /opt/bin/echo -e "\033[1;41;37m***** ERROR: ${ADDON_TO_INSTALL} HAS BEEN INSTALLED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
         fi
     fi
 done

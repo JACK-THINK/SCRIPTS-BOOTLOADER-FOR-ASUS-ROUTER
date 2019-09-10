@@ -23,9 +23,9 @@
 
 `ASUS_ROUTER/script_bootloader/usr/overture/bin/`
 
-| 权限      | 名称                   | 属性     | 说明                                                      |
-| --------- | ---------------------- | -------- | --------------------------------------------------------- |
-| rwxrwxrwx | overture_install          | 普通文件 | 安装文件                                                  |
+| 权限      | 名称                      | 属性     | 说明                                                         |
+| --------- | ------------------------- | -------- | ------------------------------------------------------------ |
+| rwxrwxrwx | overture_install          | 普通文件 | 安装文件                                                     |
 | rwxrwxrwx | overture_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序（路由器启用SS全局代理时使用） |
 | rwxrwxrwx | overture_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序（路由器启用SS全局代理时使用） |
 | rwxrwxrwx | overture-linux-arm.zip    | 普通文件 | overture预编译文件，适用于arm架构                            |
@@ -34,10 +34,10 @@
 
 `ASUS_ROUTER/script_bootloader/usr/overture/etc/`
 
-| 权限      | 名称          | 属性     | 说明                           |
-| --------- | ------------- | -------- | ------------------------------ |
-| rwxrwxrwx | config.json   | 普通文件 | overture_enable.service的配置文件 |
-| rwxrwxrwx | monit.d/overture | 普通文件 | monit.d配置文件                |
+| 权限      | 名称             | 属性     | 说明                              |
+| --------- | ---------------- | -------- | --------------------------------- |
+| rwxrwxrwx | config.json      | 普通文件 | overture_enable.service的配置文件 |
+| rwxrwxrwx | monit.d/overture | 普通文件 | monit.d配置文件                   |
 
 ## 安装方法
 
@@ -53,7 +53,7 @@
 
 ## 调用方法
 
-| 插件文件              | 插件调用者    |
-| ------------------    | ------------  |
+| 插件文件                 | 插件调用者       |
+| ------------------------ | ---------------- |
 | overture_enable.service  | monit.d/overture |
 | overture_disable.service | monit.d/overture |

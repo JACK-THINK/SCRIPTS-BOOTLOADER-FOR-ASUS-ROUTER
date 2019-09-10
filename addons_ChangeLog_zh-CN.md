@@ -1,5 +1,47 @@
 # 更新日志
 
+## 版本12.0（2019-09-10）
+
+#### 新增
+
+1. 无
+
+#### 变更
+
+1. 重写大部分程序，大幅提高性能
+2. 规范代码，清除命令歧义性
+3. anki_server实现即装即用，完全免配置
+4. caddy实现兼容arm64，arm，mipsle三种架构
+
+#### 删除
+
+1. 无
+
+#### 插件列表
+
+| 插件名称          | 版本     | 简介                                                |
+| ----------------- | -------- | --------------------------------------------------- |
+| ali_ddns          |          | 阿里云DDNS                                          |
+| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| anki_server       | 在线安装 | anki记忆系统个人服务器                              |
+| aria2             | 在线安装 | aria2下载工具                                       |
+| ariang            | 在线安装 | aria2图形界面                                       |
+| caddy             | 在线安装 | Web服务器                                           |
+| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包  |
+| freemem           |          | 自动清理内存工具                                    |
+| he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
+| ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
+| mailx             | 在线安装 | 邮件系统                                            |
+| ntpd              | 在线安装 | 授时服务器                                          |
+| overture          | 在线安装 | DNS服务器                                           |
+| samba             | 在线安装 | SAMBA服务器                                         |
+| sbl-firewalld     |          | 基于应用的防火墙                                    |
+| shadowsocks-libev | 3.2.3-9  | shadowsocks网络代理                                 |
+| syncthing         | 在线安装 | 开源分布式同步工具                                  |
+| v2ray             | 在线安装 | v2ray网络代理                                       |
+| vlmcsd            | 1112     | 给予巨硬套装活力                                    |
+| wol               |          | 定时开机                                            |
+
 ## 版本11.0（2019-08-24）
 
 #### 新增

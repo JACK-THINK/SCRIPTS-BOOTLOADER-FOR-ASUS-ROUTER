@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -34,12 +38,12 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # PACKAGE_ARCHITECTURE: Architecture of alternative packages
 # 设置自定义变量PACKAGE_ARCHITECTURE为备用软件包架构
-case $(uname -m) in
-    "armv7l")
-        PACKAGE_ARCHITECTURE="armv7-2.6"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         PACKAGE_ARCHITECTURE="aarch64-3.10"
+        ;;
+    "armv7l")
+        PACKAGE_ARCHITECTURE="armv7-2.6"
         ;;
     "mips")
         PACKAGE_ARCHITECTURE="mipselsf"
@@ -48,6 +52,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -90,7 +95,7 @@ then
         #
         # Update the list of available packages
         # 更新可用程序包列表
-        opkg update
+        /opt/bin/opkg update
         #
         # Check if ${PRIVATE_ALTERNATIVE} exists
         # 检查目录${PRIVATE_ALTERNATIVE}是否存在
@@ -98,64 +103,65 @@ then
         then
             # Install shadowsocks-libev offline
             # 离线安装shadowsocks-libev
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-config_*.ipk
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-local_*.ipk
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-redir_*.ipk
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-rules_*.ipk
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-server_*.ipk
-            opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-tunnel_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-config_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-local_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-redir_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-rules_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-server_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/shadowsocks-libev-ss-tunnel_*.ipk
             #
         else
             # Install shadowsocks-libev online
             # 在线安装shadowsocks-libev
-            opkg install shadowsocks-libev-config
-            opkg install shadowsocks-libev-ss-local
-            opkg install shadowsocks-libev-ss-redir
-            opkg install shadowsocks-libev-ss-rules
-            opkg install shadowsocks-libev-ss-server
-            opkg install shadowsocks-libev-ss-tunnel
+            /opt/bin/opkg install shadowsocks-libev-config
+            /opt/bin/opkg install shadowsocks-libev-ss-local
+            /opt/bin/opkg install shadowsocks-libev-ss-redir
+            /opt/bin/opkg install shadowsocks-libev-ss-rules
+            /opt/bin/opkg install shadowsocks-libev-ss-server
+            /opt/bin/opkg install shadowsocks-libev-ss-tunnel
         fi
         #
         # Install haveged and simple-obfs
         # 安装haveged和simple-obfs
-        opkg install haveged
-        opkg install simple-obfs
-        opkg install simple-obfs-server
+        /opt/bin/opkg install haveged
+        /opt/bin/opkg install simple-obfs
+        /opt/bin/opkg install simple-obfs-server
         #
         # Install overture
         # 安装overture
         ${SBL_SYS_USR}/overture/bin/overture_install
         if [ $? != '0' ]
         then
-            echo -e "\033[1;41;37m***** OVERTURE HAS NOT BEEN INSTALLED PROPERLY *****\033[0m"
+            /opt/bin/echo -e "\033[1;41;37m***** OVERTURE HAS NOT BEEN INSTALLED PROPERLY *****\033[0m"
             #
             exit 7
         fi
         #
-        # Disable /opt/etc/init.d/S*shadowsocks
-        # 禁用/opt/etc/init.d/S*shadowsocks
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*shadowsocks
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*shadowsocks
+        # Disable ${ENTWARE_ETC}/init.d/S*shadowsocks
+        # 禁用${ENTWARE_ETC}/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' ${ENTWARE_ETC}/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' ${ENTWARE_ETC}/init.d/S*shadowsocks
+        mv ${ENTWARE_ETC}/shadowsocks.json ${PRIVATE_ETC}/shadowsocks.json.bak
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ss_local ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ss_local
-        mv ${ENTWARE_MONITD}/ss_local ${ENTWARE_MONITD}/ss_local.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ss_local ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ss_local
+        /opt/bin/mv ${ENTWARE_MONITD}/ss_local ${ENTWARE_MONITD}/ss_local.on
         #
-        cp ${PRIVATE_ETC}/monit.d/ss_server ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ss_server
-        #mv ${ENTWARE_MONITD}/ss_server ${ENTWARE_MONITD}/ss_server.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ss_server ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ss_server
+        #/opt/bin/mv ${ENTWARE_MONITD}/ss_server ${ENTWARE_MONITD}/ss_server.on
         #
-        cp ${PRIVATE_ETC}/monit.d/ss_transparent_proxy_overture_file ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file
-        mv ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ss_transparent_proxy_overture_file ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file
+        /opt/bin/mv ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file ${ENTWARE_MONITD}/ss_transparent_proxy_overture_file.on
         #
-        cp ${PRIVATE_ETC}/monit.d/ss_transparent_proxy_overture_prog ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog
-        #mv ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ss_transparent_proxy_overture_prog ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog
+        #/opt/bin/mv ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog ${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog.on
         #
-        monit reload
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

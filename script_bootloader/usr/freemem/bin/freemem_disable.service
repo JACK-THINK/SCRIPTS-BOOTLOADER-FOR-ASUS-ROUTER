@@ -29,14 +29,14 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE FREEMEM ##########
 #
-sed -i '/\/proc\/sys\/vm\/drop_caches/d' /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/sed -i '/\/proc\/sys\/vm\/drop_caches/d' /var/spool/cron/crontabs/${ADMINUSER}
 #
 ########## END ##########
 #
 #
 ########## REMOVE STATUS FILE ##########
 #
-rm -f /var/run/freemem_enabled
+/opt/bin/rm -f /var/run/freemem_enabled
 #
 ########## END ##########
 #

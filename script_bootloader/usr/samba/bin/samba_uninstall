@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
@@ -28,9 +28,13 @@ SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -74,38 +78,38 @@ then
         #
         # Stop SAMBA_SERVER service
         # 停止SAMBA_SERVER服务
-        monit stop 'SAMBA_SERVER'
+        /opt/bin/monit stop 'SAMBA_SERVER'
         #
         # Uninstall samba
         # 卸载samba
-        opkg remove samba4-utils
-        opkg remove samba4-admin
-        opkg remove samba4-client
-        opkg remove samba4-server
-        opkg remove samba4-libs
+        /opt/bin/opkg remove samba4-utils
+        /opt/bin/opkg remove samba4-admin
+        /opt/bin/opkg remove samba4-client
+        /opt/bin/opkg remove samba4-server
+        /opt/bin/opkg remove samba4-libs
         #
         # Uninstall wsdd2
         # 卸载wsdd2
-        opkg remove wsdd2
+        /opt/bin/opkg remove wsdd2
         #
         # Remove residue
         # 删除残留文件
-        rm -rf /opt/etc/samba
+        /opt/bin/rm -rf /opt/etc/samba
         #
-        rm -f /opt/etc/printcap
-        rm -rf /opt/var/log/samba
-        rm -rf /opt/var/lib/samba
-        rm -rf /opt/var/cache/samba
-        rm -rf /opt/var/run/samba
-        rm -rf ${PRIVATE_ROOT}
-        rm -f ${SBL_SYS_TMP}/samba
+        /opt/bin/rm -f /opt/etc/printcap
+        /opt/bin/rm -rf /opt/var/log/samba
+        /opt/bin/rm -rf /opt/var/lib/samba
+        /opt/bin/rm -rf /opt/var/cache/samba
+        /opt/bin/rm -rf /opt/var/run/samba
+        /opt/bin/rm -rf ${PRIVATE_ROOT}
+        /opt/bin/rm -f ${SBL_SYS_TMP}/samba
         #
-        #rmdir /home/root/samba_share
+        #/opt/bin/mkdir /home/root/samba_share
         #
         # Configure monit
         # 配置monit
-        rm -f ${ENTWARE_MONITD}/samba_server.on
-        monit reload
+        /opt/bin/rm -f ${ENTWARE_MONITD}/samba_server.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

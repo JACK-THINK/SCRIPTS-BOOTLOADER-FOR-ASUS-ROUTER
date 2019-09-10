@@ -64,10 +64,21 @@ then
     # 创建符号链接文件${OPT_TARGET}
     ln -sf ${USB_MOUNT_POINT} ${OPT_TARGET}
     #
+    sleep 5
+    #
 elif [ -d "/opt" ]
 then
     # If it is a directory, then copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT} and mount ${USB_MOUNT_POINT} to /opt
     # 如果是目录，则将目录/opt下全部非符号链接文件复制至目录${USB_MOUNT_POINT}，之后挂载目录${USB_MOUNT_POINT}至目录/opt
+    #
+    # Check if ${PRIVATE_ETC} exists
+    # 检查目录${PRIVATE_ETC}是否存在
+    if [ ! -d "${PRIVATE_ETC}" ]
+    then
+        # Create directory ${PRIVATE_ETC}
+        # 如果目录${PRIVATE_ETC}不存在，则执行
+        mkdir ${PRIVATE_ETC}
+    fi
     #
     # Check if ${FILES_TO_COPY} exists
     # 检查文件${FILES_TO_COPY}是否存在
@@ -77,13 +88,14 @@ then
         # 如果文件${FILES_TO_COPY}不存在，则执行
         ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F ' ' '{print $9}' > ${FILES_TO_COPY}
         sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
-        cp -R $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
+        cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
         logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
     fi
     #
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
     mount ${USB_MOUNT_POINT} /opt
+    #
     sleep 5
     #
 else
@@ -92,6 +104,7 @@ else
     logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
     logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    #
     exit 1
 fi
 #
@@ -106,11 +119,14 @@ then
     sleep 5
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
+    exit 0
+    #
 else
     # Do nothing but prompt the user
     # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    #
     exit 2
 fi
 #

@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -78,77 +82,77 @@ then
         #
         # Update the list of available packages
         # 更新可用程序包列表
-        opkg update
+        /opt/bin/opkg update
         #
         # Install samba
         # 安装samba
-        opkg install samba4-libs
-        opkg install samba4-server
-        opkg install samba4-client
-        opkg install samba4-admin
-        opkg install samba4-utils
+        /opt/bin/opkg install samba4-libs
+        /opt/bin/opkg install samba4-server
+        /opt/bin/opkg install samba4-client
+        /opt/bin/opkg install samba4-admin
+        /opt/bin/opkg install samba4-utils
         #
         # Install wsdd2
         # 安装wsdd2
-        opkg install wsdd2
+        /opt/bin/opkg install wsdd2
         #
         # Configure dbus-daemon
         # 配置dbus-daemon
-        mv /opt/etc/dbus-1/system.d/avahi-dbus.conf /opt/etc/dbus-1/system.d/avahi-dbus.conf.bak
-        sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/avahi-dbus.conf
-        cp ${PRIVATE_ETC}/dbus/avahi-dbus.conf /opt/etc/dbus-1/system.d/
-        chmod 644 /opt/etc/dbus-1/system.d/avahi-dbus.conf
+        /opt/bin/mv /opt/etc/dbus-1/system.d/avahi-dbus.conf /opt/etc/dbus-1/system.d/avahi-dbus.conf.bak
+        /opt/bin/sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/avahi-dbus.conf
+        /opt/bin/cp ${PRIVATE_ETC}/dbus/avahi-dbus.conf /opt/etc/dbus-1/system.d/
+        /opt/bin/chmod 644 /opt/etc/dbus-1/system.d/avahi-dbus.conf
         #
-        mv /opt/share/dbus-1/system.conf /opt/share/dbus-1/system.conf.bak
-        sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/system.conf
-        cp ${PRIVATE_ETC}/dbus/system.conf /opt/share/dbus-1/
-        chmod 644 /opt/share/dbus-1/system.conf
+        /opt/bin/mv /opt/share/dbus-1/system.conf /opt/share/dbus-1/system.conf.bak
+        /opt/bin/sed -i "s/root/${ADMINUSER}/g" ${PRIVATE_ETC}/dbus/system.conf
+        /opt/bin/cp ${PRIVATE_ETC}/dbus/system.conf /opt/share/dbus-1/
+        /opt/bin/chmod 644 /opt/share/dbus-1/system.conf
         #
         # Disable /opt/etc/init.d/S91smb
         # 禁用/opt/etc/init.d/S91smb
-        mv /opt/etc/init.d/S91smb ${PRIVATE_ETC}/S91smb.bak
+        /opt/bin/mv /opt/etc/init.d/S91smb ${PRIVATE_ETC}/S91smb.bak
         #
         # Configure samba
         # 配置samba
-        cp /opt/etc/samba/smb.conf /opt/etc/samba/smb.conf.bak
-        sed -i '/netbios name/s/^/#/' /opt/etc/samba/smb.conf
-        sed -i "\#netbios name#a\        netbios name = ${COMPUTER_NAME}" /opt/etc/samba/smb.conf
-        sed -i '/socket options/s/^/#/' /opt/etc/samba/smb.conf
-        sed -i "\#socket options#a\        socket options = TCP_NODELAY SO_KEEPALIVE IPTOS_LOWDELAY" /opt/etc/samba/smb.conf
-        sed -i '/passdb backend/s/^/#/' /opt/etc/samba/smb.conf
-        sed -i "\#passdb backend#a\        passdb backend = tdbsam:/opt/etc/samba/passdb.tdb" /opt/etc/samba/smb.conf
-        sed -i '/syslog/s/^/#/' /opt/etc/samba/smb.conf
-        sed -i '/smb passwd file/s/^/#/' /opt/etc/samba/smb.conf
+        /opt/bin/cp /opt/etc/samba/smb.conf /opt/etc/samba/smb.conf.bak
+        /opt/bin/sed -i '/netbios name/s/^/#/' /opt/etc/samba/smb.conf
+        /opt/bin/sed -i "\#netbios name#a\        netbios name = ${COMPUTER_NAME}" /opt/etc/samba/smb.conf
+        /opt/bin/sed -i '/socket options/s/^/#/' /opt/etc/samba/smb.conf
+        /opt/bin/sed -i "\#socket options#a\        socket options = TCP_NODELAY SO_KEEPALIVE IPTOS_LOWDELAY" /opt/etc/samba/smb.conf
+        /opt/bin/sed -i '/passdb backend/s/^/#/' /opt/etc/samba/smb.conf
+        /opt/bin/sed -i "\#passdb backend#a\        passdb backend = tdbsam:/opt/etc/samba/passdb.tdb" /opt/etc/samba/smb.conf
+        /opt/bin/sed -i '/syslog/s/^/#/' /opt/etc/samba/smb.conf
+        /opt/bin/sed -i '/smb passwd file/s/^/#/' /opt/etc/samba/smb.conf
         #
-        sed -i "s/ROUTER/${ROUTER_MODEL}/" ${PRIVATE_ETC}/smb.conf.add
-        cat ${PRIVATE_ETC}/smb.conf.add >> /opt/etc/samba/smb.conf
+        /opt/bin/sed -i "s/ROUTER/${ROUTER_MODEL}/" ${PRIVATE_ETC}/smb.conf.add
+        /opt/bin/cat ${PRIVATE_ETC}/smb.conf.add >> /opt/etc/samba/smb.conf
         #
-        touch /opt/etc/printcap
-        mkdir -p /opt/var/log/samba
-        mkdir -p /opt/var/lib/samba/private
-        mkdir -p /opt/var/cache/samba
-        mkdir -p /opt/var/run/samba/ncalrpc
-        chmod 755 /opt/var/lib/samba
-        chmod 755 /opt/var/cache/samba
+        /opt/bin/touch /opt/etc/printcap
+        /opt/bin/mkdir -p /opt/var/log/samba
+        /opt/bin/mkdir -p /opt/var/lib/samba/private
+        /opt/bin/mkdir -p /opt/var/cache/samba
+        /opt/bin/mkdir -p /opt/var/run/samba/ncalrpc
+        /opt/bin/chmod 755 /opt/var/lib/samba
+        /opt/bin/chmod 755 /opt/var/cache/samba
         #
         # Create default shared directory
         # 创建默认共享目录
-        #mkdir /home/root/samba_share
+        #/opt/bin/mkdir /home/root/samba_share
         #
         # Disable /opt/etc/init.d/S99wsdd2
         # 禁用/opt/etc/init.d/S99wsdd2
-        mv /opt/etc/init.d/S99wsdd2 ${PRIVATE_ETC}/S99wsdd2.bak
+        /opt/bin/mv /opt/etc/init.d/S99wsdd2 ${PRIVATE_ETC}/S99wsdd2.bak
         #
         # Create default samba user
         # 创建默认samba用户
-        echo -ne "${ADMINPASSWORD}\n${ADMINPASSWORD}\n" | /opt/bin/pdbedit -a -u "${ADMINUSER}" -t
+        /opt/bin/echo -ne "${ADMINPASSWORD}\n${ADMINPASSWORD}\n" | /opt/bin/pdbedit -a -u "${ADMINUSER}" -t
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/samba_server ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/samba_server
-        mv ${ENTWARE_MONITD}/samba_server ${ENTWARE_MONITD}/samba_server.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/samba_server ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/samba_server
+        /opt/bin/mv ${ENTWARE_MONITD}/samba_server ${ENTWARE_MONITD}/samba_server.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

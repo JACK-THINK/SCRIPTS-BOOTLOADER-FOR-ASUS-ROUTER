@@ -29,8 +29,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE NTPD ##########
 #
-kill $(cat ${NTPD_PID_FILE}) > /dev/null 2>&1
-rm -f ${NTPD_PID_FILE} > /dev/null 2>&1
+/opt/bin/kill $(/opt/bin/cat ${NTPD_PID_FILE}) > /dev/null 2>&1
+/opt/bin/rm -f ${NTPD_PID_FILE} > /dev/null 2>&1
 #
 ########## END ##########
 #

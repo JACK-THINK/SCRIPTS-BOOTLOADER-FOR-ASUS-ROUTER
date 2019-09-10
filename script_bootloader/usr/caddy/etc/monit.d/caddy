@@ -1,4 +1,4 @@
 check process CADDY with pidfile '/var/run/caddy.pid'
     start program = "/opt/script_bootloader/usr/caddy/bin/caddy_enable.service"
-    stop program = "/bin/sh -c 'kill -15 $(cat /var/run/caddy.pid)'"
+    stop program = "/opt/script_bootloader/usr/caddy/bin/caddy_disable.service"
     if does not exist then restart

@@ -40,7 +40,7 @@ PC1="br0 XX:XX:XX:XX:XX:XX"
 ########## WOL LIST ##########
 #
 # Wake up PC1 at 4:30 everyday
-echo "30 4 * * * /usr/sbin/ether-wake -i ${PC1}" >> /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/echo "30 4 * * * /usr/sbin/ether-wake -i ${PC1}" >> /var/spool/cron/crontabs/${ADMINUSER}
 logger -st "($(basename $0))" $$ "***** PC1 WILL BOOT UP AT 4:30 EVERYDAY *****"
 #
 # Wake up NEXT COMPUTER at XX:XX FREQUENCY
@@ -50,14 +50,14 @@ logger -st "($(basename $0))" $$ "***** PC1 WILL BOOT UP AT 4:30 EVERYDAY *****"
 #
 ########## ENABLE CRONTAB ##########
 #
-chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
 #
 ########## END ##########
 #
 #
 ########## CREATE STATUS FILE ##########
 #
-touch /var/run/wol_enabled
+/opt/bin/touch /var/run/wol_enabled
 #
 ########## END ##########
 #

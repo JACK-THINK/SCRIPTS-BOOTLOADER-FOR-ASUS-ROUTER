@@ -16,9 +16,17 @@ ROUTER_MODEL=$(nvram get model)
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
 #
-# SBL_SITE: The directory which contains all the sites
-# 设置自定义变量SBL_SITE为站点目录
-SBL_SITE=${USB_MOUNT_POINT}/www
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/entware
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -27,6 +35,10 @@ SERVICE_NAME="ENTWARE"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="INSTALLATION"
+#
+# FILES_TO_COPY: The list of files that should be copied
+# 设置自定义变量FILES_TO_COPY为待复制文件列表
+FILES_TO_COPY="${PRIVATE_ETC}/files_to_copy.autosave"
 #
 ########## END ##########
 #
@@ -38,11 +50,48 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## INSTALLATION CONFIGURATION ##########
+########## PREPARE ENVIRONMENT ##########
 #
-# Check the architecture of the ASUS Router
-# 检查华硕路由器架构
-ROUTER_ARCHITECTURE=$(uname -m)
+# Take the appropriate way to make /opt available according to the type of /opt
+# 根据/opt的类型，采用适当方法使目录/opt可用
+if [ -L "/opt" ]
+then
+    # OPT_TARGET: The target of the symbolic link /opt
+    # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
+    OPT_TARGET=$(ls -al /opt | awk -F ' ' '{print $11}' | sed 's/^/\//')
+    #
+    # Create symbolic link file ${OPT_TARGET}
+    # 创建符号链接文件${OPT_TARGET}
+    ln -sf ${USB_MOUNT_POINT} ${OPT_TARGET}
+    #
+    sleep 5
+    #
+elif [ -d "/opt" ]
+then
+    # If it is a directory, then copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT} and mount ${USB_MOUNT_POINT} to /opt
+    # 如果是目录，则将目录/opt下全部非符号链接文件复制至目录${USB_MOUNT_POINT}，之后挂载目录${USB_MOUNT_POINT}至目录/opt
+    #
+    mkdir ${PRIVATE_ETC}
+    ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F ' ' '{print $9}' > ${FILES_TO_COPY}
+    sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
+    cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
+    logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
+    #
+    # Mount the USB flash drive to /opt
+    # 挂载U盘至目录/opt
+    mount ${USB_MOUNT_POINT} /opt
+    #
+    sleep 5
+    #
+else
+    # Do nothing but prompt the user
+    # 如果/opt的类型不符合上述两种情况，则执行
+    logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
+    logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    #
+    exit 1
+fi
 #
 ########## END ##########
 #
@@ -51,28 +100,28 @@ ROUTER_ARCHITECTURE=$(uname -m)
 #
 # Install Entware according to the architecture of the ASUS Router
 # 根据路由器架构，自动安装适当版本的Entware
-if [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
-then
-    wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-    #
-elif [ ${ROUTER_ARCHITECTURE} == "armv7l" ]
-then
-    wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-    #
-elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
-then
-    wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-    #
-else
-    # Do nothing but prompt the user
-    # 如果路由器架构不符合上述三种情况，则执行
-    logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-    exit 1
-fi
+case $(uname -m) in
+    "aarch64")
+        wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        ;;
+    "armv7l")
+        wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        ;;
+    "mips")
+        wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
+        ;;
+esac
 #
 ########## END ##########
 #
@@ -87,36 +136,17 @@ if [ ! -d "${USB_MOUNT_POINT}/home/root/" ]
 then
     # Copy /tmp/home/root to ${USB_MOUNT_POINT}/home/
     # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
-    cp -R /tmp/home/root ${USB_MOUNT_POINT}/home/
+    cp -r /tmp/home/root ${USB_MOUNT_POINT}/home/
     logger -st "($(basename $0))" $$ "***** HOME HAS BEEN COPIED *****"
+    #
+    exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
     logger -st "($(basename $0))" $$ "***** HOME EXISTS *****"
-fi
-#
-########## END ##########
-#
-#
-########## CREATE DIRECTORY ${SBL_SITE} ##########
-#
-logger -st "($(basename $0))" $$ "***** CREATE DIRECTORY ${SBL_SITE} *****"
-#
-# Check if directory ${SBL_SITE} exists
-# 检查目录${SBL_SITE}是否存在
-if [ ! -d "${SBL_SITE}" ]
-then
-    # Create directory ${SBL_SITE}
-    # 如果目录${SBL_SITE}不存在，则执行
-    mkdir ${SBL_SITE}
     #
-    logger -st "($(basename $0))" $$ "***** ${SBL_SITE} HAS BEEN CREATED *****"
-    #
-else
-    # Do nothing but prompt the user
-    # 如果目录${SBL_SITE}存在，则执行
-    logger -st "($(basename $0))" $$ "***** ${SBL_SITE} EXISTS *****"
+    exit 0
 fi
 #
 ########## END ##########

@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -78,11 +78,11 @@ then
         #
         # Check the architecture of the ASUS Router
         # 检查华硕路由器架构
-        ROUTER_ARCHITECTURE=$(uname -m)
+        ROUTER_ARCHITECTURE=$(/opt/bin/uname -m)
         #
         # Install vlmcsd according to the architecture of the ASUS Router
         # 根据路由器架构，自动安装适当版本的vlmcsd
-        if [ ${ROUTER_ARCHITECTURE} == "armv7l" ] || [ ${ROUTER_ARCHITECTURE} == "aarch64" ]
+        if [ "${ROUTER_ARCHITECTURE}" == "armv7l" ] || [ "${ROUTER_ARCHITECTURE}" == "aarch64" ]
         then
             # Check if ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static exist
             # 检查文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static是否存在
@@ -90,17 +90,18 @@ then
             then
                 # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static存在，则执行
-                ln -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcs
-                ln -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcsd
+                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcs
+                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcsd
                 #
             else
                 # Do nothing but prompt the user
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static不存在，则执行
                 logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+                #
                 exit 4
             fi
             #
-        elif [ ${ROUTER_ARCHITECTURE} == "mips" ]
+        elif [ "${ROUTER_ARCHITECTURE}" == "mips" ]
         then
             # Check if ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static exist
             # 检查文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static是否存在
@@ -108,13 +109,14 @@ then
             then
                 # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static存在，则执行
-                ln -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcs
-                ln -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcsd
+                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcs
+                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcsd
                 #
             else
                 # Do nothing but prompt the user
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static不存在，则执行
                 logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+                #
                 exit 6
             fi
             #
@@ -123,6 +125,7 @@ then
             # 如果路由器架构不符合上述三种情况，则执行
             logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            #
             exit 3
         fi
         #
@@ -132,34 +135,34 @@ then
         then
             # Create ${PRIVATE_ETC}/dnsmasq.d
             # 创建目录${PRIVATE_ETC}/dnsmasq.d
-            mkdir ${PRIVATE_ETC}/dnsmasq.d
+            /opt/bin/mkdir ${PRIVATE_ETC}/dnsmasq.d
         fi
         #
-        LOCAL_DOMAIN_A=$(sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)
-        LOCAL_DOMAIN_B=$(sed -n -e 's/^domain=//p' ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf)
+        LOCAL_DOMAIN_A=$(/opt/bin/sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)
+        LOCAL_DOMAIN_B=$(/opt/bin/sed -n -e 's/^domain=//p' ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf)
         #
         if [ ! -z "${LOCAL_DOMAIN_A}" ]
         then
             LOCAL_DOMAIN="${LOCAL_DOMAIN_A}"
-            echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
-            cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
+            /opt/bin/cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
             #
         elif [ ! -z "${LOCAL_DOMAIN_B}" ]
         then
             LOCAL_DOMAIN="${LOCAL_DOMAIN_B}"
-            echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
-            cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
+            /opt/bin/cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
             #
         else
-            echo -ne "\033[1;41;37m***** ERROR: DOMAIN OF DNSMASQ IS MISSING *****\033[0m\n"
+            /opt/bin/echo -ne "\033[1;41;37m***** ERROR: DOMAIN OF DNSMASQ IS MISSING *****\033[0m\n"
         fi
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/vlmcsd ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/vlmcsd
-        mv ${ENTWARE_MONITD}/vlmcsd ${ENTWARE_MONITD}/vlmcsd.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/vlmcsd ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/vlmcsd
+        /opt/bin/mv ${ENTWARE_MONITD}/vlmcsd ${ENTWARE_MONITD}/vlmcsd.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

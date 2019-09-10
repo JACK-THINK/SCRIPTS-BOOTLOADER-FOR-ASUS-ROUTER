@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -27,7 +27,7 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # SERVER_DOMAIN: Domain of the SS-SERVER
 # 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
-SERVER_DOMAIN=$(grep '"server":' ${PRIVATE_ETC}/config_redir.json | awk -F '"' '{print $4}')
+SERVER_DOMAIN=$(/opt/bin/grep '"server":' ${PRIVATE_ETC}/config_redir.json | /opt/bin/gawk -F '"' '{print $4}')
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
@@ -49,13 +49,13 @@ sleep 2
 #
 # Update /etc/hosts
 # 更新文件/etc/hosts
-sed -i '/'"${SERVER_DOMAIN}"'/d' /etc/hosts
+/opt/bin/sed -i '/'"${SERVER_DOMAIN}"'/d' /etc/hosts
 #
 # Update DNS server
 # 更新DNS服务器
-sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
-sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
-killall -q -1 dnsmasq > /dev/null 2>&1
+/opt/bin/sed -i '/^server=127\.0\.0\.1#.*/d' /tmp/resolv.dnsmasq
+/opt/bin/sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+/opt/bin/killall -q -1 dnsmasq > /dev/null 2>&1
 sleep 30
 #
 ########## END ##########
@@ -65,10 +65,10 @@ sleep 30
 #
 # Disable crontab because something is wrong with the poll time of monit
 # 因为monit的执行周期BUG，故禁用crontab进行进程周期执行
-sed -i '/ss_transparent_proxy_enable_file.service/d' /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/sed -i '/ss_transparent_proxy_enable_file.service/d' /var/spool/cron/crontabs/${ADMINUSER}
 #
 # Remove status file
 # 删除状态文件
-rm -f /var/run/ss_transparent_proxy_enable_file > /dev/null 2>&1
+/opt/bin/rm -f /var/run/ss_transparent_proxy_enable_file > /dev/null 2>&1
 #
 ########## END ##########

@@ -2,32 +2,25 @@
 #
 ########## SET THE CUSTOM VARIABLES ##########
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # GCC_ENVIRONMENT: The path to gcc environment configuration
 # 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
 GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="DEVELOPMENT-TOOLS"
+SERVICE_NAME="DEPENDENCY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="ENABLE"
-#
-########## END ##########
-#
-#
-########## CHECK THE TYPE OF FIRMWARE ##########
-#
-if [ -z "$(nvram show | grep -e '.*merlin.*')" ]
-then
-    # ASUSWRT
-    FIRMWARE_TYPE="ASUSWRT"
-    #
-else
-    # ASUSWRT-MERLIN
-    FIRMWARE_TYPE="ASUSWRT-MERLIN"
-fi
 #
 ########## END ##########
 #
@@ -39,31 +32,28 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## END ##########
 #
 #
-########## ENABLE DEVELOPMENT TOOLS ##########
+########## ENABLE DEPENDENCY ##########
 #
 # Check if ${GCC_ENVIRONMENT} exists
 # 检查文件${GCC_ENVIRONMENT}是否存在
 if [ -e "${GCC_ENVIRONMENT}" ]
 then
     logger -st "($(basename $0))" $$ "***** ${GCC_ENVIRONMENT} EXISTS *****"
+    #
     # Load ${GCC_ENVIRONMENT}
     # 如果文件${GCC_ENVIRONMENT}存在，则执行
-    #
-    # The argument script_usbumount won't be called when rebooting ASUSWRT. In order to prevent the file /opt/etc/profile from growing too large, add the 2 lines below
-    # 华硕官方固件在重启时，不能自动调用script_usbumount参数。因此加入下面两行，以防文件/opt/etc/profile无限增长
-    if [ ${FIRMWARE_TYPE} == "ASUSWRT" ]
-    then
-        sed -i '/source \/opt\/bin\/gcc_env\.sh/d' /opt/etc/profile
-    fi
-    #
-    echo "source ${GCC_ENVIRONMENT}" >> /opt/etc/profile
+    /opt/bin/sed -i '/source \/opt\/bin\/gcc_env\.sh/d' ${ENTWARE_ETC}/profile
+    /opt/bin/echo "source ${GCC_ENVIRONMENT}" >> ${ENTWARE_ETC}/profile
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+    exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${GCC_ENVIRONMENT}不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${GCC_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    #
     exit 1
 fi
 #

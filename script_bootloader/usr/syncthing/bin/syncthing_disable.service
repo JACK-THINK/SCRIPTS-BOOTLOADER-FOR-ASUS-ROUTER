@@ -29,9 +29,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE SYNCTHING ##########
 #
-#ps | grep "syncthing" | grep -v "grep" | awk '{print $1}' | xargs kill
-kill $(cat ${SYNCTHING_PID_FILE}) > /dev/null 2>&1
-rm -f ${SYNCTHING_PID_FILE} > /dev/null 2>&1
+/opt/bin/kill $(/opt/bin/cat ${SYNCTHING_PID_FILE}) > /dev/null 2>&1
+/opt/bin/rm -f ${SYNCTHING_PID_FILE} > /dev/null 2>&1
 #
 ########## END ##########
 #

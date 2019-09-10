@@ -29,9 +29,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE ARIANG ##########
 #
-#ps | grep "ariang_lighttpd.conf" | grep -v "grep" | awk '{print $1}' | xargs kill
-kill $(cat ${ARIANG_PID_FILE}) > /dev/null 2>&1
-rm -f ${ARIANG_PID_FILE} > /dev/null 2>&1
+/opt/bin/kill $(/opt/bin/cat ${ARIANG_PID_FILE}) > /dev/null 2>&1
+/opt/bin/rm -f ${ARIANG_PID_FILE} > /dev/null 2>&1
 #
 ########## END ##########
 #

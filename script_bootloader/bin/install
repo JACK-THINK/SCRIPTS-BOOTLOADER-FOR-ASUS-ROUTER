@@ -169,35 +169,6 @@ fi
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service exists
-# 检查文件${SBL_SYS_USR}/entware/bin/entware_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/entware/bin/entware_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/entware/bin/entware_enable.service
-    # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service存在，则执行
-    ${SBL_SYS_USR}/entware/bin/entware_enable.service
-    #
-    # Check if ${SBL_SYS_USR}/entware/bin/entware_enable.service returns 1
-    # 检查文件${SBL_SYS_USR}/entware/bin/entware_enable.service的返回值是否为1
-    if [ $? == '1' ]
-    then
-        # Stop and Exit
-        # 如果返回值为1，则该程序终止
-        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
-        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 9
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/entware/bin/entware_enable.service不存在，则该程序终止
-    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_enable.service *****"
-    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 10
-fi
-#
-sleep 10
-#
 # Check if ${SBL_SYS_USR}/entware/bin/entware_install exists
 # 检查文件${SBL_SYS_USR}/entware/bin/entware_install是否存在
 if [ -e "${SBL_SYS_USR}/entware/bin/entware_install" ]
@@ -214,7 +185,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/entware/bin/entware_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 11
+        exit 9
     fi
     #
 else
@@ -222,7 +193,7 @@ else
     # 如果文件${SBL_SYS_USR}/entware/bin/entware_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 12
+    exit 10
 fi
 #
 sleep 10
@@ -241,7 +212,7 @@ else
     # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
     logger -st "($(basename $0))" $$ "***** HOME HAS NOT BEEN MOUNTED *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 13
+    exit 11
 fi
 #
 sleep 10
@@ -264,8 +235,24 @@ else
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
     logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 14
+    exit 12
 fi
+#
+sleep 10
+#
+# Create Public directories
+# 创建公共目录
+mkdir ${USB_MOUNT_POINT}/www
+logger -st "($(basename $0))" $$ "***** PUBLIC DIRECTORIES HAVE BEEN CREATED *****"
+#
+# Create Personal directories
+# 创建私有目录
+mkdir ${USB_MOUNT_POINT}/home/root/Documents
+mkdir ${USB_MOUNT_POINT}/home/root/Downloads
+mkdir ${USB_MOUNT_POINT}/home/root/Music
+mkdir ${USB_MOUNT_POINT}/home/root/Pictures
+mkdir ${USB_MOUNT_POINT}/home/root/Videos
+logger -st "($(basename $0))" $$ "***** PERSONAL DIRECTORIES HAVE BEEN CREATED *****"
 #
 sleep 10
 #
@@ -285,7 +272,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 15
+        exit 13
     fi
     #
 else
@@ -293,7 +280,7 @@ else
     # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 16
+    exit 14
 fi
 #
 sleep 10
@@ -314,7 +301,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 17
+        exit 15
     fi
     #
 else
@@ -322,65 +309,65 @@ else
     # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 16
+fi
+#
+sleep 10
+#
+# Check if ${SBL_SYS_USR}/dependency/bin/dependency_install exists
+# 检查文件${SBL_SYS_USR}/dependency/bin/dependency_install是否存在
+if [ -e "${SBL_SYS_USR}/dependency/bin/dependency_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/dependency/bin/dependency_install
+    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_install存在，则执行
+    ${SBL_SYS_USR}/dependency/bin/dependency_install
+    #
+    # Check if ${SBL_SYS_USR}/dependency/bin/dependency_install returns 0
+    # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dependency/bin/dependency_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 17
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_install不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dependency/bin/dependency_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
     exit 18
 fi
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_install exists
-# 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_install是否存在
-if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_install" ]
+# Check if ${SBL_SYS_USR}/dependency/bin/dependency_enable.service exists
+# 检查文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service是否存在
+if [ -e "${SBL_SYS_USR}/dependency/bin/dependency_enable.service" ]
 then
-    # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_install
-    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_install存在，则执行
-    ${SBL_SYS_USR}/development_tools/bin/development_tools_install
+    # Invoke ${SBL_SYS_USR}/dependency/bin/dependency_enable.service
+    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service存在，则执行
+    ${SBL_SYS_USR}/dependency/bin/dependency_enable.service
     #
-    # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_install returns 0
-    # 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_install的返回值是否为0
+    # Check if ${SBL_SYS_USR}/dependency/bin/dependency_enable.service returns 0
+    # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service的返回值是否为0
     if [ $? != '0' ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
-        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
+        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dependency/bin/dependency_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
         exit 19
     fi
     #
 else
     # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_install不存在，则该程序终止
-    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_install *****"
+    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service不存在，则该程序终止
+    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dependency/bin/dependency_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
     exit 20
-fi
-#
-sleep 10
-#
-# Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service exists
-# 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
-    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service存在，则执行
-    ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service
-    #
-    # Check if ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service returns 0
-    # 检查文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service的返回值是否为0
-    if [ $? != '0' ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
-        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 21
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service不存在，则该程序终止
-    logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service *****"
-    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 22
 fi
 #
 sleep 10
@@ -401,7 +388,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/monit/bin/monit_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 23
+        exit 21
     fi
     #
 else
@@ -409,7 +396,7 @@ else
     # 如果文件${SBL_SYS_USR}/monit/bin/monit_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/monit/bin/monit_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 24
+    exit 22
 fi
 #
 sleep 10
@@ -436,7 +423,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 25
+        exit 23
     fi
     #
 else
@@ -444,7 +431,7 @@ else
     # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 26
+    exit 24
 fi
 #
 sleep 10
@@ -465,7 +452,7 @@ then
         # 如果返回值不为0，则该程序终止
         logger -st "($(basename $0))" $$ "***** ERROR: ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service *****"
         echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-        exit 27
+        exit 25
     fi
     #
 else
@@ -473,7 +460,7 @@ else
     # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 28
+    exit 26
 fi
 #
 sleep 10
@@ -486,7 +473,7 @@ then
     #
     # Modify ${SBL_SYS_BIN}/list_of_user_custom_scripts
     # 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
-    ${USB_MOUNT_POINT}/bin/sed -i -e '/# NEXT SERVICE/i\# DEVELOPMENT-TOOLS SERVICE\n${SBL_SYS_USR}/development_tools/bin/development_tools_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
+    ${USB_MOUNT_POINT}/bin/sed -i -e '/# NEXT SERVICE/i\# DEPENDENCY SERVICE\n${SBL_SYS_USR}/dependency/bin/dependency_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
     #
     ${USB_MOUNT_POINT}/bin/sed -i -e '/# NEXT SERVICE/i\# DNSMASQ.D SERVICE\n${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service\n#' ${SBL_SYS_BIN}/list_of_user_custom_scripts
     #
@@ -495,7 +482,7 @@ else
     # 如果文件${SBL_SYS_BIN}/list_of_user_custom_scripts不存在，则该程序终止
     logger -st "($(basename $0))" $$ "***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/list_of_user_custom_scripts *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 30
+    exit 27
 fi
 #
 sleep 10

@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -46,7 +46,7 @@ FMW_DNSMASQ_CONF="/etc/dnsmasq.conf"
 #
 # LOCAL_DOMAIN: The local-only domain
 # 设置自定义变量LOCAL_DOMAIN为本地专用域名
-LOCAL_DOMAIN="$(sed -n -e '/^domain=/s/^.*=//p' ${FMW_DNSMASQ_CONF} | cut -d ',' -f 1)"
+LOCAL_DOMAIN="$(/opt/bin/sed -n -e '/^domain=/s/^.*=//p' ${FMW_DNSMASQ_CONF} | /opt/bin/cut -d ',' -f 1)"
 if [ -z "${LOCAL_DOMAIN}" ]
 then
     LOCAL_DOMAIN="lan"
@@ -86,11 +86,11 @@ then
         #
         # Remove previous backup
         # 删除旧备份
-        rm -rf ${ENTWARE_DNSMASQD}.bak > /dev/null 2>&1
+        /opt/bin/rm -rf ${ENTWARE_DNSMASQD}.bak > /dev/null 2>&1
         #
         # Back up previous edition
         # 备份旧版本
-        mv ${ENTWARE_DNSMASQD} ${ENTWARE_DNSMASQD}.bak > /dev/null 2>&1
+        /opt/bin/mv ${ENTWARE_DNSMASQD} ${ENTWARE_DNSMASQD}.bak > /dev/null 2>&1
         #
         # Check if ${PRIVATE_ETC}/dnsmasq.d exists
         # 检查目录${PRIVATE_ETC}/dnsmasq.d是否存在
@@ -98,12 +98,12 @@ then
         then
             # Copy ${PRIVATE_ETC}/dnsmasq.d to ${ENTWARE_DNSMASQD}
             # 复制目录${PRIVATE_ETC}/dnsmasq.d至目录${ENTWARE_DNSMASQD}
-            cp -r ${PRIVATE_ETC}/dnsmasq.d ${ENTWARE_DNSMASQD}
+            /opt/bin/cp -r ${PRIVATE_ETC}/dnsmasq.d ${ENTWARE_DNSMASQD}
             #
         else
             # Create ${ENTWARE_DNSMASQD}
             # 创建目录${ENTWARE_DNSMASQD}
-            mkdir ${ENTWARE_DNSMASQD}
+            /opt/bin/mkdir ${ENTWARE_DNSMASQD}
         fi
         #
         # Check if ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf exists
@@ -112,38 +112,38 @@ then
         then
             # Create ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             # 如果文件${ENTWARE_DNSMASQD}/dnsmasq_extended.conf不存在，则执行
-            if [ -z "$(grep -e '^domain-needed' ${FMW_DNSMASQ_CONF})" ]
+            if [ -z "$(/opt/bin/grep -e '^domain-needed' ${FMW_DNSMASQ_CONF})" ]
             then
-                echo "domain-needed" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "domain-needed" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            if [ -z "$(grep -e '^bogus-priv' ${FMW_DNSMASQ_CONF})" ]
+            if [ -z "$(/opt/bin/grep -e '^bogus-priv' ${FMW_DNSMASQ_CONF})" ]
             then
-                echo "bogus-priv" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "bogus-priv" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            if [ -z "$(grep -e ^local=/${LOCAL_DOMAIN}/ ${FMW_DNSMASQ_CONF})" ]
+            if [ -z "$(/opt/bin/grep -e ^local=/${LOCAL_DOMAIN}/ ${FMW_DNSMASQ_CONF})" ]
             then
-                echo "local=/${LOCAL_DOMAIN}/" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "local=/${LOCAL_DOMAIN}/" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            echo "addn-hosts=${ENTWARE_DNSMASQD}/hosts.dnsmasq" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+            /opt/bin/echo "addn-hosts=${ENTWARE_DNSMASQD}/hosts.dnsmasq" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             #
-            if [ -z "$(grep -e '^expand-hosts' ${FMW_DNSMASQ_CONF})" ]
+            if [ -z "$(/opt/bin/grep -e '^expand-hosts' ${FMW_DNSMASQ_CONF})" ]
             then
-                echo "expand-hosts" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "expand-hosts" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            if [ -z "$(grep -e '^domain=' ${FMW_DNSMASQ_CONF})" ]
+            if [ -z "$(/opt/bin/grep -e '^domain=' ${FMW_DNSMASQ_CONF})" ]
             then
-                echo "domain=${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "domain=${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            DHCP_OPTION_DNS_NUM=$(sed -n -r -e 's/^dhcp-option=[[:space:][:alnum:]_-]*,*15[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*$/\1/p' ${FMW_DNSMASQ_CONF})
-            DHCP_OPTION_DNS_SYM=$(sed -n -r -e 's/^dhcp-option=.*option[[:space:]]*:[[:space:]]*domain-name[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*[[:punct:]]*.*$/\1/p' ${FMW_DNSMASQ_CONF})
+            DHCP_OPTION_DNS_NUM=$(/opt/bin/sed -n -r -e 's/^dhcp-option=[[:space:][:alnum:]_-]*,*15[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*$/\1/p' ${FMW_DNSMASQ_CONF})
+            DHCP_OPTION_DNS_SYM=$(/opt/bin/sed -n -r -e 's/^dhcp-option=.*option[[:space:]]*:[[:space:]]*domain-name[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*[[:punct:]]*.*$/\1/p' ${FMW_DNSMASQ_CONF})
             if [ -z "${DHCP_OPTION_DNS_NUM}" ] && [ -z "${DHCP_OPTION_DNS_SYM}" ]
             then
-                echo "dhcp-option=15,${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
+                /opt/bin/echo "dhcp-option=15,${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
         fi
@@ -154,15 +154,15 @@ then
         then
             # Create ${ENTWARE_DNSMASQD}/hosts.dnsmasq
             # 如果文件${ENTWARE_DNSMASQD}/hosts.dnsmasq不存在，则执行
-            echo -ne "$(nvram get lan_ipaddr) ${ROUTER_MODEL}\n" > "${ENTWARE_DNSMASQD}/hosts.dnsmasq"
+            /opt/bin/echo -ne "$(nvram get lan_ipaddr) ${ROUTER_MODEL}\n" > "${ENTWARE_DNSMASQD}/hosts.dnsmasq"
         fi
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/dnsmasq.d ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/dnsmasq.d
-        mv ${ENTWARE_MONITD}/dnsmasq.d ${ENTWARE_MONITD}/dnsmasq.d.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/dnsmasq.d ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/dnsmasq.d
+        /opt/bin/mv ${ENTWARE_MONITD}/dnsmasq.d ${ENTWARE_MONITD}/dnsmasq.d.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

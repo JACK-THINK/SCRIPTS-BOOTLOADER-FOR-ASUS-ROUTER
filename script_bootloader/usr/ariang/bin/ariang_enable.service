@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -20,14 +20,6 @@ PRIVATE_ROOT=${SBL_SYS_USR}/ariang
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
-#
-# PRIVATE_USR: The directory which contains all the external software resources related to this program
-# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
-#
-# ARIANG_PID_FILE: The path to ariang.pid
-# 设置自定义变量ARIANG_PID_FILE为文件ariang.pid的绝对路径
-ARIANG_PID_FILE=/var/run/ariang.pid
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -64,7 +56,7 @@ then
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/ariang或${PRIVATE_ETC}/config.xml不存在，则执行
+    # 如果文件${PRIVATE_ETC}/ariang_lighttpd.conf不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ARIANG CONFIGURATION FILE *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi

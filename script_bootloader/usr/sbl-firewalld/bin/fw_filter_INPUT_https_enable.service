@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -49,50 +49,50 @@ LOCAL_PORT_1="443"
 #
 # TEST_USER_DEFINED_CHAIN_NAME: Check if ${USER_DEFINED_CHAIN_NAME} exists
 # TEST_USER_DEFINED_CHAIN_NAME: 测试${USER_DEFINED_CHAIN_NAME}是否存在
-CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")
+CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")
 if [ ! -z "${CHECK_RULE}" ]
 then
     TEST_USER_DEFINED_CHAIN_NAME=true
     #
     # TEST_REFERENCE: Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # TEST_REFERENCE: 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}引用
-    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})
+    CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})
     if [ ! -z "${CHECK_RULE}" ]
     then
         TEST_REFERENCE=true
         #
         # TEST_TCP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
         # TEST_TCP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-        CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_1}")
+        CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^tcp#.*:${LOCAL_PORT_1}")
         if [ ! -z "${CHECK_RULE}" ]
         then
             TEST_TCP_LOCAL_PORT_1=true
         else
             TEST_TCP_LOCAL_PORT_1=false
-            echo -e "ERROR: ${LOCAL_PORT_1}/TCP"
+            /opt/bin/echo -e "ERROR: ${LOCAL_PORT_1}/TCP"
         fi
         #
         ## TEST_TCP_LOCAL_PORT_2: Test the rules in ${USER_DEFINED_CHAIN_NAME}
         ## TEST_TCP_LOCAL_PORT_2: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
-        #CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | awk '{print $4"#"$11}' | grep "^tcp#.*:${LOCAL_PORT_2}")
+        #CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^tcp#.*:${LOCAL_PORT_2}")
         #if [ ! -z "${CHECK_RULE}" ]
         #then
         #    TEST_TCP_LOCAL_PORT_2=true
         #else
         #    TEST_TCP_LOCAL_PORT_2=false
-        #    echo -e "ERROR: ${LOCAL_PORT_2}/TCP"
+        #    /opt/bin/echo -e "ERROR: ${LOCAL_PORT_2}/TCP"
         #fi
         ##
     else
         #
         TEST_REFERENCE=false
-        echo -e "ERROR: ${USER_DEFINED_CHAIN_NAME} IS NOT REFERENCED BY ${BUILT_IN_CHAIN_NAME}"
+        /opt/bin/echo -e "ERROR: ${USER_DEFINED_CHAIN_NAME} IS NOT REFERENCED BY ${BUILT_IN_CHAIN_NAME}"
     fi
     #
 else
     #
     TEST_USER_DEFINED_CHAIN_NAME=false
-    echo -e "ERROR: NO CHAIN ${USER_DEFINED_CHAIN_NAME}"
+    /opt/bin/echo -e "ERROR: NO CHAIN ${USER_DEFINED_CHAIN_NAME}"
 fi
 #
 ########## END ##########
@@ -110,8 +110,8 @@ ${TEST_TCP_LOCAL_PORT_1}
 then
     # Everything is OK
     # 全部规则完好
-    #echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP\nROUTER:${LOCAL_PORT_2}/TCP"
-    echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP"
+    #/opt/bin/echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP\nROUTER:${LOCAL_PORT_2}/TCP"
+    /opt/bin/echo -e "PORT OPENING RULE ${SERVICE_NAME} HAS BEEN LOADED SUCCESSFULLY\n\nROUTER:${LOCAL_PORT_1}/TCP"
     #
     exit 0
     #
@@ -136,7 +136,7 @@ else
     # 启用${USER_DEFINED_CHAIN_NAME}链
     iptables -t ${TABLE_NAME} -I ${BUILT_IN_CHAIN_NAME} 1 -j ${USER_DEFINED_CHAIN_NAME}
     #
-    echo "LOAD PORT OPENING RULE ${SERVICE_NAME}"
+    /opt/bin/echo "LOAD PORT OPENING RULE ${SERVICE_NAME}"
     #
     exit 1
     #

@@ -14,11 +14,15 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -68,23 +72,23 @@ then
     #
     # Update the list of available packages
     # 更新可用程序包列表
-    opkg update
+    /opt/bin/opkg update
     #
     # Install nail
     # 安装nail
-    opkg install nail
+    /opt/bin/opkg install nail
     #
     # Configure nail
     # 配置nail
-    cp /opt/etc/nail.rc ${PRIVATE_ETC}/nail.rc.bak
-    cp /opt/etc/nail.rc /opt/etc/nail.rc.bak
-    sed -i '/^set from=.*/s/^/#/' /opt/etc/nail.rc
-    sed -i '/^set set smtp.*/s/^/#/' /opt/etc/nail.rc
-    echo "set from=${SENDER}" >> /opt/etc/nail.rc
-    echo "set smtp=${SMTP_SERVER}" >> /opt/etc/nail.rc
-    echo "set smtp-auth-user=${SENDER}" >> /opt/etc/nail.rc
-    echo "set smtp-auth-password=${PASSWORD}" >> /opt/etc/nail.rc
-    echo "set smtp-auth=login" >> /opt/etc/nail.rc
+    /opt/bin/mkdir ${PRIVATE_ETC}
+    /opt/bin/cp ${ENTWARE_ETC}/nail.rc ${PRIVATE_ETC}/nail.rc.bak
+    /opt/bin/sed -i '/^set from=.*/s/^/#/' ${ENTWARE_ETC}/nail.rc
+    /opt/bin/sed -i '/^set set smtp.*/s/^/#/' ${ENTWARE_ETC}/nail.rc
+    /opt/bin/echo "set from=${SENDER}" >> ${ENTWARE_ETC}/nail.rc
+    /opt/bin/echo "set smtp=${SMTP_SERVER}" >> ${ENTWARE_ETC}/nail.rc
+    /opt/bin/echo "set smtp-auth-user=${SENDER}" >> ${ENTWARE_ETC}/nail.rc
+    /opt/bin/echo "set smtp-auth-password=${PASSWORD}" >> ${ENTWARE_ETC}/nail.rc
+    /opt/bin/echo "set smtp-auth=login" >> ${ENTWARE_ETC}/nail.rc
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #

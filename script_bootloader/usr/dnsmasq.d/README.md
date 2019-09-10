@@ -30,10 +30,10 @@
 
 `ASUS_ROUTER/script_bootloader/usr/dnsmasq.d/etc/`
 
-| 权限      | 名称                            | 属性     | 说明                |
-| --------- | ------------------------------- | -------- | ------------------- |
-| rwxrwxrwx | dnsmasq.d/dnsmasq_extended.conf | 普通文件 | dnsmasq.d配置文件   |
-| rwxrwxrwx | monit.d/dnsmasq.d               | 普通文件 | monit.d配置文件     |
+| 权限      | 名称                            | 属性     | 说明              |
+| --------- | ------------------------------- | -------- | ----------------- |
+| rwxrwxrwx | dnsmasq.d/dnsmasq_extended.conf | 普通文件 | dnsmasq.d配置文件 |
+| rwxrwxrwx | monit.d/dnsmasq.d               | 普通文件 | monit.d配置文件   |
 
 ## 安装方法
 

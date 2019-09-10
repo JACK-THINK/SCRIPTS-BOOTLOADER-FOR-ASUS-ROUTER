@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -42,20 +42,20 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest overture
 # 设置自定义变量LATEST_VERSION为最新版overture的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/shawn1m/overture/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/shawn1m/overture/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -64,6 +64,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -74,11 +75,11 @@ DOWNLOAD_LINK="https://github.com/shawn1m/overture/releases/download/${LATEST_VE
 #
 # SS_LOCAL_LOCAL_PORT: Local port of the SS-LOCAL
 # 设置自定义变量SS_LOCAL_LOCAL_PORT为SS-LOCAL的接收端口
-SS_LOCAL_LOCAL_PORT=$(grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_local.json | awk -F '"' '{print $4}')
+SS_LOCAL_LOCAL_PORT=$(/opt/bin/grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_local.json | /opt/bin/cut -d '"' -f 4)
 #
 # SS_TUNNEL_LOCAL_PORT: Port of the SS-TUNNEL
 # 设置自定义变量SS_TUNNEL_LOCAL_PORT为SS-TUNNEL的接收端口
-SS_TUNNEL_LOCAL_PORT=$(grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_tunnel.json | awk -F '"' '{print $4}')
+SS_TUNNEL_LOCAL_PORT=$(/opt/bin/grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_tunnel.json | /opt/bin/cut -d '"' -f 4)
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -114,7 +115,7 @@ then
         #
         # Remove vestigial overture package
         # 删除遗留的overture包
-        rm -f ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Download overture
         # 下载overture
@@ -122,36 +123,36 @@ then
         #
         # Create directory overture
         # 创建overture目录
-        mkdir ${PRIVATE_USR}/
+        /opt/bin/mkdir ${PRIVATE_USR}/
         #
         # Unzip overture package
         # 解压overture包
-        unzip ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+        /opt/bin/unzip ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
         #
         # Remove overture package
         # 删除overture包
-        rm -f ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Change the name of the program
         # 更改程序名称
-        mv ${PRIVATE_USR}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} ${PRIVATE_USR}/overture
+        /opt/bin/mv ${PRIVATE_USR}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} ${PRIVATE_USR}/overture
         #
         # Change the mode of the files
         # 更改文件权限
-        chmod 664 ${PRIVATE_USR}/*
-        chmod 775 ${PRIVATE_USR}/overture
+        /opt/bin/chmod 664 ${PRIVATE_USR}/*
+        /opt/bin/chmod 775 ${PRIVATE_USR}/overture
         #
         # Modify ${PRIVATE_ETC}/config.json
         # 修改${PRIVATE_ETC}/config.json
-        sed -i '/BindAddress/s/:[0-9].*[0-9]/:'"${SS_TUNNEL_LOCAL_PORT}"'/' ${PRIVATE_ETC}/config.json
-        sed -i '/SOCKS5Address/s/:[0-9].*[0-9]/:'"${SS_LOCAL_LOCAL_PORT}"'/' ${PRIVATE_ETC}/config.json
+        /opt/bin/sed -i '/BindAddress/s/:[0-9].*[0-9]/:'"${SS_TUNNEL_LOCAL_PORT}"'/' ${PRIVATE_ETC}/config.json
+        /opt/bin/sed -i '/SOCKS5Address/s/:[0-9].*[0-9]/:'"${SS_LOCAL_LOCAL_PORT}"'/' ${PRIVATE_ETC}/config.json
         #
         # Configure monit
         # 配置monit
-        #cp ${PRIVATE_ETC}/monit.d/overture ${ENTWARE_MONITD}/
-        #chmod 600 ${ENTWARE_MONITD}/overture
-        #mv ${ENTWARE_MONITD}/overture ${ENTWARE_MONITD}/overture.on
-        #monit reload
+        #/opt/bin/cp ${PRIVATE_ETC}/monit.d/overture ${ENTWARE_MONITD}/
+        #/opt/bin/chmod 600 ${ENTWARE_MONITD}/overture
+        #/opt/bin/mv ${ENTWARE_MONITD}/overture ${ENTWARE_MONITD}/overture.on
+        #/opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

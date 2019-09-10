@@ -35,7 +35,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 # Check if ${USER_DEFINED_CHAIN_NAME} exists
 # 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t nat -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+if [ -z "$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
 then
     # Stop and Exit
     # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
@@ -44,7 +44,7 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ ! -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}
         # 禁用${USER_DEFINED_CHAIN_NAME}链
@@ -67,7 +67,7 @@ fi
 #
 # Check if ${USER_DEFINED_CHAIN_NAME} exists
 # 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t mangle -nvL | grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+if [ -z "$(iptables -t mangle -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
 then
     # Stop and Exit
     # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
@@ -76,7 +76,7 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}
         # 禁用${USER_DEFINED_CHAIN_NAME}链

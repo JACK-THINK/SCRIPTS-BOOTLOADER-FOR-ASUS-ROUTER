@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -42,20 +46,20 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest v2ray-core
 # 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/v2ray/v2ray-core/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/v2ray/v2ray-core/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -64,6 +68,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -106,7 +111,7 @@ then
         #
         # Remove vestigial v2ray-core package
         # 删除遗留的v2ray-core包
-        rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Download v2ray-core package
         # 下载v2ray-core包
@@ -114,38 +119,38 @@ then
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
-        mkdir ${PRIVATE_USR}/
+        /opt/bin/mkdir ${PRIVATE_USR}/
         #
         # Unzip v2ray-core package
         # 解压v2ray-core包
-        unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+        /opt/bin/unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
         #
         # Remove v2ray-core package
         # 删除v2ray-core包
-        rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
         #
         # Change the mode of the files
         # 更改文件权限
-        chmod 644 ${PRIVATE_USR}/vpoint*
-        chmod 555 ${PRIVATE_USR}/v2*
-        chmod 644 ${PRIVATE_USR}/geosite.dat
-        chmod 755 ${PRIVATE_USR}/geoip.dat
+        /opt/bin/chmod 644 ${PRIVATE_USR}/vpoint*
+        /opt/bin/chmod 555 ${PRIVATE_USR}/v2*
+        /opt/bin/chmod 644 ${PRIVATE_USR}/geosite.dat
+        /opt/bin/chmod 755 ${PRIVATE_USR}/geoip.dat
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/v2ray ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/v2ray
-        mv ${ENTWARE_MONITD}/v2ray ${ENTWARE_MONITD}/v2ray.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray
+        /opt/bin/mv ${ENTWARE_MONITD}/v2ray ${ENTWARE_MONITD}/v2ray.on
         #
-        cp ${PRIVATE_ETC}/monit.d/v2ray_transparent_proxy_file ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/v2ray_transparent_proxy_file
-        mv ${ENTWARE_MONITD}/v2ray_transparent_proxy_file ${ENTWARE_MONITD}/v2ray_transparent_proxy_file.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray_transparent_proxy_file ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray_transparent_proxy_file
+        /opt/bin/mv ${ENTWARE_MONITD}/v2ray_transparent_proxy_file ${ENTWARE_MONITD}/v2ray_transparent_proxy_file.on
         #
-        cp ${PRIVATE_ETC}/monit.d/v2ray_transparent_proxy_prog ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog
-        #mv ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray_transparent_proxy_prog ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog
+        #/opt/bin/mv ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog ${ENTWARE_MONITD}/v2ray_transparent_proxy_prog.on
         #
-        monit reload
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

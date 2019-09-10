@@ -14,11 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -27,6 +35,14 @@ PRIVATE_ROOT=${SBL_SYS_USR}/monit
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# ADMINPASSWORD: The administrator's password of the router
+# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
+ADMINPASSWORD=$(nvram get http_passwd)
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -56,23 +72,32 @@ then
     #
     # Update the list of available packages
     # 更新可用程序包列表
-    opkg update
+    /opt/bin/opkg update
     #
     # Install monit
     # 安装monit
-    opkg install monit
+    /opt/bin/opkg install monit
     #
     # Configure monit
     # 配置monit
-    cp /opt/etc/init.d/S99monit ${PRIVATE_ETC}/S99monit.bak
-    sed -i '/^ARGS/s/^/#/' /opt/etc/init.d/S99monit
-    sed -i '/^#ARGS/ a\ARGS="-c /opt/etc/monitrc"' /opt/etc/init.d/S99monit
-    cp /opt/etc/monitrc /opt/etc/monitrc.bak
-    cp /opt/etc/monitrc ${PRIVATE_ETC}/monitrc.bak
-    rm -f /opt/etc/monitrc
-    cp ${PRIVATE_ETC}/monitrc /opt/etc/
-    chmod 600 /opt/etc/monitrc
-    mkdir /opt/etc/monit.d/
+    /opt/bin/mkdir ${ENTWARE_MONITD}
+    /opt/bin/mkdir ${PRIVATE_ETC}
+    /opt/bin/cp ${ENTWARE_ETC}/init.d/S99monit ${PRIVATE_ETC}/S99monit.bak
+    /opt/bin/sed -i '/^ARGS/s/^/#/' ${ENTWARE_ETC}/init.d/S99monit
+    /opt/bin/sed -i '/^#ARGS/ a\ARGS="-c /opt/etc/monitrc"' ${ENTWARE_ETC}/init.d/S99monit
+    #
+    /opt/bin/cp ${ENTWARE_ETC}/monitrc ${PRIVATE_ETC}/monitrc
+    /opt/bin/mv ${ENTWARE_ETC}/monitrc ${PRIVATE_ETC}/monitrc.bak
+    /opt/bin/chmod 600 ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^set log syslog/s/^/#/' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^# set pidfile \/var\/run\/monit.pid/s/# //' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^# set idfile \/var\/.monit.id/s/# //' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^# set statefile \/var\/.monit.state/s/# //' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^set httpd port/,+2d' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/allow admin:monit/i\set httpd port 35490 and\n    use address 0.0.0.0  # only accept connection from localhost\n    allow 0.0.0.0/0.0.0.0        # allow localhost to connect to the server and' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i 's/allow admin:monit/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' ${PRIVATE_ETC}/monitrc
+    /opt/bin/sed -i '/^#  include \/etc\/monit.d/a\include /opt/etc/monit.d/*.on' ${PRIVATE_ETC}/monitrc
+    /opt/bin/cp ${PRIVATE_ETC}/monitrc ${ENTWARE_ETC}/monitrc
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #

@@ -55,14 +55,14 @@
 
 ## 调用方法
 
-| 插件文件                 | 插件调用者   |
-| ------------------------ | ------------ |
-| ali_ddns_enable.service  | monit.d/ddns |
-| ali_ddns_disable.service | monit.d/ddns |
+| 插件文件                 | 插件调用者       |
+| ------------------------ | ---------------- |
+| ali_ddns_enable.service  | monit.d/ali_ddns |
+| ali_ddns_disable.service | monit.d/ali_ddns |
 
 ## 需修改部分
 
-`ddns/bin/ali_ddns_enable.service`
+`ali_ddns/bin/ali_ddns_enable.service`
 
 | 行号 | 代码                         | 说明                                                                   |
 | ---- | ---------------------------- | ---------------------------------------------------------------------- |
@@ -75,7 +75,7 @@
 | 72   | `MAIL_FROM=""`               | 发件人邮箱地址                                                         |
 | 76   | `MAIL_TO=""`                 | 收件人邮箱地址                                                         |
 
-`ddns/bin/ali_ddns_disable.service`
+`ali_ddns/bin/ali_ddns_disable.service`
 
 | 行号 | 代码                   | 说明                                                                   |
 | ---- | ---------------------- | ---------------------------------------------------------------------- |

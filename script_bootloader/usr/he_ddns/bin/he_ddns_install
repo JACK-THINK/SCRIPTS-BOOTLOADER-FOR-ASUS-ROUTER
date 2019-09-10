@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -70,14 +70,14 @@ then
         #
         # Create directory ${PRIVATE_TMP}
         # 创建目录${PRIVATE_TMP}
-        mkdir ${PRIVATE_TMP}
+        /opt/bin/mkdir ${PRIVATE_TMP}
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/he_ddns ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/he_ddns
-        mv ${ENTWARE_MONITD}/he_ddns ${ENTWARE_MONITD}/he_ddns.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/he_ddns ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/he_ddns
+        /opt/bin/mv ${ENTWARE_MONITD}/he_ddns ${ENTWARE_MONITD}/he_ddns.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

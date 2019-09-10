@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -38,7 +42,7 @@ PRIVATE_VAR=${PRIVATE_ROOT}/var
 #
 # DOWNLOADS: The directory which contains all the files downloaded from Internet
 # 设置自定义变量DOWNLOADS为下载目录
-DOWNLOADS=~/Downloads
+DOWNLOADS=/opt/home/root/Downloads
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -74,44 +78,41 @@ then
         #
         # Update the list of available packages
         # 更新可用程序包列表
-        opkg update
+        /opt/bin/opkg update
         #
         # Install aria2
         # 安装aria2
-        opkg install aria2
+        /opt/bin/opkg install aria2
         #
         # Disable /opt/etc/init.d/S*aria2
         # 禁用/opt/etc/init.d/S*aria2
-        sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*aria2
-        sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*aria2
-        sed -i '/^\[/s/^/#/' /opt/etc/init.d/S*aria2
-        #
-        # Create directory ${DOWNLOADS}
-        # 创建下载目录
-        mkdir ${DOWNLOADS}
+        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^\[/s/^/#/' /opt/etc/init.d/S*aria2
         #
         # Create directory ${PRIVATE_VAR}
         # 创建目录${PRIVATE_VAR}
-        mkdir ${PRIVATE_VAR}
+        /opt/bin/mkdir ${PRIVATE_VAR}
         #
         # Configure aria2
         # 配置aria2
-        cp /opt/etc/aria2.conf ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^dir=/s:/.*$:${DOWNLOADS}:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^input-file=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^log=/s:/.*$:${PRIVATE_VAR}/aria2.log:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^log=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^dht-file-path=/s:/.*$:${PRIVATE_VAR}/dht.dat:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^dht-file-path6=/s:/.*$:${PRIVATE_VAR}/dht6.dat:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^rpc-secret=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
-        sed -i "/^save-session=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/cp /opt/etc/aria2.conf ${PRIVATE_ETC}/aria2.conf.bak
+        /opt/bin/mv /opt/etc/aria2.conf ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^dir=/s:/.*$:${DOWNLOADS}:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^input-file=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^log=/s:/.*$:${PRIVATE_VAR}/aria2.log:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^log=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^dht-file-path=/s:/.*$:${PRIVATE_VAR}/dht.dat:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^dht-file-path6=/s:/.*$:${PRIVATE_VAR}/dht6.dat:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^rpc-secret=/s:^:#:" ${PRIVATE_ETC}/aria2.conf
+        /opt/bin/sed -i "/^save-session=/s:/.*$:${PRIVATE_VAR}/session.dat:" ${PRIVATE_ETC}/aria2.conf
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/aria2 ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/aria2
-        mv ${ENTWARE_MONITD}/aria2 ${ENTWARE_MONITD}/aria2.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/aria2 ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/aria2
+        /opt/bin/mv ${ENTWARE_MONITD}/aria2 ${ENTWARE_MONITD}/aria2.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

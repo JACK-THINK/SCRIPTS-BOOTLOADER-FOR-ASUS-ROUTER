@@ -14,15 +14,11 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
-#
-# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
-# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -38,24 +34,24 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest aliyun-cli
 # 设置自定义变量LATEST_VERSION为最新版aliyun-cli的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/JACK-THINK/aliyun-cli/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/JACK-THINK/aliyun-cli/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # CURRENT_VERSION: Version of the current aliyun-cli
 # 设置自定义变量CURRENT_VERSION为当前aliyun-cli的版本号
-CURRENT_VERSION=$(${ENTWARE_BIN}/aliyun --help | head -n 1 | cut -d ' ' -f 7 | sed 's/^/v/')
+CURRENT_VERSION=$(/opt/bin/aliyun --help | /opt/bin/head -n 1 | /opt/bin/cut -d ' ' -f 7 | /opt/bin/sed 's/^/v/')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -64,6 +60,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -94,7 +91,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 #
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
-    echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
     #
 else
     logger -st "($(basename $0))" $$ "***** A NEW VERSION HAS BEEN FOUND *****"
@@ -114,7 +111,7 @@ else
             #
             # Remove vestigial aliyun-cli package
             # 删除遗留的aliyun-cli包
-            rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            /opt/bin/rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
             #
             # Download aliyun-cli package
             # 下载aliyun-cli包
@@ -122,27 +119,27 @@ else
             #
             # Remove previous backup
             # 删除旧备份
-            rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
+            /opt/bin/rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
             #
             # Back up previous edition
             # 备份旧版本
-            mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
+            /opt/bin/mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
             #
             # Create directory ${PRIVATE_USR}
             # 创建${PRIVATE_USR}目录
-            mkdir ${PRIVATE_USR}/
+            /opt/bin/mkdir ${PRIVATE_USR}/
             #
             # Unzip aliyun-cli package
             # 解压aliyun-cli包
-            unzip ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+            /opt/bin/unzip ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
             #
             # Remove aliyun-cli package
             # 删除aliyun-cli包
-            rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            /opt/bin/rm -f ${PRIVATE_BIN}/aliyun-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
             #
             # Change the mode of the files
             # 更改文件权限
-            chmod 777 ${PRIVATE_USR}/aliyun*
+            /opt/bin/chmod 777 ${PRIVATE_USR}/aliyun*
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

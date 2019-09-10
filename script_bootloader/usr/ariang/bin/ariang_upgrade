@@ -22,7 +22,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/caddy
+PRIVATE_ROOT=${SBL_SYS_USR}/ariang
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
@@ -32,46 +32,25 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# LATEST_VERSION: Version of the latest caddy
-# 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/caddyserver/caddy/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
+# PRIVATE_SITE: The directory which contains the site related to this program
+# 设置自定义变量PRIVATE_SITE为此程序站点目录
+PRIVATE_SITE=${USB_MOUNT_POINT}/www/ariang
 #
-# CURRENT_VERSION: Version of the current caddy
-# 设置自定义变量CURRENT_VERSION为当前caddy的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/caddy -version | /opt/bin/cut -d ' ' -f 2)
+# LATEST_VERSION: Version of the latest ariang
+# 设置自定义变量LATEST_VERSION为最新版ariang的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/mayswind/AriaNg/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
-# OPERATING_SYSTEM: Operating system of the ASUS Router
-# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
+# CURRENT_VERSION: Version of the current ariang
+# 设置自定义变量CURRENT_VERSION为当前ariang的版本号
+CURRENT_VERSION=$(/opt/bin/cat ${PRIVATE_SITE}/index.html | /opt/bin/tr ',' '\n' | /opt/bin/grep 'buildVersion:' | /opt/bin/cut -d '"' -f 2 | /opt/bin/sed -e 's/v//')
 #
-# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
-# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(/opt/bin/uname -m) in
-    "aarch64")
-        ROUTER_ARCHITECTURE="arm64"
-        ;;
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm5"
-        ;;
-    "mips")
-        ROUTER_ARCHITECTURE="mipsle"
-        ;;
-    *)
-        # Do nothing but prompt the user
-        # 如果路由器架构不符合上述三种情况，则执行
-        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-        #
-        exit 3
-        ;;
-esac
-#
-# DOWNLOAD_LINK: Download link of the latest caddy
-# 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
-DOWNLOAD_LINK="https://caddyserver.com/download/linux/${ROUTER_ARCHITECTURE}?license=personal&telemetry=on"
+# DOWNLOAD_LINK: Download link of the latest ariang
+# 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接
+DOWNLOAD_LINK="https://github.com/mayswind/AriaNg/releases/download/${LATEST_VERSION}/AriaNg-${LATEST_VERSION}-AllInOne.zip"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="CADDY"
+SERVICE_NAME="ARIANG"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -87,7 +66,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## UPGRADE CADDY ##########
+########## UPGRADE ARIANG ##########
 #
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
@@ -109,13 +88,13 @@ else
         then
             logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
             #
-            # Remove vestigial caddy package
-            # 删除遗留的caddy包
-            /opt/bin/rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
+            # Remove vestigial ariang package
+            # 删除遗留的ariang包
+            /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
             #
-            # Download caddy
-            # 下载caddy
-            /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
+            # Download ariang
+            # 下载ariang
+            /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
             # 删除旧备份
@@ -127,15 +106,20 @@ else
             #
             # Create directory ${PRIVATE_USR}
             # 创建${PRIVATE_USR}目录
-            /opt/bin/mkdir ${PRIVATE_USR}
+            /opt/bin/mkdir ${PRIVATE_USR}/
             #
-            # Unzip caddy package
-            # 解压caddy包
-            /opt/bin/tar -xzvf ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz -C ${PRIVATE_USR}
+            # Unzip ariang package
+            # 解压ariang包
+            /opt/bin/unzip ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip -d ${PRIVATE_USR}/
             #
-            # Remove caddy package
-            # 删除caddy包
-            /opt/bin/rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
+            # Remove ariang package
+            # 删除ariang包
+            /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+            #
+            # Configure ariang
+            # 配置ariang
+            /opt/bin/rm -f ${PRIVATE_SITE}/index.html > /dev/null 2>&1
+            /opt/bin/cp ${PRIVATE_USR}/index.html ${PRIVATE_SITE}/index.html > /dev/null 2>&1
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

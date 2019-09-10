@@ -22,7 +22,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/caddy
+PRIVATE_ROOT=${SBL_SYS_USR}/syncthing
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
@@ -32,13 +32,13 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# LATEST_VERSION: Version of the latest caddy
-# 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/caddyserver/caddy/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
+# LATEST_VERSION: Version of the latest syncthing
+# 设置自定义变量LATEST_VERSION为最新版syncthing的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/syncthing/syncthing/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
-# CURRENT_VERSION: Version of the current caddy
-# 设置自定义变量CURRENT_VERSION为当前caddy的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/caddy -version | /opt/bin/cut -d ' ' -f 2)
+# CURRENT_VERSION: Version of the current syncthing
+# 设置自定义变量CURRENT_VERSION为当前syncthing的版本号
+CURRENT_VERSION=$(${PRIVATE_USR}/syncthing -version | /opt/bin/cut -d ' ' -f 2)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -51,7 +51,7 @@ case $(/opt/bin/uname -m) in
         ROUTER_ARCHITECTURE="arm64"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="arm5"
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -65,13 +65,13 @@ case $(/opt/bin/uname -m) in
         ;;
 esac
 #
-# DOWNLOAD_LINK: Download link of the latest caddy
-# 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
-DOWNLOAD_LINK="https://caddyserver.com/download/linux/${ROUTER_ARCHITECTURE}?license=personal&telemetry=on"
+# DOWNLOAD_LINK: Download link of the latest syncthing
+# 设置自定义变量DOWNLOAD_LINK为最新版syncthing的下载链接
+DOWNLOAD_LINK="https://github.com/syncthing/syncthing/releases/download/${LATEST_VERSION}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="CADDY"
+SERVICE_NAME="SYNCTHING"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -87,7 +87,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 ########## END ##########
 #
 #
-########## UPGRADE CADDY ##########
+########## UPGRADE SYNCTHING ##########
 #
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
@@ -109,13 +109,13 @@ else
         then
             logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
             #
-            # Remove vestigial caddy package
-            # 删除遗留的caddy包
-            /opt/bin/rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
+            # Remove vestigial syncthing package
+            # 删除遗留的syncthing包
+            /opt/bin/rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
             #
-            # Download caddy
-            # 下载caddy
-            /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
+            # Download syncthing
+            # 下载syncthing
+            /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
             # 删除旧备份
@@ -125,17 +125,17 @@ else
             # 备份旧版本
             /opt/bin/mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
             #
+            # Unzip syncthing package
+            # 解压syncthing包
+            /opt/bin/tar -xzvf ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz -C ${PRIVATE_ROOT}/
+            #
             # Create directory ${PRIVATE_USR}
             # 创建${PRIVATE_USR}目录
-            /opt/bin/mkdir ${PRIVATE_USR}
+            /opt/bin/mv ${PRIVATE_ROOT}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION} ${PRIVATE_USR}
             #
-            # Unzip caddy package
-            # 解压caddy包
-            /opt/bin/tar -xzvf ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz -C ${PRIVATE_USR}
-            #
-            # Remove caddy package
-            # 删除caddy包
-            /opt/bin/rm -f ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz > /dev/null 2>&1
+            # Remove syncthing package
+            # 删除syncthing包
+            /opt/bin/rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

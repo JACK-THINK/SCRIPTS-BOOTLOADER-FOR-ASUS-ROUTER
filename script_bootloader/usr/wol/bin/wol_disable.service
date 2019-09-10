@@ -29,14 +29,14 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 #
 ########## DISABLE WOL ##########
 #
-sed -i '/\/usr\/sbin\/ether\-wake/d' /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/sed -i '/\/usr\/sbin\/ether\-wake/d' /var/spool/cron/crontabs/${ADMINUSER}
 #
 ########## END ##########
 #
 #
 ########## REMOVE STATUS FILE ##########
 #
-rm -f /var/run/wol_enabled
+/opt/bin/rm -f /var/run/wol_enabled
 #
 ########## END ##########
 #

@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -26,17 +26,18 @@ PRIVATE_ROOT=${SBL_SYS_USR}/ipmitool
 #
 # PACKAGE_ARCHITECTURE: Architecture of alternative packages
 # 设置自定义变量PACKAGE_ARCHITECTURE为备用软件包架构
-case $(uname -m) in
-    "armv7l")
-        PACKAGE_ARCHITECTURE="armv7-2.6"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         PACKAGE_ARCHITECTURE="aarch64-3.10"
+        ;;
+    "armv7l")
+        PACKAGE_ARCHITECTURE="armv7-2.6"
         ;;
     "mips")
         PACKAGE_ARCHITECTURE="mipselsf"
         #
         # Prompt the user that ipmitool doesn't support ${ROUTER_ARCHITECTURE}
+        # 提示用户ipmitool不支持${ROUTER_ARCHITECTURE}
         logger -st "($(basename $0))" $$ "***** IPMITOOL DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;
@@ -44,6 +45,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -86,7 +88,7 @@ then
         #
         # Update the list of available packages
         # 更新可用程序包列表
-        opkg update
+        /opt/bin/opkg update
         #
         # Check if ${PRIVATE_ALTERNATIVE} exists
         # 检查目录${PRIVATE_ALTERNATIVE}是否存在
@@ -94,12 +96,12 @@ then
         then
             # Install ipmitool offline
             # 离线安装ipmitool
-            opkg install ${PRIVATE_ALTERNATIVE}/ipmitool_*.ipk
+            /opt/bin/opkg install ${PRIVATE_ALTERNATIVE}/ipmitool_*.ipk
             #
         else
             # Install ipmitool online
             # 在线安装ipmitool
-            opkg install ipmitool
+            /opt/bin/opkg install ipmitool
         fi
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"

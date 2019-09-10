@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
@@ -52,26 +52,26 @@ then
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用
-    if [ ! -z "$(grep -e '^dhcp-range=' ${FMW_DNSMASQ_CONF})" ] && \
+    if [ ! -z "$(/opt/bin/grep -e '^dhcp-range=' ${FMW_DNSMASQ_CONF})" ] && \
     [ -e ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq ]
     then
-        sed -i '/^dhcp-/s/^/#/' ${FMW_DNSMASQ_CONF}
-        cat ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq >> ${FMW_DNSMASQ_CONF}
+        /opt/bin/sed -i '/^dhcp-/s/^/#/' ${FMW_DNSMASQ_CONF}
+        /opt/bin/cat ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq >> ${FMW_DNSMASQ_CONF}
         #
         # Check if ${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq exists
         # 检查文件${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq是否存在
         if [ -e ${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq ]
         then
-            echo "dhcp-hostsfile=${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq" >> ${FMW_DNSMASQ_CONF}
+            /opt/bin/echo "dhcp-hostsfile=${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq" >> ${FMW_DNSMASQ_CONF}
         fi
         #
     fi
     #
     # Load ${ENTWARE_DNSMASQD}
     # 加载目录${ENTWARE_DNSMASQD}
-    sed -i '/^conf-dir=/s/^/#/' ${FMW_DNSMASQ_CONF}
-    echo "conf-dir=${ENTWARE_DNSMASQD},*.conf" >> ${FMW_DNSMASQ_CONF}
-    killall dnsmasq > /dev/null 2>&1
+    /opt/bin/sed -i '/^conf-dir=/s/^/#/' ${FMW_DNSMASQ_CONF}
+    /opt/bin/echo "conf-dir=${ENTWARE_DNSMASQD},*.conf" >> ${FMW_DNSMASQ_CONF}
+    /opt/bin/killall dnsmasq > /dev/null 2>&1
     dnsmasq --log-async --conf-file=${FMW_DNSMASQ_CONF}
     #
     logger -st "($(basename $0))" $$ "***** RULES IN ${ENTWARE_DNSMASQD} HAVE BEEN APPLIED *****"

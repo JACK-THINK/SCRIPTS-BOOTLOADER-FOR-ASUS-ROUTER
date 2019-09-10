@@ -20,18 +20,18 @@
 
 `ASUS_ROUTER/script_bootloader/usr/aria2/bin/`
 
-| 权限      | 名称                   | 属性     | 说明                                                      |
-| --------- | ---------------------- | -------- | --------------------------------------------------------- |
-| rwxrwxrwx | aria2_install          | 普通文件 | 安装文件                                                  |
-| rwxrwxrwx | aria2_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序                            |
-| rwxrwxrwx | aria2_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序                            |
+| 权限      | 名称                  | 属性     | 说明                           |
+| --------- | --------------------- | -------- | ------------------------------ |
+| rwxrwxrwx | aria2_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | aria2_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | aria2_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/aria2/etc/`
 
-| 权限      | 名称          | 属性     | 说明                           |
-| --------- | ------------- | -------- | ------------------------------ |
-| rwxrwxrwx | aria2.conf    | 普通文件 | aria2的配置文件                |
-| rwxrwxrwx | monit.d/aria2 | 普通文件 | monit.d配置文件                |
+| 权限      | 名称          | 属性     | 说明            |
+| --------- | ------------- | -------- | --------------- |
+| rwxrwxrwx | aria2.conf    | 普通文件 | aria2的配置文件 |
+| rwxrwxrwx | monit.d/aria2 | 普通文件 | monit.d配置文件 |
 
 ## 安装方法
 

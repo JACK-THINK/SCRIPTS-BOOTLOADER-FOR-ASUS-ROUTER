@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -70,30 +70,29 @@ then
         #
         # Update the list of available packages
         # 更新可用程序包列表
-        opkg update
+        /opt/bin/opkg update
         #
         # Install ntpd
         # 安装ntpd
-        opkg install ntpd
+        /opt/bin/opkg install ntpd
         #
         # Disable ${ENTWARE_ETC}/init.d/S77ntpd
         # 禁用${ENTWARE_ETC}/init.d/S77ntpd
-        cp ${ENTWARE_ETC}/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
-        sed -i '/^ENABLED.*/s/^/#/' ${ENTWARE_ETC}/init.d/S77ntpd
-        sed -i '/^#ENABLED.*/a\ENABLED=no' ${ENTWARE_ETC}/init.d/S77ntpd
+        /opt/bin/cp ${ENTWARE_ETC}/init.d/S77ntpd ${PRIVATE_ETC}/S77ntpd.bak
+        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' ${ENTWARE_ETC}/init.d/S77ntpd
+        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' ${ENTWARE_ETC}/init.d/S77ntpd
         #
         # Configure ntpd
         # 配置ntpd
-        mv ${ENTWARE_ETC}/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
-        cp ${PRIVATE_ETC}/ntp.conf ${ENTWARE_ETC}/ntp.conf
-        chmod 600 ${ENTWARE_ETC}/ntp.conf
+        /opt/bin/mv ${ENTWARE_ETC}/ntp.conf ${PRIVATE_ETC}/ntp.conf.bak
+        /opt/bin/chmod 600 ${PRIVATE_ETC}/ntp.conf
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/ntpd ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/ntpd
-        mv ${ENTWARE_MONITD}/ntpd ${ENTWARE_MONITD}/ntpd.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/ntpd ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/ntpd
+        /opt/bin/mv ${ENTWARE_MONITD}/ntpd ${ENTWARE_MONITD}/ntpd.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #

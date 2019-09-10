@@ -1,0 +1,139 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/dependency
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="DEPENDENCY"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL DEPENDENCY ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Update the list of available packages
+    # 更新可用程序包列表
+    /opt/bin/opkg update
+    #
+    case $(uname -m) in
+        "aarch64")
+            # Install fundamental dependency
+            # 安装基础依赖
+            /opt/bin/opkg install $(cat ${PRIVATE_ETC}/aarch64_list_of_packages)
+            #
+            # Install all include files according to the architecture of the ASUS Router
+            # 根据路由器架构，自动安装全部适当版本的include files
+            /opt/bin/wget-ssl -qO- http://bin.entware.net/aarch64-k3.10/include/include.tar.gz | /opt/bin/tar xvz -C /opt/include
+            #
+            ;;
+        "armv7l")
+            # Install fundamental dependency
+            # 安装基础依赖
+            /opt/bin/opkg install $(cat ${PRIVATE_ETC}/armv7l_list_of_packages)
+            #
+            # Install all include files according to the architecture of the ASUS Router
+            # 根据路由器架构，自动安装全部适当版本的include files
+            /opt/bin/wget-ssl -qO- http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz | /opt/bin/tar xvz -C /opt/include
+            #
+            ;;
+        "mips")
+            # Install fundamental dependency
+            # 安装基础依赖
+            /opt/bin/opkg install $(cat ${PRIVATE_ETC}/mips_list_of_packages)
+            #
+            ;;
+        *)
+            # Do nothing but prompt the user
+            # 如果路由器架构不符合上述三种情况，则执行
+            logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            #
+            exit 2
+            ;;
+    esac
+    #
+    # Install additional dependency
+    # 安装附加依赖
+    #
+    # Python
+    /opt/bin/pip3 install --upgrade pip setuptools
+    /opt/bin/pip3 install certifi
+    /opt/bin/pip3 install chardet
+    /opt/bin/pip3 install urllib3
+    #
+    # Back up ${ENTWARE_ETC}/profile to ${PRIVATE_ETC}/profile.bak
+    # 备份文件${ENTWARE_ETC}/profile至${PRIVATE_ETC}/profile.bak
+    /opt/bin/cp ${ENTWARE_ETC}/profile ${PRIVATE_ETC}/profile.bak
+    #
+    # Create and enable bashrc
+    # 创建并启用bashrc
+    /opt/bin/echo -e "# User specific aliases and functions\n" > ${ENTWARE_ETC}/bashrc
+    /opt/bin/echo -e "alias ls='ls --color=auto'\n" >> ${ENTWARE_ETC}/bashrc
+    /opt/bin/echo -e "\n# Get the aliases and functions\nif [ -f /opt/etc/bashrc ]\nthen\n    source /opt/etc/bashrc\nfi\n" >> ${ENTWARE_ETC}/profile
+    #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    #
+    # Sync
+    # 同步缓存
+    /opt/bin/sync
+    #
+    exit 0
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
+fi
+#
+########## END ##########

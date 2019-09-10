@@ -14,11 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
@@ -34,12 +42,12 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -53,6 +61,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -85,14 +94,14 @@ then
     #
     # Prepare Debian Environment
     # 准备Debian环境
-    tar xzvf ${PRIVATE_USR}/debian_jessie8.9-arm_clean.tgz -C /opt/
-    mkdir -p /opt/debian_mnt/
-    cp ${PRIVATE_ETC}/S99debian /opt/etc/init.d/
-    chmod 755 /opt/etc/init.d/S99debian
-    cp ${PRIVATE_ETC}/chroot-services.list /opt/etc/
-    chmod 755 /opt/etc/chroot-services.list
-    ln -s /opt/etc/init.d/S99debian /opt/bin/debian
-    cp /etc/hosts /opt/debian/etc/
+    /opt/bin/tar xzvf ${PRIVATE_USR}/debian_jessie8.9-arm_clean.tgz -C ${USB_MOUNT_POINT}/
+    /opt/bin/mkdir -p ${USB_MOUNT_POINT}/debian_mnt/
+    /opt/bin/cp ${PRIVATE_ETC}/S99debian ${ENTWARE_ETC}/init.d/
+    /opt/bin/chmod 755 ${ENTWARE_ETC}/init.d/S99debian
+    /opt/bin/cp ${PRIVATE_ETC}/chroot-services.list ${ENTWARE_ETC}/
+    /opt/bin/chmod 755 ${ENTWARE_ETC}/chroot-services.list
+    /opt/bin/cp -s ${ENTWARE_ETC}/init.d/S99debian ${ENTWARE_BIN}/debian
+    /opt/bin/cp /etc/hosts ${USB_MOUNT_POINT}/debian/etc/
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #

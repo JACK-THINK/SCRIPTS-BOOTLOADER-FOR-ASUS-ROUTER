@@ -7,7 +7,7 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -57,7 +57,7 @@ then
     #
     # Load ${PRIVATE_USR}/caddy
     # 如果文件${PRIVATE_USR}/caddy和${PRIVATE_ETC}/Caddyfile存在，则执行
-    nohup ${PRIVATE_USR}/caddy -pidfile ${CADDY_PID_FILE} -conf ${PRIVATE_ETC}/Caddyfile &> /dev/null &
+    /opt/bin/nohup ${PRIVATE_USR}/caddy -pidfile ${CADDY_PID_FILE} -conf ${PRIVATE_ETC}/Caddyfile &> /dev/null &
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #

@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -34,24 +34,24 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest v2ray-core
 # 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/v2ray/v2ray-core/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/v2ray/v2ray-core/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # CURRENT_VERSION: Version of the current v2ray-core
 # 设置自定义变量CURRENT_VERSION为当前v2ray-core的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | head -1 | awk '{print $2}' | sed 's/^/v/')
+CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | /opt/bin/head -1 | /opt/bin/cut -d ' ' -f 2 | /opt/bin/sed 's/^/v/')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -60,6 +60,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -88,9 +89,9 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 #
 ########## UPGRADE V2RAY ##########
 #
-if [ ${CURRENT_VERSION} == ${LATEST_VERSION} ]
+if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
-    echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
     #
 else
     logger -st "($(basename $0))" $$ "***** A NEW VERSION HAS BEEN FOUND *****"
@@ -110,7 +111,7 @@ else
             #
             # Remove vestigial v2ray-core package
             # 删除遗留的v2ray-core包
-            rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
             #
             # Download v2ray-core
             # 下载v2ray-core
@@ -118,38 +119,34 @@ else
             #
             # Remove previous backup
             # 删除旧备份
-            rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
-            #
-            # Kill v2ray process
-            # 结束v2ray进程
-            ${PRIVATE_BIN}/v2ray_disable.service > /dev/null 2>&1
+            /opt/bin/rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
             #
             # Back up previous edition
             # 备份旧版本
-            mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
+            /opt/bin/mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
             #
             # Create directory v2ray
             # 创建v2ray目录
-            mkdir ${PRIVATE_USR}/
+            /opt/bin/mkdir ${PRIVATE_USR}/
             #
             # Unzip v2ray-core package
             # 解压v2ray-core包
-            unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+            /opt/bin/unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
             #
             # Remove v2ray-core package
             # 删除v2ray-core包
-            rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
             #
             # Change the mode of the files
             # 更改文件权限
-            chmod 644 ${PRIVATE_USR}/vpoint*
-            chmod 555 ${PRIVATE_USR}/v2*
-            chmod 644 ${PRIVATE_USR}/geosite.dat
-            chmod 755 ${PRIVATE_USR}/geoip.dat
+            /opt/bin/chmod 644 ${PRIVATE_USR}/vpoint*
+            /opt/bin/chmod 555 ${PRIVATE_USR}/v2*
+            /opt/bin/chmod 644 ${PRIVATE_USR}/geosite.dat
+            /opt/bin/chmod 755 ${PRIVATE_USR}/geoip.dat
             #
             # Configure monit
             # 配置monit
-            monit reload
+            /opt/bin/monit reload
             #
             logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

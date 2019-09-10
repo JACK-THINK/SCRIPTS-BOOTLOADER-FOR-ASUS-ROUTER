@@ -14,7 +14,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
@@ -42,20 +42,20 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest syncthing
 # 设置自定义变量LATEST_VERSION为最新版syncthing的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://github.com/syncthing/syncthing/releases/latest/ | awk -F '/' '{print $8}' | awk -F '"' '{print $1}')
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/syncthing/syncthing/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
+case $(/opt/bin/uname -m) in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
@@ -64,6 +64,7 @@ case $(uname -m) in
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
         logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
         exit 3
         ;;
 esac
@@ -106,7 +107,7 @@ then
         #
         # Remove vestigial syncthing package
         # 删除遗留的syncthing包
-        rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
         #
         # Download syncthing
         # 下载syncthing
@@ -114,27 +115,30 @@ then
         #
         # Unzip syncthing package
         # 解压syncthing包
-        tar -xzvf ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz -C ${PRIVATE_ROOT}/
+        /opt/bin/tar -xzvf ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz -C ${PRIVATE_ROOT}/
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
-        mv ${PRIVATE_ROOT}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION} ${PRIVATE_USR}
+        /opt/bin/mv ${PRIVATE_ROOT}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION} ${PRIVATE_USR}
         #
         # Remove syncthing package
         # 删除syncthing包
-        rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
+        /opt/bin/rm -f ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz > /dev/null 2>&1
         #
         # Configure syncthing
         # 配置syncthing
         ${PRIVATE_USR}/syncthing -generate="${PRIVATE_ETC}"
-        sed -i 's/127.0.0.1:8384/0.0.0.0:8384/' ${PRIVATE_ETC}/config.xml
+        /opt/bin/cp ${PRIVATE_ETC}/config.xml ${PRIVATE_ETC}/config.xml.bak
+        /opt/bin/sed -i 's/127.0.0.1:8384/0.0.0.0:8384/' ${PRIVATE_ETC}/config.xml
+        /opt/bin/sed -i 's/<startBrowser>true/<startBrowser>false/' ${PRIVATE_ETC}/config.xml
+        /opt/bin/sed -i 's/<autoUpgradeIntervalH>12/<autoUpgradeIntervalH>0/' ${PRIVATE_ETC}/config.xml
         #
         # Configure monit
         # 配置monit
-        cp ${PRIVATE_ETC}/monit.d/syncthing ${ENTWARE_MONITD}/
-        chmod 600 ${ENTWARE_MONITD}/syncthing
-        mv ${ENTWARE_MONITD}/syncthing ${ENTWARE_MONITD}/syncthing.on
-        monit reload
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/syncthing ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/syncthing
+        /opt/bin/mv ${ENTWARE_MONITD}/syncthing ${ENTWARE_MONITD}/syncthing.on
+        /opt/bin/monit reload
         #
         logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
