@@ -71,10 +71,10 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 4. When the installation gets completed, visit
 
    ```
-   http://<IP-Address of the router>:35490
+   http://<Address of the router>:35490
 
-   username:admin
-   password：monit
+   username:username to web login of the router
+   password：password to web login of the router
    ```
 
    to manage the addons installed.
