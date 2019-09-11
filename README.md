@@ -79,7 +79,7 @@
 
    管理已安装插件
 
-   ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.png)
+   ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.jpg)
 
 ## 更多资料
 

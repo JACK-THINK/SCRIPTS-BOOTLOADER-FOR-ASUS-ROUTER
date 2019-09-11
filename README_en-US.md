@@ -79,7 +79,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
    to manage the addons installed.
 
-   ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.png)
+   ![monit_in_use.png](./Documents_Assets/monit/web/monit_in_use.jpg)
 
 ## More materials
 
