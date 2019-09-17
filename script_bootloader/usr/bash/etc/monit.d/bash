@@ -1,4 +1,4 @@
 check file BASH path "/var/run/bash_enabled"
     start program = "/opt/script_bootloader/usr/bash/bin/bash_enable.service"
     stop program = "/opt/script_bootloader/usr/bash/bin/bash_disable.service"
-    if does not exist then restart
+    if does not exist then alert

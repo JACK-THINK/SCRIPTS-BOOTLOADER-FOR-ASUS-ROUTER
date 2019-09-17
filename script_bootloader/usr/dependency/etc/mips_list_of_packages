@@ -265,7 +265,6 @@ perl-lwp-mediatypes
 perl-net-http
 perl-net-telnet
 perl-sub-uplevel
-perl-test-harness
 perl-test-warn
 perl-text-csv_xs
 perl-uri

@@ -120,7 +120,7 @@ then
     # Create and enable bashrc
     # 创建并启用bashrc
     /opt/bin/echo -e "# User specific aliases and functions\n" > ${ENTWARE_ETC}/bashrc
-    /opt/bin/echo -e "alias ls='ls --color=auto'\n" >> ${ENTWARE_ETC}/bashrc
+    /opt/bin/echo -e "alias ls='ls --color=auto'" >> ${ENTWARE_ETC}/bashrc
     /opt/bin/echo -e "alias ip='ip -h -s -d -c -t -iec'\n" >> ${ENTWARE_ETC}/bashrc
     /opt/bin/echo -e "\n# Get the aliases and functions\nif [ -f /opt/etc/bashrc ]\nthen\n    source /opt/etc/bashrc\nfi" >> ${ENTWARE_ETC}/profile
     #
