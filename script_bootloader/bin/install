@@ -528,14 +528,3 @@ else
 fi
 #
 ########## END ##########
-#
-#
-########## REBOOT ##########
-#
-# Reboot the router
-# 需使用reboot命令重启路由器，确保设置生效
-logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
-reboot
-#
-########## END ##########

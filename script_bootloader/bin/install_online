@@ -131,6 +131,18 @@ sleep 10
 # Start installation
 # 开始安装
 cd /tmp/
-${USB_MOUNT_POINT}/script_bootloader/bin/install
+${USB_MOUNT_POINT}/script_bootloader/bin/install | tee /tmp/sbl_install_log
+mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/
+#
+########## END ##########
+#
+#
+########## REBOOT ##########
+#
+# Reboot the router
+# 需使用reboot命令重启路由器，确保设置生效
+logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
+logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
+reboot
 #
 ########## END ##########
