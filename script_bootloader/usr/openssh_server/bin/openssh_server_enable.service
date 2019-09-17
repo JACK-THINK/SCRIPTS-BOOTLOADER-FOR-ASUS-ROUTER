@@ -1,0 +1,70 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="OPENSSH_SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE OPENSSH_SERVER ##########
+#
+# Check if ${ENTWARE_ETC}/ssh/sshd_config exists
+# 检查文件${ENTWARE_ETC}/ssh/sshd_config是否存在
+if [ -e "${ENTWARE_ETC}/ssh/sshd_config" ]
+then
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    #
+    # Load openssh_server
+    # 如果文件${ENTWARE_ETC}/ssh/sshd_config存在，则执行
+    /opt/bin/echo 'sshd:x:22:22:sshd:/var/run/sshd:/opt/bin/false' >> /etc/passwd
+    /opt/bin/sed -r -i 's/^('"${ADMINUSER}"'):(.*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):/\1:\2::\4:\5:\6:\7::/' /etc/shadow
+    /opt/bin/echo 'PATH="/opt/bin:/opt/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/home/$USER:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin"' > /etc/environment
+    /opt/sbin/sshd
+    #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${ENTWARE_ETC}/ssh/sshd_config不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

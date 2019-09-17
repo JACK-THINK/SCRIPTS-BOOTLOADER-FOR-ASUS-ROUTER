@@ -1,0 +1,146 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/onu_access
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# ONU_IP_ADDRESS: The IP address of ONU
+# 设置自定义变量ONU_IP_ADDRESS为光猫的IP地址
+ONU_IP_ADDRESS="192.168.18.1"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ONU_ACCESS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL ONU_ACCESS ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Check if /usr/sbin/ip exists
+        # 检查命令/usr/sbin/ip是否存在
+        if [ -e "/usr/sbin/ip" ]
+        then
+            # WAN_IFNAME: The interface name of WAN port
+            # 设置自定义变量WAN_IFNAME为接口WAN的名称
+            WAN_IFNAME="$(nvram get wan0_ifname)"
+            #
+            ONU_NET_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -r -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\1/')
+            ONU_HOST_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -r -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\2/')
+            #
+            if [ ${ONU_HOST_PART} -ge 255 ]
+            then
+                /opt/bin/echo -e "\033[1;41;37m***** ONU_IP_ADDRESS IS INVALID *****\033[0m\n"
+                #
+                exit 4
+            fi
+            #
+            WAN_HOST_PART=$((${ONU_HOST_PART}+1))
+            #
+            if [ ${WAN_HOST_PART} -ge 255 ]
+            then
+                WAN_HOST_PART=$((${WAN_HOST_PART}-2))
+            fi
+            #
+            BROADCAST_PART="255"
+            CIDR_MASK="24"
+            #
+            /opt/bin/mkdir -p ${PRIVATE_ETC}/monit.d/
+            /opt/bin/echo -e "check host ONU with address ${ONU_NET_PART}.${ONU_HOST_PART}\n    start program = \"/usr/sbin/ip address add ${ONU_NET_PART}.${WAN_HOST_PART}/${CIDR_MASK} broadcast ${ONU_NET_PART}.${BROADCAST_PART} dev eth0\"\n    stop program = \"/usr/sbin/ip address del ${ONU_NET_PART}.${WAN_HOST_PART}/${CIDR_MASK} dev eth0\"\n    if failed ping4 count 1 size 32 timeout 1 seconds then restart" > ${PRIVATE_ETC}/monit.d/host_ONU
+            #
+            # Configure monit
+            # 配置monit
+            /opt/bin/cp ${PRIVATE_ETC}/monit.d/host_ONU ${ENTWARE_MONITD}/
+            /opt/bin/chmod 600 ${ENTWARE_MONITD}/host_ONU
+            /opt/bin/mv ${ENTWARE_MONITD}/host_ONU ${ENTWARE_MONITD}/host_ONU.on
+            /opt/bin/monit reload
+            #
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+            #
+            exit 0
+            #
+        else
+            # Do nothing but prompt the user
+            # 如果命令/usr/sbin/ip不存在，则执行
+            logger -st "($(basename $0))" $$ "***** /usr/sbin/ip DOESN'T EXIST *****"
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            #
+            exit 3
+        fi
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
+fi
+#
+########## END ##########

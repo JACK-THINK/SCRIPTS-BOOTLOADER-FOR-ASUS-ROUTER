@@ -85,7 +85,7 @@ do
     #
     # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
     # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
-    WAN_IPV4_ADDRESS=$(ifconfig ppp0 | /opt/bin/grep 'inet addr' | /opt/bin/gawk '{print $2}' | /opt/bin/tr -d 'addr:')
+    WAN_IPV4_ADDRESS=$(ip addr show ppp0 | /opt/bin/grep 'inet' | /opt/bin/gawk '{print $2}')
     #
     # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
     # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址

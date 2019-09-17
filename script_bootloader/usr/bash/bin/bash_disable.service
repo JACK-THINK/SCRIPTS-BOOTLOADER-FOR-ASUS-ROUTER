@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="BASH"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## DISABLE BASH ##########
+#
+/opt/bin/sed -i "/^${ADMINUSER}.*$/s/:\/opt\/bin\/bash/:\/bin\/sh/" /etc/passwd
+/opt/bin/sed -i "/bash/d" /etc/shells
+/opt/bin/rm -f /var/run/bash_enabled
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

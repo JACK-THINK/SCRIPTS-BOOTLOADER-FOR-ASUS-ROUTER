@@ -56,7 +56,7 @@ DESTINATION_PORT_2="4500"
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IP_ADDRESS=$(ifconfig ppp0 | /opt/bin/grep 'inet addr' | /opt/bin/gawk '{print $2}' | /opt/bin/tr -d 'addr:')
+WAN_IP_ADDRESS=$(ip addr show ppp0 | /opt/bin/grep 'inet' | /opt/bin/gawk '{print $2}')
 #
 ########## END ##########
 #

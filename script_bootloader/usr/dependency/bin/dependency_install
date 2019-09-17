@@ -112,11 +112,19 @@ then
     # 备份文件${ENTWARE_ETC}/profile至${PRIVATE_ETC}/profile.bak
     /opt/bin/cp ${ENTWARE_ETC}/profile ${PRIVATE_ETC}/profile.bak
     #
+    # Create and enable profile.d
+    # 创建并启用profile.d
+    /opt/bin/mkdir /opt/etc/profile.d
+    /opt/bin/echo -e "\n# Load custom changes to the environment in /opt/etc/profile.d\nfor PROFILED in /opt/etc/profile.d/*.sh\ndo\n    if [ -r \"\${PROFILED}\" ]\n    then\n        source \"\${PROFILED}\"\n    fi\ndone" >> ${ENTWARE_ETC}/profile
+    #
     # Create and enable bashrc
     # 创建并启用bashrc
     /opt/bin/echo -e "# User specific aliases and functions\n" > ${ENTWARE_ETC}/bashrc
     /opt/bin/echo -e "alias ls='ls --color=auto'\n" >> ${ENTWARE_ETC}/bashrc
-    /opt/bin/echo -e "\n# Get the aliases and functions\nif [ -f /opt/etc/bashrc ]\nthen\n    source /opt/etc/bashrc\nfi\n" >> ${ENTWARE_ETC}/profile
+    /opt/bin/echo -e "alias ip='ip -h -s -d -c -t -iec'\n" >> ${ENTWARE_ETC}/bashrc
+    /opt/bin/echo -e "\n# Get the aliases and functions\nif [ -f /opt/etc/bashrc ]\nthen\n    source /opt/etc/bashrc\nfi" >> ${ENTWARE_ETC}/profile
+    #
+    /opt/bin/echo -e "\n" >> ${ENTWARE_ETC}/profile
     #
     logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #

@@ -39,7 +39,7 @@ USER_DEFINED_CHAIN_NAME="V2RAY_TPROXY"
 #
 # INTRANET_SET: Set of intranet
 # 设置自定义变量INTRANET_SET为内网地址集
-INTRANET="192.168.0.0/16"
+INTRANET_SET="192.168.0.0/16"
 #
 # ROUTING_MARK: Mark of PBR
 # 设置自定义变量ROUTING_MARK为策略路由标记
@@ -119,10 +119,10 @@ then
     iptables -t nat -A OUTPUT -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
     #
     # Apply the rules for LAN
-    iptables -t nat -A PREROUTING -p tcp -s ${INTRANET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
+    iptables -t nat -A PREROUTING -p tcp -s ${INTRANET_SET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
     #
     # 对内网数据包进行SNAT操作
-    iptables -t nat -A POSTROUTING -s ${INTRANET} ! -d ${INTRANET} -j MASQUERADE
+    iptables -t nat -A POSTROUTING -s ${INTRANET_SET} ! -d ${INTRANET_SET} -j MASQUERADE
     #
 else
     # Apply the rules for LAN
@@ -169,7 +169,7 @@ then
     iptables -t mangle -A OUTPUT -p udp -j ${USER_DEFINED_CHAIN_NAME}_UDP
     #
     # Apply the rules for LAN
-    iptables -t mangle -A PREROUTING -p udp -s ${INTRANET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
+    iptables -t mangle -A PREROUTING -p udp -s ${INTRANET_SET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
     #
     # 处理打了MARK的UDP包
     iptables -t mangle -A PREROUTING -m mark --mark ${ROUTING_MARK} -p udp -j TPROXY --on-ip 127.0.0.1 --on-port ${LOCAL_PORT}

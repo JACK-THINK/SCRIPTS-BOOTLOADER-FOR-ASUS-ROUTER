@@ -126,6 +126,16 @@ esac
 ########## END ##########
 #
 #
+########## COPY FILES FROM FIRMWARE ##########
+#
+logger -st "($(basename $0))" $$ "***** COPY FILES FROM FIRMWARE TO USB FLASH DRIVE *****"
+#
+cp /etc/passwd ${USB_MOUNT_POINT}/etc/passwd_from_firmware
+cp /etc/shadow ${USB_MOUNT_POINT}/etc/shadow_from_firmware
+#
+########## END ##########
+#
+#
 ########## COPY HOME ##########
 #
 logger -st "($(basename $0))" $$ "***** COPY HOME TO USB FLASH DRIVE *****"

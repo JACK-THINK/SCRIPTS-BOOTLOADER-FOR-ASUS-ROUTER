@@ -15,7 +15,7 @@ LOCAL_PORT="45154"
 #
 # INTRANET_SET: Set of intranet
 # 设置自定义变量INTRANET_SET为内网地址集
-INTRANET="192.168.0.0/16"
+INTRANET_SET="192.168.0.0/16"
 #
 # ROUTING_MARK: Mark of PBR
 # 设置自定义变量ROUTING_MARK为策略路由标记
@@ -97,11 +97,11 @@ else
             # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
             # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
             iptables -t nat -D OUTPUT -p tcp -j ${USER_DEFINED_CHAIN_NAME}_TCP
-            iptables -t nat -D PREROUTING -p tcp -s ${INTRANET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
+            iptables -t nat -D PREROUTING -p tcp -s ${INTRANET_SET} -j ${USER_DEFINED_CHAIN_NAME}_TCP
         fi
         #
         # 对内网数据包取消SNAT操作
-        iptables -t nat -D POSTROUTING -s ${INTRANET} ! -d ${INTRANET} -j MASQUERADE
+        iptables -t nat -D POSTROUTING -s ${INTRANET_SET} ! -d ${INTRANET_SET} -j MASQUERADE
     fi
     #
     # Flush chain ${USER_DEFINED_CHAIN_NAME}_TCP
@@ -142,7 +142,7 @@ else
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
         # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
-        iptables -t mangle -D PREROUTING -p udp -s ${INTRANET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
+        iptables -t mangle -D PREROUTING -p udp -s ${INTRANET_SET} -m mark ! --mark ${ROUTING_MARK} -j ${USER_DEFINED_CHAIN_NAME}_UDP
     fi
     #
     # 取消处理打了MARK的UDP包
