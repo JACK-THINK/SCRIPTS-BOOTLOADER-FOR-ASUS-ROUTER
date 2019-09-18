@@ -173,4 +173,4 @@ Modify the source files of the target add-on according to the README.md in its o
 
 1. [Uninstall](#Uninstallation) this system.
 
-2. [Install](#Installation\ (Online)) this system again.
+2. [Install](#installation-online) this system again.
