@@ -11,7 +11,7 @@
 
 ## 在线安装
 
-> 提示信息说明：
+> **提示信息说明**
 >
 > 1. 紫底白字：安装阶段提示信息
 > 2. 绿底白字：安装成功提示信息
@@ -46,11 +46,11 @@
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-2.jpg)
 
-   - 阶段一：设置路由器
+   - **阶段一**：设置路由器
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-3.jpg)
 
-   - 阶段二：安装系统必备程序
+   - **阶段二**：安装系统必备程序
 
      - 安装并启用虚拟内存（512M）
 
@@ -82,7 +82,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-10.jpg)
 
-   - 阶段三：安装用户可选插件
+   - **阶段三**：安装用户可选插件
 
      - 阅读插件菜单，输入插件编号，安装对应插件
 
@@ -96,7 +96,7 @@
 
 阅读`/opt/script_bootloader/usr/`中各个插件的README.md文件，按要求对相关程序进行修改
 
-> 注意：
+> **注意**
 >
 > - 在Windows下对程序进行修改，必须将编辑器的换行符设置为LF，否则程序将被损坏，无法运行
 > - 在Linux下对程序进行修改，无需特别设置

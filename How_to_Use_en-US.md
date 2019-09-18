@@ -11,7 +11,7 @@
 
 ## Installation (Online)
 
-> Legend
+> **LEGEND**
 >
 > 1. White characters with purple background: notice of stage.
 > 2. White characters with green background: notice of success.
@@ -46,11 +46,11 @@
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-2.jpg)
 
-   - STAGE 1: Set the router.
+   - **STAGE 1**: Set the router.
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-3.jpg)
 
-   - STAGE 2: Install the requisite components.
+   - **STAGE 2**: Install the requisite components.
 
      - Install and enable component swap (512M).
 
@@ -78,11 +78,11 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-9.jpg)
 
-     - Stage 2 completed
+     - STAGE 2 completed
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-10.jpg)
 
-   - STAGE 3: Install the optional components (the add-ons).
+   - **STAGE 3**: Install the optional components (the add-ons).
 
      - Input the index number of the favored add-on according to the menu.
 
@@ -96,7 +96,7 @@
 
 Modify the source files of the target add-on according to the README.md in its own directory in `/opt/script_bootloader/usr/`.
 
-> NOTICE
+> **NOTICE**
 >
 > - LF needs to be set in Windows before you edit the source files. Otherwise the files will be damaged.
 > - NO extra setting is required in Linux before you edit the source files.
