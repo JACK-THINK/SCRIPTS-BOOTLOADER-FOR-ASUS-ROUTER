@@ -1,12 +1,15 @@
 # SCRIPTS BOOTLOADER FOR ASUS ROUTER 使用说明
 
+[中文](./How_to_Use_zh-CN.md) | [English](./How_to_Use_en-US.md)
+
 ## 运行环境
 
-华硕路由器[官方固件](https://www.asus.com.cn)和原版[梅林固件](https://www.asuswrt-merlin.net/)
+- [Asuswrt](https://www.asus.com.cn)：官方华硕路由器固件
+- [Asuswrt-Merlin](https://www.asuswrt-merlin.net/)：享誉全球的第三方华硕路由器固件
 
-> 注意：本系统不保证兼容其它第三方固件
+> 注意：除上述固件外，本系统不保证兼容其它固件
 
-## 安装方法（在线安装）
+## 在线安装
 
 > 提示信息说明：
 >
@@ -170,4 +173,4 @@
 
 1. 执行[卸载](#卸载)
 
-2. 执行[安装](#安装方法（在线安装）)
+2. 执行[安装](#在线安装)
