@@ -27,7 +27,8 @@
 
 | 权限      | 名称                    | 属性     | 说明                                 |
 | --------- | ----------------------- | -------- | ------------------------------------ |
-| rwxrwxrwx | he_ddns_install.service | 普通文件 | 安装文件                             |
+| rwxrwxrwx | he_ddns_install         | 普通文件 | 安装程序                             |
+| rwxrwxrwx | he_ddns_configure       | 普通文件 | 安装程序                             |
 | rwxrwxrwx | he_ddns_enable.service  | 普通文件 | 更新DDNS记录或发送邮件主程序         |
 | rwxrwxrwx | he_ddns_disable.service | 普通文件 | 更新DDNS记录为无效地址并停止DDNS服务 |
 
@@ -59,26 +60,6 @@
 | ----------------------- | --------------- |
 | he_ddns_enable.service  | monit.d/he_ddns |
 | he_ddns_disable.service | monit.d/he_ddns |
-
-## 需修改部分
-
-`he_ddns/bin/he_ddns_enable.service`
-
-| 行号 | 代码                         | 说明                      |
-| ---- | ---------------------------- | ------------------------- |
-| 35   | `FQDN=""`                    | 目标服务器FQDN            |
-| 39   | `DDNS_PASSWORD=""`           | 用于更新目标DNS记录的密码 |
-| 43   | `MAIL_SMTP_SERVER="smtp://"` | 发件人的SMTP服务器地址    |
-| 47   | `MAIL_PASSWORD=""`           | 发件人密码                |
-| 51   | `MAIL_FROM=""`               | 发件人邮箱地址            |
-| 55   | `MAIL_TO=""`                 | 收件人邮箱地址            |
-
-`he_ddns/bin/he_ddns_disable.service`
-
-| 行号 | 代码               | 说明                      |
-| ---- | ------------------ | ------------------------- |
-| 10   | `FQDN=""`          | 目标服务器FQDN            |
-| 14   | `DDNS_PASSWORD=""` | 用于更新目标DNS记录的密码 |
 
 ## 使用方法
 
@@ -149,5 +130,3 @@
 5. 单击“Generate a key”后，两个文本框内会自动填写“DDNS Key”，**记录**并单击“Submit”
 
    ![step9](../../../Documents_Assets/he_ddns/dns_he_net_configuration/step9.png)
-
-6. 见[需修改部分](#需修改部分)，按说明填入相关信息

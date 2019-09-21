@@ -16,12 +16,20 @@
 | --------- | --------- | -------- | -------------- |
 | rwxrwxrwx | README.md | 普通文件 | 说明文件       |
 | rwxrwxrwx | bin       | 目录     | 可执行文件目录 |
+| rwxrwxrwx | etc       | 目录     | 配置文件目录   |
 
 `ASUS_ROUTER/script_bootloader/usr/onu_access/bin/`
 
-| 权限      | 名称               | 属性     | 说明     |
-| --------- | ------------------ | -------- | -------- |
-| rwxrwxrwx | onu_access_install | 普通文件 | 安装文件 |
+| 权限      | 名称                 | 属性     | 说明     |
+| --------- | -------------------- | -------- | -------- |
+| rwxrwxrwx | onu_access_install   | 普通文件 | 安装程序 |
+| rwxrwxrwx | onu_access_configure | 普通文件 | 配置程序 |
+
+`ASUS_ROUTER/script_bootloader/usr/onu_access/etc/`
+
+| 权限      | 名称                        | 属性     | 说明                |
+| --------- | --------------------------- | -------- | ------------------- |
+| rwxrwxrwx | monit.d/onu_access_template | 普通文件 | monit.d配置文件模板 |
 
 ## 安装方法
 
@@ -34,11 +42,3 @@
    > | **aarch64** | RT-AC86U                                                                           |
    > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
    > | **mipsel**  | RT-N66U, RT-AC66U, RT-N16                                                          |
-
-## 需修改部分
-
-`onu_access/bin/onu_access_install`
-
-| 行号 | 代码             | 说明         |
-| ---- | ---------------- | ------------ |
-| 41   | `ONU_IP_ADDRESS` | 光猫的IP地址 |

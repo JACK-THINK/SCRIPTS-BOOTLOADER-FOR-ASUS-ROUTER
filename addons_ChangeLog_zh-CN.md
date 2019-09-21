@@ -1,5 +1,51 @@
 # 更新日志
 
+## 版本13.1（2019-09-21）
+
+#### 新增
+
+1. 无
+
+#### 变更
+
+1. 为ali_ddns增加配置程序，可在安装过程中直接配置有关参数，也可以在使用过程中重新配置有关参数。避免手工修改程序源代码引发问题
+2. 为he_ddns增加配置程序，可在安装过程中直接配置有关参数，也可以在使用过程中重新配置有关参数。避免手工修改程序源代码引发问题
+3. 为onu_access增加配置程序，可在安装过程中直接配置有关参数，也可以在使用过程中重新配置有关参数。避免手工修改程序源代码引发问题
+4. 修复onu_access的重大Bug一枚
+5. 更新网络接口IP地址获取方法
+
+#### 删除
+
+1. 无
+
+#### 插件列表
+
+| 插件名称          | 版本     | 简介                                                |
+| ----------------- | -------- | --------------------------------------------------- |
+| ali_ddns          |          | 阿里云DDNS                                          |
+| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| anki_server       | 在线安装 | anki记忆系统个人服务器                              |
+| aria2             | 在线安装 | aria2下载工具                                       |
+| ariang            | 在线安装 | aria2图形界面                                       |
+| bash              | 在线安装 | 全功能bash shell                                    |
+| caddy             | 在线安装 | Web服务器                                           |
+| debian            | Jessie   | Debian的chroot环境。可安装Debian系统下大部分软件包  |
+| freemem           |          | 自动清理内存工具                                    |
+| he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
+| ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
+| mailx             | 在线安装 | 邮件系统                                            |
+| ntpd              | 在线安装 | 授时服务器                                          |
+| onu_access        |          | 允许访问光猫管理页面                                |
+| openssh_server    | 在线安装 | OpenSSH服务器                                       |
+| overture          | 在线安装 | DNS服务器                                           |
+| samba             | 在线安装 | SAMBA服务器                                         |
+| sbl-firewalld     |          | 基于应用的防火墙                                    |
+| shadowsocks-libev | 3.2.3-9  | shadowsocks网络代理                                 |
+| syncthing         | 在线安装 | 开源分布式同步工具                                  |
+| v2ray             | 在线安装 | v2ray网络代理                                       |
+| vlmcsd            | 1112     | 给予巨硬套装活力                                    |
+| wol               |          | 定时开机                                            |
+
 ## 版本13.0（2019-09-17）
 
 #### 新增

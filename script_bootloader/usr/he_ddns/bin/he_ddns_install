@@ -20,13 +20,21 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloade
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT=${SBL_SYS_USR}/he_ddns
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
@@ -72,16 +80,28 @@ then
         # 创建目录${PRIVATE_TMP}
         /opt/bin/mkdir ${PRIVATE_TMP}
         #
-        # Configure monit
-        # 配置monit
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/he_ddns ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/he_ddns
-        /opt/bin/mv ${ENTWARE_MONITD}/he_ddns ${ENTWARE_MONITD}/he_ddns.on
-        /opt/bin/monit reload
+        # Configure he_ddns_enable.service and he_ddns_disable.service
+        # 配置he_ddns_enable.service和he_ddns_disable.service
+        ${PRIVATE_BIN}/he_ddns_configure
         #
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-        #
-        exit 0
+        if [ ${?} -eq 0 ]
+        then
+            # Configure monit
+            # 配置monit
+            /opt/bin/chmod 600 ${PRIVATE_ETC}/monit.d/he_ddns
+            /opt/bin/cp ${PRIVATE_ETC}/monit.d/he_ddns ${ENTWARE_MONITD}/
+            /opt/bin/mv ${ENTWARE_MONITD}/he_ddns ${ENTWARE_MONITD}/he_ddns.on
+            /opt/bin/monit reload
+            #
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+            #
+            exit 0
+            #
+        else
+            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            #
+            exit 3
+        fi
         #
     else
         # Do nothing but prompt the user

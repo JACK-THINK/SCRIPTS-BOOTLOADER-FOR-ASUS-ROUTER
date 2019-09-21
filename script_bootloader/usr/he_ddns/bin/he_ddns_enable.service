@@ -25,6 +25,10 @@ PRIVATE_TMP=${PRIVATE_ROOT}/tmp
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
+# WAN0_GW_IFNAME: The interface name of gateway
+# 设置自定义变量WAN0_GW_IFNAME为网关设备名
+WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+#
 # SOURCE_OF_PUBLIC_IP_ADDRESS: The source of public IP address
 # 设置自定义变量SOURCE_OF_PUBLIC_IP_ADDRESS为公网IP地址来源
 SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
@@ -85,7 +89,7 @@ do
     #
     # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
     # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
-    WAN_IPV4_ADDRESS=$(ip addr show ppp0 | /opt/bin/grep 'inet' | /opt/bin/gawk '{print $2}')
+    WAN_IPV4_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -n -r -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
     #
     # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
     # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址

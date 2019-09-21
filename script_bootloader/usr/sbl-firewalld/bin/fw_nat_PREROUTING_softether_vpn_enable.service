@@ -21,6 +21,10 @@ PRIVATE_ROOT=${SBL_SYS_USR}/sbl-firewalld
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
+# WAN0_GW_IFNAME: The interface name of gateway
+# 设置自定义变量WAN0_GW_IFNAME为网关设备名
+WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SOFTETHER_VPN"
@@ -54,7 +58,7 @@ DESTINATION_PORT_1="15605"
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IP_ADDRESS=$(ip addr show ppp0 | /opt/bin/grep 'inet' | /opt/bin/gawk '{print $2}')
+WAN_IP_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -n -r -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
 #
 ########## END ##########
 #

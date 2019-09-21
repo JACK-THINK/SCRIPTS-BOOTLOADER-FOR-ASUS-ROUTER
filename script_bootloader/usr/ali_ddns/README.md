@@ -27,7 +27,8 @@
 
 | 权限      | 名称                     | 属性     | 说明                           |
 | --------- | ------------------------ | -------- | ------------------------------ |
-| rwxrwxrwx | ali_ddns_install.service | 普通文件 | 安装文件                       |
+| rwxrwxrwx | ali_ddns_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | ali_ddns_configure       | 普通文件 | 配置程序                       |
 | rwxrwxrwx | ali_ddns_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ali_ddns_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -59,27 +60,3 @@
 | ------------------------ | ---------------- |
 | ali_ddns_enable.service  | monit.d/ali_ddns |
 | ali_ddns_disable.service | monit.d/ali_ddns |
-
-## 需修改部分
-
-`ali_ddns/bin/ali_ddns_enable.service`
-
-| 行号 | 代码                         | 说明                                                                   |
-| ---- | ---------------------------- | ---------------------------------------------------------------------- |
-| 40   | `ACCESS_KEY_ID=""`           | 你的ACCESS_KEY_ID                                                      |
-| 41   | `ACCESS_KEY_SECRET=""`       | 你的ACCESS_KEY_SECRET                                                  |
-| 47   | `DOMAIN_NAME=""`             | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
-| 48   | `RR_KEY_WORD=""`             | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |
-| 64   | `MAIL_SMTP_SERVER="smtp://"` | 发件人的SMTP服务器地址                                                 |
-| 68   | `MAIL_PASSWORD=""`           | 发件人密码                                                             |
-| 72   | `MAIL_FROM=""`               | 发件人邮箱地址                                                         |
-| 76   | `MAIL_TO=""`                 | 收件人邮箱地址                                                         |
-
-`ali_ddns/bin/ali_ddns_disable.service`
-
-| 行号 | 代码                   | 说明                                                                   |
-| ---- | ---------------------- | ---------------------------------------------------------------------- |
-| 15   | `ACCESS_KEY_ID=""`     | 你的ACCESS_KEY_ID                                                      |
-| 16   | `ACCESS_KEY_SECRET=""` | 你的ACCESS_KEY_SECRET                                                  |
-| 22   | `DOMAIN_NAME=""`       | 你的主域名（假设你的域名是`www.example.com`，则主域名是`example.com`） |
-| 23   | `RR_KEY_WORD=""`       | 你的子域名（假设你的域名是`www.example.com`，则子域名是`www`）         |

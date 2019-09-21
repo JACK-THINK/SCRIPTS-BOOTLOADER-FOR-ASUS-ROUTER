@@ -1,0 +1,4 @@
+check host ONU with address ONU_IP_ADDRESS
+    start program = "/usr/sbin/ip address add ONU_NET_PART.WAN_HOST_PART/CIDR_MASK broadcast ONU_NET_PART.BROADCAST_PART dev WAN_IFNAME"
+    stop program = "/usr/sbin/ip address del ONU_NET_PART.WAN_HOST_PART/CIDR_MASK dev WAN_IFNAME"
+    if failed ping4 count 1 size 32 timeout 1 seconds then restart

@@ -1,0 +1,109 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/he_ddns
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        /opt/bin/echo -ne "Input the value of ${1}: "
+        read VALUE_1
+        /opt/bin/echo -ne "Input the value of ${1} again to confirm: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            /opt/bin/echo -e "The two values you entered were inconsistent."
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SET PARAMETERS ##########
+#
+case ${#} in
+    6)
+        FQDN="${1}"
+        DDNS_PASSWORD="${2}"
+        MAIL_SMTP_SERVER="${3}"
+        MAIL_PASSWORD="${4}"
+        MAIL_FROM="${5}"
+        MAIL_TO="${6}"
+        ;;
+    0)
+        /opt/bin/echo -e "FQDN: www.example.com"
+        doubleCheckAndConfirm FQDN
+        #
+        /opt/bin/echo -e "DDNS_PASSWORD"
+        doubleCheckAndConfirm DDNS_PASSWORD
+        #
+        /opt/bin/echo -e "MAIL_SMTP_SERVER: smtp.example.com"
+        doubleCheckAndConfirm MAIL_SMTP_SERVER
+        #
+        /opt/bin/echo -e "MAIL_PASSWORD: The password of sender"
+        doubleCheckAndConfirm MAIL_PASSWORD
+        #
+        /opt/bin/echo -e "MAIL_FROM: sender's email address"
+        doubleCheckAndConfirm MAIL_FROM
+        #
+        /opt/bin/echo -e "MAIL_TO: recipient's email address"
+        doubleCheckAndConfirm MAIL_TO
+        ;;
+    *)
+        /opt/bin/echo -e "\033[1;41;37m***** ERROR: WRONG NUMBER OF PARAMETERS *****\033[0m"
+        exit 1
+        ;;
+esac
+#
+########## END ##########
+#
+#
+########## CONFIGURE HE_DDNS ##########
+#
+# Modify ${PRIVATE_BIN}/he_ddns_enable.service
+# 修改${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(FQDN=).*/\1\"'"${FQDN}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(DDNS_PASSWORD=).*/\1\"'"${DDNS_PASSWORD}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(MAIL_SMTP_SERVER=).*/\1\"smtp:\/\/'"${MAIL_SMTP_SERVER}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(MAIL_PASSWORD=).*/\1\"'"${MAIL_PASSWORD}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(MAIL_FROM=).*/\1\"'"${MAIL_FROM}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+/opt/bin/sed -r -i 's/^(MAIL_TO=).*/\1\"'"${MAIL_TO}"'\"/' ${PRIVATE_BIN}/he_ddns_enable.service
+#
+# Modify ${PRIVATE_BIN}/he_ddns_disable.service
+# 修改${PRIVATE_BIN}/he_ddns_disable.service
+/opt/bin/sed -r -i 's/^(FQDN=).*/\1\"'"${FQDN}"'\"/' ${PRIVATE_BIN}/he_ddns_disable.service
+/opt/bin/sed -r -i 's/^(DDNS_PASSWORD=).*/\1\"'"${DDNS_PASSWORD}"'\"/' ${PRIVATE_BIN}/he_ddns_disable.service
+#
+########## END ##########
