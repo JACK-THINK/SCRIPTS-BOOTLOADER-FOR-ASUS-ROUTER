@@ -9,6 +9,10 @@
 
 > **CAVEAT**: NO COMPLIANCE FOR OTHER FIRMWARE GUARANTEED.
 
+## Notice
+
+1. Make sure your username and password which are used to log into the web GUI contain **NO** character beyond the range of *underline, numbers and lower-case and upper-case letters*.
+
 ## Installation (Online)
 
 > **LEGEND**

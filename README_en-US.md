@@ -48,6 +48,10 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How_to_Use](./How_to_Use_en-US.md).
 
+   > **Notice**
+   > 
+   > Make sure your username and password which are used to log into the web GUI contain **NO** character beyond the range of *underline, numbers and lower-case and upper-case letters*.
+
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```

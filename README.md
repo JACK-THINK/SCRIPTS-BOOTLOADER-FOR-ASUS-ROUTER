@@ -48,6 +48,10 @@
 
 3. 使用`ssh`登陆路由器并执行下述代码，按照屏幕提示完成安装（本地安装方法见[使用说明](./How_to_Use_zh-CN.md)）
 
+   > **注意事项**
+   > 
+   > 确保用于登录路由器Web页面的用户名和密码**不含有**除*大小写字母、数字、下划线*之外的其它任何字符
+
    ```shell
    cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
