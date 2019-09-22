@@ -88,3 +88,7 @@
 > 默认用户名：路由器管理页面登陆用户名
 >
 > 默认密码：路由器管理页面登陆密码
+>
+> 自定义同步服务器：http://<路由器IP地址>:27701
+>
+> 数据集目录：`/opt/script_bootloader/usr/anki_server/var/collections/`
