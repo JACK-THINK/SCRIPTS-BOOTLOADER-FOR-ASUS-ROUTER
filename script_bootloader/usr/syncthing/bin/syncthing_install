@@ -63,7 +63,7 @@ case $(/opt/bin/uname -m) in
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
         #
         exit 3
         ;;
@@ -86,7 +86,7 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -97,13 +97,13 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 # 检查ENTWARE_ENABLE SERVICE是否已启用
 if [ $(which opkg) == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
         # Remove vestigial syncthing package
         # 删除遗留的syncthing包
@@ -140,16 +140,16 @@ then
         /opt/bin/mv ${ENTWARE_MONITD}/syncthing ${ENTWARE_MONITD}/syncthing.on
         /opt/bin/monit reload
         #
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
         exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
         #
         exit 2
     fi
@@ -157,9 +157,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
     #
     exit 1
 fi

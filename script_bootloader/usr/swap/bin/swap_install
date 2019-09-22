@@ -41,7 +41,7 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -61,19 +61,19 @@ fi
 # 检查文件${PRIVATE_VAR}/swapfile.var是否存在
 if [ -e "${PRIVATE_VAR}/swapfile.var" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var EXISTS *****"
+    echo "($(basename $0)): $$ ***** ${PRIVATE_VAR}/swapfile.var EXISTS *****"
     #
     # Do nothing but prompt the user
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
     exit 0
     #
 else
     # Create ${PRIVATE_VAR}/swapfile.var
     # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则创建${PRIVATE_VAR}/swapfile.var
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${PRIVATE_VAR}/swapfile.var *****"
-    logger -st "($(basename $0))" $$ "***** CREATE ${PRIVATE_VAR}/swapfile.var *****"
+    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE ${PRIVATE_VAR}/swapfile.var *****"
+    echo "($(basename $0)): $$ ***** CREATE ${PRIVATE_VAR}/swapfile.var *****"
     #
     # Set the size of swapfile.var to 256M
     # 设定文件swapfile.var的大小为256M
@@ -89,8 +89,8 @@ else
     #
     mkswap -L ASUS_SWAP ${PRIVATE_VAR}/swapfile.var
     chmod 600 ${PRIVATE_VAR}/swapfile.var
-    logger -st "($(basename $0))" $$ "***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    echo "($(basename $0)): $$ ***** ${PRIVATE_VAR}/swapfile.var HAS BEEN CREATED *****"
+    echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
     exit 0
 fi

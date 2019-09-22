@@ -54,13 +54,13 @@ case $(/opt/bin/uname -m) in
         #
         # Prompt the user that debian doesn't support ${ROUTER_ARCHITECTURE}
         # 提示用户debian不支持${ROUTER_ARCHITECTURE}
-        logger -st "($(basename $0))" $$ "***** DEBIAN DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** DEBIAN DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
         #
         exit 3
         ;;
@@ -79,7 +79,7 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -90,7 +90,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 # 检查ENTWARE_ENABLE SERVICE是否已启用
 if [ $(which opkg) == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
     #
     # Prepare Debian Environment
     # 准备Debian环境
@@ -103,16 +103,16 @@ then
     /opt/bin/cp -s ${ENTWARE_ETC}/init.d/S99debian ${ENTWARE_BIN}/debian
     /opt/bin/cp /etc/hosts ${USB_MOUNT_POINT}/debian/etc/
     #
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
     #
     exit 1
 fi

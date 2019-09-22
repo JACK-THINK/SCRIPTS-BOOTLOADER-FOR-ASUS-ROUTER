@@ -57,7 +57,7 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -68,7 +68,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 # 检查ENTWARE_ENABLE SERVICE是否已启用
 if [ $(which opkg) == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
     #
     # Update the list of available packages
     # 更新可用程序包列表
@@ -90,16 +90,16 @@ then
     /opt/bin/echo "set smtp-auth-password=${PASSWORD}" >> ${ENTWARE_ETC}/nail.rc
     /opt/bin/echo "set smtp-auth=login" >> ${ENTWARE_ETC}/nail.rc
     #
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
     #
     exit 1
 fi

@@ -45,7 +45,7 @@ FILES_TO_COPY="${PRIVATE_ETC}/files_to_copy.autosave"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -75,7 +75,7 @@ then
     ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F ' ' '{print $9}' > ${FILES_TO_COPY}
     sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
     cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
-    logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
+    echo "($(basename $0)): $$ ***** FILES IN /opt HAVE BEEN COPIED *****"
     #
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
@@ -86,9 +86,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果/opt的类型不符合上述两种情况，则执行
-    logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
-    logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo "($(basename $0)): $$ ***** TYPE OF /opt IS UNKNOWN *****"
+    echo "($(basename $0)): $$ ***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
+    echo "($(basename $0)): $$ ***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
     #
     exit 1
 fi
@@ -103,21 +103,21 @@ fi
 case $(uname -m) in
     "aarch64")
         wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         ;;
     "armv7l")
         wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         ;;
     "mips")
         wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
         #
         exit 2
         ;;
@@ -128,7 +128,7 @@ esac
 #
 ########## COPY FILES FROM FIRMWARE ##########
 #
-logger -st "($(basename $0))" $$ "***** COPY FILES FROM FIRMWARE TO USB FLASH DRIVE *****"
+echo "($(basename $0)): $$ ***** COPY FILES FROM FIRMWARE TO USB FLASH DRIVE *****"
 #
 cp /etc/passwd ${USB_MOUNT_POINT}/etc/passwd_from_firmware
 cp /etc/shadow ${USB_MOUNT_POINT}/etc/shadow_from_firmware
@@ -138,7 +138,7 @@ cp /etc/shadow ${USB_MOUNT_POINT}/etc/shadow_from_firmware
 #
 ########## COPY HOME ##########
 #
-logger -st "($(basename $0))" $$ "***** COPY HOME TO USB FLASH DRIVE *****"
+echo "($(basename $0)): $$ ***** COPY HOME TO USB FLASH DRIVE *****"
 #
 # Check if HOME is already in the USB flash drive
 # 检查目录${USB_MOUNT_POINT}/home/root/是否存在
@@ -147,14 +147,14 @@ then
     # Copy /tmp/home/root to ${USB_MOUNT_POINT}/home/
     # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
     cp -r /tmp/home/root ${USB_MOUNT_POINT}/home/
-    logger -st "($(basename $0))" $$ "***** HOME HAS BEEN COPIED *****"
+    echo "($(basename $0)): $$ ***** HOME HAS BEEN COPIED *****"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
-    logger -st "($(basename $0))" $$ "***** HOME EXISTS *****"
+    echo "($(basename $0)): $$ ***** HOME EXISTS *****"
     #
     exit 0
 fi

@@ -57,7 +57,7 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
 #
 ########## END ##########
 #
@@ -68,13 +68,13 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 # 检查ENTWARE_ENABLE SERVICE是否已启用
 if [ $(which opkg) == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
         # Check the architecture of the ASUS Router
         # 检查华硕路由器架构
@@ -96,7 +96,7 @@ then
             else
                 # Do nothing but prompt the user
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static不存在，则执行
-                logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
                 #
                 exit 4
             fi
@@ -115,7 +115,7 @@ then
             else
                 # Do nothing but prompt the user
                 # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static不存在，则执行
-                logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
                 #
                 exit 6
             fi
@@ -123,8 +123,8 @@ then
         else
             # Do nothing but prompt the user
             # 如果路由器架构不符合上述三种情况，则执行
-            logger -st "($(basename $0))" $$ "***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+            /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
             #
             exit 3
         fi
@@ -164,16 +164,16 @@ then
         /opt/bin/mv ${ENTWARE_MONITD}/vlmcsd ${ENTWARE_MONITD}/vlmcsd.on
         /opt/bin/monit reload
         #
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
         #
         exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
         #
         exit 2
     fi
@@ -181,9 +181,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
     #
     exit 1
 fi
