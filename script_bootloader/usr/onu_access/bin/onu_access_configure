@@ -96,13 +96,13 @@ case ${#} in
     0)
         while [ 1 ]
         do
-            /opt/bin/echo -ne 'Input IP address of ONU: '
+            /opt/bin/echo -e "ONU_IP_ADDRESS: The IP address of ONU"
             doubleCheckAndConfirm ONU_IP_ADDRESS
             #
             isValidIpAddress ${ONU_IP_ADDRESS}
             if [ ${?} -eq 1 ]
             then
-                /opt/bin/echo -e "IP address of ONU is invalid."
+                /opt/bin/echo -e "The IP address of ONU is invalid."
             else
                 break
             fi
