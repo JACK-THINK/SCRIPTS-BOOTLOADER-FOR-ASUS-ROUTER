@@ -10,7 +10,7 @@
 #
 # USB_DEVICE_PARTITION: Partition 1 of the USB flash drive
 # 设置自定义变量USB_DEVICE_PARTITION为U盘第一分区
-USB_DEVICE_PARTITION="/dev/$(cat /tmp/usb.log | sed -r -n -e 's/.*\((sd[[:alnum:]]{2})\):[[:space:]]+Success.*/\1/p')"
+USB_DEVICE_PARTITION="/dev/$(cat /tmp/usb.log | sed -r -n -e 's/.*\((sd[[:alpha:]]1)\):[[:space:]]+Success.*/\1/p')"
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标ASUS_ROUTER。可修改，但长度不可超过16字节
