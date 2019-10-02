@@ -188,6 +188,11 @@ then
     ${USB_MOUNT_POINT}/script_bootloader/bin/install | tee /tmp/sbl_install_log
 else
     ${USB_MOUNT_POINT}/script_bootloader/bin/install | ${USB_MOUNT_POINT}/script_bootloader/bin/gotee/gotee-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} /tmp/sbl_install_log
+    #
+    # Temporary Solution: The code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
+    # 临时解决方案：以下代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
+    ${USB_MOUNT_POINT}/script_bootloader/bin/addons_install | /opt/bin/tee -a /tmp/sbl_install_log
+    echo -e "\033[1;42;37m***** STAGE 3: SUCCEEDED *****\033[0m"
 fi
 #
 mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/

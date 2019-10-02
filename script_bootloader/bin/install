@@ -57,9 +57,22 @@ SBL_SYS_USR=${SBL_SYS_ROOT}/usr
 # 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
 SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${USB_MOUNT_POINT}/etc/monit.d
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+#
+# TEST_FMW_TEE: The value to show if tee exists in the firmware
+# 设置自定义变量TEST_FMW_TEE为固件内tee命令的测试值
+if [ -n "$(which tee)" ]
+then
+    TEST_FMW_TEE=0
+else
+    TEST_FMW_TEE=1
+fi
 #
 ########## END ##########
 #
@@ -495,6 +508,13 @@ echo -e "\033[1;42;37m***** STAGE 2: SUCCEEDED *****\033[0m"
 ########## STAGE 3 ##########
 #
 echo -e "\033[1;45;37m***** STAGE 3: INSTALL ADDONS *****\033[0m"
+#
+# Temporary Solution: The 4-line code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
+# 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
+if [ ${TEST_FMW_TEE} -eq 1 ]
+then
+    exit 28
+fi
 #
 # Check if ${SBL_SYS_BIN}/addons_install exists
 # 检查文件${SBL_SYS_BIN}/addons_install是否存在
