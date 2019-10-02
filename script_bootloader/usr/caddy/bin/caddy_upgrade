@@ -34,11 +34,11 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest caddy
 # 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/caddyserver/caddy/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/caddyserver/caddy/releases/latest | /opt/bin/sed -r -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
 # CURRENT_VERSION: Version of the current caddy
 # 设置自定义变量CURRENT_VERSION为当前caddy的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/caddy -version | /opt/bin/cut -d ' ' -f 2)
+CURRENT_VERSION=$(${PRIVATE_USR}/caddy -version | /opt/bin/sed -r -n -e 's/.*[[:space:]]+(v[[:digit:]\.]*)[[:space:]]+.*/\1/p' 2> /dev/null)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统

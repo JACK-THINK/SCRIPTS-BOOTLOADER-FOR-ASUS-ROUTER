@@ -1,0 +1,83 @@
+#!/bin/sh
+#
+# 此程序用于检查安装“华硕路由器开机自动运行程序系统”的必要前提
+#
+########## LOAD FUNCTIONS ##########
+#
+essentialCommandChecker()
+{
+    if [ -n "$(which ${1})" ]
+    then
+        echo -e "${1}: \033[1;42;37mYES\033[0m"
+        return 0
+    else
+        echo -e "${1}: \033[1;41;37mNO\033[0m"
+        exit 1
+    fi
+}
+#
+essentialfileChecker()
+{
+    if [ -e "${1}" ]
+    then
+        echo -e "${1}: \033[1;42;37mYES\033[0m"
+        return 0
+    else
+        echo -e "${1}: \033[1;41;37mNO\033[0m"
+        exit 2
+    fi
+}
+#
+########## END ##########
+#
+#
+########## CHECK ESSENTIALS ##########
+#
+essentialCommandChecker awk
+essentialCommandChecker basename
+essentialCommandChecker cat
+essentialCommandChecker chmod
+essentialCommandChecker cp
+essentialCommandChecker date
+essentialCommandChecker dd
+essentialCommandChecker echo
+essentialCommandChecker find
+essentialCommandChecker grep
+essentialCommandChecker ln
+essentialCommandChecker logger
+essentialCommandChecker ls
+essentialCommandChecker mkdir
+essentialCommandChecker mkfs.ext3
+essentialCommandChecker mkswap
+essentialCommandChecker mount
+essentialCommandChecker mv
+essentialCommandChecker nvram
+essentialCommandChecker reboot
+essentialCommandChecker rm
+essentialCommandChecker sed
+essentialCommandChecker sleep
+essentialCommandChecker swapoff
+essentialCommandChecker swapon
+essentialCommandChecker tail
+essentialCommandChecker tar
+essentialCommandChecker umount
+essentialCommandChecker uname
+essentialCommandChecker wc
+essentialCommandChecker wget
+#
+essentialfileChecker "/tmp/usb.log"
+#
+########## END ##########
+#
+#
+########## CHECK FEATURES OF COMMANDS ##########
+#
+if [ "$(echo '1st2nd3rd' | sed -r -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" == "123" ]
+then
+    echo -e "extended regular expression: \033[1;42;37mYES\033[0m"
+else
+    echo -e "extended regular expression: \033[1;41;37mNO\033[0m"
+    exit 1
+fi
+#
+########## END ##########

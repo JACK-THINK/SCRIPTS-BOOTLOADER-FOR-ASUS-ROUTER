@@ -1,0 +1,107 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+isValidPort()
+{
+    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -r -e 's/^[[:digit:]]*/0/') != "0" ]
+    then
+        return 1
+    fi
+    #
+    if [ ${1} -ge 0 ] && [ ${1} -le 65535 ]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        /opt/bin/echo -ne "Input the value of ${1}: "
+        read VALUE_1
+        /opt/bin/echo -ne "Input the value of ${1} again to confirm: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            /opt/bin/echo -e "The two values you entered were inconsistent."
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SET PARAMETERS ##########
+#
+case ${#} in
+    1)
+        PORT="${1}"
+        ;;
+    0)
+        while [ 1 ]
+        do
+            /opt/bin/echo -e "PORT: The listening port of sshd"
+            doubleCheckAndConfirm PORT
+            #
+            isValidPort ${PORT}
+            if [ ${?} -eq 1 ]
+            then
+                /opt/bin/echo -e "The listening port of sshd is invalid."
+            else
+                break
+            fi
+        done
+        ;;
+    *)
+        /opt/bin/echo -e "\033[1;41;37m***** ERROR: WRONG NUMBER OF PARAMETERS *****\033[0m"
+        exit 1
+        ;;
+esac
+#
+########## END ##########
+#
+#
+########## CONFIGURE OPENSSH_SERVER ##########
+#
+if [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ] && \
+[ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+then
+    /opt/bin/sed -r -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+elif [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+then
+    /opt/bin/sed -r -i 's/^#(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+elif [ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+then
+    /opt/bin/sed -r -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+else
+    /opt/bin/echo "Port ${PORT}" >> ${ENTWARE_ETC}/ssh/sshd_config
+fi
+#
+########## END ##########

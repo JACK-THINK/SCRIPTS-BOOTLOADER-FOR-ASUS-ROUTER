@@ -34,7 +34,7 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest overture
 # 设置自定义变量LATEST_VERSION为最新版overture的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/shawn1m/overture/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/shawn1m/overture/releases/latest | /opt/bin/sed -r -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
 # CURRENT_VERSION: Version of the current overture
 # 设置自定义变量CURRENT_VERSION为当前overture的版本号

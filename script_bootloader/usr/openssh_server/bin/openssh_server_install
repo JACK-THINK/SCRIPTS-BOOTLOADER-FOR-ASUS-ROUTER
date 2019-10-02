@@ -32,13 +32,13 @@ ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT=${SBL_SYS_USR}/openssh_server
 #
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC=${PRIVATE_ROOT}/etc
-#
-# PORT: The listening port of sshd
-# 设置自定义变量PORT为sshd监听端口
-PORT=2222
 #
 # IP_ADDRESS: The listening IP address of sshd
 # 设置自定义变量IP_ADDRESS为sshd监听IP地址
@@ -83,6 +83,7 @@ then
         # Install openssh_server
         # 安装openssh_server
         /opt/bin/opkg install openssh-server-pam
+        /opt/bin/opkg install openssh-moduli
         #
         # Disable ${ENTWARE_ETC}/init.d/S*sshd
         # 禁用${ENTWARE_ETC}/init.d/S*sshd
@@ -91,7 +92,7 @@ then
         # Configure openssh_server
         # 配置openssh_server
         /opt/bin/cp ${ENTWARE_ETC}/ssh/sshd_config ${PRIVATE_ETC}/sshd_config.bak
-        /opt/bin/sed -i "s/^#Port 22/Port ${PORT}/" ${ENTWARE_ETC}/ssh/sshd_config
+        ${PRIVATE_BIN}/openssh_server_configure
         /opt/bin/sed -i "/^#ListenAddress 0\.0\.0\.0/ a\ListenAddress ${IP_ADDRESS}" ${ENTWARE_ETC}/ssh/sshd_config
         /opt/bin/ssh-keygen -t rsa -N '' -f ${ENTWARE_ETC}/ssh/ssh_host_rsa_key
         /opt/bin/sed -i "/^HostKey .*ecdsa_key$/s/^/#/" ${ENTWARE_ETC}/ssh/sshd_config

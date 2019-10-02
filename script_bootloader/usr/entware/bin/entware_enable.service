@@ -58,7 +58,7 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET=$(ls -al /opt | awk -F ' ' '{print $11}' | sed 's/^/\//')
+    OPT_TARGET=$(ls -al /opt | sed -r -n -e 's/.*->[[:space:]]*([^[:space:]]*)/\/\1/p')
     #
     # Create symbolic link file ${OPT_TARGET}
     # 创建符号链接文件${OPT_TARGET}
@@ -86,7 +86,7 @@ then
     then
         # Copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT}
         # 如果文件${FILES_TO_COPY}不存在，则执行
-        ls -al /opt/ | grep -ve '^l.*' | tail -n +3 | awk -F ' ' '{print $9}' > ${FILES_TO_COPY}
+        ls -al /opt/ | sed -r -n -e 's/^[^l[:space:]]{10}.*[[:space:]]+(.*[^.]$)/\1/p' > ${FILES_TO_COPY}
         sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
         cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
         logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"

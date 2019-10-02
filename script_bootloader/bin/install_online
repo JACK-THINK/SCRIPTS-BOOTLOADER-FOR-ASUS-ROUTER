@@ -7,12 +7,36 @@ ROUTER_MODEL=$(nvram get model)
 ########## END ##########
 #
 #
+########## CHECK PREREQUISITES ##########
+#
+# Download prerequisite_checker
+# 下载文件prerequisite_checker
+wget -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
+#
+# Change the mode of /tmp/prerequisite_checker
+# 更改文件/tmp/prerequisite_checker权限
+chmod 777 /tmp/prerequisite_checker
+#
+# Run /tmp/prerequisite_checker
+# 执行/tmp/prerequisite_checker
+/tmp/prerequisite_checker
+#
+if [ ${?} -ne 0 ]
+then
+    echo -e "\033[1;41;37m***** ERROR: MISSING PREREQUISITES *****\033[0m"
+    echo -e "Abort installation ..."
+    exit 1
+fi
+#
+########## END ##########
+#
+#
 ########## NOTIFICATION ##########
 #
 echo -e "\033[1;41;37m***** WARNING *****\033[0m"
-echo -e "This program will erase ALL THE DATA on the target USB flash drive and install SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.\nBefore the installation, you must:\n1. Back up all the data on the target USB flash drive.\n2. Unplug all the USB flash drives except the target one.\n "
+echo -e "This program will erase ALL THE DATA on the target USB flash drive and install SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.\nBefore the installation, you must:\n1. Back up all the data on the target USB flash drive.\n2. Unplug all the USB flash drives except the target one.\n"
 echo -e "\033[1;41;37m***** 警告 *****\033[0m"
-echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER。\n开始安装前，你必须：\n1. 备份目标U盘上的全部数据。\n2. 除目标U盘外，移除一切其它U盘。\n "
+echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER。\n开始安装前，你必须：\n1. 备份目标U盘上的全部数据。\n2. 除目标U盘外，移除一切其它U盘。\n"
 #
 ########## END ##########
 #
@@ -34,7 +58,7 @@ do
             ;;
         "N" | "n" | "NO" | "no" | "No")
             echo -e "Stop installation ..."
-            exit 1
+            exit 2
             ;;
         *)
             echo -e "Sorry, wrong selection."
@@ -69,11 +93,11 @@ chmod 777 /tmp/label_modifier
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
-USB_DRIVE_LABEL=$(grep 'USB_DRIVE_LABEL=' /tmp/label_modifier | awk -F '"' '{print $2}')
+USB_DRIVE_LABEL=$(sed -r -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/label_modifier)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(mount | grep "${USB_DRIVE_LABEL}" | awk -F ' ' '{print $3}')
+USB_MOUNT_POINT=$(mount | sed -r -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DRIVE_LABEL}"'[^[:space:]]*)[[:space:]]+.*/\1/p')
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
@@ -84,6 +108,31 @@ rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 # NAME OF THE ARCHIVE
 # 设置自定义变量ARCHIVE_NAME为包文件名
 ARCHIVE_NAME="sbl_setup.tar.gz"
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case $(uname -m) in
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        echo -e "\033[1;41;37m***** ERROR: ROUTER ARCHITECTURE IS UNKNOWN *****\033[0m"
+        #
+        exit 3
+        ;;
+esac
 #
 ########## END ##########
 #
@@ -131,7 +180,16 @@ sleep 10
 # Start installation
 # 开始安装
 cd /tmp/
-${USB_MOUNT_POINT}/script_bootloader/bin/install | tee /tmp/sbl_install_log
+#
+echo "${USB_MOUNT_POINT}/sbl_install_log will be generated."
+#
+if [ -n "$(which tee)" ]
+then
+    ${USB_MOUNT_POINT}/script_bootloader/bin/install | tee /tmp/sbl_install_log
+else
+    ${USB_MOUNT_POINT}/script_bootloader/bin/install | ${USB_MOUNT_POINT}/script_bootloader/bin/gotee/gotee-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} /tmp/sbl_install_log
+fi
+#
 mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/
 #
 ########## END ##########
@@ -141,8 +199,8 @@ mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/
 #
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
-logger -st "($(basename $0))" $$ "***** INSTALLATION HAS BEEN COMPLETE *****"
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
+echo "($(basename $0)): $$ ***** INSTALLATION HAS BEEN COMPLETE *****"
+echo "($(basename $0)): $$ ***** REBOOTING THE ROUTER *****"
 reboot
 #
 ########## END ##########

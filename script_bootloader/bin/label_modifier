@@ -8,9 +8,13 @@
 #
 ########## SET THE LABEL OF THE USB FLASH DRIVE ##########
 #
-# USB_DEVICE_FILE: Default device file of the USB flash drive
-# 设置自定义变量USB_DEVICE_FILE为U盘默认设备文件
-USB_DEVICE_FILE=$(blkid | head -n 1 | awk -F ':' '{print $1}')
+# USB_DEVICE_NAME: Device name of the USB flash drive
+# 设置自定义变量USB_DEVICE_NAME为U盘设备名
+USB_DEVICE_NAME=$(cat /tmp/usb.log | sed -r -n -e 's/.*\((sd.)\).*/\1/p')
+#
+# USB_DEVICE_PARTITION: Partition 1 of the USB flash drive
+# 设置自定义变量USB_DEVICE_PARTITION为U盘第一分区
+USB_DEVICE_PARTITION="/dev/${USB_DEVICE_NAME}1"
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标ASUS_ROUTER。可修改，但长度不可超过16字节
@@ -21,16 +25,16 @@ USB_DRIVE_LABEL="ASUS_ROUTER"
 #
 ########## PREPARE THE USB FLASH DRIVE ##########
 #
-logger -st "($(basename $0))" $$ "***** LABEL OF THE USB FLASH DRIVE IS ${USB_DRIVE_LABEL} *****"
+echo "($(basename $0)): $$ ***** LABEL OF THE USB FLASH DRIVE IS ${USB_DRIVE_LABEL} *****"
 cd /tmp/
 #
-# Unmount ${USB_DEVICE_FILE}
-# 卸载${USB_DEVICE_FILE}
-umount ${USB_DEVICE_FILE}
+# Unmount ${USB_DEVICE_PARTITION}
+# 卸载${USB_DEVICE_PARTITION}
+umount ${USB_DEVICE_PARTITION}
 #
-# Format ${USB_DEVICE_FILE} with ${USB_DRIVE_LABEL}
-# 格式化${USB_DEVICE_FILE}并创建卷标${USB_DRIVE_LABEL}
-mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_FILE}
+# Format ${USB_DEVICE_PARTITION} with ${USB_DRIVE_LABEL}
+# 格式化${USB_DEVICE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
+mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_PARTITION}
 #
 sleep 120
 #
@@ -38,12 +42,12 @@ sleep 120
 # 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
 mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
 #
-# Mount ${USB_DEVICE_FILE} to /tmp/mnt/${USB_DRIVE_LABEL}
-# 挂载${USB_DEVICE_FILE}至/tmp/mnt/${USB_DRIVE_LABEL}
-mount ${USB_DEVICE_FILE} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
+# Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
+# 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
+mount ${USB_DEVICE_PARTITION} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
 #
 sleep 30
 #
-logger -st "($(basename $0))" $$ "***** USB FLASH DRIVE IS READY *****"
+echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS READY *****"
 #
 ########## END ##########

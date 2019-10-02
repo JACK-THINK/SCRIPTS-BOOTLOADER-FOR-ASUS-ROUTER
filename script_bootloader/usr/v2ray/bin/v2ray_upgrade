@@ -34,11 +34,11 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest v2ray-core
 # 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/v2ray/v2ray-core/releases/latest | /opt/bin/grep 'tag_name' | /opt/bin/cut -d '"' -f 4)
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/v2ray/v2ray-core/releases/latest | /opt/bin/sed -r -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
 # CURRENT_VERSION: Version of the current v2ray-core
 # 设置自定义变量CURRENT_VERSION为当前v2ray-core的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | /opt/bin/head -1 | /opt/bin/cut -d ' ' -f 2 | /opt/bin/sed 's/^/v/')
+CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | /opt/bin/sed -r -n -e 's/.*[[:space:]]+([[:digit:]\.]*)[[:space:]]+.*/v\1/p' 2> /dev/null)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
