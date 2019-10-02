@@ -6,11 +6,8 @@
 #
 essentialCommandChecker()
 {
-    if [ -n "$(which ${1})" ]
+    if [ -z "$(which ${1})" ]
     then
-        echo -e "${1}: \033[1;42;37mYES\033[0m"
-        return 0
-    else
         echo -e "${1}: \033[1;41;37mNO\033[0m"
         exit 1
     fi
@@ -18,11 +15,8 @@ essentialCommandChecker()
 #
 essentialfileChecker()
 {
-    if [ -e "${1}" ]
+    if [ ! -e "${1}" ]
     then
-        echo -e "${1}: \033[1;42;37mYES\033[0m"
-        return 0
-    else
         echo -e "${1}: \033[1;41;37mNO\033[0m"
         exit 2
     fi
@@ -72,12 +66,10 @@ essentialfileChecker "/tmp/usb.log"
 #
 ########## CHECK FEATURES OF COMMANDS ##########
 #
-if [ "$(echo '1st2nd3rd' | sed -r -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" == "123" ]
+if [ "$(echo '1st2nd3rd' | sed -r -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" != "123" ]
 then
-    echo -e "extended regular expression: \033[1;42;37mYES\033[0m"
-else
     echo -e "extended regular expression: \033[1;41;37mNO\033[0m"
-    exit 1
+    exit 3
 fi
 #
 ########## END ##########
