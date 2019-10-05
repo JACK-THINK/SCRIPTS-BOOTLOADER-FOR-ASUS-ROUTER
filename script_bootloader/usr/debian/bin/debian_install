@@ -94,7 +94,7 @@ then
     #
     # Prepare Debian Environment
     # 准备Debian环境
-    /opt/bin/tar xzvf ${PRIVATE_USR}/debian_jessie8.9-arm_clean.tgz -C ${USB_MOUNT_POINT}/
+    /opt/bin/tar -xzvf ${PRIVATE_USR}/debian_jessie8.9-arm_clean.tgz -C ${USB_MOUNT_POINT}/
     /opt/bin/mkdir -p ${USB_MOUNT_POINT}/debian_mnt/
     /opt/bin/cp ${PRIVATE_ETC}/S99debian ${ENTWARE_ETC}/init.d/
     /opt/bin/chmod 755 ${ENTWARE_ETC}/init.d/S99debian
