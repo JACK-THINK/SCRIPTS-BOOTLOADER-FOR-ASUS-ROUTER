@@ -38,11 +38,11 @@ PRIVATE_SITE=${USB_MOUNT_POINT}/www/ariang
 #
 # LATEST_VERSION: Version of the latest ariang
 # 设置自定义变量LATEST_VERSION为最新版ariang的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/mayswind/AriaNg/releases/latest | /opt/bin/sed -r -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/mayswind/AriaNg/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
 # CURRENT_VERSION: Version of the current ariang
 # 设置自定义变量CURRENT_VERSION为当前ariang的版本号
-CURRENT_VERSION=$(/opt/bin/sed -r -n -e 's/.*buildVersion:\"v([[:digit:]\.]*)\".*/\1/p' ${PRIVATE_SITE}/index.html 2> /dev/null)
+CURRENT_VERSION=$(/opt/bin/sed -E -n -e 's/.*buildVersion:\"v([[:digit:]\.]*)\".*/\1/p' ${PRIVATE_SITE}/index.html 2> /dev/null)
 #
 # DOWNLOAD_LINK: Download link of the latest ariang
 # 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接

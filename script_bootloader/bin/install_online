@@ -93,11 +93,11 @@ chmod 777 /tmp/label_modifier
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
-USB_DRIVE_LABEL=$(sed -r -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/label_modifier)
+USB_DRIVE_LABEL=$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/label_modifier)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(mount | sed -r -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DRIVE_LABEL}"'[^[:space:]]*)[[:space:]]+.*/\1/p')
+USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DRIVE_LABEL}"'[^[:space:]]*)[[:space:]]+.*/\1/p')
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接

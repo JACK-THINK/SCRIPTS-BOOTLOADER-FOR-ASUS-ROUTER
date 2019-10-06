@@ -42,7 +42,7 @@ PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
 # LATEST_VERSION: Version of the latest syncthing
 # 设置自定义变量LATEST_VERSION为最新版syncthing的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/syncthing/syncthing/releases/latest | /opt/bin/sed -r -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/syncthing/syncthing/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
