@@ -21,29 +21,13 @@ chmod 777 /tmp/prerequisite_checker
 # 执行/tmp/prerequisite_checker
 /tmp/prerequisite_checker
 #
-case ${?} in
-    1)
-        echo -e "\033[1;41;37m***** ERROR: MISSING ESSENTIAL COMMANDS *****\033[0m"
-        echo -e "Abort installation ..."
-        exit 1
-        ;;
-    2)
-        echo -e "\033[1;41;37m***** ERROR: MISSING ESSENTIAL FILES *****\033[0m"
-        echo -e "Abort installation ..."
-        exit 1
-        ;;
-    3)
-        echo -e "\033[1;41;37m***** ERROR: MISSING ESSENTIAL FEATURES *****\033[0m"
-        echo -e "Abort installation ..."
-        exit 1
-        ;;
-    4)
-        echo -e "\033[1;41;37m***** ERROR: MISSING ESSENTIAL SETTINGS *****\033[0m"
-        echo -e "Modify settings as instructions above, reboot the router and then try again."
-        echo -e "Abort installation ..."
-        exit 1
-        ;;
-esac
+# Check if /tmp/prerequisite_checker returns 0
+# 检查/tmp/prerequisite_checker的返回值是否为0
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 1
+fi
 #
 ########## END ##########
 #
@@ -62,7 +46,7 @@ echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-
 #
 while [ 1 ]
 do
-    echo -ne "Do you want to start the installation right now? (YES/NO): "
+    echo -n "Do you want to start the installation right now? (YES/NO): "
     #
     # Read the input of user
     # 读取用户输入值
@@ -70,15 +54,15 @@ do
     #
     case ${input_value} in
         "Y" | "y" | "YES" | "yes" | "Yes")
-            echo -e "Start installation ..."
+            echo "($(basename $0)): $$ ***** START INSTALLATION *****"
             break
             ;;
         "N" | "n" | "NO" | "no" | "No")
-            echo -e "Stop installation ..."
+            echo "($(basename $0)): $$ ***** STOP INSTALLATION *****"
             exit 2
             ;;
         *)
-            echo -e "Sorry, wrong selection."
+            echo "($(basename $0)): $$ ***** WRONG SELECTION *****"
             ;;
     esac
 done
@@ -99,6 +83,14 @@ chmod 777 /tmp/label_modifier
 # Run /tmp/label_modifier
 # 执行/tmp/label_modifier
 /tmp/label_modifier
+#
+# Check if /tmp/label_modifier returns 0
+# 检查/tmp/label_modifier的返回值是否为0
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 3
+fi
 #
 ########## END ##########
 #
@@ -147,7 +139,8 @@ case $(uname -m) in
         # 如果路由器架构不符合上述三种情况，则执行
         echo -e "\033[1;41;37m***** ERROR: ROUTER ARCHITECTURE IS UNKNOWN *****\033[0m"
         #
-        exit 3
+        echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+        exit 4
         ;;
 esac
 #

@@ -32,18 +32,31 @@ umount ${USB_DEVICE_PARTITION}
 # 格式化${USB_DEVICE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
 mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_PARTITION}
 #
-sleep 120
-#
-# Create mount point /tmp/mnt/${USB_DRIVE_LABEL}
-# 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
-mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
-#
-# Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
-# 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
-mount ${USB_DEVICE_PARTITION} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
-#
-sleep 30
-#
-echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS READY *****"
+# Check if mkfs.ext3 returns 0
+# 检查mkfs.ext3的返回值是否为0
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS NOT READY *****"
+    #
+    exit 1
+    #
+else
+    #
+    sleep 120
+    #
+    # Create mount point /tmp/mnt/${USB_DRIVE_LABEL}
+    # 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
+    mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
+    #
+    # Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
+    # 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
+    mount ${USB_DEVICE_PARTITION} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
+    #
+    sleep 30
+    #
+    echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS READY *****"
+    #
+    exit 0
+fi
 #
 ########## END ##########

@@ -85,6 +85,7 @@ essentialCommandChecker wget
 #
 if [ ${COMMAND_SENTINEL} -ne 0 ]
 then
+    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL COMMANDS *****"
     exit 1
 fi
 #
@@ -97,6 +98,7 @@ essentialFileChecker "/tmp/usb.log"
 #
 if [ ${FILE_SENTINEL} -ne 0 ]
 then
+    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL FILES *****"
     exit 2
 fi
 #
@@ -113,6 +115,7 @@ fi
 #
 if [ ${FEATURE_SENTINEL} -ne 0 ]
 then
+    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL FEATURES *****"
     exit 3
 fi
 #
@@ -185,6 +188,8 @@ fi
 #
 if [ ${SETTING_SENTINEL} -ne 0 ]
 then
+    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL SETTINGS *****"
+    echo "($(basename $0)): $$ Modify settings as instructions above, reboot the router and then try again."
     exit 4
 fi
 #
