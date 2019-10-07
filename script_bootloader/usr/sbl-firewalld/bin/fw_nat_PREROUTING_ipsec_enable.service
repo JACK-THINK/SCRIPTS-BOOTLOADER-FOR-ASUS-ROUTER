@@ -60,7 +60,7 @@ DESTINATION_PORT_2="4500"
 #
 ########## GET WAN IP ADDRESS ##########
 #
-WAN_IP_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -n -r -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+WAN_IP_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
 #
 ########## END ##########
 #

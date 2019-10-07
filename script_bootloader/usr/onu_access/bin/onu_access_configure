@@ -36,7 +36,7 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 isValidIpAddress()
 {
-    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -r -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/') != "0.0.0.0" ]
+    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/') != "0.0.0.0" ]
     then
         return 1
     fi
@@ -116,8 +116,8 @@ esac
 #
 WAN_IFNAME="$(nvram get wan0_ifname)"
 #
-ONU_NET_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -r -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\1/')
-ONU_HOST_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -r -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\2/')
+ONU_NET_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -E -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\1/')
+ONU_HOST_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -E -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\2/')
 #
 WAN_HOST_PART=$((${ONU_HOST_PART}+1))
 #
@@ -135,12 +135,12 @@ CIDR_MASK="24"
 ########## CONFIGURE ONU_ACCESS ##########
 #
 /opt/bin/cp -f ${PRIVATE_ETC}/monit.d/onu_access_template ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/ONU_IP_ADDRESS/'"${ONU_IP_ADDRESS}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/ONU_NET_PART/'"${ONU_NET_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/WAN_HOST_PART/'"${WAN_HOST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/CIDR_MASK/'"${CIDR_MASK}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/BROADCAST_PART/'"${BROADCAST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -r -i 's/WAN_IFNAME/'"${WAN_IFNAME}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/ONU_IP_ADDRESS/'"${ONU_IP_ADDRESS}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/ONU_NET_PART/'"${ONU_NET_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/WAN_HOST_PART/'"${WAN_HOST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/CIDR_MASK/'"${CIDR_MASK}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/BROADCAST_PART/'"${BROADCAST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's/WAN_IFNAME/'"${WAN_IFNAME}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
 #
 ########## END ##########
 #

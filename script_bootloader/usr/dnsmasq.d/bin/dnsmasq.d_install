@@ -139,8 +139,8 @@ then
                 /opt/bin/echo "domain=${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf
             fi
             #
-            DHCP_OPTION_DNS_NUM=$(/opt/bin/sed -n -r -e 's/^dhcp-option=[[:space:][:alnum:]_-]*,*15[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*$/\1/p' ${FMW_DNSMASQ_CONF})
-            DHCP_OPTION_DNS_SYM=$(/opt/bin/sed -n -r -e 's/^dhcp-option=.*option[[:space:]]*:[[:space:]]*domain-name[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*[[:punct:]]*.*$/\1/p' ${FMW_DNSMASQ_CONF})
+            DHCP_OPTION_DNS_NUM=$(/opt/bin/sed -E -n -e 's/^dhcp-option=[[:space:][:alnum:]_-]*,*15[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*$/\1/p' ${FMW_DNSMASQ_CONF})
+            DHCP_OPTION_DNS_SYM=$(/opt/bin/sed -E -n -e 's/^dhcp-option=.*option[[:space:]]*:[[:space:]]*domain-name[[:space:]]*,[[:space:]]*([[:alnum:]_-]*)[[:space:]]*[[:punct:]]*.*$/\1/p' ${FMW_DNSMASQ_CONF})
             if [ -z "${DHCP_OPTION_DNS_NUM}" ] && [ -z "${DHCP_OPTION_DNS_SYM}" ]
             then
                 /opt/bin/echo "dhcp-option=15,${LOCAL_DOMAIN}" >> ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf

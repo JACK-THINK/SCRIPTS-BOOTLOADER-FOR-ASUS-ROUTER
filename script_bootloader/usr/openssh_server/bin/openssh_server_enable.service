@@ -54,7 +54,7 @@ then
     # Load openssh_server
     # 如果文件${ENTWARE_ETC}/ssh/sshd_config存在，则执行
     /opt/bin/echo 'sshd:x:22:22:sshd:/var/run/sshd:/opt/bin/false' >> /etc/passwd
-    /opt/bin/sed -r -i 's/^('"${ADMINUSER}"'):(.*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):/\1:\2::\4:\5:\6:\7::/' /etc/shadow
+    /opt/bin/sed -E -i 's/^('"${ADMINUSER}"'):(.*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):([[:digit:]]*):/\1:\2::\4:\5:\6:\7::/' /etc/shadow
     /opt/bin/echo 'PATH="/opt/bin:/opt/sbin:/bin:/usr/bin:/sbin:/usr/sbin:/home/$USER:/mmc/sbin:/mmc/bin:/mmc/usr/sbin:/mmc/usr/bin"' > /etc/environment
     /opt/sbin/sshd
     #

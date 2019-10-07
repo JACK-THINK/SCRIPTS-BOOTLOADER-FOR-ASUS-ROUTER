@@ -89,7 +89,7 @@ do
     #
     # WAN_IPV4_ADDRESS: The IPv4 address of the router's WAN port
     # 设置自定义变量WAN_IPV4_ADDRESS为路由器WAN口IPv4地址
-    WAN_IPV4_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -n -r -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+    WAN_IPV4_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
     #
     # WAN_IPV6_ADDRESS: The IPv6 address of the router's WAN port
     # 设置自定义变量WAN_IPV6_ADDRESS为路由器WAN口IPv6地址

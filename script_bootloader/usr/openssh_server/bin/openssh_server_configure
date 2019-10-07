@@ -20,7 +20,7 @@ ENTWARE_ETC=${USB_MOUNT_POINT}/etc
 #
 isValidPort()
 {
-    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -r -e 's/^[[:digit:]]*/0/') != "0" ]
+    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*/0/') != "0" ]
     then
         return 1
     fi
@@ -93,13 +93,13 @@ esac
 if [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ] && \
 [ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
 then
-    /opt/bin/sed -r -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
 elif [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
 then
-    /opt/bin/sed -r -i 's/^#(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+    /opt/bin/sed -E -i 's/^#(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
 elif [ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
 then
-    /opt/bin/sed -r -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
 else
     /opt/bin/echo "Port ${PORT}" >> ${ENTWARE_ETC}/ssh/sshd_config
 fi

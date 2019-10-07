@@ -102,20 +102,20 @@ esac
 #
 # Modify ${PRIVATE_BIN}/ali_ddns_enable.service
 # 修改${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(ACCESS_KEY_ID=).*/\1\"'"${ACCESS_KEY_ID}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(ACCESS_KEY_SECRET=).*/\1\"'"${ACCESS_KEY_SECRET}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(DOMAIN_NAME=).*/\1\"'"${DOMAIN_NAME}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(RR_KEY_WORD=).*/\1\"'"${RR_KEY_WORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(MAIL_SMTP_SERVER=).*/\1\"smtp:\/\/'"${MAIL_SMTP_SERVER}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(MAIL_PASSWORD=).*/\1\"'"${MAIL_PASSWORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(MAIL_FROM=).*/\1\"'"${MAIL_FROM}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
-/opt/bin/sed -r -i 's/^(MAIL_TO=).*/\1\"'"${MAIL_TO}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(ACCESS_KEY_ID=).*/\1\"'"${ACCESS_KEY_ID}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(ACCESS_KEY_SECRET=).*/\1\"'"${ACCESS_KEY_SECRET}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(DOMAIN_NAME=).*/\1\"'"${DOMAIN_NAME}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(RR_KEY_WORD=).*/\1\"'"${RR_KEY_WORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(MAIL_SMTP_SERVER=).*/\1\"smtp:\/\/'"${MAIL_SMTP_SERVER}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(MAIL_PASSWORD=).*/\1\"'"${MAIL_PASSWORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(MAIL_FROM=).*/\1\"'"${MAIL_FROM}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
+/opt/bin/sed -E -i 's/^(MAIL_TO=).*/\1\"'"${MAIL_TO}"'\"/' ${PRIVATE_BIN}/ali_ddns_enable.service
 #
 # Modify ${PRIVATE_BIN}/ali_ddns_disable.service
 # 修改${PRIVATE_BIN}/ali_ddns_disable.service
-/opt/bin/sed -r -i 's/^(ACCESS_KEY_ID=).*/\1\"'"${ACCESS_KEY_ID}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
-/opt/bin/sed -r -i 's/^(ACCESS_KEY_SECRET=).*/\1\"'"${ACCESS_KEY_SECRET}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
-/opt/bin/sed -r -i 's/^(DOMAIN_NAME=).*/\1\"'"${DOMAIN_NAME}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
-/opt/bin/sed -r -i 's/^(RR_KEY_WORD=).*/\1\"'"${RR_KEY_WORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
+/opt/bin/sed -E -i 's/^(ACCESS_KEY_ID=).*/\1\"'"${ACCESS_KEY_ID}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
+/opt/bin/sed -E -i 's/^(ACCESS_KEY_SECRET=).*/\1\"'"${ACCESS_KEY_SECRET}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
+/opt/bin/sed -E -i 's/^(DOMAIN_NAME=).*/\1\"'"${DOMAIN_NAME}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
+/opt/bin/sed -E -i 's/^(RR_KEY_WORD=).*/\1\"'"${RR_KEY_WORD}"'\"/' ${PRIVATE_BIN}/ali_ddns_disable.service
 #
 ########## END ##########
