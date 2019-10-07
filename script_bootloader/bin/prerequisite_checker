@@ -2,6 +2,30 @@
 #
 # 此程序用于检查安装“华硕路由器开机自动运行程序系统”的必要前提
 #
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# COMMAND_SENTINEL: Sentinel value for essential commands
+# 设置自定义变量COMMAND_SENTINEL为必备命令哨兵值
+COMMAND_SENTINEL=0
+#
+# FILE_SENTINEL: Sentinel value for essential files
+# 设置自定义变量FILE_SENTINEL为必备文件哨兵值
+FILE_SENTINEL=0
+#
+# FEATURE_SENTINEL: Sentinel value for essential features
+# 设置自定义变量FEATURE_SENTINEL为必备功能哨兵值
+FEATURE_SENTINEL=0
+#
+# SETTING_SENTINEL: Sentinel value for essential settings
+# 设置自定义变量SETTING_SENTINEL为必备设置哨兵值
+SETTING_SENTINEL=0
+#
+########## END ##########
+#
+#
 ########## LOAD FUNCTIONS ##########
 #
 essentialCommandChecker()
@@ -9,23 +33,23 @@ essentialCommandChecker()
     if [ -z "$(which ${1})" ]
     then
         echo -e "${1}: \033[1;41;37mNO\033[0m"
-        exit 1
+        COMMAND_SENTINEL=$((${COMMAND_SENTINEL}+1))
     fi
 }
 #
-essentialfileChecker()
+essentialFileChecker()
 {
     if [ ! -e "${1}" ]
     then
         echo -e "${1}: \033[1;41;37mNO\033[0m"
-        exit 2
+        FILE_SENTINEL=$((${FILE_SENTINEL}+1))
     fi
 }
 #
 ########## END ##########
 #
 #
-########## CHECK ESSENTIALS ##########
+########## CHECK ESSENTIAL COMMANDS ##########
 #
 essentialCommandChecker awk
 essentialCommandChecker basename
@@ -59,7 +83,22 @@ essentialCommandChecker uname
 essentialCommandChecker wc
 essentialCommandChecker wget
 #
-essentialfileChecker "/tmp/usb.log"
+if [ ${COMMAND_SENTINEL} -ne 0 ]
+then
+    exit 1
+fi
+#
+########## END ##########
+#
+#
+########## CHECK ESSENTIAL FILES ##########
+#
+essentialFileChecker "/tmp/usb.log"
+#
+if [ ${FILE_SENTINEL} -ne 0 ]
+then
+    exit 2
+fi
 #
 ########## END ##########
 #
@@ -69,7 +108,84 @@ essentialfileChecker "/tmp/usb.log"
 if [ "$(echo '1st2nd3rd' | sed -E -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" != "123" ]
 then
     echo -e "extended regular expression: \033[1;41;37mNO\033[0m"
+    FEATURE_SENTINEL=$((${FEATURE_SENTINEL}+1))
+fi
+#
+if [ ${FEATURE_SENTINEL} -ne 0 ]
+then
     exit 3
+fi
+#
+########## END ##########
+#
+#
+########## CHECK SETTINGS ##########
+#
+if [ -n "$(nvram get daapd_enable)" ] && [ $(nvram get daapd_enable) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable iTunes Server\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get dms_enable)" ] && [ $(nvram get dms_enable) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable UPnP Media Server\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get enable_samba)" ] && [ $(nvram get enable_samba) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Network Place (Samba) Share / Cloud Disk\", and set \"Enable Share\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get nfsd_enable)" ] && [ $(nvram get nfsd_enable) -ne 0 ]
+#|| [ $(nvram get #nfsd_enable_v2) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"NFS Exports\", and set \"Enable NFSD\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get enable_ftp)" ] && [ $(nvram get enable_ftp) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"FTP Share\", and set \"Enable FTP\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get timemachine_enable)" ] && [ $(nvram get timemachine_enable) -ne 0 ]
+then
+    echo -e "Go to \"USB Application\" -> \"Time Machine\", and set \"Enable Time Machine\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get webdav_aidisk)" ] && [ $(nvram get webdav_aidisk) -ne 0 ]
+#|| [ -n "$(nvram get enable_webdav)" ] && [ $(nvram get enable_webdav) -ne 0 ]
+then
+    echo -e "Go to \"AiCloud 2.0\" -> \"AiCloud 2.0\", and set \"Cloud Disk\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get enable_cloudsync)" ] && [ $(nvram get enable_cloudsync) -ne 0 ]
+then
+    echo -e "Go to \"AiCloud 2.0\" -> \"AiCloud Sync\", and set \"AiCloud Sync\" to \033[1;43;31mOFF\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get usb_idle_enable)" ] && [ $(nvram get usb_idle_enable) -ne 0 ]
+then
+    echo -e "Go to \"Administration\" -> \"System\", and set \"Enable HDD Hibernation\" to \033[1;43;31mNo\033[0m."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ -n "$(nvram get ntp_ready)" ] && [ $(nvram get ntp_ready) -ne 1 ]
+then
+    echo -e "Go to \"Administration\" -> \"System\", and set \"NTP Server\" to \"\033[1;43;31mntp.aliyun.com\033[0m\"."
+    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+fi
+#
+if [ ${SETTING_SENTINEL} -ne 0 ]
+then
+    exit 4
 fi
 #
 ########## END ##########
