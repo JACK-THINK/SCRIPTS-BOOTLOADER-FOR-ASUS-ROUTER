@@ -75,7 +75,7 @@ do
     while [ ${ADDON_ORDER} -le ${ADDON_COUNT} ]
     do
         /opt/bin/echo -n "${ADDON_ORDER}. "
-        /opt/bin/sed -e 's/.*\///' -e 's/_install//' -ne "${ADDON_ORDER}p" ${SBL_SYS_TMP}/addon_install_list
+        /opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${ADDON_ORDER}"'p' ${SBL_SYS_TMP}/addon_install_list
         ADDON_ORDER=$((${ADDON_ORDER} + 1))
     done
     #
@@ -96,7 +96,7 @@ do
         then
             break
         fi
-        ADDON_TO_INSTALL=$(/opt/bin/sed -e 's/.*\///' -e 's/_install//' -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
+        ADDON_TO_INSTALL=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addon_install_list)
         #
         # Check if ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} exists
         # 检查文件${SBL_SYS_TMP}/${ADDON_TO_INSTALL}是否存在
@@ -105,7 +105,7 @@ do
             # Install the addon chosen by user
             # 安装用户选择的插件
             /opt/bin/touch ${SBL_SYS_TMP}/${ADDON_TO_INSTALL}
-            $(/opt/bin/sed -ne "${INPUT_VALUE}p" ${SBL_SYS_TMP}/addon_install_list)
+            $(/opt/bin/sed -ne ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addon_install_list)
             #
             # Check if return value is 0
             # 检查返回值是否为0
