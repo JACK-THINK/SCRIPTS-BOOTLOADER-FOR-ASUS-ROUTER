@@ -46,6 +46,33 @@ essentialFileChecker()
     fi
 }
 #
+essentialSettingOffChecker()
+{
+    if [ -n "$(nvram get ${1})" ] && [ $(nvram get ${1}) -ne 0 ]
+    then
+        echo -e "${2}"
+        SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+    fi
+}
+#
+essentialSettingOnChecker()
+{
+    if [ -n "$(nvram get ${1})" ] && [ $(nvram get ${1}) -ne 1 ]
+    then
+        echo -e "${2}"
+        SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
+    fi
+}
+#
+sentinelChecker()
+{
+    if [ ${1} -ne 0 ]
+    then
+        echo -e "${2}"
+        exit 1
+    fi
+}
+#
 ########## END ##########
 #
 #
@@ -83,11 +110,7 @@ essentialCommandChecker uname
 essentialCommandChecker wc
 essentialCommandChecker wget
 #
-if [ ${COMMAND_SENTINEL} -ne 0 ]
-then
-    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL COMMANDS *****"
-    exit 1
-fi
+sentinelChecker ${COMMAND_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL COMMANDS *****"
 #
 ########## END ##########
 #
@@ -96,11 +119,7 @@ fi
 #
 essentialFileChecker "/tmp/usb.log"
 #
-if [ ${FILE_SENTINEL} -ne 0 ]
-then
-    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL FILES *****"
-    exit 2
-fi
+sentinelChecker ${FILE_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL FILES *****"
 #
 ########## END ##########
 #
@@ -113,84 +132,24 @@ then
     FEATURE_SENTINEL=$((${FEATURE_SENTINEL}+1))
 fi
 #
-if [ ${FEATURE_SENTINEL} -ne 0 ]
-then
-    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL FEATURES *****"
-    exit 3
-fi
+sentinelChecker ${FEATURE_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL FEATURES *****"
 #
 ########## END ##########
 #
 #
 ########## CHECK SETTINGS ##########
 #
-if [ -n "$(nvram get daapd_enable)" ] && [ $(nvram get daapd_enable) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable iTunes Server\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
+essentialSettingOffChecker daapd_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable iTunes Server\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker dms_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable UPnP Media Server\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker enable_samba "Go to \"USB Application\" -> \"Servers Center\" -> \"Network Place (Samba) Share / Cloud Disk\", and set \"Enable Share\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker nfsd_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"NFS Exports\", and set \"Enable NFSD\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker enable_ftp "Go to \"USB Application\" -> \"Servers Center\" -> \"FTP Share\", and set \"Enable FTP\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker timemachine_enable "Go to \"USB Application\" -> \"Time Machine\", and set \"Enable Time Machine\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker webdav_aidisk "Go to \"AiCloud 2.0\" -> \"AiCloud 2.0\", and set \"Cloud Disk\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker enable_cloudsync "Go to \"AiCloud 2.0\" -> \"AiCloud Sync\", and set \"AiCloud Sync\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker usb_idle_enable "Go to \"Administration\" -> \"System\", and set \"Enable HDD Hibernation\" to \033[1;43;31mNo\033[0m."
+essentialSettingOnChecker ntp_ready "Go to \"Administration\" -> \"System\", and set \"NTP Server\" to \"\033[1;43;31mntp.aliyun.com\033[0m\"."
 #
-if [ -n "$(nvram get dms_enable)" ] && [ $(nvram get dms_enable) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable UPnP Media Server\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get enable_samba)" ] && [ $(nvram get enable_samba) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"Network Place (Samba) Share / Cloud Disk\", and set \"Enable Share\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get nfsd_enable)" ] && [ $(nvram get nfsd_enable) -ne 0 ]
-#|| [ $(nvram get #nfsd_enable_v2) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"NFS Exports\", and set \"Enable NFSD\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get enable_ftp)" ] && [ $(nvram get enable_ftp) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Servers Center\" -> \"FTP Share\", and set \"Enable FTP\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get timemachine_enable)" ] && [ $(nvram get timemachine_enable) -ne 0 ]
-then
-    echo -e "Go to \"USB Application\" -> \"Time Machine\", and set \"Enable Time Machine\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get webdav_aidisk)" ] && [ $(nvram get webdav_aidisk) -ne 0 ]
-#|| [ -n "$(nvram get enable_webdav)" ] && [ $(nvram get enable_webdav) -ne 0 ]
-then
-    echo -e "Go to \"AiCloud 2.0\" -> \"AiCloud 2.0\", and set \"Cloud Disk\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get enable_cloudsync)" ] && [ $(nvram get enable_cloudsync) -ne 0 ]
-then
-    echo -e "Go to \"AiCloud 2.0\" -> \"AiCloud Sync\", and set \"AiCloud Sync\" to \033[1;43;31mOFF\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get usb_idle_enable)" ] && [ $(nvram get usb_idle_enable) -ne 0 ]
-then
-    echo -e "Go to \"Administration\" -> \"System\", and set \"Enable HDD Hibernation\" to \033[1;43;31mNo\033[0m."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ -n "$(nvram get ntp_ready)" ] && [ $(nvram get ntp_ready) -ne 1 ]
-then
-    echo -e "Go to \"Administration\" -> \"System\", and set \"NTP Server\" to \"\033[1;43;31mntp.aliyun.com\033[0m\"."
-    SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
-fi
-#
-if [ ${SETTING_SENTINEL} -ne 0 ]
-then
-    echo "($(basename $0)): $$ ***** MISSING ESSENTIAL SETTINGS *****"
-    echo "($(basename $0)): $$ Modify settings as instructions above, reboot the router and then try again."
-    exit 4
-fi
+sentinelChecker ${SETTING_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL SETTINGS *****\n($(basename $0)): $$ Modify settings as instructions above, reboot the router and then try again."
 #
 ########## END ##########
