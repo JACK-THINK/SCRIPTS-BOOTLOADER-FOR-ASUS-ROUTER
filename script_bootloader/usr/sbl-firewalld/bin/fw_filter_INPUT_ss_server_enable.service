@@ -49,21 +49,21 @@ LOCAL_PORT_1="18145"
 # TEST_USER_DEFINED_CHAIN_NAME: Check if ${USER_DEFINED_CHAIN_NAME} exists
 # TEST_USER_DEFINED_CHAIN_NAME: 测试${USER_DEFINED_CHAIN_NAME}是否存在
 CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")
-if [ ! -z "${CHECK_RULE}" ]
+if [ -n "${CHECK_RULE}" ]
 then
     TEST_USER_DEFINED_CHAIN_NAME=true
     #
     # TEST_REFERENCE: Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # TEST_REFERENCE: 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}引用
     CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})
-    if [ ! -z "${CHECK_RULE}" ]
+    if [ -n "${CHECK_RULE}" ]
     then
         TEST_REFERENCE=true
         #
         # TEST_TCP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
         # TEST_TCP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
         CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^tcp#.*:${LOCAL_PORT_1}")
-        if [ ! -z "${CHECK_RULE}" ]
+        if [ -n "${CHECK_RULE}" ]
         then
             TEST_TCP_LOCAL_PORT_1=true
         else
@@ -74,7 +74,7 @@ then
         # TEST_UDP_LOCAL_PORT_1: Test the rules in ${USER_DEFINED_CHAIN_NAME}
         # TEST_UDP_LOCAL_PORT_1: ${USER_DEFINED_CHAIN_NAME}链内规则测试值
         CHECK_RULE=$(iptables -t ${TABLE_NAME} -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^udp#.*:${LOCAL_PORT_1}")
-        if [ ! -z "${CHECK_RULE}" ]
+        if [ -n "${CHECK_RULE}" ]
         then
             TEST_UDP_LOCAL_PORT_1=true
         else

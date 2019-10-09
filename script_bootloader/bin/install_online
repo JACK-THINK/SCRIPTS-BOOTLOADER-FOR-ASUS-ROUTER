@@ -111,7 +111,7 @@ USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DR
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
 wget -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
-DOWNLOAD_LINK=$(grep -E 'tarball_url' /tmp/sbl_download_link.html | cut -d '"' -f 4)
+DOWNLOAD_LINK=$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' /tmp/sbl_download_link.html 2> /dev/null)
 rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 #
 # NAME OF THE ARCHIVE

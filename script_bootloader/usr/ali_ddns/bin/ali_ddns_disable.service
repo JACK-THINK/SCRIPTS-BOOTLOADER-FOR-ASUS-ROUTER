@@ -26,7 +26,7 @@ TYPE="A"
 # Parameters for UpdateDomainRecord
 # UpdateDomainRecord所需参数
 RR="${RR_KEY_WORD}"
-RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/grep 'RecordId' | /opt/bin/cut -d '"' -f 4)"
+RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"RecordId\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)"
 TYPE="A"
 VALUE="8.8.8.8"
 #

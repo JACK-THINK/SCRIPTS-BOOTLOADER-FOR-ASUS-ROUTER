@@ -59,7 +59,7 @@ TARGET_TIME_ZONE=$(find ${USB_MOUNT_POINT}/ -name 'Shanghai' | grep -e "${USB_MO
 #
 # Install timezone
 # 安装timezone
-if [ ! -z "${TARGET_TIME_ZONE}" ]
+if [ -n "${TARGET_TIME_ZONE}" ]
 then
     # Create a symbolic link file named ${PRIVATE_ETC}/localtime
     # 如果文件${TARGET_TIME_ZONE}存在，则执行

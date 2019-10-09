@@ -44,7 +44,7 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ -n "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}
         # 禁用${USER_DEFINED_CHAIN_NAME}链
@@ -76,7 +76,7 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ -n "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}
         # 禁用${USER_DEFINED_CHAIN_NAME}链

@@ -81,7 +81,7 @@ else
     then
         # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain PREROUTING
         # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被PREROUTING链所引用
-        if [ ! -z "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        if [ -n "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
         then
             # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
             # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
@@ -91,8 +91,8 @@ else
     else
         # Check if chain ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by chain OUTPUT and chain PREROUTING
         # 检查${USER_DEFINED_CHAIN_NAME}_TCP链是否被OUTPUT链和PREROUTING链所引用
-        if [ ! -z "$(iptables -t nat -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ] || \
-        [ ! -z "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
+        if [ -n "$(iptables -t nat -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ] || \
+        [ -n "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_TCP")" ]
         then
             # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
             # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
@@ -129,7 +129,7 @@ then
 else
     # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain OUTPUT
     # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被OUTPUT链所引用
-    if [ ! -z "$(iptables -t mangle -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
+    if [ -n "$(iptables -t mangle -nvL OUTPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
         # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
@@ -138,7 +138,7 @@ else
     #
     # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by chain PREROUTING
     # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否被PREROUTING链所引用
-    if [ ! -z "$(iptables -t mangle -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
+    if [ -n "$(iptables -t mangle -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}_UDP")" ]
     then
         # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
         # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链

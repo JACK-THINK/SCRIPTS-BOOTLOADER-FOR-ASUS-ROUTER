@@ -37,7 +37,7 @@ then
 else
     # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
     # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ ! -z "$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
+    if [ -n "$(iptables -t ${TABLE_NAME} -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
     then
         # Get ${DESTINATION_IP_ADDRESS} from ${BUILT_IN_CHAIN_NAME}
         # 如果${USER_DEFINED_CHAIN_NAME}被${BUILT_IN_CHAIN_NAME}所引用，则从${BUILT_IN_CHAIN_NAME}中获取${DESTINATION_IP_ADDRESS}

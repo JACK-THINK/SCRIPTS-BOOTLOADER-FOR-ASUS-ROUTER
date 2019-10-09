@@ -46,7 +46,7 @@ FMW_DNSMASQ_CONF="/etc/dnsmasq.conf"
 #
 # LOCAL_DOMAIN: The local-only domain
 # 设置自定义变量LOCAL_DOMAIN为本地专用域名
-LOCAL_DOMAIN="$(/opt/bin/sed -n -e '/^domain=/s/^.*=//p' ${FMW_DNSMASQ_CONF} | /opt/bin/cut -d ',' -f 1)"
+LOCAL_DOMAIN="$(/opt/bin/sed -E -n -e 's/^domain=([^,]+),?.*/\1/p' ${FMW_DNSMASQ_CONF})"
 if [ -z "${LOCAL_DOMAIN}" ]
 then
     LOCAL_DOMAIN="lan"

@@ -31,15 +31,15 @@ V2RAY_PID_FILE=/var/run/v2ray.pid
 #
 # SERVER_DOMAIN: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
-SERVER_DOMAIN=$(/opt/bin/sed -n '/outbounds/,/port/p' ${PRIVATE_ETC}/config_proxy.json | /opt/bin/grep 'address' | /opt/bin/cut -d '"' -f 4)
+SERVER_DOMAIN=$(/opt/bin/sed -E -n -e '/outbounds/,/port/s/^[[:space:]]*\"address\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_proxy.json 2> /dev/null)
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -n '/Name/,+1p' | /opt/bin/tail -n 1 | /opt/bin/gawk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p')
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME=$(/opt/bin/grep '^USER_DEFINED_CHAIN_NAME=' ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service | /opt/bin/cut -d '"' -f 2)
+USER_DEFINED_CHAIN_NAME=$(/opt/bin/sed -E -n -e 's/^USER_DEFINED_CHAIN_NAME=\"(.*)\"/\1/p' ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service)
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
@@ -51,7 +51,7 @@ ADMINUSER=$(nvram get http_username)
 if [ -f "${V2RAY_PID_FILE}" ]
 then
     PID_NUM=$(/opt/bin/cat ${V2RAY_PID_FILE})
-    if [ ! -z "$(ps | /opt/bin/grep ${PID_NUM} | /opt/bin/grep -v '/opt/bin/grep')" ]
+    if [ -n "$(ps | /opt/bin/sed -E -n -e '/^[[:space:]]*'"${PID_NUM}"'[[:space:]]+/p')" ]
     then
         TEST_V2RAY=true
     else
@@ -65,7 +65,7 @@ fi
 # 设置环境变量TEST_FW为防火墙规则测试值
 # 特殊说明：必须避免双引号多重嵌套
 CHECK_RULES=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}")
-if [ ! -z "${CHECK_RULES}" ]
+if [ -n "${CHECK_RULES}" ]
 then
     TEST_FW=true
 else

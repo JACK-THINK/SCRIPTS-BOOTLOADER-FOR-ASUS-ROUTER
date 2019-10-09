@@ -141,13 +141,13 @@ then
         LOCAL_DOMAIN_A=$(/opt/bin/sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)
         LOCAL_DOMAIN_B=$(/opt/bin/sed -n -e 's/^domain=//p' ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf)
         #
-        if [ ! -z "${LOCAL_DOMAIN_A}" ]
+        if [ -n "${LOCAL_DOMAIN_A}" ]
         then
             LOCAL_DOMAIN="${LOCAL_DOMAIN_A}"
             /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
             /opt/bin/cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
             #
-        elif [ ! -z "${LOCAL_DOMAIN_B}" ]
+        elif [ -n "${LOCAL_DOMAIN_B}" ]
         then
             LOCAL_DOMAIN="${LOCAL_DOMAIN_B}"
             /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf

@@ -23,15 +23,15 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # SERVER_DOMAIN: Domain of the SS-SERVER
 # 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
-SERVER_DOMAIN=$(/opt/bin/grep '"server":' ${PRIVATE_ETC}/config_redir.json | /opt/bin/gawk -F '"' '{print $4}')
+SERVER_DOMAIN=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"server\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_redir.json 2> /dev/null)
 #
 # SERVER_IP: Domain of the SS-SERVER
 # 设置自定义变量SERVER_IP为SS-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -n '/Name/,+1p' | /opt/bin/tail -n 1 | /opt/bin/gawk '{print $3}')
+SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p' 2> /dev/null)
 #
 # LOCAL_PORT: Local port of the SS-REDIR
 # 设置自定义变量LOCAL_PORT为SS-REDIR的接收端口
-LOCAL_PORT=$(/opt/bin/grep '"local_port":' ${PRIVATE_ETC}/config_redir.json | /opt/bin/gawk -F '"' '{print $4}')
+LOCAL_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_redir.json 2> /dev/null)
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
@@ -101,7 +101,7 @@ iptables -t nat -A ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
 #
 # Check if ${NF_TPROXY_CORE} and ${XT_TPROXY} exist (Disable UDP proxy temporarily)
 # 检查${NF_TPROXY_CORE}和${XT_TPROXY}是否存在（临时禁用UDP proxy）
-if [ ! -z "${NF_TPROXY_CORE}" ] && [ ! -z "${XT_TPROXY}" ] && false
+if [ -n "${NF_TPROXY_CORE}" ] && [ -n "${XT_TPROXY}" ] && false
 then
     # Enable TPROXY
     # 启用TPROXY

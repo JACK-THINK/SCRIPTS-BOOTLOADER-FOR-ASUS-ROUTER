@@ -55,7 +55,7 @@ TYPE="A"
 # Parameters for UpdateDomainRecord
 # UpdateDomainRecord所需参数
 RR="${RR_KEY_WORD}"
-RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/grep 'RecordId' | /opt/bin/cut -d '"' -f 4)"
+RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"RecordId\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)"
 TYPE="A"
 VALUE=$(/opt/bin/curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")
 #
@@ -123,7 +123,7 @@ do
         # Choose one of the following metheds to update DNS record
         # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}相等，则执行
         #
-        RECORD_IPV4_ADDRESS="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/grep 'Value' | /opt/bin/cut -d '"' -f 4)"
+        RECORD_IPV4_ADDRESS="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"Value\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)"
         #
         if [ "${PUBLIC_IPV4_ADDRESS}" != "${RECORD_IPV4_ADDRESS}" ]
         then

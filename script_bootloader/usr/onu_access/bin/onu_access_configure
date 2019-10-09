@@ -46,10 +46,10 @@ isValidIpAddress()
     local IP_ADDRESS_PART_3
     local IP_ADDRESS_PART_4
     #
-    IP_ADDRESS_PART_1=$(/opt/bin/echo ${1} | /opt/bin/cut -d '.' -f 1)
-    IP_ADDRESS_PART_2=$(/opt/bin/echo ${1} | /opt/bin/cut -d '.' -f 2)
-    IP_ADDRESS_PART_3=$(/opt/bin/echo ${1} | /opt/bin/cut -d '.' -f 3)
-    IP_ADDRESS_PART_4=$(/opt/bin/echo ${1} | /opt/bin/cut -d '.' -f 4)
+    IP_ADDRESS_PART_1=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_2=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_3=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_4=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
     #
     if [ ${IP_ADDRESS_PART_1} -ge 0 ] && [ ${IP_ADDRESS_PART_1} -le 255 ] && \
     [ ${IP_ADDRESS_PART_2} -ge 0 ] && [ ${IP_ADDRESS_PART_2} -le 255 ] && \

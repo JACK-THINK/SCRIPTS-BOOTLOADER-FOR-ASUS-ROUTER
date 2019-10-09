@@ -52,7 +52,7 @@ then
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用
-    if [ ! -z "$(/opt/bin/grep -e '^dhcp-range=' ${FMW_DNSMASQ_CONF})" ] && \
+    if [ -n "$(/opt/bin/grep -e '^dhcp-range=' ${FMW_DNSMASQ_CONF})" ] && \
     [ -e ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq ]
     then
         /opt/bin/sed -i '/^dhcp-/s/^/#/' ${FMW_DNSMASQ_CONF}

@@ -75,11 +75,11 @@ DOWNLOAD_LINK="https://github.com/shawn1m/overture/releases/download/${LATEST_VE
 #
 # SS_LOCAL_LOCAL_PORT: Local port of the SS-LOCAL
 # 设置自定义变量SS_LOCAL_LOCAL_PORT为SS-LOCAL的接收端口
-SS_LOCAL_LOCAL_PORT=$(/opt/bin/grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_local.json | /opt/bin/cut -d '"' -f 4)
+SS_LOCAL_LOCAL_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' ${SBL_SYS_USR}/shadowsocks/etc/config_local.json 2> /dev/null)
 #
 # SS_TUNNEL_LOCAL_PORT: Port of the SS-TUNNEL
 # 设置自定义变量SS_TUNNEL_LOCAL_PORT为SS-TUNNEL的接收端口
-SS_TUNNEL_LOCAL_PORT=$(/opt/bin/grep '"local_port":' ${SBL_SYS_USR}/shadowsocks/etc/config_tunnel.json | /opt/bin/cut -d '"' -f 4)
+SS_TUNNEL_LOCAL_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' ${SBL_SYS_USR}/shadowsocks/etc/config_tunnel.json 2> /dev/null)
 #
 # NAME OF THE SERVICE
 # 服务名称
