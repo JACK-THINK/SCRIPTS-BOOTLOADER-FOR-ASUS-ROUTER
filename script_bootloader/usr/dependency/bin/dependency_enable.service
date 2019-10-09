@@ -44,17 +44,20 @@ then
     # 如果文件${GCC_ENVIRONMENT}存在，则执行
     /opt/bin/sed -i '/source \/opt\/bin\/gcc_env\.sh/d' ${ENTWARE_ETC}/profile
     /opt/bin/echo "source ${GCC_ENVIRONMENT}" >> ${ENTWARE_ETC}/profile
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
-    #
-    exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${GCC_ENVIRONMENT}不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${GCC_ENVIRONMENT} *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
-    #
-    exit 1
 fi
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+exit 0
 #
 ########## END ##########
