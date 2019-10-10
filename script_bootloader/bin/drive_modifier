@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# 此程序用于对U盘重新创建分区，更改卷标，并格式化
+# 使用前务必：
+# 1. 备份U盘全部内容
+# 2. 拔掉路由器上的其它全部U盘并重启路由器
+# 3. 务必将该程序上传至路由器目录/tmp/，并在此位置运行
+#
+########## SET THE LABEL OF THE USB FLASH DRIVE ##########
+#
+# USB_DEVICE: USB flash drive
+# 设置自定义变量USB_DEVICE为U盘
+USB_DEVICE="$(cat /tmp/usb.log | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])\):[[:space:]]+Success.*/\1/p')"
+#
+# USB_DEVICE_PARTITION: Partition 1 of the USB flash drive
+# 设置自定义变量USB_DEVICE_PARTITION为U盘第一分区
+USB_DEVICE_PARTITION="/dev/${USB_DEVICE}1"
+#
+# USB_DRIVE_LABEL: Default label of the USB flash drive
+# 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标ASUS_ROUTER。可修改，但长度不可超过16字节
+USB_DRIVE_LABEL="ASUS_ROUTER"
+#
+########## END ##########
+#
+#
+########## PREPARE THE USB FLASH DRIVE ##########
+#
+cd /tmp/
+#
+# Unmount all partitions on the USB flash drive
+# 卸载U盘上的全部分区
+MAX_PARTNUM=$(echo -ne "p\n" | fdisk "/dev/${USB_DEVICE}" | sed -E -n -e 's/[[:space:]]*\/dev\/'"${USB_DEVICE}"'([[:digit:]]+)[[:space:]]+.*/\1/p' | tail -n 1)
+while [ ${MAX_PARTNUM} -gt 0 ]
+do
+    umount "/dev/${USB_DEVICE}${MAX_PARTNUM}" 2> /dev/null
+    MAX_PARTNUM=$((${MAX_PARTNUM}-1))
+    sleep 5
+done
+#
+sleep 10
+#
+# Re-partition /dev/${USB_DEVICE}
+# 重新分区/dev/${USB_DEVICE}
+echo "($(basename $0)): $$ ***** RE-PARTITION THE USB FLASH DRIVE *****"
+echo -ne "p\no\nn\np\n1\n\n\np\nw\n" | fdisk "/dev/${USB_DEVICE}"
+#
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** ERROR: CAN'T RE-PARTITION THE USB FLASH DRIVE *****"
+    exit 1
+fi
+#
+sleep 10
+#
+# Format ${USB_DEVICE_PARTITION} with ${USB_DRIVE_LABEL}
+# 格式化${USB_DEVICE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
+echo "($(basename $0)): $$ ***** LABEL OF THE USB FLASH DRIVE IS ${USB_DRIVE_LABEL} *****"
+mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_PARTITION}
+#
+# Check if mkfs.ext3 returns 0
+# 检查mkfs.ext3的返回值是否为0
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS NOT READY *****"
+    exit 2
+fi
+#
+sleep 120
+#
+# Create mount point /tmp/mnt/${USB_DRIVE_LABEL}
+# 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
+mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
+#
+# Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
+# 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
+mount ${USB_DEVICE_PARTITION} /tmp/mnt/${USB_DRIVE_LABEL}  > /dev/null 2>&1
+#
+sleep 30
+#
+echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS READY *****"
+#
+exit 0
+#
+########## END ##########

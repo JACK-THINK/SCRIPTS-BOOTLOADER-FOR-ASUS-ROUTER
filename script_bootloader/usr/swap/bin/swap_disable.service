@@ -49,7 +49,7 @@ then
     # Unload swapfile.var
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
     swapoff ${PRIVATE_VAR}/swapfile.var
-    sleep 5
+    sleep 30
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
     exit 0

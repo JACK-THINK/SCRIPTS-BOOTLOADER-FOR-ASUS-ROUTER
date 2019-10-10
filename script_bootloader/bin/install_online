@@ -72,20 +72,20 @@ done
 #
 ########## PREPARE THE USB FLASH DRIVE ##########
 #
-# Download label_modifier
-# 下载文件label_modifier
-wget -O /tmp/label_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/label_modifier"
+# Download drive_modifier
+# 下载文件drive_modifier
+wget -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
 #
-# Change the mode of /tmp/label_modifier
-# 更改文件/tmp/label_modifier权限
-chmod 777 /tmp/label_modifier
+# Change the mode of /tmp/drive_modifier
+# 更改文件/tmp/drive_modifier权限
+chmod 777 /tmp/drive_modifier
 #
-# Run /tmp/label_modifier
-# 执行/tmp/label_modifier
-/tmp/label_modifier
+# Run /tmp/drive_modifier
+# 执行/tmp/drive_modifier
+/tmp/drive_modifier
 #
-# Check if /tmp/label_modifier returns 0
-# 检查/tmp/label_modifier的返回值是否为0
+# Check if /tmp/drive_modifier returns 0
+# 检查/tmp/drive_modifier的返回值是否为0
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
@@ -102,7 +102,7 @@ fi
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
-USB_DRIVE_LABEL=$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/label_modifier)
+USB_DRIVE_LABEL=$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/drive_modifier)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
@@ -177,9 +177,9 @@ rm -rf ${USB_MOUNT_POINT}/JACK*/ > /dev/null 2>&1
 # 删除${ARCHIVE_NAME}包
 rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
 #
-# Remove /tmp/label_modifier
-# 删除文件/tmp/label_modifier
-rm -f /tmp/label_modifier > /dev/null 2>&1
+# Remove /tmp/drive_modifier
+# 删除文件/tmp/drive_modifier
+rm -f /tmp/drive_modifier > /dev/null 2>&1
 #
 # Change the mode of the files
 # 更改文件权限
