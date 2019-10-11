@@ -11,7 +11,7 @@ ROUTER_MODEL=$(nvram get model)
 #
 # Download prerequisite_checker
 # 下载文件prerequisite_checker
-wget -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
+wget -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
 #
 # Change the mode of /tmp/prerequisite_checker
 # 更改文件/tmp/prerequisite_checker权限
@@ -74,7 +74,7 @@ done
 #
 # Download drive_modifier
 # 下载文件drive_modifier
-wget -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
+wget -c -t 10 -T 120 -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
 #
 # Change the mode of /tmp/drive_modifier
 # 更改文件/tmp/drive_modifier权限
@@ -110,7 +110,7 @@ USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DR
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
-wget -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+wget -c -t 10 -T 120 -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 DOWNLOAD_LINK=$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' /tmp/sbl_download_link.html 2> /dev/null)
 rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 #
@@ -155,7 +155,7 @@ rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
 #
 # Download ${ARCHIVE_NAME} package
 # 下载${ARCHIVE_NAME}包
-wget -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
+wget -c -t 10 -T 120 -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
 #
 # Untar ${ARCHIVE_NAME} package
 # 解压${ARCHIVE_NAME}包

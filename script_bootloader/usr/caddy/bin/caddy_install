@@ -119,7 +119,7 @@ then
         #
         # Download caddy
         # 下载caddy
-        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
+        /opt/bin/wget-ssl -c -t 10 -T 120 -q --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录

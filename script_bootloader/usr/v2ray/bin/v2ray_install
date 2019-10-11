@@ -115,7 +115,7 @@ then
         #
         # Download v2ray-core package
         # 下载v2ray-core包
-        /opt/bin/wget-ssl -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget-ssl -c -t 10 -T 120 -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
@@ -141,10 +141,6 @@ then
         /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray ${ENTWARE_MONITD}/
         /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray
         /opt/bin/mv ${ENTWARE_MONITD}/v2ray ${ENTWARE_MONITD}/v2ray.on
-        #
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray_bridge ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray_bridge
-        #/opt/bin/mv ${ENTWARE_MONITD}/v2ray_bridge ${ENTWARE_MONITD}/v2ray_bridge.on
         #
         /opt/bin/cp ${PRIVATE_ETC}/monit.d/v2ray_transparent_proxy_file ${ENTWARE_MONITD}/
         /opt/bin/chmod 600 ${ENTWARE_MONITD}/v2ray_transparent_proxy_file
