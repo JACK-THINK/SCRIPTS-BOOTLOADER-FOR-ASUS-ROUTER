@@ -12,6 +12,12 @@
 # 设置自定义变量USB_DEVICE为U盘
 USB_DEVICE="$(cat /tmp/usb.log | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])\):[[:space:]]+Success.*/\1/p')"
 #
+if [ -z "$(echo ${USB_DEVICE} | grep -e '^sd[[:alpha:]]$')" ]
+then
+    echo "($(basename $0)): $$ ***** ERROR: CAN'T DETECT THE USB FLASH DRIVE *****"
+    exit 1
+fi
+#
 # USB_DEVICE_PARTITION: Partition 1 of the USB flash drive
 # 设置自定义变量USB_DEVICE_PARTITION为U盘第一分区
 USB_DEVICE_PARTITION="/dev/${USB_DEVICE}1"
@@ -47,7 +53,7 @@ echo -ne "p\no\nn\np\n1\n\n\np\nw\n" | fdisk "/dev/${USB_DEVICE}"
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ERROR: CAN'T RE-PARTITION THE USB FLASH DRIVE *****"
-    exit 1
+    exit 2
 fi
 #
 sleep 10
@@ -62,7 +68,7 @@ mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_PARTITION}
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** USB FLASH DRIVE IS NOT READY *****"
-    exit 2
+    exit 3
 fi
 #
 sleep 120
