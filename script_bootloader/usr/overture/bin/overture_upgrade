@@ -117,7 +117,7 @@ else
             #
             # Download overture
             # 下载overture
-            /opt/bin/wget-ssl -c -t 10 -T 120 -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+            /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
             # 删除旧备份

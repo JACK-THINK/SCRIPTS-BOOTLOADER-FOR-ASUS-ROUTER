@@ -115,7 +115,7 @@ then
         #
         # Download v2ray-core package
         # 下载v2ray-core包
-        /opt/bin/wget-ssl -c -t 10 -T 120 -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录

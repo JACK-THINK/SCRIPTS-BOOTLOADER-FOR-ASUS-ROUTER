@@ -111,7 +111,7 @@ then
         #
         # Download syncthing
         # 下载syncthing
-        /opt/bin/wget-ssl -c -t 10 -T 120 -q --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
         #
         # Unzip syncthing package
         # 解压syncthing包

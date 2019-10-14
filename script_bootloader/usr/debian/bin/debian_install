@@ -47,13 +47,18 @@ case $(/opt/bin/uname -m) in
         ROUTER_ARCHITECTURE="arm64"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="arm"
+        if [ -z "$(/opt/bin/readelf -A /proc/self/exe | /opt/bin/grep 'Tag_ABI_VFP_args')" ]
+        then
+            ROUTER_ARCHITECTURE="armel"
+        else
+            ROUTER_ARCHITECTURE="armhf"
+        fi
         ;;
     "mips")
-        ROUTER_ARCHITECTURE="mipsle"
+        ROUTER_ARCHITECTURE="mipsel"
         #
-        # Prompt the user that debian doesn't support ${ROUTER_ARCHITECTURE}
-        # 提示用户debian不支持${ROUTER_ARCHITECTURE}
+        # Prompt the user that Debian doesn't support ${ROUTER_ARCHITECTURE}
+        # 提示用户Debian不支持${ROUTER_ARCHITECTURE}
         /opt/bin/echo "($(basename $0)): $$ ***** DEBIAN DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;
@@ -65,6 +70,28 @@ case $(/opt/bin/uname -m) in
         exit 3
         ;;
 esac
+#
+# DEBIAN_VERSION: Version of Debian
+# 设置自定义变量DEBIAN_VERSION为Debian版本
+case $(/opt/bin/uname -r | /opt/bin/sed -E -n -e 's/^([[:digit:]]).*/\1/p') in
+    "2")
+        DEBIAN_VERSION="jessie"
+        ;;
+    "3" | "4")
+        DEBIAN_VERSION="buster"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        /opt/bin/echo "($(basename $0)): $$ ***** VERSION OF KERNEL IS UNKNOWN *****"
+        #
+        exit 7
+        ;;
+esac
+#
+# DOWNLOAD_LINK: Download link of Debian
+# 设置自定义变量DOWNLOAD_LINK为Debian的下载链接
+DOWNLOAD_LINK="https://github.com/JACK-THINK/debian/releases/download/${DEBIAN_VERSION}/debian-${DEBIAN_VERSION}-${ROUTER_ARCHITECTURE}.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -92,9 +119,14 @@ if [ $(which opkg) == "/opt/bin/opkg" ]
 then
     /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
     #
+    # Download Debian
+    # 下载Debian
+    /opt/bin/mkdir -p ${PRIVATE_USR}
+    /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_USR} ${DOWNLOAD_LINK}
+    #
     # Prepare Debian Environment
     # 准备Debian环境
-    /opt/bin/tar -xzvf ${PRIVATE_USR}/debian_jessie8.9-arm_clean.tgz -C ${USB_MOUNT_POINT}/
+    /opt/bin/tar -xzvf ${PRIVATE_USR}/debian-${DEBIAN_VERSION}-${ROUTER_ARCHITECTURE}.tar.gz -C ${USB_MOUNT_POINT}/
     /opt/bin/mkdir -p ${USB_MOUNT_POINT}/debian_mnt/
     /opt/bin/cp ${PRIVATE_ETC}/S99debian ${ENTWARE_ETC}/init.d/
     /opt/bin/chmod 755 ${ENTWARE_ETC}/init.d/S99debian
