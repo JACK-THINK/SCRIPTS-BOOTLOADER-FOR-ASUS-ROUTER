@@ -56,6 +56,10 @@
    > | **aarch64** | RT-AC86U                                                                           |
    > | **armv7**   | RT-AC68U, RT-AC56U, RT-AC87U, RT-AC3200, RT-AC88U, RT-AC3100, RT-AC5300, GT-AC5300 |
 
+## 卸载方法
+
+执行`cd /tmp && /opt/bin/debian stop && /tmp/mnt/ASUS_ROUTER/script_bootloader/usr/debian/bin/debian_uninstall`
+
 ## 调用方法
 
 1. 由entware自动执行
