@@ -46,7 +46,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 2. Unplug all the USB flash drives from the router except the target one.
 
-3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How_to_Use](./How_to_Use_en-US.md).
+3. Login the router by `ssh` and run the line of code below to finish installation. If you want to install the system locally, please refer to the [How to use](./How_to_Use_en-US.md).
 
    > **Notice**
    > 
@@ -87,7 +87,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 ## More materials
 
-[How_to_Use](./How_to_Use_en-US.md)
+[How to use](./How_to_Use_en-US.md)
 
 [ChangeLog](./ChangeLog_en-US.md)
 

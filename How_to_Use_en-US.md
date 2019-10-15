@@ -98,7 +98,7 @@
 
 ## Modification to source files
 
-Modify the source files of the target add-on according to the README.md in its own directory in `/opt/script_bootloader/usr/`.
+Modify the source files of the target add-on according to the README_en-US.md in its own directory in `/opt/script_bootloader/usr/`.
 
 > **NOTICE**
 >
@@ -112,7 +112,7 @@ Modify the source files of the target add-on according to the README.md in its o
 > | Add-on Management system    | Type of add-ons                                            | Instruction                                              |
 > | --------------------------- | ---------------------------------------------------------- | -----------                                              |
 > | list_of_user_custom_scripts | Add-ons which run at startup with no surveillance required | Read the instruction below.                              |
-> | Monit                       | All add-ons except the type listed above                   | [Click to read](./script_bootloader/usr/monit/README.md) |
+> | Monit                       | All add-ons except the type listed above                   | [Click to read](./script_bootloader/usr/monit/README_en-US.md) |
 
 1. Login the router with ssh client.
 
