@@ -89,6 +89,6 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 [How to use](./How_to_Use_en-US.md)
 
-[ChangeLog](./ChangeLog_en-US.md)
+[Changelog](./ChangeLog_en-US.md)
 
 [Download link](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases)
