@@ -78,7 +78,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
    http://<Address of the router>:35490
 
    username: username to web login of the router
-   password：password to web login of the router
+   password: password to web login of the router
    ```
 
    to manage the addons installed.
