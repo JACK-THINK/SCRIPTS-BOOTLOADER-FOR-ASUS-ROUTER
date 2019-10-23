@@ -38,7 +38,7 @@ cd /tmp/
 MAX_PARTNUM=$(echo -ne "p\n" | fdisk "/dev/${USB_DEVICE}" | sed -E -n -e 's/[[:space:]]*\/dev\/'"${USB_DEVICE}"'([[:digit:]]+)[[:space:]]+.*/\1/p' | tail -n 1)
 while [ ${MAX_PARTNUM} -gt 0 ]
 do
-    umount "/dev/${USB_DEVICE}${MAX_PARTNUM}" 2> /dev/null
+    umount -f "/dev/${USB_DEVICE}${MAX_PARTNUM}" 2> /dev/null
     MAX_PARTNUM=$((${MAX_PARTNUM}-1))
     sleep 5
 done
@@ -61,6 +61,7 @@ sleep 10
 # Format ${USB_DEVICE_PARTITION} with ${USB_DRIVE_LABEL}
 # 格式化${USB_DEVICE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
 echo "($(basename $0)): $$ ***** LABEL OF THE USB FLASH DRIVE IS ${USB_DRIVE_LABEL} *****"
+umount -f "/dev/${USB_DEVICE}1" 2> /dev/null
 mkfs.ext3 -FL ${USB_DRIVE_LABEL} ${USB_DEVICE_PARTITION}
 #
 # Check if mkfs.ext3 returns 0
