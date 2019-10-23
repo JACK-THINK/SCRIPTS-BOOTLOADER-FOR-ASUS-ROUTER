@@ -76,7 +76,10 @@ sleep 120
 #
 # Create mount point /tmp/mnt/${USB_DRIVE_LABEL}
 # 创建挂载点/tmp/mnt/${USB_DRIVE_LABEL}
-mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
+if [ ! -d "/tmp/mnt/${USB_DRIVE_LABEL}" ]
+then
+    mkdir -m 777 /tmp/mnt/${USB_DRIVE_LABEL} > /dev/null 2>&1
+fi
 #
 # Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
 # 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
