@@ -400,7 +400,7 @@ isAliveRuleTerm()
             local TEST_EXIST_RULE_FORWARD=$(iptables -t nat -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
             if [ -n "${TEST_EXIST_RULE_FORWARD}" ]
             then
-                /opt/bin/echo -e "ROUTER:${LOCAL_PORT}/${PROTOCOL}\tTO\t${TARGET_IP_ADDRESS}:${TARGET_PORT}"
+                /opt/bin/echo -e "ROUTER:${LOCAL_PORT}/${PROTOCOL}\tTO\t${TARGET_IP_ADDRESS}:${TARGET_PORT}/${PROTOCOL}"
                 return 0
             else
                 return 1
