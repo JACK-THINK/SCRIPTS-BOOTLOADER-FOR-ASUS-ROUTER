@@ -1,0 +1,4 @@
+check program FW_PORT_FORWARDING_IPSEC with path "/opt/bin/fwd enable /opt/etc/fw.d/ipsec_forward" every 6 cycles
+    start program = "/opt/bin/fwd enable /opt/etc/fw.d/ipsec_forward"
+    stop program = "/opt/bin/fwd disable /opt/etc/fw.d/ipsec_forward"
+    if status == 1 then alert

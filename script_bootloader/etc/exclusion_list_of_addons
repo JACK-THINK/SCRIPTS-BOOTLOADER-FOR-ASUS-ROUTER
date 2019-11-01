@@ -11,6 +11,7 @@
 dependency
 dnsmasq.d
 entware
+fwd
 monit
 swap
 timezone

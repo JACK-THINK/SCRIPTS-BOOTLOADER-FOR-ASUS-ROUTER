@@ -1,0 +1,4 @@
+check program FW_PORT_FORWARDING_SOFTETHERVPN with path "/opt/bin/fwd enable /opt/etc/fw.d/softethervpn_forward" every 6 cycles
+    start program = "/opt/bin/fwd enable /opt/etc/fw.d/softethervpn_forward"
+    stop program = "/opt/bin/fwd disable /opt/etc/fw.d/softethervpn_forward"
+    if status == 1 then alert

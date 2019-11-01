@@ -478,6 +478,35 @@ fi
 #
 sleep 10
 #
+# Check if ${SBL_SYS_USR}/fwd/bin/fwd_install exists
+# 检查文件${SBL_SYS_USR}/fwd/bin/fwd_install是否存在
+if [ -e "${SBL_SYS_USR}/fwd/bin/fwd_install" ]
+then
+    # Invoke ${SBL_SYS_USR}/fwd/bin/fwd_install
+    # 如果文件${SBL_SYS_USR}/fwd/bin/fwd_install存在，则执行
+    ${SBL_SYS_USR}/fwd/bin/fwd_install
+    #
+    # Check if ${SBL_SYS_USR}/fwd/bin/fwd_install returns 0
+    # 检查文件${SBL_SYS_USR}/fwd/bin/fwd_install的返回值是否为0
+    if [ $? != '0' ]
+    then
+        # Stop and Exit
+        # 如果返回值不为0，则该程序终止
+        echo "($(basename $0)): $$ ***** ERROR: ${SBL_SYS_USR}/fwd/bin/fwd_install *****"
+        echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+        exit 27
+    fi
+    #
+else
+    # Stop and Exit
+    # 如果文件${SBL_SYS_USR}/fwd/bin/fwd_install不存在，则该程序终止
+    echo "($(basename $0)): $$ ***** ERROR: CAN'T LOCATE ${SBL_SYS_USR}/fwd/bin/fwd_install *****"
+    echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
+    exit 28
+fi
+#
+sleep 10
+#
 # Check if ${SBL_SYS_BIN}/list_of_user_custom_scripts exists
 # 检查文件${SBL_SYS_BIN}/list_of_user_custom_scripts是否存在
 if [ -e "${SBL_SYS_BIN}/list_of_user_custom_scripts" ]
@@ -495,7 +524,7 @@ else
     # 如果文件${SBL_SYS_BIN}/list_of_user_custom_scripts不存在，则该程序终止
     echo "($(basename $0)): $$ ***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/list_of_user_custom_scripts *****"
     echo -e "\033[1;41;37m***** STAGE 2: FAILED *****\033[0m"
-    exit 27
+    exit 29
 fi
 #
 sleep 10
@@ -513,7 +542,7 @@ echo -e "\033[1;45;37m***** STAGE 3: INSTALL ADDONS *****\033[0m"
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
 if [ ${TEST_FMW_TEE} -eq 1 ]
 then
-    exit 28
+    exit 30
 fi
 #
 # Check if ${SBL_SYS_BIN}/addons_install exists

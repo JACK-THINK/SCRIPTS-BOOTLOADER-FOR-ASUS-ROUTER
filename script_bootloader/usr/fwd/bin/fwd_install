@@ -20,6 +20,10 @@ USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloade
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+#
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
 ENTWARE_ETC=${USB_MOUNT_POINT}/etc
@@ -30,7 +34,11 @@ ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/sbl-firewalld
+PRIVATE_ROOT=${SBL_SYS_USR}/fwd
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
@@ -38,7 +46,7 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="SBL-FIREWALLD"
+SERVICE_NAME="FWD"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -54,7 +62,7 @@ SERVICE_FUNCTION="INSTALLATION"
 ########## END ##########
 #
 #
-########## INSTALL SBL-FIREWALLD ##########
+########## INSTALL FWD ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -67,6 +75,9 @@ then
     if [ -e "/opt/bin/monit" ]
     then
         /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        /opt/bin/cp ${PRIVATE_BIN}/fwd ${ENTWARE_BIN}
+        /opt/bin/cp -r ${PRIVATE_ETC}/fw.d ${ENTWARE_ETC}/fw.d
         #
         # Configure monit
         # 配置monit
@@ -90,9 +101,9 @@ then
         /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent
         #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent.on
         #
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn
-        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn ${ENTWARE_MONITD}/fw_nat_PREROUTING_softether_vpn.on
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softethervpn ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn
+        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn.on
         #
         /opt/bin/monit reload
         #

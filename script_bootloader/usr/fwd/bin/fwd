@@ -1,0 +1,532 @@
+#!/bin/sh
+#
+########## MAIN FUNCTIONS ##########
+#
+main()
+{
+    local ACTION="${1}"
+    local CONFIGURATION=$(formatRuleConfig "${2}")
+    #
+    isValidRuleSet "${CONFIGURATION}"
+    if [ ${?} -eq 0 ]
+    then
+        case "${ACTION}" in
+            "enable")
+                isAliveRuleSet "${CONFIGURATION}"
+                if [ ${?} -eq 0 ]
+                then
+                    /opt/bin/echo -e "\nOK"
+                    exit 0
+                else
+                    disableRuleSet "${CONFIGURATION}"
+                    sleep 10
+                    enableRuleSet "${CONFIGURATION}"
+                    if [ ${?} -eq 0 ]
+                    then
+                        /opt/bin/echo -e "SUCCEEDED"
+                        exit 0
+                    else
+                        /opt/bin/echo -e "FAILED"
+                        exit 1
+                    fi
+                fi
+                ;;
+            "disable")
+                disableRuleSet "${CONFIGURATION}"
+                if [ ${?} -eq 0 ]
+                then
+                    /opt/bin/echo -e "SUCCEEDED"
+                    exit 0
+                else
+                    /opt/bin/echo -e "FAILED"
+                    exit 1
+                fi
+                ;;
+            *)
+                /opt/bin/echo -e "UNKNOWN OPERATION"
+                exit 1
+                ;;
+        esac
+    else
+        /opt/bin/echo -e "ERROR: COLLATE RULES IN FILE ${2}"
+        exit 1
+    fi
+}
+#
+########## END ##########
+#
+#
+########## FUNCTIONS ABOUT CONFIGURATION ##########
+#
+formatRuleConfig()
+{
+    /opt/bin/cat "${1}" | /opt/bin/sed -E -e '/^[[:space:]]*$/d' -ne '/^(NAME=|RULE=).*/p' | /opt/bin/sort
+}
+#
+########## END ##########
+#
+#
+########## SET FUNCTIONS ##########
+#
+isValidRuleSet()
+{
+    local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
+    local RULE_COUNT=$(/opt/bin/echo "${1}" | /opt/bin/grep -c '^RULE=')
+    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    #
+    while [ ${RULE_COUNT} -gt 0 ]
+    do
+        local RULE_ITEM="$(/opt/bin/echo -e "${RULE_SET}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT}"'p')"
+        isValidRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM}"
+        if [ ${?} -ne 0 ]
+        then
+            return 1
+        fi
+        #
+        RULE_COUNT=$((${RULE_COUNT}-1))
+    done
+}
+#
+isAliveRuleSet()
+{
+    local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
+    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    #
+    for ACTION_TERM in ${ACTION_SET} # ${ACTION_SET}绝不能被引号包围
+    do
+        case "${ACTION_TERM}" in
+            "OPEN")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -n "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                    if [ -n "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                    then
+                        local RULE_SET_OPEN=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^OPEN#')
+                        local RULE_COUNT_OPEN=$(/opt/bin/echo "${RULE_SET_OPEN}" | /opt/bin/wc -l)
+                        while [ ${RULE_COUNT_OPEN} -gt 0 ]
+                        do
+                            local RULE_ITEM_OPEN="$(/opt/bin/echo -e "${RULE_SET_OPEN}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_OPEN}"'p')"
+                            isAliveRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_OPEN}"
+                            if [ ${?} -ne 0 ]
+                            then
+                                return 1
+                            fi
+                            #
+                            RULE_COUNT_OPEN=$((${RULE_COUNT_OPEN}-1))
+                        done
+                    else
+                        return 1
+                    fi
+                else
+                    return 1
+                fi
+                ;;
+            "CLOSE")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -n "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                    if [ -n "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                    then
+                        local RULE_SET_CLOSE=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^OPEN#')
+                        local RULE_COUNT_CLOSE=$(/opt/bin/echo "${RULE_SET_CLOSE}" | /opt/bin/wc -l)
+                        while [ ${RULE_COUNT_CLOSE} -gt 0 ]
+                        do
+                            local RULE_ITEM_CLOSE="$(/opt/bin/echo -e "${RULE_SET_CLOSE}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_CLOSE}"'p')"
+                            isAliveRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_CLOSE}"
+                            if [ ${?} -ne 0 ]
+                            then
+                                return 1
+                            fi
+                            #
+                            RULE_COUNT_CLOSE=$((${RULE_COUNT_CLOSE}-1))
+                        done
+                    else
+                        return 1
+                    fi
+                else
+                    return 1
+                fi
+                ;;
+            "FORWARD")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -n "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                    if [ -n "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                    then
+                        local WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+                        local WAN_IP_ADDRESS=$(ip address show dev "${WAN0_GW_IFNAME}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+                        local DESTINATION_IP_ADDRESS=$(/opt/bin/echo "${TEST_REFERENCE_USER_DEFINED_CHAIN}" | /opt/bin/gawk '{print $9}')
+                        if [ "${DESTINATION_IP_ADDRESS}" == "${WAN_IP_ADDRESS}" ]
+                        then
+                            local RULE_SET_FORWARD=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^FORWARD#')
+                            local RULE_COUNT_FORWARD=$(/opt/bin/echo "${RULE_SET_FORWARD}" | /opt/bin/wc -l)
+                            while [ ${RULE_COUNT_FORWARD} -gt 0 ]
+                            do
+                                local RULE_ITEM_FORWARD="$(/opt/bin/echo -e "${RULE_SET_FORWARD}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_FORWARD}"'p')"
+                                isAliveRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_FORWARD}"
+                                if [ ${?} -ne 0 ]
+                                then
+                                    return 1
+                                fi
+                                #
+                                RULE_COUNT_FORWARD=$((${RULE_COUNT_FORWARD}-1))
+                            done
+                        else
+                            return 1
+                        fi
+                    else
+                        return 1
+                    fi
+                else
+                    return 1
+                fi
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+    done
+}
+#
+enableRuleSet()
+{
+    local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
+    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    #
+    for ACTION_TERM in ${ACTION_SET} # ${ACTION_SET}绝不能被引号包围
+    do
+        case "${ACTION_TERM}" in
+            "OPEN")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t filter -N ${USER_DEFINED_CHAIN_NAME}
+                fi
+                local RULE_SET_OPEN=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^OPEN#')
+                local RULE_COUNT_OPEN=$(/opt/bin/echo "${RULE_SET_OPEN}" | /opt/bin/wc -l)
+                while [ ${RULE_COUNT_OPEN} -gt 0 ]
+                do
+                    local RULE_ITEM_OPEN="$(/opt/bin/echo -e "${RULE_SET_OPEN}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_OPEN}"'p')"
+                    enableRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_OPEN}"
+                    #
+                    RULE_COUNT_OPEN=$((${RULE_COUNT_OPEN}-1))
+                done
+                local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t filter -I INPUT 1 -j ${USER_DEFINED_CHAIN_NAME}
+                fi
+                ;;
+            "CLOSE")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t filter -N ${USER_DEFINED_CHAIN_NAME}
+                fi
+                local RULE_SET_CLOSE=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^CLOSE#')
+                local RULE_COUNT_CLOSE=$(/opt/bin/echo "${RULE_SET_CLOSE}" | /opt/bin/wc -l)
+                while [ ${RULE_COUNT_CLOSE} -gt 0 ]
+                do
+                    local RULE_ITEM_CLOSE="$(/opt/bin/echo -e "${RULE_SET_CLOSE}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_CLOSE}"'p')"
+                    enableRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_CLOSE}"
+                    #
+                    RULE_COUNT_CLOSE=$((${RULE_COUNT_CLOSE}-1))
+                done
+                local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t filter -I INPUT 1 -j ${USER_DEFINED_CHAIN_NAME}
+                fi
+                ;;
+            "FORWARD")
+                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
+                fi
+                local RULE_SET_FORWARD=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^FORWARD#')
+                local RULE_COUNT_FORWARD=$(/opt/bin/echo "${RULE_SET_FORWARD}" | /opt/bin/wc -l)
+                local WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+                local WAN_IP_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+                while [ ${RULE_COUNT_FORWARD} -gt 0 ]
+                do
+                    local RULE_ITEM_FORWARD="$(/opt/bin/echo -e "${RULE_SET_FORWARD}" | /opt/bin/sed -E -n -e ''"${RULE_COUNT_FORWARD}"'p')"
+                    enableRuleTerm "${USER_DEFINED_CHAIN_NAME}" "${RULE_ITEM_FORWARD}"
+                    #
+                    RULE_COUNT_FORWARD=$((${RULE_COUNT_FORWARD}-1))
+                done
+                local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                if [ -z "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
+                then
+                    iptables -t nat -I PREROUTING 1 -d ${WAN_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME}
+                fi
+                ;;
+            *)
+                #return 1
+                continue
+                ;;
+        esac
+    done
+}
+#
+disableRuleSet()
+{
+    local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
+    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    #
+    for ACTION_TERM in ${ACTION_SET} # ${ACTION_SET}绝不能被引号包围
+    do
+        case "${ACTION_TERM}" in
+            "OPEN")
+                iptables -t filter -D INPUT -j ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -F ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -X ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                /opt/bin/echo -n ""
+                ;;
+            "CLOSE")
+                iptables -t filter -D INPUT -j ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -F ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -X ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                /opt/bin/echo -n ""
+                ;;
+            "FORWARD")
+                local DESTINATION_IP_ADDRESS="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $9}')"
+                iptables -t nat -D PREROUTING -d ${DESTINATION_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t nat -F ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t nat -X ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                /opt/bin/echo -n ""
+                ;;
+            *)
+                #return 1
+                continue
+                ;;
+        esac
+    done
+}
+#
+########## END ##########
+#
+#
+########## TERM FUNCTIONS ##########
+#
+isValidRuleTerm()
+{
+    local ACTION="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 1)"
+    case "${ACTION}" in
+        "OPEN" | "CLOSE")
+            local NUM_COLUMN=$(/opt/bin/echo "${2}" | /opt/bin/sed -e 's/#/\n/g' | /opt/bin/wc -l)
+            if [ ${NUM_COLUMN} -eq 3 ]
+            then
+                local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+                local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+                #
+                local TEST_1=$(isValidProtocol "${PROTOCOL}")
+                local TEST_2=$(isValidPort "${LOCAL_PORT}")
+                if [ ${TEST_1} -ne 0 ] || [ ${TEST_2} -ne 0 ]
+                then
+                    return 1
+                fi
+            else
+                return 1
+            fi
+            ;;
+        "FORWARD")
+            local NUM_COLUMN=$(/opt/bin/echo "${2}" | /opt/bin/sed -e 's/#/\n/g' | /opt/bin/wc -l)
+            if [ ${NUM_COLUMN} -eq 5 ]
+            then
+                local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+                local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+                local TARGET_IP_ADDRESS="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 4)"
+                local TARGET_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 5)"
+                #
+                local TEST_1=$(isValidProtocol "${PROTOCOL}")
+                local TEST_2=$(isValidPort "${LOCAL_PORT}")
+                local TEST_3=$(isValidIP "${TARGET_IP_ADDRESS}")
+                local TEST_4=$(isValidPort "${TARGET_PORT}")
+                if [ ${TEST_1} -ne 0 ] || [ ${TEST_2} -ne 0 ] || [ ${TEST_3} -ne 0 ] || [ ${TEST_4} -ne 0 ]
+                then
+                    return 1
+                fi
+            else
+                return 1
+            fi
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+#
+isAliveRuleTerm()
+{
+    local USER_DEFINED_CHAIN_NAME="${1}"
+    local ACTION="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 1)"
+    case "${ACTION}" in
+        "OPEN")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            local TEST_EXIST_RULE_OPEN=$(iptables -t filter -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
+            if [ -n "${TEST_EXIST_RULE_OPEN}" ]
+            then
+                /opt/bin/echo -e "OPEN\tROUTER:${LOCAL_PORT}/${PROTOCOL}"
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        "CLOSE")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            local TEST_EXIST_RULE_CLOSE=$(iptables -t filter -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
+            if [ -n "${TEST_EXIST_RULE_CLOSE}" ]
+            then
+                /opt/bin/echo -e "CLOSED\tROUTER:${LOCAL_PORT}/${PROTOCOL}"
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        "FORWARD")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            local TARGET_IP_ADDRESS="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 4)"
+            local TARGET_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 5)"
+            local TEST_EXIST_RULE_FORWARD=$(iptables -t nat -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
+            if [ -n "${TEST_EXIST_RULE_FORWARD}" ]
+            then
+                /opt/bin/echo -e "ROUTER:${LOCAL_PORT}/${PROTOCOL}\tTO\t${TARGET_IP_ADDRESS}:${TARGET_PORT}"
+                return 0
+            else
+                return 1
+            fi
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+#
+enableRuleTerm()
+{
+    local USER_DEFINED_CHAIN_NAME="${1}"
+    local ACTION="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 1)"
+    case "${ACTION}" in
+        "OPEN")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            iptables -t filter -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j ACCEPT
+            ;;
+        "CLOSE")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            iptables -t filter -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j DROP
+            ;;
+        "FORWARD")
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
+            local TARGET_IP_ADDRESS="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 4)"
+            local TARGET_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 5)"
+            iptables -t nat -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j DNAT --to-destination ${TARGET_IP_ADDRESS}:${TARGET_PORT}
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+#
+########## END ##########
+#
+#
+########## FUNCTIONS ##########
+#
+isValidProtocol()
+{
+    case "${1}" in
+        "TCP" | "tcp")
+            /opt/bin/echo 0
+            return 0
+            ;;
+        "UDP" | "udp")
+            /opt/bin/echo 0
+            return 0
+            ;;
+        *)
+            /opt/bin/echo 1
+            return 1
+            ;;
+    esac
+}
+#
+isValidPort()
+{
+    if [ ${1} -ge 0 ] && [ ${1} -le 65535 ]
+    then
+        /opt/bin/echo 0
+        return 0
+    else
+        /opt/bin/echo 1
+        return 1
+    fi
+}
+#
+isValidIP()
+{
+    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/') != "0.0.0.0" ]
+    then
+        /opt/bin/echo 1
+        return 1
+    fi
+    #
+    local IP_ADDRESS_PART_1
+    local IP_ADDRESS_PART_2
+    local IP_ADDRESS_PART_3
+    local IP_ADDRESS_PART_4
+    #
+    IP_ADDRESS_PART_1=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_2=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_3=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_4=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
+    #
+    if [ ${IP_ADDRESS_PART_1} -ge 0 ] && [ ${IP_ADDRESS_PART_1} -le 255 ] && \
+    [ ${IP_ADDRESS_PART_2} -ge 0 ] && [ ${IP_ADDRESS_PART_2} -le 255 ] && \
+    [ ${IP_ADDRESS_PART_3} -ge 0 ] && [ ${IP_ADDRESS_PART_3} -le 255 ] && \
+    [ ${IP_ADDRESS_PART_4} -ge 0 ] && [ ${IP_ADDRESS_PART_4} -le 255 ]
+    then
+        /opt/bin/echo 0
+        return 0
+    else
+        /opt/bin/echo 1
+        return 1
+    fi
+}
+#
+########## END ##########
+#
+#
+########## PORTAL ##########
+#
+if [ ${#} -ne 2 ]
+then
+    /opt/bin/echo -e "Usage:\nfwd enable RULE\nfwd disable RULE"
+else
+    local ACTION="$(/opt/bin/echo ${1} | /opt/bin/tr '[:upper:]' '[:lower:]')"
+    case "${ACTION}" in
+        "enable")
+            main "${ACTION}" "${2}"
+            ;;
+        "disable")
+            main "${ACTION}" "${2}"
+            ;;
+        *)
+            /opt/bin/echo -e "Usage:\nfwd enable RULE\nfwd disable RULE"
+            ;;
+    esac
+fi
+#
+########## END ##########
