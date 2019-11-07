@@ -98,7 +98,7 @@
 
 ## 修改程序
 
-阅读`/opt/script_bootloader/usr/`中各个插件的README.md文件，按要求对相关程序进行修改
+阅读`/opt/script_bootloader/usr/`中各个插件的README_zh-CN.md文件，按要求对相关程序进行修改
 
 > **注意**
 >
@@ -112,7 +112,7 @@
 > | 插件管理者 | 插件类型 | 使用说明 |
 > | ---------- | -------- | -------- |
 > | list_of_user_custom_scripts | 仅需在开机时调用一次且无需监控的插件，例如修改环境变量等 | 见下文 |
-> | Monit进程管理系统 | 除上述类型外的全部插件 | [点击查看](./script_bootloader/usr/monit/README.md) |
+> | Monit进程管理系统 | 除上述类型外的全部插件 | [点击查看](./script_bootloader/usr/monit/README_zh-CN.md) |
 
 1. 用ssh登陆路由器后台
 
