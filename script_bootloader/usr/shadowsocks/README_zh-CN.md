@@ -12,7 +12,7 @@
    | iOS     | Kitsunebi    |
    | Android | BifrostV     |
 
-4. 支持全局透明代理（需手动在shell中执行ss_transparent_proxy_enable.service（DNS无混淆）或ss_transparent_proxy_overture_enable.service（全混淆）），但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
+4. 支持全局透明代理，但仅能代理TCP流量。代理UDP流量的功能须等到华硕官方固件支持tproxy
 
 ## 安装前提
 
@@ -22,11 +22,12 @@
 
 `ASUS_ROUTER/script_bootloader/usr/shadowsocks/`
 
-| 权限      | 名称      | 属性     | 说明           |
-| --------- | --------- | -------- | -------------- |
-| rwxrwxrwx | README_zh-CN.md | 普通文件 | 说明文件       |
-| rwxrwxrwx | bin       | 目录     | 可执行文件目录 |
-| rwxrwxrwx | etc       | 目录     | 配置文件目录   |
+| 权限      | 名称            | 属性     | 说明             |
+| --------- | --------------- | -------- | ---------------- |
+| rwxrwxrwx | README_zh-CN.md | 普通文件 | 说明文件         |
+| rwxrwxrwx | alternative     | 目录     | 备用安装文件目录 |
+| rwxrwxrwx | bin             | 目录     | 可执行文件目录   |
+| rwxrwxrwx | etc             | 目录     | 配置文件目录     |
 
 `ASUS_ROUTER/script_bootloader/usr/shadowsocks/bin/`
 
@@ -75,27 +76,39 @@
 
 `shadowsocks/etc/config_local.json`
 
-| 行号 | 代码             | 说明                      |
-| ---- | -----------------| ------------------------- |
-| 2    | `"server":`      | Shadowsocks服务器IP地址   |
-| 3    | `"server_port":` | Shadowsocks服务器监听端口 |
-| 5    | `"local_port":`  | 本地监听端口              |
-| 6    | `"password":`    | 密码                      |
+| 行号 | 代码             | 说明                            |
+| ---- | -----------------| ------------------------------- |
+| 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
+| 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
+| 5    | `"local_port":`  | 本地监听端口                    |
+| 6    | `"password":`    | 密码                            |
 
 `shadowsocks/etc/config_redir.json`
 
-| 行号 | 代码             | 说明                      |
-| ---- | -----------------| ------------------------- |
-| 2    | `"server":`      | Shadowsocks服务器IP地址   |
-| 3    | `"server_port":` | Shadowsocks服务器监听端口 |
-| 5    | `"local_port":`  | 本地监听端口              |
-| 6    | `"password":`    | 密码                      |
+| 行号 | 代码             | 说明                            |
+| ---- | -----------------| ------------------------------- |
+| 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
+| 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
+| 5    | `"local_port":`  | 本地监听端口                    |
+| 6    | `"password":`    | 密码                            |
+
+`shadowsocks/etc/config_server.json`
+
+| 行号 | 代码          | 说明 |
+| ---- | ------------- | ---- |
+| 4    | `"password":` | 密码 |
 
 `shadowsocks/etc/config_tunnel.json`
 
-| 行号 | 代码             | 说明                      |
-| ---- | ---------------- | ------------------------- |
-| 2    | `"server":`      | Shadowsocks服务器IP地址   |
-| 3    | `"server_port":` | Shadowsocks服务器监听端口 |
-| 5    | `"local_port":`  | 本地监听端口              |
-| 6    | `"password":`    | 密码                      |
+| 行号 | 代码             | 说明                            |
+| ---- | ---------------- | ------------------------------- |
+| 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
+| 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
+| 5    | `"local_port":`  | 本地监听端口                    |
+| 6    | `"password":`    | 密码                            |
+
+## 注意事项
+
+1. 登录monit管理页面，可以看到SS_LOCAL和SS_TRANSPARENT_PROXY_OVERTURE
+2. SS_LOCAL是浏览器代理。可以配合客户端代理工具使用，路由器和未使用代理工具的客户端均在墙内
+3. SS_TRANSPARENT_PROXY_OVERTURE是全局透明代理。必须先在monit管理页面中停止SS_LOCAL，然后再启用SS_TRANSPARENT_PROXY_OVERTURE。路由器和全体客户端均在墙外
