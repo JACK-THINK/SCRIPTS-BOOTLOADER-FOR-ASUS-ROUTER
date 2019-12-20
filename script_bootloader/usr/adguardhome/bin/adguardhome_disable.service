@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# ADGUARDHOME_PID_FILE: The path to adguardhome.pid
+# 设置自定义变量ADGUARDHOME_PID_FILE为文件adguardhome.pid的绝对路径
+ADGUARDHOME_PID_FILE=/var/run/adguardhome.pid
+#
+# DNS_PORT: Local port of DNS service from ADGUARD-HOME
+# 设置自定义变量DNS_PORT为ADGUARD-HOME的DNS服务监听端口
+DNS_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*port:[[:space:]]*([[:digit:]]*).*/\1/p' ${PRIVATE_ETC}/AdGuardHome.yaml 2> /dev/null)
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ADGUARD-HOME"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## DISABLE ADGUARD-HOME ##########
+#
+/opt/bin/kill $(/opt/bin/cat ${ADGUARDHOME_PID_FILE}) > /dev/null 2>&1
+/opt/bin/rm -f ${ADGUARDHOME_PID_FILE} > /dev/null 2>&1
+#
+# Update DNS server
+# 更新DNS服务器
+/opt/bin/sed -i '/^server=127\.0\.0\.1#'"${DNS_PORT}"'/d' /tmp/resolv.dnsmasq
+/opt/bin/sed -i '/^#server=.*/s/#//' /tmp/resolv.dnsmasq
+/opt/bin/killall -q -1 dnsmasq > /dev/null 2>&1
+sleep 30
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+#
+########## END ##########

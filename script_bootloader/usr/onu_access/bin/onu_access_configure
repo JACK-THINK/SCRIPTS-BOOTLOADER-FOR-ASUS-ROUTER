@@ -90,9 +90,6 @@ doubleCheckAndConfirm()
 ########## SET PARAMETERS ##########
 #
 case ${#} in
-    1)
-        ONU_IP_ADDRESS="${1}"
-        ;;
     0)
         while [ 1 ]
         do
@@ -108,11 +105,16 @@ case ${#} in
             fi
         done
         ;;
+    1)
+        ONU_IP_ADDRESS="${1}"
+        ;;
     *)
         /opt/bin/echo -e "\033[1;41;37m***** ERROR: WRONG NUMBER OF PARAMETERS *****\033[0m"
         exit 1
         ;;
 esac
+#
+IP_COMMAND="$(which ip)"
 #
 WAN_IFNAME="$(nvram get wan0_ifname)"
 #
@@ -135,6 +137,7 @@ CIDR_MASK="24"
 ########## CONFIGURE ONU_ACCESS ##########
 #
 /opt/bin/cp -f ${PRIVATE_ETC}/monit.d/onu_access_template ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/sed -E -i 's#IP_COMMAND#'"${IP_COMMAND}"'#g' ${PRIVATE_ETC}/monit.d/onu_access
 /opt/bin/sed -E -i 's/ONU_IP_ADDRESS/'"${ONU_IP_ADDRESS}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
 /opt/bin/sed -E -i 's/ONU_NET_PART/'"${ONU_NET_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
 /opt/bin/sed -E -i 's/WAN_HOST_PART/'"${WAN_HOST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access

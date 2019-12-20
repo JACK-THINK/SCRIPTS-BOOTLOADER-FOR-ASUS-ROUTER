@@ -13,6 +13,15 @@ ROUTER_MODEL=$(nvram get model)
 # 下载文件prerequisite_checker
 wget -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
 #
+# Check if /tmp/prerequisite_checker exists
+# 检查文件/tmp/prerequisite_checker是否存在
+if [ -ne '/tmp/prerequisite_checker' ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
+#
 # Change the mode of /tmp/prerequisite_checker
 # 更改文件/tmp/prerequisite_checker权限
 chmod 777 /tmp/prerequisite_checker
@@ -76,6 +85,15 @@ done
 # 下载文件drive_modifier
 wget -c -t 10 -T 120 -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
 #
+# Check if /tmp/drive_modifier exists
+# 检查文件/tmp/drive_modifier是否存在
+if [ -ne '/tmp/drive_modifier' ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
+#
 # Change the mode of /tmp/drive_modifier
 # 更改文件/tmp/drive_modifier权限
 chmod 777 /tmp/drive_modifier
@@ -111,6 +129,14 @@ USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DR
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
 wget -c -t 10 -T 120 -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+#
+if [ -ne '/tmp/sbl_download_link.html' ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
+#
 DOWNLOAD_LINK=$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' /tmp/sbl_download_link.html 2> /dev/null)
 rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 #
@@ -156,6 +182,15 @@ rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
 # Download ${ARCHIVE_NAME} package
 # 下载${ARCHIVE_NAME}包
 wget -c -t 10 -T 120 -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
+#
+# Check if ${USB_MOUNT_POINT}/${ARCHIVE_NAME} exists
+# 检查文件${USB_MOUNT_POINT}/${ARCHIVE_NAME}是否存在
+if [ -ne "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
 #
 # Untar ${ARCHIVE_NAME} package
 # 解压${ARCHIVE_NAME}包

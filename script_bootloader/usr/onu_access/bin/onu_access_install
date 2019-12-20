@@ -60,28 +60,15 @@ then
     then
         /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
         #
-        # Check if /usr/sbin/ip exists
-        # 检查命令/usr/sbin/ip是否存在
-        if [ -e "/usr/sbin/ip" ]
+        ${PRIVATE_BIN}/onu_access_configure
+        #
+        if [ ${?} -eq 0 ]
         then
-            ${PRIVATE_BIN}/onu_access_configure
+            /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #
-            if [ ${?} -eq 0 ]
-            then
-                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-                #
-                exit 0
-                #
-            else
-                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-                #
-                exit 4
-            fi
+            exit 0
             #
         else
-            # Do nothing but prompt the user
-            # 如果命令/usr/sbin/ip不存在，则执行
-            /opt/bin/echo "($(basename $0)): $$ ***** /usr/sbin/ip DOESN'T EXIST *****"
             /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
             #
             exit 3

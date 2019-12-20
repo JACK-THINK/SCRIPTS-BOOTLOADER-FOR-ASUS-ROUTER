@@ -160,6 +160,8 @@ else
     /opt/bin/killall -q -1 dnsmasq > /dev/null 2>&1
     sleep 30
     #
+    ########## END ##########
+    #
     #
     ########## ENABLE CRONTAB ##########
     #

@@ -1,0 +1,82 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/adguardhome
+#
+# PRIVATE_ETC: The directory which contains all the WORKING DIRECTORYs related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# ADGUARDHOME_PID_FILE: The path to adguardhome.pid
+# 设置自定义变量ADGUARDHOME_PID_FILE为文件adguardhome.pid的绝对路径
+ADGUARDHOME_PID_FILE=/var/run/adguardhome.pid
+#
+# DNS_PORT: Local port of DNS service from ADGUARD-HOME
+# 设置自定义变量DNS_PORT为ADGUARD-HOME的DNS服务监听端口
+DNS_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*port:[[:space:]]*([[:digit:]]*).*/\1/p' ${PRIVATE_ETC}/AdGuardHome.yaml 2> /dev/null)
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ADGUARD-HOME"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE ADGUARD-HOME ##########
+#
+# Check if ${PRIVATE_USR}/AdGuardHome and ${PRIVATE_ETC} exist
+# 检查文件${PRIVATE_USR}/AdGuardHome和目录${PRIVATE_ETC}是否存在
+if [ -e "${PRIVATE_USR}/AdGuardHome" ] && [ -d "${PRIVATE_ETC}" ]
+then
+    logger -st "($(basename $0))" $$ "***** ADGUARD-HOME WORKING DIRECTORY EXISTS *****"
+    #
+    # Load ${PRIVATE_USR}/AdGuardHome
+    # 如果文件${PRIVATE_USR}/AdGuardHome和目录${PRIVATE_ETC}存在，则执行
+    /opt/bin/nohup ${PRIVATE_USR}/AdGuardHome --work-dir "${PRIVATE_ETC}" --pidfile "${ADGUARDHOME_PID_FILE}" --no-check-update &> /dev/null &
+    #
+    # Update DNS server
+    # 更新DNS服务器
+    /opt/bin/sed -i '/^server=.*/s/^/#/' /tmp/resolv.dnsmasq
+    /opt/bin/echo "server=127.0.0.1#${DNS_PORT}" >> /tmp/resolv.dnsmasq
+    /opt/bin/killall -q -1 dnsmasq > /dev/null 2>&1
+    sleep 30
+    #
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${PRIVATE_USR}/AdGuardHome或${PRIVATE_ETC}不存在，则执行
+    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ADGUARD-HOME WORKING DIRECTORY *****"
+    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+fi
+#
+########## END ##########

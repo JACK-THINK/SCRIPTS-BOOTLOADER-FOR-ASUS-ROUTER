@@ -1,0 +1,4 @@
+check process ADGUARD_HOME with pidfile '/var/run/adguardhome.pid'
+    start program = "/opt/script_bootloader/usr/adguardhome/bin/adguardhome_enable.service"
+    stop program = "/opt/script_bootloader/usr/adguardhome/bin/adguardhome_disable.service"
+    if does not exist then restart
