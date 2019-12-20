@@ -19,7 +19,7 @@
 
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
-| AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
+| AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
 | aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
