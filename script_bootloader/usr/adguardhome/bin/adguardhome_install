@@ -57,9 +57,9 @@ case $(/opt/bin/uname -m) in
     #"armv7l")
     #    ROUTER_ARCHITECTURE="arm"
     #    ;;
-    #"mips")
-    #    ROUTER_ARCHITECTURE="mipsle"
-    #    ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行

@@ -74,7 +74,7 @@ then
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/AdGuardHome或${PRIVATE_ETC}不存在，则执行
+    # 如果文件${PRIVATE_USR}/AdGuardHome或目录${PRIVATE_ETC}不存在，则执行
     logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ADGUARD-HOME WORKING DIRECTORY *****"
     logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
 fi

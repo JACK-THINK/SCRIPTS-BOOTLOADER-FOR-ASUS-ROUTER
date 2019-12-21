@@ -1,4 +1,5 @@
 #!/bin/sh
+exit 1
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
@@ -38,7 +39,7 @@ LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/AdguardTeam/AdGua
 #
 # CURRENT_VERSION: Version of the current adguardhome
 # 设置自定义变量CURRENT_VERSION为当前adguardhome的版本号
-CURRENT_VERSION=
+CURRENT_VERSION=$()
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
