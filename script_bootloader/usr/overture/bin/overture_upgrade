@@ -57,6 +57,9 @@ case $(/opt/bin/uname -m) in
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
+        #
+        # When v1.6 final comes out, enable this modification
+        #ROUTER_ARCHITECTURE="mipsle-softfloat"
         ;;
     *)
         # Do nothing but prompt the user
