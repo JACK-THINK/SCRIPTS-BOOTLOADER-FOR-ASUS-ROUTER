@@ -100,7 +100,7 @@ updateFile()
     /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${FILE_DOWNLOADED}" "${DOWNLOAD_LINK_PREFIX}/${1}"
     #
     local FILE_DOWNLOADED_SHA256="$(/opt/bin/sha256sum ${FILE_DOWNLOADED} | /opt/bin/cut -d ' ' -f 1)"
-    local TARGET_SHA256="$(/opt/bin/grep ${1} ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1)"
+    local TARGET_SHA256="$(/opt/bin/grep ${1}$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1)"
     if [ "${FILE_DOWNLOADED_SHA256}" != "${TARGET_SHA256}" ]
     then
         /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: CONNECTION FAILED" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
