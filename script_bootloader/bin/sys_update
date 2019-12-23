@@ -143,7 +143,7 @@ removeFile()
     local PARENT_DIRECTORY=$(/opt/bin/dirname ${1})
     while [ 1 ]
     do
-        if [ "$(/opt/bin/ls -al | /opt/bin/wc -l)" == "3" ]
+        if [ "$(/opt/bin/ls -al ${PARENT_DIRECTORY} | /opt/bin/wc -l)" == "3" ]
         then
             /opt/bin/rmdir ${PARENT_DIRECTORY} > /dev/null 2>&1
             if [ ${?} -eq 0 ]
