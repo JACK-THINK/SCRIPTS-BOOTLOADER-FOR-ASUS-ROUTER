@@ -2,7 +2,7 @@
 #
 # Code to generate file sys_update_fingerprint_current in Windows 10
 # 以下代码用于在Windows 10中生成文件sys_update_fingerprint_current
-# find ./script_bootloader/ -type f -exec sha256sum {} > ./script_bootloader/var/update/sys_update_fingerprint_current \; && sed -E -i 's/[[:space:]]+\*\./ ./' ./script_bootloader/var/update/sys_update_fingerprint_current
+# rm -f ./script_bootloader/var/update/sys_update_fingerprint_current && find ./script_bootloader/ -type f -exec sha256sum {} > ./sys_update_fingerprint_current \; && sed -E -i 's/[[:space:]]+\*\./ ./' ./sys_update_fingerprint_current && mv ./sys_update_fingerprint_current ./script_bootloader/var/update/sys_update_fingerprint_current
 #
 # 此程序用于更新“华硕路由器开机自动运行程序系统”
 #
