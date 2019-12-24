@@ -22,7 +22,7 @@
 | 权限      | 名称           | 属性     | 说明     |
 | --------- | -------------- | -------- | -------- |
 | rwxrwxrwx | aliyun_install | 普通文件 | 安装文件 |
-| rwxrwxrwx | aliyun_upgrade | 普通文件 | 升级文件 |
+| rwxrwxrwx | aliyun_update  | 普通文件 | 升级文件 |
 
 ## 安装方法
 

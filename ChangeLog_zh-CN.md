@@ -1,18 +1,24 @@
 # 更新日志
 
-## 版本15.0（2020-XX-XX）
+## 版本15.0（2019-12-24）
 
 #### 新增
 
 1. 新增系统更新程序sys_update。此为重大更新，请使用者务必全新部署本系统
+2. 新增exclusion_list_of_addons_update
+3. 新增exclusion_list_of_addons_install
 
 #### 变更
 
 1. 更新gotee
+2. 更新install
+3. 更新restore
+4. 更新addons_install
 
 #### 删除
 
-1. 无
+1. 删除sys_install
+2. 删除exclusion_list_of_addons
 
 ## 版本14.2（2019-12-20）
 

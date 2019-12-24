@@ -1,10 +1,16 @@
 # 更新日志
 
-## 版本14.1（2020-XX-XX）
+## 版本14.1（2019-12-24）
 
 #### 新增
 
-1. 无
+1. 新增adguardhome_update
+2. 新增aliyun_update
+3. 新增ariang_update
+4. 新增caddy_update
+5. 新增overture_update
+6. 新增syncthing_update
+7. 新增v2ray_update
 
 #### 变更
 
@@ -14,7 +20,13 @@
 
 #### 删除
 
-1. 无
+1. 删除adguardhome_upgrade
+2. 删除aliyun_upgrade
+3. 删除ariang_upgrade
+4. 删除caddy_upgrade
+5. 删除overture_upgrade
+6. 删除syncthing_upgrade
+7. 删除v2ray_upgrade
 
 #### 插件列表
 

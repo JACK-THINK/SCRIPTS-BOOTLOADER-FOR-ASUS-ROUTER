@@ -45,18 +45,18 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## GENERATE ADDON LIST ##########
 #
-# Check if ${SBL_SYS_ETC}/exclusion_list_of_addons exists
-# 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons是否存在
-if [ -e "${SBL_SYS_ETC}/exclusion_list_of_addons" ]
+# Check if ${SBL_SYS_ETC}/exclusion_list_of_addons_install exists
+# 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons_install是否存在
+if [ -e "${SBL_SYS_ETC}/exclusion_list_of_addons_install" ]
 then
-    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons > ${SBL_SYS_TMP}/addon_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons_install > ${SBL_SYS_TMP}/addons_install_list
     #
 else
     # Exclude system components and special flags
-    # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons不存在，则执行
-    /opt/bin/echo -e "\033[1;41;37m***** ERROR: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons *****\033[0m\n\033[1;41;37m***** EXCLUDE SYSTEM COMPONENTS AND SPECIAL FLAGS INSTEAD *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
+    # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_install不存在，则执行
+    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_install, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
     #
-    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|overture|software|swap|timezone|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addon_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|overture|software|swap|timezone|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addons_install_list
 fi
 #
 ########## END ##########
@@ -68,18 +68,31 @@ while [ 1 ]
 do
     # Print the menu for addons
     # 打印插件菜单
-    ADDON_COUNT=$(/opt/bin/cat ${SBL_SYS_TMP}/addon_install_list | /opt/bin/wc -l)
+    ADDON_COUNT=$(/opt/bin/cat ${SBL_SYS_TMP}/addons_install_list | /opt/bin/wc -l)
     ADDON_ORDER=1
     /opt/bin/echo -e "Choose the addon you want to install:\n"
     /opt/bin/echo -e "\033[1;31m0. exit\033[0m"
     while [ ${ADDON_ORDER} -le ${ADDON_COUNT} ]
     do
-        /opt/bin/echo -n "${ADDON_ORDER}. "
-        /opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${ADDON_ORDER}"'p' ${SBL_SYS_TMP}/addon_install_list
+        ADDON_ITEM=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${ADDON_ORDER}"'p' ${SBL_SYS_TMP}/addons_install_list)
+        #
+        case "$(/opt/bin/grep ': '"${ADDON_ITEM}"'$' ${SBL_SYS_TMP}/addons_install_log 2> /dev/null | /opt/bin/sed -E -e 's/^[^[:alpha:]]*m([[:upper:]]*).*/\1/' 2> /dev/null)" in
+            "SUCCEEDED")
+                ADDON_STATUS="[INSTALLED    ]"
+                ;;
+            "FAILED")
+                ADDON_STATUS="[ERROR        ]"
+                ;;
+            *)
+                ADDON_STATUS="[NON-INSTALLED]"
+                ;;
+        esac
+        #
+        /opt/bin/echo "${ADDON_ORDER}. ${ADDON_STATUS} ${ADDON_ITEM}"
         ADDON_ORDER=$((${ADDON_ORDER} + 1))
     done
     #
-    /opt/bin/echo -en "\nInput ONE INTEGER every time: "
+    /opt/bin/echo -en "\nInput ONE ORDER NUMBER every time: "
     #
     # Read the input of user
     # 读取用户输入值
@@ -96,29 +109,29 @@ do
         then
             break
         fi
-        ADDON_TO_INSTALL=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addon_install_list)
+        ADDON_TO_INSTALL=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addons_install_list)
         #
-        # Check if ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} exists
-        # 检查文件${SBL_SYS_TMP}/${ADDON_TO_INSTALL}是否存在
-        if [ ! -e ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} ]
+        # Check if ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} has been installed successfully
+        # 检查文件${SBL_SYS_TMP}/${ADDON_TO_INSTALL}是否已成功安装
+        ADDON_STATUS_SUCCEEDED="$(/opt/bin/grep 'SUCCEEDED.*: '"${ADDON_TO_INSTALL}"'' ${SBL_SYS_TMP}/addons_install_log 2> /dev/null)"
+        if [ -z "${ADDON_STATUS_SUCCEEDED}" ]
         then
             # Install the addon chosen by user
             # 安装用户选择的插件
-            /opt/bin/touch ${SBL_SYS_TMP}/${ADDON_TO_INSTALL}
-            $(/opt/bin/sed -ne ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addon_install_list)
+            $(/opt/bin/sed -ne ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addons_install_list)
             #
             # Check if return value is 0
             # 检查返回值是否为0
-            if [ $? == '0' ]
+            if [ ${?} -eq 0 ]
             then
-                /opt/bin/echo -e "\033[1;42;37m***** ${ADDON_TO_INSTALL}: SUCCEEDED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
+                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
                 #
             else
-                /opt/bin/echo -e "\033[1;41;37m***** ${ADDON_TO_INSTALL}: FAILED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
+                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
             fi
             #
         else
-            /opt/bin/echo -e "\033[1;41;37m***** ERROR: ${ADDON_TO_INSTALL} HAS BEEN INSTALLED *****\033[0m\n" | /opt/bin/tee -a ${SBL_SYS_TMP}/addon_installation_log
+            /opt/bin/echo -e "\033[1;41;37mERROR\033[0m: ${ADDON_TO_INSTALL} HAS BEEN INSTALLED"
         fi
     fi
 done

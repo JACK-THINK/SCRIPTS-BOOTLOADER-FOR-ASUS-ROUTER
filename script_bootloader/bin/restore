@@ -6,7 +6,7 @@
 #
 ROUTER_MODEL=$(nvram get model)
 #
-logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${ROUTER_MODEL} RESTORATION ---------*"
+echo "($(basename $0)): $$ *--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${ROUTER_MODEL} RESTORATION ---------*"
 #
 ########## END ##########
 #
@@ -21,7 +21,7 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER 
 USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
 if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
 then
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
+    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
     exit 1
     #
 elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
@@ -29,7 +29,7 @@ then
     USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
     #
 else
-    logger -st "($(basename $0))" $$ "***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
+    echo "($(basename $0)): $$ ***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
     exit 2
 fi
 #
@@ -50,8 +50,8 @@ USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_us
 # 检查文件${USB_MOUNT_SCRIPT}和${USB_UMOUNT_SCRIPT}是否存在
 if [ -e "${USB_MOUNT_SCRIPT}" ] && [ -e "${USB_UMOUNT_SCRIPT}" ]
 then
-    logger -st "($(basename $0))" $$ "***** ALL THE ESSENTIAL FILES EXIST *****"
-    logger -st "($(basename $0))" $$ "***** SETTING THE ROUTER *****"
+    echo "($(basename $0)): $$ ***** ALL THE ESSENTIAL FILES EXIST *****"
+    echo "($(basename $0)): $$ ***** SETTING THE ROUTER *****"
     #
     # Set nvram variable "script_usbmount" and "script_usbumount"
     # 如果两个文件都存在，则设置nvram变量script_usbmount和script_usbumount
@@ -65,14 +65,14 @@ then
     # Commit the changes
     # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
     nvram commit
-    logger -st "($(basename $0))" $$ "***** RESTORATION HAS BEEN COMPLETE *****"
+    echo "($(basename $0)): $$ ***** RESTORATION HAS BEEN COMPLETE *****"
     #
 else
     # Stop and Exit
     # 如果两个文件不同时存在，则该程序终止
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
-    logger -st "($(basename $0))" $$ "***** RESTORATION HAS NOT BEEN COMPLETE *****"
-    logger -st "($(basename $0))" $$ "***** EXIT *****"
+    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
+    echo "($(basename $0)): $$ ***** RESTORATION HAS NOT BEEN COMPLETE *****"
+    echo "($(basename $0)): $$ ***** EXIT *****"
     exit 3
 fi
 #
@@ -83,7 +83,7 @@ fi
 #
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
+echo "($(basename $0)): $$ ***** REBOOTING THE ROUTER *****"
 reboot
 #
 ########## END ##########

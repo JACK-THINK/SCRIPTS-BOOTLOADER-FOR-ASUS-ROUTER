@@ -28,9 +28,9 @@
 | --------- | --------------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | bcrypt-tool                 | 目录     | bcrypt-tool加密工具目录        |
 | rwxrwxrwx | adguardhome_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | adguardhome_update          | 普通文件 | 升级文件（暂不可用）           |
 | rwxrwxrwx | adguardhome_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | adguardhome_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | adguardhome_upgrade         | 普通文件 | 升级文件（暂不可用）           |
 
 `ASUS_ROUTER/script_bootloader/usr/adguardhome/etc/`
 

@@ -25,9 +25,9 @@
 | 权限      | 名称                  | 属性     | 说明                           |
 | --------- | --------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | caddy_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | caddy_update          | 普通文件 | 升级文件                       |
 | rwxrwxrwx | caddy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | caddy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | caddy_upgrade         | 普通文件 | 升级文件                       |
 
 `ASUS_ROUTER/script_bootloader/usr/caddy/etc/`
 

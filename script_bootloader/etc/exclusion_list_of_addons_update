@@ -1,0 +1,36 @@
+########## WARNING ##########
+#
+# 1. NO BLANK LINE is permitted in this file.
+# 2. System components and addons with special flags will be excluded.
+#
+########## END ##########
+#
+#
+########## SYSTEM COMPONENTS ##########
+#
+dependency
+dnsmasq.d
+entware
+fwd
+monit
+swap
+timezone
+#
+########## END ##########
+#
+#
+########## SUBSIDIARY ADDONS ##########
+#
+adguardhome
+#
+########## END ##########
+#
+#
+########## SPECIAL FLAGS ##########
+#
+software
+dev_
+old_
+deprecated
+#
+########## END ##########

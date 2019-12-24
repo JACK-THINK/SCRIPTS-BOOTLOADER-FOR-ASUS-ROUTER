@@ -44,7 +44,7 @@
 | 权限      | 名称                                         | 属性     | 说明                           |
 | --------- | -------------------------------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | v2ray_install                                | 普通文件 | 安装文件                       |
-| rwxrwxrwx | v2ray_upgrade                                | 普通文件 | 升级文件                       |
+| rwxrwxrwx | v2ray_update                                 | 普通文件 | 升级文件                       |
 | rwxrwxrwx | v2ray_enable.service                         | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | v2ray_disable.service                        | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | fw_v2ray_transparent_proxy_enable.service    | 普通文件 | 插件的可执行程序，用于启动程序 |

@@ -62,9 +62,9 @@ LATEST_FINGERPRINT=${SBL_SYS_UPDATE}/sys_update_fingerprint_latest
 # 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
 CURRENT_FINGERPRINT=${SBL_SYS_VAR}/update/sys_update_fingerprint_current
 #
-# SBL_SYS_UPDATE_LOG: The update log of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_UPDATE_LOG为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统更新日志
-SBL_SYS_UPDATE_LOG=${SBL_SYS_VAR}/update/sys_update_log
+# SBL_UPDATE_LOG: The update log of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_UPDATE_LOG为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统更新日志
+SBL_UPDATE_LOG=${SBL_SYS_VAR}/update/sys_update_log
 if [ ! -d ${SBL_SYS_VAR}/update ]
 then
     /opt/bin/mkdir ${SBL_SYS_VAR}/update > /dev/null 2>&1
@@ -103,8 +103,8 @@ updateFile()
     local TARGET_SHA256="$(/opt/bin/grep ${1}$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)"
     if [ "${FILE_DOWNLOADED_SHA256}" != "${TARGET_SHA256}" ]
     then
-        /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: CONNECTION FAILED" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
-        /opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+        /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: CONNECTION FAILED" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         exit 2
     else
         if [ -e "${SBL_SYS_ROOT}/${1}" ]
@@ -122,9 +122,9 @@ updateFile()
         /opt/bin/mv ${FILE_DOWNLOADED} ${SBL_SYS_ROOT}/${1} > /dev/null 2>&1
         if [ ${?} -eq 0 ]
         then
-            /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${SBL_SYS_ROOT}/${1}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+            /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${SBL_SYS_ROOT}/${1}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         else
-            /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${SBL_SYS_ROOT}/${1}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+            /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${SBL_SYS_ROOT}/${1}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         fi
     fi
 }
@@ -135,9 +135,9 @@ removeFile()
     /opt/bin/rm -f "${1}"  > /dev/null 2>&1
     if [ ${?} -eq 0 ]
     then
-        /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+        /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     else
-        /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+        /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     fi
     #
     local PARENT_DIRECTORY=$(/opt/bin/dirname ${1})
@@ -148,9 +148,9 @@ removeFile()
             /opt/bin/rmdir ${PARENT_DIRECTORY} > /dev/null 2>&1
             if [ ${?} -eq 0 ]
             then
-                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
             else
-                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
                 break
             fi
             #
@@ -164,7 +164,7 @@ removeFile()
 ########## END ##########
 #
 #
-########## UPGRADE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
+########## UPDATE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
 #
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
@@ -199,7 +199,7 @@ else
         /opt/bin/grep -vf ${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp ${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp > ${SBL_SYS_UPDATE}/files_to_remove.tmp 2> /dev/null
         /opt/bin/cp ${SBL_SYS_UPDATE}/files_to_remove.tmp ${SBL_SYS_UPDATE}/files_to_remove.stack 2> /dev/null
         #
-        /opt/bin/echo -e "########## DATE: $(/opt/bin/date) ##########\n\nUPDATE:" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+        /opt/bin/echo -e "########## DATE: $(/opt/bin/date) ##########\n\nPART 1: SYSTEM\n\nUPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Add or modify files
         # 新增或修改文件
@@ -216,7 +216,7 @@ else
             fi
         done
         #
-        /opt/bin/echo -e "\nREMOVE:" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
+        /opt/bin/echo -e "\nREMOVE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Remove files
         # 删除文件
@@ -233,8 +233,6 @@ else
             fi
         done
         #
-        /opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_SYS_UPDATE_LOG}
-        #
         if [ "$(/opt/bin/grep sys_update$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" != "$(/opt/bin/grep sys_update$ ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
         then
             /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: ${SBL_SYS_BIN}/sys_update has been updated, please execute it again."
@@ -243,10 +241,6 @@ else
         # Update system update fingerprint of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
         # 更新SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统更新指纹
         /opt/bin/mv ${LATEST_FINGERPRINT} ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-        #
-        # Remove all the temporary files
-        # 删除全部临时文件
-        /opt/bin/rm -rf ${SBL_SYS_UPDATE} > /dev/null 2>&1
         #
     else
         # Do nothing but prompt the user
@@ -258,5 +252,67 @@ else
         exit 1
     fi
 fi
+#
+########## END ##########
+#
+#
+########## UPDATE ENTWARE ##########
+#
+/opt/bin/echo -e "\nPART 2: ENTWARE\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+/opt/bin/opkg update | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+/opt/bin/opkg upgrade | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+#
+########## END ##########
+#
+#
+########## UPDATE APPS FROM OTHER SOURCES ##########
+#
+# Generate list of addons installed
+# 生成已安装插件列表
+/opt/bin/sed -E -n -e 's/.*SUCCEEDED.*: (.*)$/\1/p' ${SBL_SYS_TMP}/addons_install_log > ${SBL_SYS_UPDATE}/addons_installed.tmp
+#
+# Check if ${SBL_SYS_ETC}/exclusion_list_of_addons_update exists
+# 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons_update是否存在
+if [ -e "${SBL_SYS_ETC}/exclusion_list_of_addons_update" ]
+then
+    /opt/bin/find ${SBL_SYS_USR} -name "*_update" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons_update | /opt/bin/grep -Ef ${SBL_SYS_UPDATE}/addons_installed.tmp > ${SBL_SYS_UPDATE}/addons_to_update.stack
+    #
+else
+    # Exclude system components and special flags
+    # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_update不存在，则执行
+    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_update, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+    #
+    /opt/bin/find ${SBL_SYS_USR} -name "*_update" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -Ef ${SBL_SYS_UPDATE}/addons_installed.tmp > ${SBL_SYS_UPDATE}/addons_to_update.stack
+fi
+#
+/opt/bin/echo -e "\nPART 3: ADDONS\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+#
+# Update addons
+# 更新插件
+while [ 1 ]
+do
+    STACK_TOP=$(/opt/bin/head -n 1 ${SBL_SYS_UPDATE}/addons_to_update.stack 2> /dev/null)
+    if [ -n "${STACK_TOP}" ]
+    then
+        $(${STACK_TOP})
+        if [ ${?} -eq 0 ]
+        then
+            /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        else
+            /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        fi
+        #
+        /opt/bin/sed -i '1d' ${SBL_SYS_UPDATE}/addons_to_update.stack
+    else
+        /opt/bin/rm -f ${SBL_SYS_UPDATE}/addons_to_update.stack > /dev/null 2>&1
+        break
+    fi
+done
+#
+/opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+#
+# Remove all the temporary files
+# 删除全部临时文件
+/opt/bin/rm -rf ${SBL_SYS_UPDATE} > /dev/null 2>&1
 #
 ########## END ##########

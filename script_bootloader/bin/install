@@ -83,34 +83,50 @@ echo -e "\033[1;45;37m***** STAGE 1: CONFIGURE THE ROUTER ${ROUTER_MODEL} *****\
 #
 sleep 10
 #
-# Check if ${SBL_SYS_BIN}/sys_install exists
-# 检查文件${SBL_SYS_BIN}/sys_install是否存在
-if [ -e "${SBL_SYS_BIN}/sys_install" ]
+# USB_MOUNT_SCRIPT: The script runs automatically when the USB flash drive is mounted
+# 设置自定义变量USB_MOUNT_SCRIPT为U盘挂载时自动运行文件
+USB_MOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_mount"
+#
+# USB_UMOUNT_SCRIPT: The script runs automatically when the USB flash drive is unmounted
+# 设置自定义变量USB_UMOUNT_SCRIPT为U盘卸载时自动运行文件
+USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_umount"
+#
+# Check if ${USB_MOUNT_SCRIPT} and ${USB_UMOUNT_SCRIPT} exist
+# 检查文件${USB_MOUNT_SCRIPT}和${USB_UMOUNT_SCRIPT}是否存在
+if [ -e "${USB_MOUNT_SCRIPT}" ] && [ -e "${USB_UMOUNT_SCRIPT}" ]
 then
-    # Invoke ${SBL_SYS_BIN}/sys_install
-    # 如果文件${SBL_SYS_BIN}/sys_install存在，则执行${SBL_SYS_BIN}/sys_install
-    ${SBL_SYS_BIN}/sys_install
+    echo "($(basename $0)): $$ ***** ALL THE ESSENTIAL FILES EXIST *****"
+    echo "($(basename $0)): $$ ***** SETTING THE ROUTER *****"
     #
-    # Check if ${SBL_SYS_BIN}/sys_install returns 0
-    # 检查文件${SBL_SYS_BIN}/sys_install的返回值是否为0
-    if [ $? != '0' ]
+    # Set nvram variable "script_usbmount" and "script_usbumount"
+    # 如果两个文件都存在，则设置nvram变量script_usbmount和script_usbumount
+    #
+    # 使用nvram对变量script_usbmount进行设置。当U盘被挂载后，任何被该变量引用的可执行程序会自动执行
+    nvram set script_usbmount="${USB_MOUNT_SCRIPT}"
+    #
+    # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行程序会自动执行
+    nvram set script_usbumount="${USB_UMOUNT_SCRIPT}"
+    #
+    # Commit the changes
+    # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
+    nvram commit
+    if [ ${?} -ne 0 ]
     then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo "($(basename $0)): $$ ***** ERROR: ${SBL_SYS_BIN}/sys_install *****"
+        echo "($(basename $0)): $$ ***** INSTALLATION HAS NOT BEEN COMPLETE *****"
+        echo "($(basename $0)): $$ ***** ERROR: ${SBL_SYS_BIN}/install *****"
         echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
         exit 3
-        #
     else
-        # Continue
-        # 如果返回值为0，则继续
+        echo "($(basename $0)): $$ ***** INSTALLATION HAS BEEN COMPLETE *****"
         echo -e "\033[1;42;37m***** STAGE 1: SUCCEEDED *****\033[0m"
     fi
     #
 else
     # Stop and Exit
-    # 如果文件${SBL_SYS_BIN}/sys_install不存在，则该程序终止
-    echo "($(basename $0)): $$ ***** ERROR: CAN'T LOCATE ${SBL_SYS_BIN}/sys_install *****"
+    # 如果两个文件不同时存在，则该程序终止
+    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
+    echo "($(basename $0)): $$ ***** INSTALLATION HAS NOT BEEN COMPLETE *****"
+    echo "($(basename $0)): $$ ***** ERROR: ${SBL_SYS_BIN}/install *****"
     echo -e "\033[1;41;37m***** STAGE 1: FAILED *****\033[0m"
     exit 4
 fi
@@ -134,7 +150,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/swap/bin/swap_install returns 0
     # 检查文件${SBL_SYS_USR}/swap/bin/swap_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -163,7 +179,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service returns 0
     # 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -192,7 +208,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/entware/bin/entware_install returns 0
     # 检查文件${SBL_SYS_USR}/entware/bin/entware_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -279,7 +295,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/timezone/bin/timezone_install returns 0
     # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -308,7 +324,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service returns 0
     # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -337,7 +353,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/dependency/bin/dependency_install returns 0
     # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -366,7 +382,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/dependency/bin/dependency_enable.service returns 0
     # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -395,7 +411,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/monit/bin/monit_install returns 0
     # 检查文件${SBL_SYS_USR}/monit/bin/monit_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -430,7 +446,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install returns 0
     # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -459,7 +475,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service returns 0
     # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -488,7 +504,7 @@ then
     #
     # Check if ${SBL_SYS_USR}/fwd/bin/fwd_install returns 0
     # 检查文件${SBL_SYS_USR}/fwd/bin/fwd_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止
@@ -555,7 +571,7 @@ then
     #
     # Check if ${SBL_SYS_BIN}/addons_install returns 0
     # 检查文件${SBL_SYS_BIN}/addons_install的返回值是否为0
-    if [ $? != '0' ]
+    if [ ${?} -ne 0 ]
     then
         # Stop and Exit
         # 如果返回值不为0，则该程序终止

@@ -26,6 +26,7 @@
 | 权限      | 名称                      | 属性     | 说明                                                         |
 | --------- | ------------------------- | -------- | ------------------------------------------------------------ |
 | rwxrwxrwx | overture_install          | 普通文件 | 安装文件                                                     |
+| rwxrwxrwx | overture_update           | 普通文件 | 升级文件                                                     |
 | rwxrwxrwx | overture_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序（路由器启用SS全局代理时使用） |
 | rwxrwxrwx | overture_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序（路由器启用SS全局代理时使用） |
 | rwxrwxrwx | overture-linux-arm.zip    | 普通文件 | overture预编译文件，适用于arm架构                            |

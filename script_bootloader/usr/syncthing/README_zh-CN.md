@@ -24,7 +24,7 @@
 | 权限      | 名称                      | 属性     | 说明                           |
 | --------- | ------------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | syncthing_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | syncthing_upgrade         | 普通文件 | 升级文件                       |
+| rwxrwxrwx | syncthing_update          | 普通文件 | 升级文件                       |
 | rwxrwxrwx | syncthing_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | syncthing_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
