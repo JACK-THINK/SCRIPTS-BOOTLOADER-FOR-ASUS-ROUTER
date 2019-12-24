@@ -143,6 +143,18 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
+## Update
+
+1. Login the router with ssh client.
+
+   ![](./Documents_Assets/How_to_Use/uninstall/step1.jpg)
+
+2. Execute the code below to uninstall this system.
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/update
+   ```
+
 ## Uninstallation
 
 1. Login the router with ssh client.

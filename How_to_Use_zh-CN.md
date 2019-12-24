@@ -143,6 +143,18 @@
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
+## 升级
+
+1. 用ssh登陆路由器后台
+
+   ![](./Documents_Assets/How_to_Use/uninstall/step1.jpg)
+
+2. 执行下列代码升级本系统
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/update
+   ```
+
 ## 卸载
 
 1. 用ssh登陆路由器后台
