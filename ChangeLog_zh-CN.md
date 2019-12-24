@@ -4,7 +4,7 @@
 
 #### 新增
 
-1. 新增系统更新程序sys_update。此为重大更新，请使用者务必全新部署本系统
+1. 新增系统更新程序update，可用于更新系统+Entware+外部插件。此为重大更新，请使用者务必全新部署本系统
 2. 新增exclusion_list_of_addons_update
 3. 新增exclusion_list_of_addons_install
 

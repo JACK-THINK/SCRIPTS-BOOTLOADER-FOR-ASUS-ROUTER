@@ -64,7 +64,7 @@ CURRENT_FINGERPRINT=${SBL_SYS_VAR}/update/sys_update_fingerprint_current
 #
 # SBL_UPDATE_LOG: The update log of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_UPDATE_LOG为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统更新日志
-SBL_UPDATE_LOG=${SBL_SYS_VAR}/update/sys_update_log
+SBL_UPDATE_LOG=${SBL_SYS_VAR}/update/update_log
 if [ ! -d ${SBL_SYS_VAR}/update ]
 then
     /opt/bin/mkdir ${SBL_SYS_VAR}/update > /dev/null 2>&1
@@ -233,9 +233,9 @@ else
             fi
         done
         #
-        if [ "$(/opt/bin/grep sys_update$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" != "$(/opt/bin/grep sys_update$ ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
+        if [ "$(/opt/bin/grep bin\/update$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" != "$(/opt/bin/grep bin\/update$ ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
         then
-            /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: ${SBL_SYS_BIN}/sys_update has been updated, please execute it again."
+            /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: ${SBL_SYS_BIN}/update has been updated, please execute it again."
         fi
         #
         # Update system update fingerprint of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
