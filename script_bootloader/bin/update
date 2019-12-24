@@ -166,6 +166,9 @@ removeFile()
 #
 ########## UPDATE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
 #
+/opt/bin/echo -e "########## DATE: $(/opt/bin/date) ##########" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+/opt/bin/echo -e "\nPART 1: SYSTEM\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+#
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
 /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${LATEST_FINGERPRINT}" "${DOWNLOAD_LINK_PREFIX}/var/update/sys_update_fingerprint_current"
@@ -175,6 +178,8 @@ removeFile()
 if [ "$(/opt/bin/sha256sum ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" == "$(/opt/bin/sha256sum ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
 then
     /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    #
+    /opt/bin/echo -e "\033[1;44;37mNO-CHANGES\033[0m" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     #
 else
     /opt/bin/echo "($(basename $0)): $$ ***** A NEW VERSION HAS BEEN FOUND *****"
@@ -199,7 +204,7 @@ else
         /opt/bin/grep -vf ${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp ${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp > ${SBL_SYS_UPDATE}/files_to_remove.tmp 2> /dev/null
         /opt/bin/cp ${SBL_SYS_UPDATE}/files_to_remove.tmp ${SBL_SYS_UPDATE}/files_to_remove.stack 2> /dev/null
         #
-        /opt/bin/echo -e "########## DATE: $(/opt/bin/date) ##########\n\nPART 1: SYSTEM\n\nUPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "UPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Add or modify files
         # 新增或修改文件
@@ -216,7 +221,7 @@ else
             fi
         done
         #
-        /opt/bin/echo -e "\nREMOVE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "REMOVE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Remove files
         # 删除文件
@@ -235,7 +240,7 @@ else
         #
         if [ "$(/opt/bin/grep bin\/update$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" != "$(/opt/bin/grep bin\/update$ ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
         then
-            /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: ${SBL_SYS_BIN}/update has been updated, please execute it again."
+            /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: ${SBL_SYS_BIN}/update has been updated, please execute it again."
         fi
         #
         # Update system update fingerprint of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
@@ -259,6 +264,7 @@ fi
 ########## UPDATE ENTWARE ##########
 #
 /opt/bin/echo -e "\nPART 2: ENTWARE\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+#
 /opt/bin/opkg update | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 /opt/bin/opkg upgrade | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 #
@@ -266,6 +272,8 @@ fi
 #
 #
 ########## UPDATE APPS FROM OTHER SOURCES ##########
+#
+/opt/bin/echo -e "\nPART 3: ADDONS\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 #
 # Generate list of addons installed
 # 生成已安装插件列表
@@ -280,12 +288,10 @@ then
 else
     # Exclude system components and special flags
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_update不存在，则执行
-    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_update, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_update, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     #
     /opt/bin/find ${SBL_SYS_USR} -name "*_update" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -Ef ${SBL_SYS_UPDATE}/addons_installed.tmp > ${SBL_SYS_UPDATE}/addons_to_update.stack
 fi
-#
-/opt/bin/echo -e "\nPART 3: ADDONS\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 #
 # Update addons
 # 更新插件
