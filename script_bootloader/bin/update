@@ -277,7 +277,7 @@ fi
 #
 # Generate list of addons installed
 # 生成已安装插件列表
-/opt/bin/sed -E -n -e 's/.*SUCCEEDED.*: (.*)$/\1/p' ${SBL_SYS_TMP}/addons_install_log > ${SBL_SYS_UPDATE}/addons_installed.tmp
+/opt/bin/sed -E -n -e 's/.*SUCCEEDED.*: (.*)$/\1/p' ${SBL_SYS_VAR}/addons/addons_install_log > ${SBL_SYS_UPDATE}/addons_installed.tmp 2> /dev/null
 #
 # Check if ${SBL_SYS_ETC}/exclusion_list_of_addons_update exists
 # 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons_update是否存在

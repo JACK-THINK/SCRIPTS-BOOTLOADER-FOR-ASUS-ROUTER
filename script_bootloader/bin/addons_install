@@ -24,13 +24,13 @@ SBL_SYS_ROOT=${USB_MOUNT_POINT}/script_bootloader
 # 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
 SBL_SYS_ETC=${SBL_SYS_ROOT}/etc
 #
-# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
-SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
-#
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR=${SBL_SYS_ROOT}/usr
+#
+# SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
+SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -45,18 +45,20 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 ########## GENERATE ADDON LIST ##########
 #
+/opt/bin/mkdir -p ${SBL_SYS_VAR}/addons > /dev/null 2>&1
+#
 # Check if ${SBL_SYS_ETC}/exclusion_list_of_addons_install exists
 # 检查文件${SBL_SYS_ETC}/exclusion_list_of_addons_install是否存在
 if [ -e "${SBL_SYS_ETC}/exclusion_list_of_addons_install" ]
 then
-    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons_install > ${SBL_SYS_TMP}/addons_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vEf ${SBL_SYS_ETC}/exclusion_list_of_addons_install > ${SBL_SYS_VAR}/addons/addons_install_list
     #
 else
     # Exclude system components and special flags
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_install不存在，则执行
-    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_install, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
+    /opt/bin/echo -e "\033[1;41;37mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_install, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD" | /opt/bin/tee -a ${SBL_SYS_VAR}/addons/addons_install_log
     #
-    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|overture|software|swap|timezone|dev_|old_|deprecated)' > ${SBL_SYS_TMP}/addons_install_list
+    /opt/bin/find ${SBL_SYS_USR} -name "*_install" | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|overture|software|swap|timezone|dev_|old_|deprecated)' > ${SBL_SYS_VAR}/addons/addons_install_list
 fi
 #
 ########## END ##########
@@ -68,15 +70,15 @@ while [ 1 ]
 do
     # Print the menu for addons
     # 打印插件菜单
-    ADDON_COUNT=$(/opt/bin/cat ${SBL_SYS_TMP}/addons_install_list | /opt/bin/wc -l)
+    ADDON_COUNT=$(/opt/bin/cat ${SBL_SYS_VAR}/addons/addons_install_list | /opt/bin/wc -l)
     ADDON_ORDER=1
     /opt/bin/echo -e "Choose the addon you want to install:\n"
     /opt/bin/echo -e "\033[1;31m0. exit\033[0m"
     while [ ${ADDON_ORDER} -le ${ADDON_COUNT} ]
     do
-        ADDON_ITEM=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${ADDON_ORDER}"'p' ${SBL_SYS_TMP}/addons_install_list)
+        ADDON_ITEM=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${ADDON_ORDER}"'p' ${SBL_SYS_VAR}/addons/addons_install_list)
         #
-        case "$(/opt/bin/grep ': '"${ADDON_ITEM}"'$' ${SBL_SYS_TMP}/addons_install_log 2> /dev/null | /opt/bin/sed -E -e 's/^[^[:alpha:]]*m([[:upper:]]*).*/\1/' 2> /dev/null)" in
+        case "$(/opt/bin/grep ': '"${ADDON_ITEM}"'$' ${SBL_SYS_VAR}/addons/addons_install_log 2> /dev/null | /opt/bin/sed -E -e 's/^[^[:alpha:]]*m([[:upper:]]*).*/\1/' 2> /dev/null)" in
             "SUCCEEDED")
                 ADDON_STATUS="[INSTALLED    ]"
                 ;;
@@ -109,25 +111,25 @@ do
         then
             break
         fi
-        ADDON_TO_INSTALL=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addons_install_list)
+        ADDON_TO_INSTALL=$(/opt/bin/sed -E -n -e 's/.*\/([[:alnum:]_-]*)_install/\1/' -e ''"${INPUT_VALUE}"'p' ${SBL_SYS_VAR}/addons/addons_install_list)
         #
-        # Check if ${SBL_SYS_TMP}/${ADDON_TO_INSTALL} has been installed successfully
-        # 检查文件${SBL_SYS_TMP}/${ADDON_TO_INSTALL}是否已成功安装
-        ADDON_STATUS_SUCCEEDED="$(/opt/bin/grep 'SUCCEEDED.*: '"${ADDON_TO_INSTALL}"'' ${SBL_SYS_TMP}/addons_install_log 2> /dev/null)"
+        # Check if ${ADDON_TO_INSTALL} has been installed successfully
+        # 检查文件${ADDON_TO_INSTALL}是否已成功安装
+        ADDON_STATUS_SUCCEEDED="$(/opt/bin/grep 'SUCCEEDED.*: '"${ADDON_TO_INSTALL}"'' ${SBL_SYS_VAR}/addons/addons_install_log 2> /dev/null)"
         if [ -z "${ADDON_STATUS_SUCCEEDED}" ]
         then
             # Install the addon chosen by user
             # 安装用户选择的插件
-            $(/opt/bin/sed -ne ''"${INPUT_VALUE}"'p' ${SBL_SYS_TMP}/addons_install_list)
+            $(/opt/bin/sed -ne ''"${INPUT_VALUE}"'p' ${SBL_SYS_VAR}/addons/addons_install_list)
             #
             # Check if return value is 0
             # 检查返回值是否为0
             if [ ${?} -eq 0 ]
             then
-                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
+                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_VAR}/addons/addons_install_log
                 #
             else
-                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_TMP}/addons_install_log
+                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: ${ADDON_TO_INSTALL}" | /opt/bin/tee -a ${SBL_SYS_VAR}/addons/addons_install_log
             fi
             #
         else
