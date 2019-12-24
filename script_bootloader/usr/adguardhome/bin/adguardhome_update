@@ -93,6 +93,7 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
     /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    exit 9
     #
 else
     logger -st "($(basename $0))" $$ "***** A NEW VERSION HAS BEEN FOUND *****"

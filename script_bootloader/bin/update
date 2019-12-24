@@ -294,13 +294,19 @@ do
     STACK_TOP=$(/opt/bin/head -n 1 ${SBL_SYS_UPDATE}/addons_to_update.stack 2> /dev/null)
     if [ -n "${STACK_TOP}" ]
     then
-        $(${STACK_TOP})
-        if [ ${?} -eq 0 ]
-        then
-            /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
-        else
-            /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
-        fi
+        "${STACK_TOP}"
+        #
+        case ${?} in
+            0)
+                /opt/bin/echo -e "\033[1;42;37mSUCCEEDED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+                ;;
+            9)
+                /opt/bin/echo -e "\033[1;44;37mNO-CHANGES\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+                ;;
+            *)
+                /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: UPDATE ADDON $(/opt/bin/basename ${STACK_TOP} | /opt/bin/sed 's/_update//' 2> /dev/null)" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+                ;;
+        esac
         #
         /opt/bin/sed -i '1d' ${SBL_SYS_UPDATE}/addons_to_update.stack
     else
