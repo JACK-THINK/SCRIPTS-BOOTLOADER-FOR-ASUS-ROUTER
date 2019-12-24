@@ -263,4 +263,3 @@ ad9c7ba6cba099dba6a100ea44ac9d4742d158cd5fe142f22d2bf1115fe843dc ./script_bootlo
 5dd3132123d1363e818e5be90d520ec17b9a852d4d8ee89a484c8f09f03ecc98 ./script_bootloader/usr/wol/bin/wol_install
 de172c9630b740b20aaed1c101d27cf67d1e2f8b432e95819a618a470c24ea2c ./script_bootloader/usr/wol/etc/monit.d/wol
 6f7fb78077297d51791cc759737502e86c9a51930a8343d1fb1ec2dd65af7e62 ./script_bootloader/usr/wol/README_zh-CN.md
-54a93a5bf30f247bd8350d59a1e369b7f9827887b134d326c22d7f1bf4144531 ./script_bootloader/var/.gitignore
