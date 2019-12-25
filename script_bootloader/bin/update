@@ -205,7 +205,7 @@ else
         /opt/bin/grep -vf ${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp ${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp > ${SBL_SYS_UPDATE}/files_to_remove.tmp 2> /dev/null
         /opt/bin/cp ${SBL_SYS_UPDATE}/files_to_remove.tmp ${SBL_SYS_UPDATE}/files_to_remove.stack 2> /dev/null
         #
-        /opt/bin/echo -e "\nUPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "UPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Add or modify files
         # 新增或修改文件
