@@ -59,6 +59,16 @@ wget -q -c -t 10 -T 120 -O /tmp/sys_update_fingerprint_current --no-check-certif
 # 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
 CURRENT_FINGERPRINT=/tmp/sys_update_fingerprint_current
 #
+# Check integrity of /tmp/install_online
+# 检查文件/tmp/install_online的完整性
+if [ ! -s /tmp/install_online ] || \
+[ "$(/tmp/gohash -a sha256 /tmp/install_online | cut -d ' ' -f 1)" != "$(grep 'bin/install_online' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
+#
 # Download prerequisite_checker
 # 下载文件prerequisite_checker
 wget -q -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
