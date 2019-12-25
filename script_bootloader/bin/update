@@ -183,14 +183,14 @@ then
     /opt/bin/echo -e "\033[1;44;37mNO-CHANGES\033[0m" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     #
 else
-    /opt/bin/echo "($(basename $0)): $$ ***** A NEW VERSION HAS BEEN FOUND *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** UPGRADING ... *****"
+    #/opt/bin/echo "($(basename $0)): $$ ***** A NEW VERSION HAS BEEN FOUND *****"
+    #/opt/bin/echo "($(basename $0)): $$ ***** UPGRADING ... *****"
     #
     # Check if ENTWARE_ENABLE SERVICE has been loaded
     # 检查ENTWARE_ENABLE SERVICE是否已启用
     if [ $(which opkg) == "/opt/bin/opkg" ]
     then
-        /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+        #/opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
         #
         # Generate list of files to add or modify
         # 生成文件新增或修改列表
