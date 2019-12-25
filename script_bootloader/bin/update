@@ -205,7 +205,7 @@ else
         /opt/bin/grep -vf ${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp ${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp > ${SBL_SYS_UPDATE}/files_to_remove.tmp 2> /dev/null
         /opt/bin/cp ${SBL_SYS_UPDATE}/files_to_remove.tmp ${SBL_SYS_UPDATE}/files_to_remove.stack 2> /dev/null
         #
-        /opt/bin/echo -e "UPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "\nUPDATE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Add or modify files
         # 新增或修改文件
@@ -222,7 +222,7 @@ else
             fi
         done
         #
-        /opt/bin/echo -e "REMOVE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/echo -e "\nREMOVE:" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         #
         # Remove files
         # 删除文件
@@ -241,7 +241,7 @@ else
         #
         if [ "$(/opt/bin/grep bin\/update$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" != "$(/opt/bin/grep bin\/update$ ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
         then
-            /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: ${SBL_SYS_BIN}/update has been updated, please execute it again."
+            /opt/bin/echo -e "\n\033[1;43;31mNOTICE\033[0m: ${SBL_SYS_BIN}/update has been updated, please execute it again."
         fi
         #
         # Update system update fingerprint of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
