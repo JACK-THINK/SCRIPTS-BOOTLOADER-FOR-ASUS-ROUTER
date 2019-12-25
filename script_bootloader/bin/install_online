@@ -219,6 +219,8 @@ rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
 # 下载${ARCHIVE_NAME}包
 wget -c -t 10 -T 120 -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
 #
+sleep 30
+#
 # Check if ${USB_MOUNT_POINT}/${ARCHIVE_NAME} exists
 # 检查文件${USB_MOUNT_POINT}/${ARCHIVE_NAME}是否存在
 if [ ! -s "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
@@ -231,6 +233,13 @@ fi
 # Untar ${ARCHIVE_NAME} package
 # 解压${ARCHIVE_NAME}包
 tar -zvxf ${USB_MOUNT_POINT}/${ARCHIVE_NAME} -C ${USB_MOUNT_POINT}/ JACK*/script_bootloader/ > /dev/null 2>&1
+#
+if [ ${?} -ne 0 ]
+then
+    echo "($(basename $0)): $$ ***** ${ARCHIVE_NAME} IS CORRUPT *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
 #
 sleep 30
 #
