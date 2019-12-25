@@ -97,7 +97,7 @@ SERVICE_FUNCTION="UPDATE"
 updateFile()
 {
     local FILE_DOWNLOADED="${SBL_SYS_UPDATE}/$(/opt/bin/basename ${1})"
-    /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${FILE_DOWNLOADED}" "${DOWNLOAD_LINK_PREFIX}/${1}"
+    /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${FILE_DOWNLOADED}" "${DOWNLOAD_LINK_PREFIX}/${1}"
     #
     local FILE_DOWNLOADED_SHA256="$(/opt/bin/sha256sum ${FILE_DOWNLOADED} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)"
     local TARGET_SHA256="$(/opt/bin/grep ${1}$ ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)"
@@ -166,18 +166,19 @@ removeFile()
 #
 ########## UPDATE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
 #
+/opt/bin/echo -e ""
 /opt/bin/echo -e "########## DATE: $(/opt/bin/date) ##########" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 /opt/bin/echo -e "\nPART 1: SYSTEM\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
 #
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
-/opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${LATEST_FINGERPRINT}" "${DOWNLOAD_LINK_PREFIX}/var/update/sys_update_fingerprint_current"
+/opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${LATEST_FINGERPRINT}" "${DOWNLOAD_LINK_PREFIX}/var/update/sys_update_fingerprint_current"
 #
 # Compare SHA256 of ${LATEST_FINGERPRINT} and SHA256 of ${CURRENT_FINGERPRINT}
 # 比较${LATEST_FINGERPRINT}和${CURRENT_FINGERPRINT}的SHA256
 if [ "$(/opt/bin/sha256sum ${LATEST_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" == "$(/opt/bin/sha256sum ${CURRENT_FINGERPRINT} | /opt/bin/cut -d ' ' -f 1 2> /dev/null)" ]
 then
-    /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    #/opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
     #
     /opt/bin/echo -e "\033[1;44;37mNO-CHANGES\033[0m" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
     #
@@ -300,7 +301,7 @@ do
     STACK_TOP=$(/opt/bin/head -n 1 ${SBL_SYS_UPDATE}/addons_to_update.stack 2> /dev/null)
     if [ -n "${STACK_TOP}" ]
     then
-        "${STACK_TOP}"
+        "${STACK_TOP}" > /dev/null 2>&1
         #
         case ${?} in
             0)

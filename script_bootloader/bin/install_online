@@ -9,13 +9,64 @@ ROUTER_MODEL=$(nvram get model)
 #
 ########## CHECK PREREQUISITES ##########
 #
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case $(uname -m) in
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        echo -e "\033[1;41;37m***** ERROR: ROUTER ARCHITECTURE IS UNKNOWN *****\033[0m"
+        #
+        echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+        exit 1
+        ;;
+esac
+#
+# Download checksum generator and checker
+# 下载checksum generator and checker
+wget -q -c -t 10 -T 120 -O /tmp/gohash --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/gohash/gohash-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}"
+#
+chmod 777 /tmp/gohash
+#
+# Check integrity of /tmp/gohash
+# 检查文件/tmp/gohash的完整性
+if [ ! -s /tmp/gohash ] || \
+[ "$(md5sum /tmp/gohash | cut -d ' ' -f 1)" != "$(/tmp/gohash -a md5 /tmp/gohash | cut -d ' ' -f 1)" ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    exit 5
+fi
+#
+# Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
+wget -q -c -t 10 -T 120 -O /tmp/sys_update_fingerprint_current --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/var/update/sys_update_fingerprint_current"
+#
+# CURRENT_FINGERPRINT: System update fingerprint of the current SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
+CURRENT_FINGERPRINT=/tmp/sys_update_fingerprint_current
+#
 # Download prerequisite_checker
 # 下载文件prerequisite_checker
-wget -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
+wget -q -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
 #
-# Check if /tmp/prerequisite_checker exists
-# 检查文件/tmp/prerequisite_checker是否存在
-if [ -ne '/tmp/prerequisite_checker' ]
+# Check integrity of /tmp/prerequisite_checker
+# 检查文件/tmp/prerequisite_checker的完整性
+if [ ! -s /tmp/prerequisite_checker ] || \
+[ "$(/tmp/gohash -a sha256 /tmp/prerequisite_checker | cut -d ' ' -f 1)" != "$(grep 'bin/prerequisite_checker' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
@@ -35,7 +86,7 @@ chmod 777 /tmp/prerequisite_checker
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    exit 1
+    exit 2
 fi
 #
 ########## END ##########
@@ -59,16 +110,16 @@ do
     #
     # Read the input of user
     # 读取用户输入值
-    read input_value
+    read INPUT_VALUE
     #
-    case ${input_value} in
+    case ${INPUT_VALUE} in
         "Y" | "y" | "YES" | "yes" | "Yes")
             echo "($(basename $0)): $$ ***** START INSTALLATION *****"
             break
             ;;
         "N" | "n" | "NO" | "no" | "No")
             echo "($(basename $0)): $$ ***** STOP INSTALLATION *****"
-            exit 2
+            exit 3
             ;;
         *)
             echo "($(basename $0)): $$ ***** WRONG SELECTION *****"
@@ -85,9 +136,10 @@ done
 # 下载文件drive_modifier
 wget -c -t 10 -T 120 -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
 #
-# Check if /tmp/drive_modifier exists
-# 检查文件/tmp/drive_modifier是否存在
-if [ -ne '/tmp/drive_modifier' ]
+# Check integrity of /tmp/drive_modifier
+# 检查文件/tmp/drive_modifier的完整性
+if [ ! -s /tmp/drive_modifier ] || \
+[ "$(/tmp/gohash -a sha256 /tmp/drive_modifier | cut -d ' ' -f 1)" != "$(grep 'bin/drive_modifier' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
@@ -107,7 +159,7 @@ chmod 777 /tmp/drive_modifier
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    exit 3
+    exit 4
 fi
 #
 ########## END ##########
@@ -130,7 +182,7 @@ USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DR
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
 wget -c -t 10 -T 120 -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 #
-if [ -ne '/tmp/sbl_download_link.html' ]
+if [ ! -s '/tmp/sbl_download_link.html' ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
@@ -143,32 +195,6 @@ rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 # NAME OF THE ARCHIVE
 # 设置自定义变量ARCHIVE_NAME为包文件名
 ARCHIVE_NAME="sbl_setup.tar.gz"
-#
-# OPERATING_SYSTEM: Operating system of the ASUS Router
-# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
-#
-# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
-# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
-    "aarch64")
-        ROUTER_ARCHITECTURE="arm64"
-        ;;
-    "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        ;;
-    "mips")
-        ROUTER_ARCHITECTURE="mipsle"
-        ;;
-    *)
-        # Do nothing but prompt the user
-        # 如果路由器架构不符合上述三种情况，则执行
-        echo -e "\033[1;41;37m***** ERROR: ROUTER ARCHITECTURE IS UNKNOWN *****\033[0m"
-        #
-        echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-        exit 4
-        ;;
-esac
 #
 ########## END ##########
 #
@@ -185,7 +211,7 @@ wget -c -t 10 -T 120 -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificat
 #
 # Check if ${USB_MOUNT_POINT}/${ARCHIVE_NAME} exists
 # 检查文件${USB_MOUNT_POINT}/${ARCHIVE_NAME}是否存在
-if [ -ne "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
+if [ ! -s "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
