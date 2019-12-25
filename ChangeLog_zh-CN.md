@@ -1,19 +1,21 @@
 # 更新日志
 
-## 版本15.0（2019-12-24）
+## 版本15.0（Christmas Day）
 
 #### 新增
 
 1. 新增系统更新程序update，可用于更新系统+Entware+外部插件。此为重大更新，请使用者务必全新部署本系统
 2. 新增exclusion_list_of_addons_update
 3. 新增exclusion_list_of_addons_install
+4. 新增gohash
 
 #### 变更
 
-1. 更新gotee
+1. 更新install_online
 2. 更新install
 3. 更新restore
 4. 更新addons_install
+5. 更新gotee
 
 #### 删除
 
