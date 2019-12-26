@@ -232,7 +232,7 @@ fi
 #
 # Untar ${ARCHIVE_NAME} package
 # 解压${ARCHIVE_NAME}包
-tar -zvxf ${USB_MOUNT_POINT}/${ARCHIVE_NAME} -C ${USB_MOUNT_POINT}/ JACK*/script_bootloader/ > /dev/null 2>&1
+tar -zvxf ${USB_MOUNT_POINT}/${ARCHIVE_NAME} -C ${USB_MOUNT_POINT}/ > /dev/null 2>&1
 #
 if [ ${?} -ne 0 ]
 then
