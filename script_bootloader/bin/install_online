@@ -271,7 +271,7 @@ sleep 10
 # 开始安装
 cd /tmp/
 #
-echo "${USB_MOUNT_POINT}/sbl_install_log will be generated."
+echo -e "\033[1;43;31mNOTICE\033[0m: ${USB_MOUNT_POINT}/sbl_install_log will be generated.\n"
 #
 if [ -n "$(which tee)" ]
 then
