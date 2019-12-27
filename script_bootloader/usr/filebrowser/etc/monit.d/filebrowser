@@ -1,0 +1,4 @@
+check process FILE_BROWSER with pidfile '/var/run/filebrowser.pid'
+    start program = "/opt/script_bootloader/usr/filebrowser/bin/filebrowser_enable.service"
+    stop program = "/opt/script_bootloader/usr/filebrowser/bin/filebrowser_disable.service"
+    if does not exist then restart

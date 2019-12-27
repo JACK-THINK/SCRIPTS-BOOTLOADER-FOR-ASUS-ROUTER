@@ -1,0 +1,4 @@
+check program FW_PORT_OPENING_FILE_BROWSER with path "/opt/bin/fwd enable /opt/etc/fw.d/filebrowser_open" every 6 cycles
+    start program = "/opt/bin/fwd enable /opt/etc/fw.d/filebrowser_open"
+    stop program = "/opt/bin/fwd disable /opt/etc/fw.d/filebrowser_open"
+    if status == 1 then alert

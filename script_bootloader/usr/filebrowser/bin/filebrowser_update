@@ -22,7 +22,7 @@ SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+PRIVATE_ROOT=${SBL_SYS_USR}/filebrowser
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
@@ -32,13 +32,13 @@ PRIVATE_BIN=${PRIVATE_ROOT}/bin
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR=${PRIVATE_ROOT}/usr
 #
-# LATEST_VERSION: Version of the latest v2ray-core
-# 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/v2ray/v2ray-core/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
+# LATEST_VERSION: Version of the latest filebrowser
+# 设置自定义变量LATEST_VERSION为最新版filebrowser的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/filebrowser/filebrowser/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
 #
-# CURRENT_VERSION: Version of the current v2ray-core
-# 设置自定义变量CURRENT_VERSION为当前v2ray-core的版本号
-CURRENT_VERSION=$(${PRIVATE_USR}/v2ray -version | /opt/bin/sed -E -n -e 's/.*[[:space:]]+([[:digit:]\.]*)[[:space:]]+.*/v\1/p' 2> /dev/null)
+# CURRENT_VERSION: Version of the current filebrowser
+# 设置自定义变量CURRENT_VERSION为当前filebrowser的版本号
+CURRENT_VERSION=$(${PRIVATE_USR}/filebrowser version | /opt/bin/sed -E -e 's/.*(v[[:digit:].]*).*/\1/')
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -51,14 +51,11 @@ case $(/opt/bin/uname -m) in
         ROUTER_ARCHITECTURE="arm64"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="arm"
-        #
-        # When v4.21.4/4.22 final comes out, enable this modification
-        #ROUTER_ARCHITECTURE="arm5"
+        ROUTER_ARCHITECTURE="armv5"
         ;;
-    "mips")
-        ROUTER_ARCHITECTURE="mipsle"
-        ;;
+    #"mips")
+    #    ROUTER_ARCHITECTURE="mipsle"
+    #    ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
@@ -68,13 +65,13 @@ case $(/opt/bin/uname -m) in
         ;;
 esac
 #
-# DOWNLOAD_LINK: Download link of the latest v2ray-core
-# 设置自定义变量DOWNLOAD_LINK为最新版v2ray-core的下载链接
-DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+# DOWNLOAD_LINK: Download link of the latest filebrowser
+# 设置自定义变量DOWNLOAD_LINK为最新版filebrowser的下载链接
+DOWNLOAD_LINK="https://github.com/filebrowser/filebrowser/releases/download/${LATEST_VERSION}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="V2RAY"
+SERVICE_NAME="FILE-BROWSER"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -90,7 +87,7 @@ SERVICE_FUNCTION="UPGRADE"
 ########## END ##########
 #
 #
-########## UPGRADE V2RAY ##########
+########## UPGRADE FILE-BROWSER ##########
 #
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
@@ -113,12 +110,12 @@ else
         then
             /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
             #
-            # Remove vestigial v2ray-core package
-            # 删除遗留的v2ray-core包
-            /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
+            # Remove vestigial filebrowser package
+            # 删除遗留的filebrowser包
+            /opt/bin/rm -f ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz > /dev/null 2>&1
             #
-            # Download v2ray-core
-            # 下载v2ray-core
+            # Download filebrowser package
+            # 下载filebrowser包
             /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
             #
             # Remove previous backup
@@ -129,28 +126,17 @@ else
             # 备份旧版本
             /opt/bin/mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
             #
-            # Create directory v2ray
-            # 创建v2ray目录
-            /opt/bin/mkdir ${PRIVATE_USR}/
+            # Create directory ${PRIVATE_USR}
+            # 创建${PRIVATE_USR}目录
+            /opt/bin/mkdir ${PRIVATE_USR}
             #
-            # Unzip v2ray-core package
-            # 解压v2ray-core包
-            /opt/bin/unzip ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip -d ${PRIVATE_USR}/
+            # Unzip filebrowser package
+            # 解压filebrowser包
+            /opt/bin/tar -xzvf ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz -C ${PRIVATE_USR}/
             #
-            # Remove v2ray-core package
-            # 删除v2ray-core包
-            /opt/bin/rm -f ${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip > /dev/null 2>&1
-            #
-            # Change the mode of the files
-            # 更改文件权限
-            /opt/bin/chmod 644 ${PRIVATE_USR}/vpoint*
-            /opt/bin/chmod 555 ${PRIVATE_USR}/v2*
-            /opt/bin/chmod 644 ${PRIVATE_USR}/geosite.dat
-            /opt/bin/chmod 755 ${PRIVATE_USR}/geoip.dat
-            #
-            # Configure monit
-            # 配置monit
-            /opt/bin/monit reload
+            # Remove filebrowser package
+            # 删除filebrowser包
+            /opt/bin/rm -f ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz > /dev/null 2>&1
             #
             /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
             #

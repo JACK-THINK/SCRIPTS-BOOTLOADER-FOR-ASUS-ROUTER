@@ -1,0 +1,192 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL=$(nvram get model)
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+#
+# ENTWARE_FWD: The directory which contains all the configuration files used by fwd
+# 设置自定义变量ENTWARE_FWD为fwd配置文件目录
+ENTWARE_FWD=${ENTWARE_ETC}/fw.d
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT=${SBL_SYS_USR}/filebrowser
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN=${PRIVATE_ROOT}/bin
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC=${PRIVATE_ROOT}/etc
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR=${PRIVATE_ROOT}/usr
+#
+# LATEST_VERSION: Version of the latest filebrowser
+# 设置自定义变量LATEST_VERSION为最新版filebrowser的版本号
+LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/filebrowser/filebrowser/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM=$(/opt/bin/uname | /opt/bin/sed 's/L/l/g')
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case $(/opt/bin/uname -m) in
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="armv5"
+        ;;
+    #"mips")
+    #    ROUTER_ARCHITECTURE="mipsle"
+    #    ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        #
+        exit 3
+        ;;
+esac
+#
+# DOWNLOAD_LINK: Download link of the latest filebrowser
+# 设置自定义变量DOWNLOAD_LINK为最新版filebrowser的下载链接
+DOWNLOAD_LINK="https://github.com/filebrowser/filebrowser/releases/download/${LATEST_VERSION}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER=$(nvram get http_username)
+#
+# ADMINPASSWORD: The administrator's password of the router
+# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
+ADMINPASSWORD=$(nvram get http_passwd)
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="FILE-BROWSER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALLATION"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+#
+########## END ##########
+#
+#
+########## INSTALL FILE-BROWSER ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ $(which opkg) == "/opt/bin/opkg" ]
+then
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        #
+        # Remove vestigial filebrowser package
+        # 删除遗留的filebrowser包
+        /opt/bin/rm -f ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz > /dev/null 2>&1
+        #
+        # Download filebrowser package
+        # 下载filebrowser包
+        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+        #
+        # Create directory ${PRIVATE_USR}
+        # 创建${PRIVATE_USR}目录
+        /opt/bin/mkdir ${PRIVATE_USR}
+        #
+        # Unzip filebrowser package
+        # 解压filebrowser包
+        /opt/bin/tar -xzvf ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz -C ${PRIVATE_USR}/
+        #
+        # Remove filebrowser package
+        # 删除filebrowser包
+        /opt/bin/rm -f ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz > /dev/null 2>&1
+        #
+        # Configure filebrowser
+        # 配置filebrowser
+        ${PRIVATE_USR}/filebrowser --database "${PRIVATE_ETC}/database.db" config init --address "0.0.0.0" --branding.disableExternal --locale "zh-cn" --perm.admin --port "35248" --scope "/root/" --sorting.asc --sorting.by "name" --viewMode "list"
+        #
+        ${PRIVATE_USR}/filebrowser --database "${PRIVATE_ETC}/database.db" users add "${ADMINUSER}" "${ADMINPASSWORD}"
+        #
+        ${PRIVATE_USR}/filebrowser --database "${PRIVATE_ETC}/database.db" config export "${PRIVATE_ETC}/config.json"
+        #
+        # Configure fwd
+        # 配置fwd
+        /opt/bin/cp ${PRIVATE_ETC}/fw.d/filebrowser_open ${ENTWARE_FWD}/
+        #
+        # Configure monit
+        # 配置monit
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/filebrowser ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/filebrowser
+        /opt/bin/mv ${ENTWARE_MONITD}/filebrowser ${ENTWARE_MONITD}/filebrowser.on
+        #
+        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_filebrowser ${ENTWARE_MONITD}/
+        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser
+        /opt/bin/mv ${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser ${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser.on
+        #
+        /opt/bin/monit reload
+        #
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
+        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
+    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    #
+    exit 1
+fi
+#
+########## END ##########
