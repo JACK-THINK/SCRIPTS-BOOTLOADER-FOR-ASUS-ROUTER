@@ -105,6 +105,7 @@ updateFile()
     then
         /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: CONNECTION FAILED" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
         /opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+        /opt/bin/rm -rf ${SBL_SYS_UPDATE} > /dev/null 2>&1
         exit 2
     else
         if [ -e "${SBL_SYS_ROOT}/${1}" ]
@@ -173,6 +174,13 @@ removeFile()
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
 /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${LATEST_FINGERPRINT}" "${DOWNLOAD_LINK_PREFIX}/var/update/sys_update_fingerprint_current"
+if [ $(/opt/bin/cat ${LATEST_FINGERPRINT} | /opt/bin/wc -l) -lt 100 ]
+then
+    /opt/bin/echo -e "\033[1;41;37mFAILED\033[0m: CONNECTION FAILED" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+    /opt/bin/echo -e "\n########## END ##########\n" | /opt/bin/tee -a ${SBL_UPDATE_LOG}
+    /opt/bin/rm -rf ${SBL_SYS_UPDATE} > /dev/null 2>&1
+    exit 2
+fi
 #
 # Compare SHA256 of ${LATEST_FINGERPRINT} and SHA256 of ${CURRENT_FINGERPRINT}
 # 比较${LATEST_FINGERPRINT}和${CURRENT_FINGERPRINT}的SHA256
@@ -246,7 +254,9 @@ else
         #
         # Update system update fingerprint of SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
         # 更新SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统更新指纹
-        /opt/bin/mv ${LATEST_FINGERPRINT} ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+        /opt/bin/rm -f "${CURRENT_FINGERPRINT}_prev" > /dev/null 2>&1
+        /opt/bin/mv "${CURRENT_FINGERPRINT}" "${CURRENT_FINGERPRINT}_prev" > /dev/null 2>&1
+        /opt/bin/mv "${LATEST_FINGERPRINT}" "${CURRENT_FINGERPRINT}" > /dev/null 2>&1
         #
     else
         # Do nothing but prompt the user
@@ -254,6 +264,10 @@ else
         /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
         /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
         /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        #
+        # Remove all the temporary files
+        # 删除全部临时文件
+        /opt/bin/rm -rf ${SBL_SYS_UPDATE} > /dev/null 2>&1
         #
         exit 1
     fi
