@@ -16,6 +16,7 @@
 3. 更新restore
 4. 更新addons_install
 5. 更新gotee
+6. 更新fwd，修复bugs
 
 #### 删除
 

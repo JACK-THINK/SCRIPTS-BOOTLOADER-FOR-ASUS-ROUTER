@@ -766,7 +766,7 @@ then
 else
     #
     # 设置自定义局部变量ACTION为位置参数1的小写值
-    local ACTION="$(/opt/bin/echo ${1} | /opt/bin/tr '[:upper:]' '[:lower:]')"
+    ACTION="$(/opt/bin/echo ${1} | /opt/bin/tr '[:upper:]' '[:lower:]')"
     #
     # 根据自定义局部变量ACTION的值进行后续操作
     case "${ACTION}" in
