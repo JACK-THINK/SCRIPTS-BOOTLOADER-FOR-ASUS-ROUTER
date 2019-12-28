@@ -48,6 +48,8 @@ if [ ! -s /tmp/gohash ] || \
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
@@ -59,6 +61,18 @@ wget -q -c -t 10 -T 120 -O /tmp/sys_update_fingerprint_current --no-check-certif
 # 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
 CURRENT_FINGERPRINT=/tmp/sys_update_fingerprint_current
 #
+# Check integrity of ${CURRENT_FINGERPRINT}
+# 检查文件${CURRENT_FINGERPRINT}的完整性
+if [ $(cat ${CURRENT_FINGERPRINT} | wc -l) -lt 100 ]
+then
+    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
+    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
+    exit 5
+fi
+#
 # Check integrity of /tmp/install_online
 # 检查文件/tmp/install_online的完整性
 if [ ! -s /tmp/install_online ] || \
@@ -66,6 +80,9 @@ if [ ! -s /tmp/install_online ] || \
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
@@ -80,6 +97,10 @@ if [ ! -s /tmp/prerequisite_checker ] || \
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
@@ -96,6 +117,10 @@ chmod 777 /tmp/prerequisite_checker
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 2
 fi
 #
@@ -129,6 +154,10 @@ do
             ;;
         "N" | "n" | "NO" | "no" | "No")
             echo "($(basename $0)): $$ ***** STOP INSTALLATION *****"
+            rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+            rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+            rm -f /tmp/gohash > /dev/null 2>&1
+            rm -f /tmp/install_online > /dev/null 2>&1
             exit 3
             ;;
         *)
@@ -153,6 +182,11 @@ if [ ! -s /tmp/drive_modifier ] || \
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/drive_modifier > /dev/null 2>&1
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
@@ -169,6 +203,11 @@ chmod 777 /tmp/drive_modifier
 if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/drive_modifier > /dev/null 2>&1
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 4
 fi
 #
@@ -192,15 +231,21 @@ USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DR
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
 wget -c -t 10 -T 120 -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 #
-if [ ! -s '/tmp/sbl_download_link.html' ]
+if [ ! -s '/tmp/sbl_download_link.html' ] || \
+[ $(cat ${CURRENT_FINGERPRINT} | wc -l) -lt 20 ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
+    rm -f /tmp/drive_modifier > /dev/null 2>&1
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
 DOWNLOAD_LINK=$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' /tmp/sbl_download_link.html 2> /dev/null)
-rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
 #
 # NAME OF THE ARCHIVE
 # 设置自定义变量ARCHIVE_NAME为包文件名
@@ -227,6 +272,13 @@ if [ ! -s "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
 then
     echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
+    rm -f /tmp/drive_modifier > /dev/null 2>&1
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #
@@ -238,6 +290,13 @@ if [ ${?} -ne 0 ]
 then
     echo "($(basename $0)): $$ ***** ${ARCHIVE_NAME} IS CORRUPT *****"
     echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+    rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
+    rm -f /tmp/drive_modifier > /dev/null 2>&1
+    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
+    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
+    rm -f /tmp/gohash > /dev/null 2>&1
+    rm -f /tmp/install_online > /dev/null 2>&1
     exit 5
 fi
 #

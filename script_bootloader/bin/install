@@ -276,10 +276,12 @@ echo "($(basename $0)): $$ ***** PUBLIC DIRECTORIES HAVE BEEN CREATED *****"
 #
 # Create Personal directories
 # 创建私有目录
+mkdir ${USB_MOUNT_POINT}/home/root/Developments
 mkdir ${USB_MOUNT_POINT}/home/root/Documents
 mkdir ${USB_MOUNT_POINT}/home/root/Downloads
 mkdir ${USB_MOUNT_POINT}/home/root/Music
 mkdir ${USB_MOUNT_POINT}/home/root/Pictures
+mkdir ${USB_MOUNT_POINT}/home/root/Shared
 mkdir ${USB_MOUNT_POINT}/home/root/Videos
 echo "($(basename $0)): $$ ***** PERSONAL DIRECTORIES HAVE BEEN CREATED *****"
 #
