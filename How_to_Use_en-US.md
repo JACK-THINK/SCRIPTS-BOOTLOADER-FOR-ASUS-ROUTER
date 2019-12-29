@@ -114,6 +114,10 @@
 
 ## Installation (Offline)
 
+> **NOTICE**
+>
+> 1. In all the instances of `SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0` below, the version part `15.0-15.0` can vary when the system gets updates. Please replace it with the latest version number. Plus, you can auto-complete this part by hitting key \<Tab\>.
+
 1. Insert a USB flash drive with no files into a USB port of the Router.
 
 2. Login the router with ssh client.
