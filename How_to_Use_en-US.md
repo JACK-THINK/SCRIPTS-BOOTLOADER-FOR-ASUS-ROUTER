@@ -112,7 +112,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
 
-## Installation (Manual)
+## Installation (Offline)
 
 1. Insert a USB flash drive with no files into a USB port of the Router.
 
@@ -120,7 +120,7 @@
 
 3. Download the latest installation package from Github and upload it to `/tmp/home/root` of the router.
 
-   ![](./Documents_Assets/How_to_Use/install/manual_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/offline_step3.jpg)
 
 4. Execute the code below to unzip the installation package.
 

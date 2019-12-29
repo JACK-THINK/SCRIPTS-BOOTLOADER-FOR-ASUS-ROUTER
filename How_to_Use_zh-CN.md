@@ -112,7 +112,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
 
-## 手动安装
+## 离线安装
 
 1. 准备一个空白U盘，插入路由器USB接口
 
@@ -120,7 +120,7 @@
 
 3. 下载最新版安装包，并将其上传至路由器`/tmp/home/root`
 
-   ![](./Documents_Assets/How_to_Use/install/manual_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/offline_step3.jpg)
 
 4. 执行下列代码，解压安装包
 
