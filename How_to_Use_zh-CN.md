@@ -31,7 +31,7 @@
 3. 执行下列代码
 
    ```shell
-   cd /tmp && wget -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
+   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
    ![](./Documents_Assets/How_to_Use/install/online_step3.jpg)
@@ -42,7 +42,7 @@
 
 5. 安装过程开始
 
-   - 格式化U盘
+   - 重新分区并格式化U盘
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-1.jpg)
 
@@ -50,51 +50,132 @@
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-2.jpg)
 
-   - **阶段一**：设置路由器
+   - 创建安装日志
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-3.jpg)
+
+   - **阶段一**：设置路由器
+
+     ![](./Documents_Assets/How_to_Use/install/online_step5-4.jpg)
 
    - **阶段二**：安装系统必备程序
 
      - 安装并启用虚拟内存（512M）
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-4.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-5.jpg)
 
      - 安装并启用entware
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-5.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-6.jpg)
 
      - 安装并启用timezone
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-6.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-7.jpg)
 
      - 安装并启用dependency
 
        > 在此过程中，会出现少量黄字/红字警告，这是正常现象
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-7.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-8.jpg)
 
      - 安装并启用monit
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-8.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-9.jpg)
 
      - 安装并启用dnsmasq.d
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-9.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-10.jpg)
+
+     - 安装fwd
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
+
+     - 注册用户自定义插件（无需监控类型）
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
      - 阶段二完成
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-10.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13.jpg)
 
    - **阶段三**：安装用户可选插件
 
      - 阅读插件菜单，输入插件编号，安装对应插件
 
-       ![](./Documents_Assets/How_to_Use/install/online_step6-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14.jpg)
+
+     - 插件安装成功，安装下一个插件
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
 
      - 全部插件安装完毕后，输入`0`，退出安装程序并重启路由器
 
-       ![](./Documents_Assets/How_to_Use/install/online_step6-2.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
+
+## 手动安装
+
+1. 准备一个空白U盘，插入路由器USB接口
+
+2. 用ssh登陆路由器后台
+
+3. 下载最新版安装包，并将其上传至路由器`/tmp/home/root`
+
+   ![](./Documents_Assets/How_to_Use/install/manual_step3.jpg)
+
+4. 执行下列代码，解压安装包
+
+   ```shell
+   cd /tmp/home/root
+   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
+   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
+   ```
+
+5. 执行下列代码，将文件移动至指定位置并修改程序权限
+
+   ```shell
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/script_bootloader/ ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/
+   chmod -R 777 script_bootloader/
+   cp script_bootloader/bin/prerequisite_checker /tmp/
+   cp script_bootloader/bin/drive_modifier /tmp/
+   cd /tmp
+   ```
+
+6. 执行下列代码，检查安装环境。如无输出，则表示通过
+
+   ```shell
+   /tmp/prerequisite_checker
+   ```
+
+7. 执行下列代码，重新分区并格式化U盘
+
+   ```shell
+   /tmp/drive_modifier
+   ```
+
+8. 执行下列代码，将文件移动至指定位置
+
+   ```shell
+   mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER/
+   ```
+
+9. 执行下列代码，开始安装
+
+   ```shell
+   /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install
+   ```
+
+10. （可选）如果固件中没有`tee`命令，则安装程序会在输出`***** STAGE 3: INSTALL ADDONS *****`后自动退出。执行下列代码，安装插件
+
+   ```shell
+   /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/addons_install
+   ```
+
+11. 全部插件安装完毕后，执行下列代码，重启路由器
+
+   ```shell
+   reboot
+   ```
 
 ## 修改程序
 
@@ -130,7 +211,7 @@
 
 3. 启用/禁用特定插件
 
-   - 启用插件：删除插件路径前的`#`
+   - 启用插件：在插件路径前删除`#`
    - 禁用插件：在插件路径前插入`#`
 
    ![](./Documents_Assets/How_to_Use/services_once/step4.jpg)
@@ -147,13 +228,15 @@
 
 1. 用ssh登陆路由器后台
 
-   ![](./Documents_Assets/How_to_Use/uninstall/step1.jpg)
+   ![](./Documents_Assets/How_to_Use/update/step1.jpg)
 
 2. 执行下列代码升级本系统
 
    ```shell
    cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/update
    ```
+
+   ![](./Documents_Assets/How_to_Use/update/step2.jpg)
 
 ## 卸载
 
