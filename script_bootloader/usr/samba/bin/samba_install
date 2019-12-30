@@ -38,7 +38,13 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 # COMPUTER_NAME: The computer_name defined in nvram
 # 设置自定义变量COMPUTER_NAME为nvram中定义的computer_name
-COMPUTER_NAME="$(nvram get computer_name)"
+COMPUTER_NAME="$(nvram get computer_name 2> /dev/null)"
+if [ -z "${COMPUTER_NAME}" ]
+then
+    COMPUTER_NAME="${ROUTER_MODEL}"
+    nvram set computer_name="${COMPUTER_NAME}"
+    nvram commit
+fi
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
