@@ -87,7 +87,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 ## More materials
 
-[How to use](./How_to_Use_en-US.md)
+[How to use](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions)
 
 [Changelog](./ChangeLog_en-US.md)
 
