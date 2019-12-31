@@ -122,7 +122,7 @@
 
 2. 用ssh登陆路由器后台
 
-3. 下载最新版安装包，并将其上传至路由器`/tmp/home/root`
+3. 下载最新版安装包（[国内下载地址](./Download_link_for_offline_installation)），并将其上传至路由器`/tmp/home/root`
 
    ![](./Documents_Assets/How_to_Use/install/offline_step3.jpg)
 
