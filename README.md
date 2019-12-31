@@ -87,7 +87,7 @@
 
 ## 更多资料
 
-[使用说明](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引)
+[使用说明索引](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引)
 
 [更新日志](./ChangeLog_zh-CN.md)
 
