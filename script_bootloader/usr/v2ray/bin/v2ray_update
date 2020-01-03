@@ -52,9 +52,6 @@ case $(/opt/bin/uname -m) in
         ;;
     "armv7l")
         ROUTER_ARCHITECTURE="arm"
-        #
-        # When v4.21.4/4.22 final comes out, enable this modification
-        #ROUTER_ARCHITECTURE="arm5"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
