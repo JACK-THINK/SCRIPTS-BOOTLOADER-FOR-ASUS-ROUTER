@@ -48,7 +48,7 @@ sleep 10
 # Re-partition /dev/${USB_DEVICE}
 # 重新分区/dev/${USB_DEVICE}
 echo "($(basename $0)): $$ ***** RE-PARTITION THE USB FLASH DRIVE *****"
-echo -ne "p\no\nn\np\n1\n\n\np\nw\n" | fdisk "/dev/${USB_DEVICE}"
+echo -ne "u\np\no\nn\np\n1\n2048\n\np\nw\n" | fdisk "/dev/${USB_DEVICE}"
 #
 if [ ${?} -ne 0 ]
 then
