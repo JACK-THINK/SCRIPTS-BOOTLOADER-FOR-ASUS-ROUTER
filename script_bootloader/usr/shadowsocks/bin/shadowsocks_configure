@@ -74,10 +74,10 @@ case ${#} in
                     break
                     ;;
                 "client")
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: IP address of remote shadowsocks server"
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: IP address or domain name of remote shadowsocks server"
                     doubleCheckAndConfirm SERVER_ADDRESS
                     #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER PORT\033[0m: listening port of remote shadowsocks server"
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER PORT\033[0m: port of remote shadowsocks server"
                     doubleCheckAndConfirm SERVER_PORT
                     #
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of remote shadowsocks server"

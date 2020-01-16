@@ -71,10 +71,10 @@ case ${#} in
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mWAN INBOUND SS PASSWORD\033[0m: shadowsocks password used to connect router from Internet"
                     doubleCheckAndConfirm WAN_INBOUND_SS_PASSWORD
                     #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mIP OR DOMAIN OF V2RAY SERVER\033[0m: IP address or domain name of remote v2ray server"
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: IP address or domain name of remote v2ray server"
                     doubleCheckAndConfirm IP_OR_DOMAIN_OF_V2RAY_SERVER
                     #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPORT OF V2RAY SERVER\033[0m: port of remote v2ray server"
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER PORT\033[0m: port of remote v2ray server"
                     doubleCheckAndConfirm PORT_OF_V2RAY_SERVER
                     #
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOUTBOUND VMESS ID\033[0m: vmess ID used to connect remote v2ray server"
@@ -92,7 +92,7 @@ case ${#} in
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mWAN INBOUND SS PASSWORD\033[0m: shadowsocks password used to connect router from Internet"
                     doubleCheckAndConfirm WAN_INBOUND_SS_PASSWORD
                     #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mDOMAIN OF V2RAY SERVER\033[0m: domain name of remote v2ray server"
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: domain name of remote v2ray server"
                     doubleCheckAndConfirm DOMAIN_OF_V2RAY_SERVER
                     #
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOUTBOUND VMESS ID\033[0m: vmess ID used to connect remote v2ray server"
