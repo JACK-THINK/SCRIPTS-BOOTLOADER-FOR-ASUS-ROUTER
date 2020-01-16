@@ -3,7 +3,6 @@
 ## 概述
 
 1. 本插件用于安装、启动和结束ariang
-2. 默认端口：18914
 
 ## 安装前提
 
@@ -23,8 +22,8 @@
 
 | 权限      | 名称                   | 属性     | 说明                           |
 | --------- | ---------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | ariang_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | ariang_update          | 普通文件 | 升级文件                       |
+| rwxrwxrwx | ariang_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | ariang_update          | 普通文件 | 升级程序                       |
 | rwxrwxrwx | ariang_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ariang_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -59,3 +58,9 @@
 | ---------------------- | -------------- |
 | ariang_enable.service  | monit.d/ariang |
 | ariang_disable.service | monit.d/ariang |
+
+## 使用方法
+
+> Web页面登陆地址：http://<路由器IP地址>:18914
+>
+> 下载目录：`/opt/home/root/Downloads`

@@ -6,7 +6,7 @@
 
 ## 安装前提
 
-1. 必须安装并启用entware和monit
+1. 必须安装并启用entware
 
 ## 文件结构
 
@@ -22,7 +22,7 @@
 
 | 权限      | 名称             | 属性     | 说明     |
 | --------- | ---------------- | -------- | -------- |
-| rwxrwxrwx | ipmitool_install | 普通文件 | 安装文件 |
+| rwxrwxrwx | ipmitool_install | 普通文件 | 安装程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/ipmitool/alternative/`
 

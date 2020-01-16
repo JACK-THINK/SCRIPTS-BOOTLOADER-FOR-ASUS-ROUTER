@@ -5,9 +5,9 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# The environment variables needed by aliyun
-# aliyun所需的环境变量
-export HOME='/root'
+# The environment variables needed by aliyun-cli
+# aliyun-cli所需的环境变量
+export HOME="/root"
 #
 # Public parameters
 # 公共参数
@@ -26,9 +26,24 @@ TYPE="A"
 # Parameters for UpdateDomainRecord
 # UpdateDomainRecord所需参数
 RR="${RR_KEY_WORD}"
-RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName ${DOMAIN_NAME} --RRKeyWord ${RR_KEY_WORD} --Type ${TYPE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"RecordId\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)"
+RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName "${DOMAIN_NAME}" --RRKeyWord "${RR_KEY_WORD}" --Type "${TYPE}" --mode "${MODE}" --access-key-id "${ACCESS_KEY_ID}" --access-key-secret "${ACCESS_KEY_SECRET}" --language "${LANGUAGE}" --region "${REGION}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"RecordId\":[[:space:]]*\"(.*)\".*/\1/p')"
 TYPE="A"
 VALUE="8.8.8.8"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ALI_DDNS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -37,13 +52,22 @@ VALUE="8.8.8.8"
 #
 # Update Domain Record in type A
 # 更新域名A记录
-/opt/bin/aliyun alidns UpdateDomainRecord --RR ${RR} --RecordId ${RECORD_ID} --Type ${TYPE} --Value ${VALUE} --mode ${MODE} --access-key-id ${ACCESS_KEY_ID} --access-key-secret ${ACCESS_KEY_SECRET} --language ${LANGUAGE} --region ${REGION} --quiet > /dev/null 2>&1
+/opt/bin/aliyun alidns UpdateDomainRecord --RR "${RR}" --RecordId "${RECORD_ID}" --Type "${TYPE}" --Value "${VALUE}" --mode "${MODE}" --access-key-id "${ACCESS_KEY_ID}" --access-key-secret "${ACCESS_KEY_SECRET}" --language "${LANGUAGE}" --region "${REGION}" --quiet
 #
 ########## END ##########
 #
 #
 ########## STOP SERVICE ##########
 #
-/opt/bin/monit stop ALI_DDNS
+/opt/bin/monit unmonitor "ALI_DDNS"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

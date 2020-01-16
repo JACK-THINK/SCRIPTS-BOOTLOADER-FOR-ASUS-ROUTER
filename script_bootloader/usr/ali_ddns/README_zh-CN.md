@@ -9,7 +9,7 @@
 
 ## 安装前提
 
-1. 必须安装并启用entware、monit和aliyun
+1. 必须安装并启用entware、monit和aliyun-cli
 
 ## 文件结构
 

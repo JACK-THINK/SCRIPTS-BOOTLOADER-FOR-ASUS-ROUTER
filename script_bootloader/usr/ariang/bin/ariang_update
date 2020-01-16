@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,35 +14,35 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/ariang
+PRIVATE_ROOT="${SBL_SYS_USR}/ariang"
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${PRIVATE_ROOT}/bin
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # PRIVATE_SITE: The directory which contains the site related to this program
 # 设置自定义变量PRIVATE_SITE为此程序站点目录
-PRIVATE_SITE=${USB_MOUNT_POINT}/www/ariang
+PRIVATE_SITE="${USB_MOUNT_POINT}/www/ariang"
 #
 # LATEST_VERSION: Version of the latest ariang
 # 设置自定义变量LATEST_VERSION为最新版ariang的版本号
-LATEST_VERSION=$(/opt/bin/curl -s https://api.github.com/repos/mayswind/AriaNg/releases/latest | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p' 2> /dev/null)
+LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/mayswind/AriaNg/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
 #
 # CURRENT_VERSION: Version of the current ariang
 # 设置自定义变量CURRENT_VERSION为当前ariang的版本号
-CURRENT_VERSION=$(/opt/bin/sed -E -n -e 's/.*buildVersion:\"v([[:digit:]\.]*)\".*/\1/p' ${PRIVATE_SITE}/index.html 2> /dev/null)
+CURRENT_VERSION="$(/opt/bin/sed -E -n -e 's/.*buildVersion:\"v([[:digit:]\.]*)\".*/\1/p' ${PRIVATE_SITE}/index.html)"
 #
 # DOWNLOAD_LINK: Download link of the latest ariang
 # 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接
@@ -61,7 +61,7 @@ SERVICE_FUNCTION="UPGRADE"
 #
 ########## NOTIFICATION ##########
 #
-/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -70,68 +70,68 @@ SERVICE_FUNCTION="UPGRADE"
 #
 if [ "${CURRENT_VERSION}" == "${LATEST_VERSION}" ]
 then
-    /opt/bin/echo -e "***** YOU HAVE ALREADY INSTALLED THE LATEST VERSION *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: YOU HAVE ALREADY INSTALLED THE LATEST VERSION"
+    #
     exit 9
     #
 else
-    /opt/bin/echo "($(basename $0)): $$ ***** A NEW VERSION HAS BEEN FOUND *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** UPGRADING ... *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: A NEW VERSION HAS BEEN FOUND"
     #
     # Check if ENTWARE_ENABLE SERVICE has been loaded
     # 检查ENTWARE_ENABLE SERVICE是否已启用
-    if [ $(which opkg) == "/opt/bin/opkg" ]
+    if [ "$(which opkg)" == "/opt/bin/opkg" ]
     then
-        /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
         #
         # Check if MONIT MANAGEMENT SYSTEM has been deployed
         # 检查MONIT MANAGEMENT SYSTEM是否已部署
         if [ -e "/opt/bin/monit" ]
         then
-            /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
             #
             # Remove vestigial ariang package
             # 删除遗留的ariang包
-            /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+            /opt/bin/rm -f "${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip"
             #
             # Download ariang
             # 下载ariang
-            /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_BIN} ${DOWNLOAD_LINK}
+            /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
             #
             # Remove previous backup
             # 删除旧备份
-            /opt/bin/rm -rf ${PRIVATE_ROOT}/usr_prev/ > /dev/null 2>&1
+            /opt/bin/rm -rf "${PRIVATE_ROOT}/usr_prev"
             #
             # Back up previous edition
             # 备份旧版本
-            /opt/bin/mv ${PRIVATE_USR} ${PRIVATE_ROOT}/usr_prev/
+            /opt/bin/mv -f "${PRIVATE_USR}" "${PRIVATE_ROOT}/usr_prev"
             #
             # Create directory ${PRIVATE_USR}
             # 创建${PRIVATE_USR}目录
-            /opt/bin/mkdir ${PRIVATE_USR}/
+            /opt/bin/mkdir "${PRIVATE_USR}"
             #
             # Unzip ariang package
             # 解压ariang包
-            /opt/bin/unzip ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip -d ${PRIVATE_USR}/
+            /opt/bin/unzip "${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip" -d "${PRIVATE_USR}"
             #
             # Remove ariang package
             # 删除ariang包
-            /opt/bin/rm -f ${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip > /dev/null 2>&1
+            /opt/bin/rm -f "${PRIVATE_BIN}/AriaNg-${LATEST_VERSION}-AllInOne.zip"
             #
             # Configure ariang
             # 配置ariang
-            /opt/bin/rm -f ${PRIVATE_SITE}/index.html > /dev/null 2>&1
-            /opt/bin/cp ${PRIVATE_USR}/index.html ${PRIVATE_SITE}/index.html > /dev/null 2>&1
+            /opt/bin/rm -f "${PRIVATE_SITE}/index.html"
+            /opt/bin/cp -f "${PRIVATE_USR}/index.html" "${PRIVATE_SITE}/index.html"
             #
-            /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #
             exit 0
             #
         else
             # Do nothing but prompt the user
             # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-            /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-            /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-            /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #
             exit 2
         fi
@@ -139,9 +139,9 @@ else
     else
         # Do nothing but prompt the user
         # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 1
     fi

@@ -2,11 +2,10 @@
     "server":"<Shadowsocks服务器的IP地址或域名>",
     "server_port":"<Shadowsocks服务器的监听端口>",
     "local_address":"0.0.0.0",
-    "local_port":"<本地监听端口>",
+    "local_port":"1081",
     "password":"<密码>",
     "method":"aes-256-gcm",
     "timeout":60,
-    "tunnel_address":"8.8.8.8:53",
     "mode":"tcp_and_udp",
     "plugin":"obfs-local",
     "plugin_opts":"obfs=http;obfs-host=www.bing.com"

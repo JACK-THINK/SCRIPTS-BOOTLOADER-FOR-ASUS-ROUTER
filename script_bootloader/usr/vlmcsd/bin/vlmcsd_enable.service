@@ -7,19 +7,35 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/vlmcsd
+PRIVATE_ROOT="${SBL_SYS_USR}/vlmcsd"
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
+#
+# VLMCSD_PID_FILE: The path to vlmcsd.pid
+# 设置自定义变量VLMCSD_PID_FILE为文件vlmcsd.pid的绝对路径
+VLMCSD_PID_FILE="/var/run/vlmcsd.pid"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -34,7 +50,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -45,18 +61,30 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查文件${PRIVATE_USR}/vlmcsd是否存在
 if [ -e "${PRIVATE_USR}/vlmcsd" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Load the defined external program
     # 如果两个文件都存在，则执行
-    ${PRIVATE_USR}/vlmcsd -p /var/run/vlmcsd.pid
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    if [ -e "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" ]
+    then
+        /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" "${ENTWARE_DNSMASQD}"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: KMS AUTO DISCOVERY IS SET"
+    else
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: KMS AUTO DISCOVERY CAN'T BE SET"
+    fi
+    #
+    "${PRIVATE_USR}/vlmcsd" -p "${VLMCSD_PID_FILE}"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果两个文件不同时存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
 fi
 #
 ########## END ##########

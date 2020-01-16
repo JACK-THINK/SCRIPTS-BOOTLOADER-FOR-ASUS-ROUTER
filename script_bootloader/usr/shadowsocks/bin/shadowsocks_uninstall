@@ -1,0 +1,181 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL="$(nvram get model)"
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
+#
+# ENTWARE_FWD: The directory which contains all the configuration files used by fwd
+# 设置自定义变量ENTWARE_FWD为fwd配置文件目录
+ENTWARE_FWD="${ENTWARE_ETC}/fw.d"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/shadowsocks"
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SHADOWSOCKS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UNINSTALL"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
+########## END ##########
+#
+#
+########## UNINSTALL SHADOWSOCKS ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
+then
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Check if ${SERVICE_NAME} has been installed
+        # 检查${SERVICE_NAME}是否已安装
+        if [ ! -e "/opt/bin/ss-local" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${SERVICE_NAME} IS NOT INSTALLED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 3
+        fi
+        #
+        # Stop SHADOWSOCKS service
+        # 停止SHADOWSOCKS服务
+        /opt/bin/monit stop "SS_LOCAL" > /dev/null 2>&1
+        /opt/bin/monit stop "SS_REDIR" > /dev/null 2>&1
+        /opt/bin/monit stop "SS_SERVER" > /dev/null 2>&1
+        /opt/bin/monit stop "SS_TUNNEL" > /dev/null 2>&1
+        /opt/bin/monit stop "SS_TRANSPARENT_PROXY_OVERTURE" > /dev/null 2>&1
+        #
+        # Wait until SHADOWSOCKS service is terminated
+        # 等待直至SHADOWSOCKS service被终止
+        while [ -n "$(pidof ss-local)" ] || [ -n "$(pidof ss-redir)" ] || [ -n "$(pidof ss-server)" ] || [ -n "$(pidof ss-tunnel)" ]
+        do
+            /opt/bin/sleep 5
+        done
+        #
+        # Uninstall overture
+        # 卸载overture
+        "${SBL_SYS_USR}/overture/bin/overture_uninstall"
+        if [ ${?} -ne 0 ]
+        then
+            exit 7
+        fi
+        #
+        # Enable /opt/etc/init.d/S*shadowsocks
+        # 启用/opt/etc/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^ENABLED=no/d' /opt/etc/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^#ENABLED=.*/s/#//' /opt/etc/init.d/S*shadowsocks
+        #
+        # Configure shadowsocks
+        # 配置shadowsocks
+        /opt/bin/rm -f "${PRIVATE_ETC}/config_local.json"
+        /opt/bin/rm -f "${PRIVATE_ETC}/config_redir.json"
+        /opt/bin/rm -f "${PRIVATE_ETC}/config_server.json"
+        /opt/bin/rm -f "${PRIVATE_ETC}/config_tunnel.json"
+        #
+        # Uninstall haveged and simple-obfs
+        # 卸载haveged和simple-obfs
+        /opt/bin/opkg remove simple-obfs-server
+        /opt/bin/opkg remove simple-obfs
+        /opt/bin/opkg remove haveged
+        #
+        # Uninstall shadowsocks
+        # 卸载shadowsocks
+        /opt/bin/opkg remove shadowsocks-libev-ss-tunnel
+        /opt/bin/opkg remove shadowsocks-libev-ss-server
+        /opt/bin/opkg remove shadowsocks-libev-ss-rules
+        /opt/bin/opkg remove shadowsocks-libev-ss-redir
+        /opt/bin/opkg remove shadowsocks-libev-ss-local
+        /opt/bin/opkg remove shadowsocks-libev-config
+        #
+        # Configure fwd
+        # 配置fwd
+        /opt/bin/rm -f "${ENTWARE_FWD}/ss_server_open"
+        #
+        # Configure monit
+        # 配置monit
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_local.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_local"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_redir.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_redir"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_server.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_server"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/fw_filter_INPUT_ss_server.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/fw_filter_INPUT_ss_server"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_tunnel.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_tunnel"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog"
+        /opt/bin/monit reload
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
+fi
+#
+########## END ##########

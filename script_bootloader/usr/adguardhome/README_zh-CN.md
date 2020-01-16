@@ -27,8 +27,8 @@
 | 权限      | 名称                        | 属性     | 说明                           |
 | --------- | --------------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | bcrypt-tool                 | 目录     | bcrypt-tool加密工具目录        |
-| rwxrwxrwx | adguardhome_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | adguardhome_update          | 普通文件 | 升级文件（暂不可用）           |
+| rwxrwxrwx | adguardhome_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | adguardhome_update          | 普通文件 | 升级程序（暂不可用）           |
 | rwxrwxrwx | adguardhome_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | adguardhome_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -63,6 +63,6 @@
 >
 > 默认密码：路由器管理页面登陆密码
 >
-> 自定义同步服务器：http://<路由器IP地址>:14711
+> Web页面登陆地址：http://<路由器IP地址>:14711
 >
 > 工作目录：`/opt/script_bootloader/usr/adguardhome/etc/`

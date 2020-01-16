@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,35 +14,35 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
 # 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
-ENTWARE_DNSMASQD=${ENTWARE_ETC}/dnsmasq.d
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/vlmcsd
+PRIVATE_ROOT="${SBL_SYS_USR}/vlmcsd"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -50,14 +50,14 @@ SERVICE_NAME="VLMCSD"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -66,114 +66,113 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
-        #
-        # Check the architecture of the ASUS Router
-        # 检查华硕路由器架构
-        ROUTER_ARCHITECTURE=$(/opt/bin/uname -m)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #
         # Install vlmcsd according to the architecture of the ASUS Router
         # 根据路由器架构，自动安装适当版本的vlmcsd
-        if [ "${ROUTER_ARCHITECTURE}" == "armv7l" ] || [ "${ROUTER_ARCHITECTURE}" == "aarch64" ]
-        then
-            # Check if ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static exist
-            # 检查文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static是否存在
-            if [ -e "${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static" ]
-            then
-                # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
-                # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static存在，则执行
-                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcs
-                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static ${PRIVATE_USR}/vlmcsd
+        case "$(/opt/bin/uname -m)" in
+            "aarch64" | "armv7l")
+                # Check if ${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static exist
+                # 检查文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static是否存在
+                if [ -e "${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static" ]
+                then
+                    # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
+                    # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static存在，则执行
+                    /opt/bin/cp -fs "${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static" "${PRIVATE_USR}/vlmcs"
+                    /opt/bin/cp -fs "${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static" "${PRIVATE_USR}/vlmcsd"
+                    #
+                else
+                    # Do nothing but prompt the user
+                    # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static不存在，则执行
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                    #
+                    exit 4
+                fi
                 #
-            else
+                ;;
+            "mips")
+                # Check if ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static exist
+                # 检查文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static是否存在
+                if [ -e "${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static" ]
+                then
+                    # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
+                    # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static存在，则执行
+                    /opt/bin/cp -fs "${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static" "${PRIVATE_USR}/vlmcs"
+                    /opt/bin/cp -fs "${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static" "${PRIVATE_USR}/vlmcsd"
+                    #
+                else
+                    # Do nothing but prompt the user
+                    # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static不存在，则执行
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                    #
+                    exit 6
+                fi
+                #
+                ;;
+            *)
                 # Do nothing but prompt the user
-                # 如果文件${PRIVATE_USR}/vlmcsdmulti-armelv7-bcm47xx_53xx-openwrt-musl-static不存在，则执行
-                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+                # 如果路由器架构不符合上述三种情况，则执行
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
                 #
-                exit 4
-            fi
-            #
-        elif [ "${ROUTER_ARCHITECTURE}" == "mips" ]
-        then
-            # Check if ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static exist
-            # 检查文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static是否存在
-            if [ -e "${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static" ]
-            then
-                # Create two symbolic link files named ${PRIVATE_USR}/vlmcs and ${PRIVATE_USR}/vlmcsd
-                # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static存在，则执行
-                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcs
-                /opt/bin/cp -s ${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static ${PRIVATE_USR}/vlmcsd
-                #
-            else
-                # Do nothing but prompt the user
-                # 如果文件${PRIVATE_USR}/vlmcsdmulti-mips16el-asus-rt-n66u-uclibc-static不存在，则执行
-                /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-                #
-                exit 6
-            fi
-            #
-        else
-            # Do nothing but prompt the user
-            # 如果路由器架构不符合上述三种情况，则执行
-            /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-            /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
-            #
-            exit 3
-        fi
+                exit 3
+                ;;
+        esac
         #
-        # Check if ${PRIVATE_ETC}/dnsmasq.d exists
-        # 检查目录${PRIVATE_ETC}/dnsmasq.d是否存在
-        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
-        then
-            # Create ${PRIVATE_ETC}/dnsmasq.d
-            # 创建目录${PRIVATE_ETC}/dnsmasq.d
-            /opt/bin/mkdir ${PRIVATE_ETC}/dnsmasq.d
-        fi
-        #
-        LOCAL_DOMAIN_A=$(/opt/bin/sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)
-        LOCAL_DOMAIN_B=$(/opt/bin/sed -n -e 's/^domain=//p' ${ENTWARE_DNSMASQD}/dnsmasq_extended.conf)
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        LOCAL_DOMAIN_A="$(/opt/bin/sed -n -e 's/^domain=//p' /etc/dnsmasq.conf)"
+        LOCAL_DOMAIN_B="$(/opt/bin/sed -n -e 's/^domain=//p' "${ENTWARE_DNSMASQD}/dnsmasq_extended.conf")"
         #
         if [ -n "${LOCAL_DOMAIN_A}" ]
         then
+            if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+            then
+                /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+            fi
+            #
             LOCAL_DOMAIN="${LOCAL_DOMAIN_A}"
-            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
-            /opt/bin/cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf"
             #
         elif [ -n "${LOCAL_DOMAIN_B}" ]
         then
+            if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+            then
+                /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+            fi
+            #
             LOCAL_DOMAIN="${LOCAL_DOMAIN_B}"
-            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf
-            /opt/bin/cp ${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf ${ENTWARE_DNSMASQD}
+            /opt/bin/echo -e "srv-host=_vlmcs._tcp.${LOCAL_DOMAIN},${ROUTER_MODEL}.${LOCAL_DOMAIN},1688,0,100" > "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf"
             #
         else
-            /opt/bin/echo -ne "\033[1;41;37m***** ERROR: DOMAIN OF DNSMASQ IS MISSING *****\033[0m\n"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: DOMAIN OF DNSMASQ IS MISSING"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: KMS AUTO DISCOVERY CAN'T BE SET"
         fi
         #
         # Configure monit
         # 配置monit
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/vlmcsd ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/vlmcsd
-        /opt/bin/mv ${ENTWARE_MONITD}/vlmcsd ${ENTWARE_MONITD}/vlmcsd.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/vlmcsd" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/vlmcsd"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/vlmcsd" "${ENTWARE_MONITD}/vlmcsd.on"
         /opt/bin/monit reload
         #
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 2
     fi
@@ -181,9 +180,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi

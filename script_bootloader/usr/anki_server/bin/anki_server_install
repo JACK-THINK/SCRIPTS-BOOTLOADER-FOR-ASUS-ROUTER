@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,51 +14,51 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/anki_server
+PRIVATE_ROOT="${SBL_SYS_USR}/anki_server"
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${PRIVATE_ROOT}/bin
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # PRIVATE_VAR: The directory which contains all the variable files related to this program
 # 设置自定义变量PRIVATE_VAR为此程序可变文件目录
-PRIVATE_VAR=${PRIVATE_ROOT}/var
+PRIVATE_VAR="${PRIVATE_ROOT}/var"
 #
 # PY_VIRT_ENV: The directory which contains the python virtual environment of this program
 # 设置自定义变量PY_VIRT_ENV为此程序Python虚拟环境目录
-PY_VIRT_ENV=${PRIVATE_USR}/venv_ankiserver
+PY_VIRT_ENV="${PRIVATE_USR}/venv_ankiserver"
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER=$(nvram get http_username)
+ADMINUSER="$(nvram get http_username)"
 #
 # ADMINPASSWORD: The administrator's password of the router
 # 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
-ADMINPASSWORD=$(nvram get http_passwd)
+ADMINPASSWORD="$(nvram get http_passwd)"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -66,14 +66,14 @@ SERVICE_NAME="ANKI-SERVER"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -82,15 +82,15 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #
         # Update the list of available packages
         # 更新可用程序包列表
@@ -102,25 +102,25 @@ then
         #
         # Create virtual environment
         # 创建虚拟环境
-        /opt/bin/virtualenv -p /opt/bin/python2 ${PY_VIRT_ENV}
+        /opt/bin/virtualenv -p /opt/bin/python2 "${PY_VIRT_ENV}"
         #
         # Create directory ${PRIVATE_VAR}
         # 创建目录${PRIVATE_VAR}
-        /opt/bin/mkdir ${PRIVATE_VAR}
+        /opt/bin/mkdir "${PRIVATE_VAR}"
         #
         # Enter virtual environment
         # 进入虚拟环境
-        source ${PY_VIRT_ENV}/bin/activate
+        source "${PY_VIRT_ENV}/bin/activate"
         #
         # Install AnkiServer
         # 安装AnkiServer
         export LC_ALL="en_US.UTF-8"
-        ${PY_VIRT_ENV}/bin/easy_install-2.7 AnkiServer
+        "${PY_VIRT_ENV}/bin/easy_install-2.7" AnkiServer
         #
         # Modify ankiserverctl.py
         # 修改文件ankiserverctl.py
         ANKISERVERCTL="${PY_VIRT_ENV}/lib/python2*/site-packages/AnkiServer*/EGG-INFO/scripts/ankiserverctl.py"
-        /opt/bin/cp ${ANKISERVERCTL} ${PRIVATE_BIN}/ankiserverctl.py.bak
+        /opt/bin/cp -f ${ANKISERVERCTL} "${PRIVATE_BIN}/ankiserverctl.py.bak"
         #
         /opt/bin/sed -i '/^SERVERCONFIG/s/^/#/' ${ANKISERVERCTL}
         /opt/bin/sed -i '/^#SERVERCONFIG/ a\SERVERCONFIG = \"'"${PRIVATE_ETC}/ankiserver.conf"'\"' ${ANKISERVERCTL}
@@ -136,40 +136,40 @@ then
         #
         # Configure AnkiServer
         # 配置AnkiServer
-        /opt/bin/cp ${PRIVATE_USR}/examples/example.ini ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^host/s/^/;/' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^;host/ a\host = 0.0.0.0' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^data_root/s/^/;/' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^;data_root/ a\data_root = '"${PRIVATE_VAR}/collections"'' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^allowed_hosts/s/^/;/' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^;allowed_hosts/ a\allowed_hosts = 0.0.0.0' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^session_db_path/s/^/;/' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^;session_db_path/ a\session_db_path = '"${PRIVATE_VAR}/session.db"'' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^auth_db_path/s/^/;/' ${PRIVATE_ETC}/ankiserver.conf
-        /opt/bin/sed -i '/^;auth_db_path/ a\auth_db_path = '"${PRIVATE_VAR}/auth.db"'' ${PRIVATE_ETC}/ankiserver.conf
+        /opt/bin/cp -f "${PRIVATE_USR}/examples/example.ini" "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^host/s/^/;/' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^;host/ a\host = 0.0.0.0' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^data_root/s/^/;/' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^;data_root/ a\data_root = '"${PRIVATE_VAR}/collections"'' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^allowed_hosts/s/^/;/' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^;allowed_hosts/ a\allowed_hosts = 0.0.0.0' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^session_db_path/s/^/;/' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^;session_db_path/ a\session_db_path = '"${PRIVATE_VAR}/session.db"'' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^auth_db_path/s/^/;/' "${PRIVATE_ETC}/ankiserver.conf"
+        /opt/bin/sed -i '/^;auth_db_path/ a\auth_db_path = '"${PRIVATE_VAR}/auth.db"'' "${PRIVATE_ETC}/ankiserver.conf"
         #
         # Create default user
         # 创建默认用户
-        /opt/sbin/empty -f -i in.anki -o out.anki ${PY_VIRT_ENV}/bin/ankiserverctl.py adduser "${ADMINUSER}"
+        /opt/sbin/empty -f -i in.anki -o out.anki "${PY_VIRT_ENV}/bin/ankiserverctl.py" adduser "${ADMINUSER}"
         /opt/sbin/empty -w -i out.anki -o in.anki assword: "${ADMINPASSWORD}\n"
         #
         # Configure monit
         # 配置monit
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/anki_server ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/anki_server
-        /opt/bin/mv ${ENTWARE_MONITD}/anki_server ${ENTWARE_MONITD}/anki_server.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/anki_server" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/anki_server"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/anki_server" "${ENTWARE_MONITD}/anki_server.on"
         /opt/bin/monit reload
         #
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 2
     fi
@@ -177,9 +177,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi

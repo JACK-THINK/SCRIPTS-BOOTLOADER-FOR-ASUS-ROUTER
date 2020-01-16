@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,15 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
 # 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+ENTWARE_BIN="${USB_MOUNT_POINT}/bin"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -30,14 +34,14 @@ SERVICE_NAME="DEBIAN"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="UNINSTALLATION"
+SERVICE_FUNCTION="UNINSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -46,26 +50,56 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} 
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
-    # Destroy Debian Environment
-    # 销毁Debian环境
-    /opt/bin/rm -rf ${USB_MOUNT_POINT}/debian/
-    /opt/bin/rm -rf ${USB_MOUNT_POINT}/debian_mnt/
-    /opt/bin/rm -f ${ENTWARE_ETC}/init.d/S99debian
-    /opt/bin/rm -f ${ENTWARE_ETC}/chroot-services.list
-    /opt/bin/rm -f ${ENTWARE_BIN}/debian
-    #
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Stop monit service
+        # 停止monit服务
+        /opt/bin/monit stop "DEBIAN" > /dev/null 2>&1
+        /opt/bin/sleep 30
+        #
+        # Destroy Debian Environment
+        # 销毁Debian环境
+        /opt/bin/rm -rf "/opt/debian"
+        /opt/bin/rm -rf "/opt/debian_mnt"
+        /opt/bin/rm -f "/opt/etc/chroot-services.list"
+        /opt/bin/rm -f "${ENTWARE_BIN}/debian"
+        #
+        # Configure monit
+        # 配置monit
+        /opt/bin/rm -f "${ENTWARE_MONITD}/debian"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/debian.on"
+        /opt/bin/monit reload
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+    fi
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
 fi
 #
 ########## END ##########

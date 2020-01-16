@@ -22,16 +22,18 @@
 
 | 权限      | 名称                        | 属性     | 说明                           |
 | --------- | --------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | filebrowser_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | filebrowser_update          | 普通文件 | 升级文件                       |
+| rwxrwxrwx | filebrowser_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | filebrowser_update          | 普通文件 | 升级程序                       |
 | rwxrwxrwx | filebrowser_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | filebrowser_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/filebrowser/etc/`
 
-| 权限      | 名称                | 属性     | 说明            |
-| --------- | ------------------- | -------- | --------------- |
-| rwxrwxrwx | monit.d/filebrowser | 普通文件 | monit.d配置文件 |
+| 权限      | 名称                                | 属性     | 说明            |
+| --------- | ----------------------------------- | -------- | --------------- |
+| rwxrwxrwx | fw.d/filebrowser_open               | 普通文件 | fw.d配置文件    |
+| rwxrwxrwx | monit.d/fw_filter_INPUT_filebrowser | 普通文件 | monit.d配置文件 |
+| rwxrwxrwx | monit.d/filebrowser                 | 普通文件 | monit.d配置文件 |
 
 ## 安装方法
 
@@ -58,6 +60,6 @@
 >
 > 默认密码：路由器管理页面登陆密码
 >
-> 自定义同步服务器：http://<路由器IP地址>:35248
+> Web页面登陆地址：http://<路由器IP地址>:35248
 >
 > 工作目录：`/root/`

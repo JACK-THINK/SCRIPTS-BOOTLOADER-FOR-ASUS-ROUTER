@@ -5,22 +5,6 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# USB_MOUNT_POINT: The mount point of the USB flash drive
-# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
-#
-# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
-#
-# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
-# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
-#
-# OPENSSH_SERVER_PID_FILE: The path to sshd.pid
-# 设置自定义变量OPENSSH_SERVER_PID_FILE为文件sshd.pid的绝对路径
-OPENSSH_SERVER_PID_FILE=/var/run/sshd.pid
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="OPENSSH_SERVER"
@@ -34,21 +18,23 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## DISABLE OPENSSH_SERVER ##########
 #
-/opt/bin/kill $(/opt/bin/cat ${OPENSSH_SERVER_PID_FILE}) > /dev/null 2>&1
-/opt/bin/sed -i "/^sshd:.*$/d" /etc/passwd
+/opt/bin/killall -q "sshd"
+/opt/bin/sed -i '/^sshd:.*$/d' "/etc/passwd"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

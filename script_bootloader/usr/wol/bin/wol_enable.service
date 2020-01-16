@@ -5,9 +5,13 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# LAN_IFNAME: The interface name of LAN
+# 设置自定义变量LAN_IFNAME为LAN设备名
+LAN_IFNAME="$(nvram get lan_ifname)"
+#
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER=$(nvram get http_username)
+ADMINUSER="$(nvram get http_username)"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -22,17 +26,17 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## MAC ADDRESS LIST ##########
 #
-# Example: <computer_name>="<interface> <mac_address>"
-PC1="br0 XX:XX:XX:XX:XX:XX"
+# Example: <computer_name>="<mac_address>"
+PC1="XX:XX:XX:XX:XX:XX"
 #
-# Next_Computer="xxx XX:XX:XX:XX:XX:XX"
+# Next_Computer="XX:XX:XX:XX:XX:XX"
 #
 ########## END ##########
 #
@@ -40,8 +44,8 @@ PC1="br0 XX:XX:XX:XX:XX:XX"
 ########## WOL LIST ##########
 #
 # Wake up PC1 at 4:30 everyday
-/opt/bin/echo "30 4 * * * /usr/sbin/ether-wake -i ${PC1}" >> /var/spool/cron/crontabs/${ADMINUSER}
-logger -st "($(basename $0))" $$ "***** PC1 WILL BOOT UP AT 4:30 EVERYDAY *****"
+#/opt/bin/echo "30 4 * * * /usr/sbin/ether-wake -i \"${LAN_IFNAME}\" \"${PC1}\"" >> "/var/spool/cron/crontabs/${ADMINUSER}"
+#/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: PC1 WILL BOOT UP AT 4:30 EVERYDAY"
 #
 # Wake up NEXT COMPUTER at XX:XX FREQUENCY
 #
@@ -50,20 +54,22 @@ logger -st "($(basename $0))" $$ "***** PC1 WILL BOOT UP AT 4:30 EVERYDAY *****"
 #
 ########## ENABLE CRONTAB ##########
 #
-/opt/bin/chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+/opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
 #
 ########## END ##########
 #
 #
 ########## CREATE STATUS FILE ##########
 #
-/opt/bin/touch /var/run/wol_enabled
+/opt/bin/touch "/var/run/wol_enabled"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

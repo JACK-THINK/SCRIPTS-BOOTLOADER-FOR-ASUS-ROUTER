@@ -20,7 +20,7 @@
             "protocol":"dokodemo-door",
             "settings":
             {
-                "address":"<上游DNS服务器的IP地址>",
+                "address":"<UPSTREAM_DNS_IP>",
                 "port":53,
                 "network":"tcp,udp",
                 "timeout":0,
@@ -58,7 +58,7 @@
                 "clients":
                 [
                     {
-                        "id":"<使用vmess协议接入路由器所用的用户主ID>",
+                        "id":"<WAN_INBOUND_VMESS_ID>",
                         "level":1,
                         "alterId":64
                     }
@@ -147,7 +147,7 @@
             "settings":
             {
                 "method":"aes-256-gcm",
-                "password":"<使用shadowsocks协议接入路由器所用的密码>",
+                "password":"<WAN_INBOUND_SS_PASSWORD>",
                 "level":1,
                 "ota":false,
                 "network":"tcp,udp"
@@ -163,7 +163,7 @@
                 "clients":
                 [
                     {
-                        "id":"<使用vmess协议接入路由器所用的用户主ID>",
+                        "id":"<WAN_INBOUND_VMESS_ID>",
                         "level":1,
                         "alterId":64
                     }
@@ -252,7 +252,7 @@
             "settings":
             {
                 "method":"aes-256-gcm",
-                "password":"<使用shadowsocks协议接入路由器所用的密码>",
+                "password":"<WAN_INBOUND_SS_PASSWORD>",
                 "level":1,
                 "ota":false,
                 "network":"tcp,udp"
@@ -270,12 +270,12 @@
                 "vnext":
                 [
                     {
-                        "address":"<V2Ray服务器的域名>",
-                        "port":443,
+                        "address":"<IP_OR_DOMAIN_OF_V2RAY_SERVER>",
+                        "port":<PORT_OF_V2RAY_SERVER>,
                         "users":
                         [
                             {
-                                "id":"<使用vmess协议接入V2Ray服务器所用的用户主ID>",
+                                "id":"<OUTBOUND_VMESS_ID>",
                                 "alterid":64,
                                 "security":"auto",
                                 "level":1
@@ -286,29 +286,75 @@
             },
             "streamSettings":
             {
-                "network":"http",
-                "security":"tls",
-                "tlsSettings":
+                "network":"tcp",
+                "security":"none",
+                "tcpSettings":
                 {
-                    "serverName":"<V2Ray服务器的域名>",
-                    "allowInsecure":false,
-                    "allowInsecureCiphers":false
-                },
-                "httpSettings":
-                {
-                    "host":
-                    [
-                        "www.163.com",
-                        "www.baidu.com",
-                        "www.cctv.com",
-                        "www.jd.com",
-                        "www.qq.com",
-                        "www.sina.com.cn",
-                        "www.taobao.com",
-                        "www.bing.com",
-                        "www.alibaba.com"
-                    ],
-                    "path":"/"
+                    "header":
+                    {
+                        "type":"http",
+                        "request":
+                        {
+                            "version":"1.1",
+                            "method":"GET",
+                            "path":
+                            [
+                                "/"
+                            ],
+                            "headers":
+                            {
+                                "Host":
+                                [
+                                    "www.163.com",
+                                    "www.baidu.com",
+                                    "www.cctv.com",
+                                    "www.jd.com",
+                                    "www.qq.com",
+                                    "www.sina.com.cn",
+                                    "www.taobao.com",
+                                    "www.bing.com",
+                                    "www.alibaba.com"
+                                ],
+                                "User-Agent":
+                                [
+                                    "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36",
+                                    "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0_2 like Mac OS X) AppleWebKit/601.1 (KHTML, like Gecko) CriOS/53.0.2785.109 Mobile/14A456 Safari/601.1.46"
+                                ],
+                                "Accept-Encoding":
+                                [
+                                    "gzip, deflate"
+                                ],
+                                "Connection":
+                                [
+                                    "keep-alive"
+                                ],
+                                "Pragma":"no-cache"
+                            }
+                        },
+                        "response":
+                        {
+                            "version":"1.1",
+                            "status":"200",
+                            "reason":"OK",
+                            "headers":
+                            {
+                                "Content-Type":
+                                [
+                                    "application/octet-stream",
+                                    "video/mpeg"
+                                ],
+                                "Transfer-Encoding":
+                                [
+                                    "chunked"
+                                ],
+                                "Connection":
+                                [
+                                    "keep-alive"
+                                ],
+                                "Pragma":"no-cache"
+                            }
+                        }
+                    }
                 }
             },
             "tag":"VPS_outbound"

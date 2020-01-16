@@ -7,27 +7,27 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/filebrowser
+PRIVATE_ROOT="${SBL_SYS_USR}/filebrowser"
 #
 # PRIVATE_ETC: The directory which contains all the WORKING DIRECTORYs related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # FILEBROWSER_PID_FILE: The path to filebrowser.pid
 # 设置自定义变量FILEBROWSER_PID_FILE为文件filebrowser.pid的绝对路径
-FILEBROWSER_PID_FILE=/var/run/filebrowser.pid
+FILEBROWSER_PID_FILE="/var/run/filebrowser.pid"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -42,7 +42,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -54,23 +54,27 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 if [ -e "${PRIVATE_USR}/filebrowser" ] && \
 [ -e "${PRIVATE_ETC}/config.json" ] && [ -e "${PRIVATE_ETC}/database.db" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Load ${PRIVATE_USR}/filebrowser
     # 如果文件${PRIVATE_USR}/filebrowser，${PRIVATE_ETC}/config.json和${PRIVATE_ETC}/database.db存在，则执行
-    /opt/bin/nohup ${PRIVATE_USR}/filebrowser --database "${PRIVATE_ETC}/database.db" --config "${PRIVATE_ETC}/config.json" &> /dev/null &
-    PID=$(/opt/bin/echo ${!})
-    /opt/bin/echo ${PID} > ${FILEBROWSER_PID_FILE}
+    /opt/bin/nohup "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" --config "${PRIVATE_ETC}/config.json" &> /dev/null &
+    PID="$(pidof filebrowser)"
+    /opt/bin/echo "${PID}" > "${FILEBROWSER_PID_FILE}"
     #
-    /opt/bin/monit start FW_PORT_OPENING_FILE_BROWSER
+    /opt/bin/monit start "FW_PORT_OPENING_FILE_BROWSER"
     #
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${PRIVATE_USR}/filebrowser或目录${PRIVATE_ETC}不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE FILE-BROWSER WORKING DIRECTORY *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
 fi
 #
 ########## END ##########

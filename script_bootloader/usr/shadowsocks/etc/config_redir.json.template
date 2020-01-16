@@ -2,7 +2,7 @@
     "server":"<Shadowsocks服务器的IP地址或域名>",
     "server_port":"<Shadowsocks服务器的监听端口>",
     "local_address":"0.0.0.0",
-    "local_port":"<本地监听端口>",
+    "local_port":"19854",
     "password":"<密码>",
     "method":"aes-256-gcm",
     "timeout":60,

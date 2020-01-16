@@ -7,70 +7,80 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/v2ray
+PRIVATE_ROOT="${SBL_SYS_USR}/v2ray"
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${PRIVATE_ROOT}/bin
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # V2RAY_PID_FILE: The path to v2ray.pid
 # 设置自定义变量V2RAY_PID_FILE为文件v2ray.pid的绝对路径
-V2RAY_PID_FILE=/var/run/v2ray.pid
+V2RAY_PID_FILE="/var/run/v2ray.pid"
 #
 # SERVER_DOMAIN: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_DOMAIN为V2RAY-SERVER的域名
-SERVER_DOMAIN=$(/opt/bin/sed -E -n -e '/outbounds/,/port/s/^[[:space:]]*\"address\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_proxy.json 2> /dev/null)
+SERVER_DOMAIN="$(/opt/bin/sed -E -n -e '/outbounds/,/port/s/^[[:space:]]*\"address\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_proxy.json")"
 #
 # SERVER_IP: Domain of the V2RAY-SERVER
 # 设置自定义变量SERVER_IP为V2RAY-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p')
+SERVER_IP="$(nslookup "${SERVER_DOMAIN}" | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p')"
 #
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME=$(/opt/bin/sed -E -n -e 's/^USER_DEFINED_CHAIN_NAME=\"(.*)\"/\1/p' ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service)
+USER_DEFINED_CHAIN_NAME="$(/opt/bin/sed -E -n -e 's/^USER_DEFINED_CHAIN_NAME=\"(.*)\"/\1/p' "${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service")"
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER=$(nvram get http_username)
-#
-# TEST_V2RAY: Test for v2ray process
-# 设置环境变量TEST_V2RAY为v2ray进程测试值
-# 特殊说明：monit不能检查过长的字符串，故不能使用TEST_V2RAY=$(ps | /opt/bin/grep 'v2ray.*config_proxy\.json' | /opt/bin/grep -v '/opt/bin/grep')，必须使用PID法解决该问题
-if [ -f "${V2RAY_PID_FILE}" ]
-then
-    PID_NUM=$(/opt/bin/cat ${V2RAY_PID_FILE})
-    if [ -n "$(ps | /opt/bin/sed -E -n -e '/^[[:space:]]*'"${PID_NUM}"'[[:space:]]+/p')" ]
-    then
-        TEST_V2RAY=true
-    else
-        TEST_V2RAY=false
-    fi
-else
-    TEST_V2RAY=false
-fi
+ADMINUSER="$(nvram get http_username)"
 #
 # TEST_FW: Test for firewall rules
 # 设置环境变量TEST_FW为防火墙规则测试值
 # 特殊说明：必须避免双引号多重嵌套
-CHECK_RULES=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}")
+CHECK_RULES="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'_TCP')"
 if [ -n "${CHECK_RULES}" ]
 then
-    TEST_FW=true
+    TEST_FW="true"
 else
-    TEST_FW=false
+    TEST_FW="false"
 fi
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+checkIfProcessAlive()
+{
+    local PROCESS_ID_FILE="${1}"
+    local PROCESS_ID
+    #
+    if [ -e "${PROCESS_ID_FILE}" ]
+    then
+        for PROCESS_ID in $(/opt/bin/cat "${PROCESS_ID_FILE}")
+        do
+            if [ -z "$(ps | /opt/bin/grep -E '^[[:space:]]*'"${PROCESS_ID}"'[[:space:]]+')" ]
+            then
+                eval ${2}="false"
+                return
+            fi
+        done
+        eval ${2}="true"
+    else
+        eval ${2}="false"
+    fi
+}
 #
 ########## END ##########
 #
@@ -79,47 +89,52 @@ fi
 #
 # Check if ${PRIVATE_BIN}/v2ray_enable.service and ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service has been loaded
 # 检查${PRIVATE_BIN}/v2ray_enable.service和${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service是否被加载
+checkIfProcessAlive "${V2RAY_PID_FILE}" TEST_V2RAY
+#
 if ${TEST_V2RAY} && ${TEST_FW}
 then
     # Everything is OK
     # 满足全部条件
-    /opt/bin/echo -e "TRANSPARENT PROXY IS ON"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: TRANSPARENT PROXY IS ON"
     #
     exit 0
+    #
 else
     # Stop all the relevant processes
     # 如果有任意条件不符，则停止全部相关进程
-    ${PRIVATE_BIN}/v2ray_transparent_proxy_disable_file.service > /dev/null 2>&1
+    "${PRIVATE_BIN}/v2ray_transparent_proxy_disable_file.service" > /dev/null 2>&1
     #
-    /opt/bin/echo -e "LOAD TRANSPARENT PROXY"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: LOAD TRANSPARENT PROXY"
     #
     # Update /etc/hosts
     # 更新文件/etc/hosts
-    /opt/bin/echo "${SERVER_IP} ${SERVER_DOMAIN}" >> /etc/hosts
+    /opt/bin/echo "${SERVER_IP} ${SERVER_DOMAIN}" >> "/etc/hosts"
     #
     # Start all the relevant processes
     # 启动全部相关进程
-    ${PRIVATE_BIN}/v2ray_enable.service > /dev/null 2>&1
-    sleep 2
-    ${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service > /dev/null 2>&1
-    sleep 2
+    "${PRIVATE_BIN}/v2ray_enable.service" > /dev/null 2>&1
+    /opt/bin/sleep 2
+    "${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service" > /dev/null 2>&1
+    /opt/bin/sleep 2
     #
     # Update DNS server
     # 更新DNS服务器
-    /opt/bin/killall -q -1 dnsmasq > /dev/null 2>&1
-    sleep 30
+    /opt/bin/killall -q -1 "dnsmasq"
+    /opt/bin/sleep 30
+    #
+    ########## END ##########
     #
     #
     ########## ENABLE CRONTAB ##########
     #
     # Enable crontab because something is wrong with the poll time of monit
     # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
-    /opt/bin/echo "*/5 * * * * ${PRIVATE_BIN}/v2ray_transparent_proxy_enable_file.service" >> /var/spool/cron/crontabs/${ADMINUSER}
-    /opt/bin/chmod 600 /var/spool/cron/crontabs/${ADMINUSER}
+    /opt/bin/echo "*/5 * * * * \"${PRIVATE_BIN}/v2ray_transparent_proxy_enable_file.service\"" >> "/var/spool/cron/crontabs/${ADMINUSER}"
+    /opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
     #
     # Create status file
     # 创建状态文件
-    /opt/bin/touch /var/run/v2ray_transparent_proxy_enable_file
+    /opt/bin/touch "/var/run/v2ray_transparent_proxy_enable_file"
     #
     ########## END ##########
     #

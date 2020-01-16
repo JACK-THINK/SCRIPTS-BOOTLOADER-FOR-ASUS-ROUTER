@@ -1,0 +1,139 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL="$(nvram get model)"
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/openssh_server"
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="OPENSSH_SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UNINSTALL"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
+########## END ##########
+#
+#
+########## UNINSTALL OPENSSH_SERVER ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
+then
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Check if ${SERVICE_NAME} has been installed
+        # 检查${SERVICE_NAME}是否已安装
+        if [ ! -e "/opt/sbin/sshd" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${SERVICE_NAME} IS NOT INSTALLED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 3
+        fi
+        #
+        # Stop OPENSSH_SERVER service
+        # 停止OPENSSH_SERVER服务
+        /opt/bin/monit stop "OPENSSH_SERVER" > /dev/null 2>&1
+        #
+        # Wait until OPENSSH_SERVER service is terminated
+        # 等待直至OPENSSH_SERVER service被终止
+        while [ -n "$(pidof sshd)" ]
+        do
+            /opt/bin/sleep 5
+        done
+        #
+        # Configure openssh_server
+        # 配置openssh_server
+        /opt/bin/rm -f "/opt/etc/ssh/sshd_config"
+        /opt/bin/mv -f "/opt/etc/ssh/sshd_config.bak" "/opt/etc/ssh/sshd_config"
+        #
+        /opt/bin/rm -f "/opt/etc/ssh/ssh_host_rsa_key"
+        /opt/bin/rm -f "/opt/etc/ssh/ssh_host_rsa_key.pub"
+        #
+        # Enable /opt/etc/init.d/S40sshd
+        # 启用/opt/etc/init.d/S40sshd
+        /opt/bin/mv -f "${PRIVATE_ETC}"/S*sshd "/opt/etc/init.d"
+        #
+        # Uninstall openssh_server
+        # 卸载openssh_server
+        /opt/bin/opkg remove openssh-moduli
+        /opt/bin/opkg remove openssh-server-pam
+        #
+        # Configure monit
+        # 配置monit
+        /opt/bin/rm -f "${ENTWARE_MONITD}/openssh_server.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/openssh_server"
+        /opt/bin/monit reload
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
+fi
+#
+########## END ##########

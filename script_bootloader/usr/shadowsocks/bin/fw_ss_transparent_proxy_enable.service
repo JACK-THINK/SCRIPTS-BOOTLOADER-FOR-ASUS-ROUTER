@@ -7,31 +7,31 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/shadowsocks
+PRIVATE_ROOT="${SBL_SYS_USR}/shadowsocks"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # SERVER_DOMAIN: Domain of the SS-SERVER
 # 设置自定义变量SERVER_DOMAIN为SS-SERVER的域名
-SERVER_DOMAIN=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"server\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_redir.json 2> /dev/null)
+SERVER_DOMAIN="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"server\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_redir.json")"
 #
 # SERVER_IP: Domain of the SS-SERVER
 # 设置自定义变量SERVER_IP为SS-SERVER的IP地址
-SERVER_IP=$(nslookup ${SERVER_DOMAIN} | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p' 2> /dev/null)
+SERVER_IP="$(nslookup "${SERVER_DOMAIN}" | /opt/bin/sed -E -n -e '/Name/,+1s/.*:[[:space:]]+(([[:digit:]]+\.?){4})[[:space:]]+.*/\1/p')"
 #
 # LOCAL_PORT: Local port of the SS-REDIR
 # 设置自定义变量LOCAL_PORT为SS-REDIR的接收端口
-LOCAL_PORT=$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' ${PRIVATE_ETC}/config_redir.json 2> /dev/null)
+LOCAL_PORT="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_redir.json")"
 #
 # BUILT_IN_CHAIN_NAME: Name of the built-in chain
 # 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
@@ -43,11 +43,11 @@ USER_DEFINED_CHAIN_NAME="SS_TPROXY"
 #
 # NF_TPROXY_CORE: The path to nf_tproxy_core.ko
 # 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
-NF_TPROXY_CORE=$(/opt/bin/find /lib/modules/ -name "nf_tproxy_core.ko")
+NF_TPROXY_CORE="$(/opt/bin/find /lib/modules/ -name "nf_tproxy_core.ko")"
 #
 # XT_TPROXY: The path to xt_TPROXY.ko
 # 设置自定义变量XT_TPROXY为文件xt_TPROXY.ko的绝对路径
-XT_TPROXY=$(/opt/bin/find /lib/modules/ -name "xt_TPROXY.ko")
+XT_TPROXY="$(/opt/bin/find /lib/modules/ -name "xt_TPROXY.ko")"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -62,7 +62,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -70,29 +70,29 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 ########## SET UP TCP PROXY ##########
 #
 # Create new chain
-iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
+iptables -t nat -N "${USER_DEFINED_CHAIN_NAME}_TCP"
 #
 # Ignore your shadowsocks server's addresses
 # It's very IMPORTANT, just be careful.
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d ${SERVER_IP} -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "${SERVER_IP}" -j RETURN
 #
 # Ignore LANs and any other addresses you'd like to bypass the proxy
 # See Wikipedia and RFC5735 for full list of reserved networks.
 # See ashi009/bestroutetb for a highly optimized CHN route list.
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 0.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 10.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 127.0.0.0/8 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 169.254.0.0/16 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 172.16.0.0/12 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 192.168.0.0/16 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 224.0.0.0/4 -j RETURN
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -d 240.0.0.0/4 -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "0.0.0.0/8" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "10.0.0.0/8" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "127.0.0.0/8" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "169.254.0.0/16" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "172.16.0.0/12" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "192.168.0.0/16" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "224.0.0.0/4" -j RETURN
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -d "240.0.0.0/4" -j RETURN
 #
 # Anything else should be redirected to shadowsocks's local port
-iptables -t nat -A ${USER_DEFINED_CHAIN_NAME} -p tcp -j REDIRECT --to-ports ${LOCAL_PORT}
+iptables -t nat -A "${USER_DEFINED_CHAIN_NAME}_TCP" -p tcp -j REDIRECT --to-ports "${LOCAL_PORT}"
 #
 # Apply the rules
-iptables -t nat -A ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+iptables -t nat -A "${BUILT_IN_CHAIN_NAME}" -p tcp -j "${USER_DEFINED_CHAIN_NAME}_TCP"
 #
 ########## END ##########
 #
@@ -105,26 +105,26 @@ if [ -n "${NF_TPROXY_CORE}" ] && [ -n "${XT_TPROXY}" ] && false
 then
     # Enable TPROXY
     # 启用TPROXY
-    insmod ${NF_TPROXY_CORE}
-    insmod ${XT_TPROXY}
+    insmod "${NF_TPROXY_CORE}"
+    insmod "${XT_TPROXY}"
     #
     # Create new chain
-    iptables -t mangle -N ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -N "${USER_DEFINED_CHAIN_NAME}_UDP"
     #
     # Add any UDP rules
     #ip route add local default dev lo table 100
     #ip rule add fwmark 1 lookup 100
     ip rule add fwmark 0x01/0x01 table 100
     ip route add local 0.0.0.0/0 dev lo table 100
-    iptables -t mangle -A ${USER_DEFINED_CHAIN_NAME} -p udp --dport 53 -j TPROXY --on-port ${LOCAL_PORT} --tproxy-mark 0x01/0x01
+    iptables -t mangle -A "${USER_DEFINED_CHAIN_NAME}_UDP" -p udp --dport 53 -j TPROXY --on-port "${LOCAL_PORT}" --tproxy-mark 0x01/0x01
     #
     # Apply the rules
-    iptables -t mangle -A ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+    iptables -t mangle -A "${BUILT_IN_CHAIN_NAME}" -j "${USER_DEFINED_CHAIN_NAME}_UDP"
     #
 else
     # Do nothing but prompt the user
     # 如果文件${NF_TPROXY_CORE}或${XT_TPROXY}不存在，则执行
-    /opt/bin/echo -e "NO UDP PROXY"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NO UDP PROXY"
 fi
 #
 ########## END ##########
@@ -132,6 +132,8 @@ fi
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

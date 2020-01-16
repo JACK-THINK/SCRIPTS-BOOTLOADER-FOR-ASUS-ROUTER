@@ -2,7 +2,7 @@
 
 ## 概述
 
-1. 本插件用于安装、卸载debian
+1. 本插件用于安装、卸载debian，并运行基于debian的服务
 2. 安装本插件后，可直接在路由器上开启debian环境，安装海量软件（远多于entware）
 3. 提供两种安装程序
    - `debian_install`：预安装版安装程序，默认启用
@@ -10,7 +10,7 @@
 
 ## 安装前提
 
-1. 必须安装并启用entware
+1. 必须安装并启用entware和monit
 
 ## 文件结构
 
@@ -25,18 +25,18 @@
 
 `ASUS_ROUTER/script_bootloader/usr/debian/bin/`
 
-| 权限      | 名称                  | 属性     | 说明                   |
-| --------- | --------------------- | -------- | ---------------------- |
-| rwxrwxrwx | debian_install        | 普通文件 | 插件的预安装版安装程序 |
-| rwxrwxrwx | debian_install_online | 普通文件 | 插件的官方部署安装程序 |
-| rwxrwxrwx | debian_uninstall      | 普通文件 | 插件的卸载程序         |
+| 权限      | 名称                  | 属性     | 说明             |
+| --------- | --------------------- | -------- | ---------------- |
+| rwxrwxrwx | debian_install        | 普通文件 | 预安装版安装程序 |
+| rwxrwxrwx | debian_install_online | 普通文件 | 官方部署安装程序 |
+| rwxrwxrwx | debian_uninstall      | 普通文件 | 插件的卸载程序   |
+| rwxrwxrwx | debian                | 普通文件 | 插件的主程序     |
 
 `ASUS_ROUTER/script_bootloader/usr/debian/etc/`
 
-| 权限      | 名称                 | 属性     | 说明               |
-| --------- | -------------------- | -------- | ------------------ |
-| rwxrwxrwx | chroot-services.list | 普通文件 | debian服务列表     |
-| rwxrwxrwx | S99debian            | 普通文件 | debian环境启动程序 |
+| 权限      | 名称                 | 属性     | 说明            |
+| --------- | -------------------- | -------- | --------------- |
+| rwxrwxrwx | monit.d/debian       | 普通文件 | monit.d配置文件 |
 
 `ASUS_ROUTER/script_bootloader/usr/debian/usr/`
 

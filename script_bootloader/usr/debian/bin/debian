@@ -1,0 +1,270 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# CHROOT_DIR: Folder with Debian Jessie
+# 设置自定义变量CHROOT_DIR为debian环境系统目录
+CHROOT_DIR="${USB_MOUNT_POINT}/debian"
+#
+# EXT_DIR: Some folder outside of sandbox will be mounted to /mnt folder in Debian. Uncommented "EXT_DIR=" line if you need to mount a folder inside debian (remove #)
+# 设置自定义变量EXT_DIR为debian环境外挂目录
+EXT_DIR="${USB_MOUNT_POINT}/debian_mnt"
+#
+# CHROOT_SERVICES_LIST: List of services in debian
+# 设置自定义变量CHROOT_SERVICES_LIST为debian服务启动列表
+CHROOT_SERVICES_LIST="/opt/etc/chroot-services.list"
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+start()
+{
+    if [ ${MOUNTED_DIR_COUNT} -gt 0 ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
+        #
+        exit 1
+    fi
+    #
+    for DIR in dev proc sys
+    do
+        /bin/mount -o bind "/${DIR}" "${CHROOT_DIR}/${DIR}"
+    done
+    #
+    if [ -n "${EXT_DIR}" ]
+    then
+        /bin/mount -o bind "${EXT_DIR}" "${CHROOT_DIR}/mnt"
+    fi
+    #
+    for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
+    do
+        /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" start
+    done
+    #
+    /opt/bin/touch "/var/run/debian_enabled"
+    #
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: START CHROOTED DEBIAN SERVICES"
+}
+#
+stop()
+{
+    if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
+        #
+        exit 1
+    fi
+    #
+    for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
+    do
+        /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" stop
+        /opt/bin/sleep 2
+    done
+    #
+    /bin/umount "${CHROOT_DIR}/dev/pts" 2> /dev/null
+    #
+    for ITEM in $(/bin/mount | /opt/bin/grep ''"${CHROOT_DIR}"'' | /opt/bin/sed -E -n -e 's#[^[:space:]]+[[:space:]]+on[[:space:]]+([^[:space:]]+)[[:space:]]+.*$#\1#p')
+    do
+        /bin/umount -l "${ITEM}"
+    done
+    #
+    /opt/bin/rm -f "/var/run/debian_enabled"
+    #
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STOP CHROOTED DEBIAN SERVICES"
+}
+#
+restart()
+{
+    if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
+        #
+        for DIR in dev proc sys
+        do
+            /bin/mount -o bind "/${DIR}" "${CHROOT_DIR}/${DIR}"
+        done
+        #
+        if [ -n "${EXT_DIR}" ]
+        then
+            /bin/mount -o bind "${EXT_DIR}" "${CHROOT_DIR}/mnt"
+        fi
+        #
+        for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
+        do
+            /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" start
+        done
+    else
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: STOP CHROOTED DEBIAN SERVICES"
+        #
+        for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
+        do
+            /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" stop
+            /opt/bin/sleep 2
+        done
+        #
+        /bin/umount "${CHROOT_DIR}/dev/pts" 2> /dev/null
+        #
+        for ITEM in $(/bin/mount | /opt/bin/grep ''"${CHROOT_DIR}"'' | /opt/bin/sed -E -n -e 's#[^[:space:]]+[[:space:]]+on[[:space:]]+([^[:space:]]+)[[:space:]]+.*$#\1#p')
+        do
+            /bin/umount -l "${ITEM}"
+        done
+        #
+        /opt/bin/rm -f "/var/run/debian_enabled"
+        #
+        for DIR in dev proc sys
+        do
+            /bin/mount -o bind "/${DIR}" "${CHROOT_DIR}/${DIR}"
+        done
+        #
+        if [ -n "${EXT_DIR}" ]
+        then
+            /bin/mount -o bind "${EXT_DIR}" "${CHROOT_DIR}/mnt"
+        fi
+        #
+        for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
+        do
+            /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" start
+        done
+    fi
+    #
+    /opt/bin/touch "/var/run/debian_enabled"
+    #
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: RESTART CHROOTED DEBIAN SERVICES"
+}
+#
+enter()
+{
+    if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: START CHROOTED DEBIAN SERVICES"
+        #
+        for DIR in dev proc sys
+        do
+            /bin/mount -o bind "/${DIR}" "${CHROOT_DIR}/${DIR}"
+        done
+        #
+        if [ -n "${EXT_DIR}" ]
+        then
+            /bin/mount -o bind "${EXT_DIR}" "${CHROOT_DIR}/mnt"
+        fi
+        #
+        /opt/bin/touch "/var/run/debian_enabled"
+    else
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
+    fi
+    #
+    if [ -z "$(/bin/mount | /opt/bin/grep ''"${CHROOT_DIR}"'/dev/pts')" ]
+    then
+        /bin/mount -o bind "/dev/pts" "${CHROOT_DIR}/dev/pts"
+    fi
+    #
+    /opt/bin/chroot "${CHROOT_DIR}" "/bin/bash"
+}
+#
+status()
+{
+    if [ ${MOUNTED_DIR_COUNT} -gt 0 ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE RUNNING"
+    else
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE NOT RUNNING"
+    fi
+}
+#
+checkServiceList()
+{
+    if [ -e "${CHROOT_SERVICES_LIST}" ]
+    then
+        return 0
+    else
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEFINE DEBIAN SERVICES TO START IN ${CHROOT_SERVICES_LIST} FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ONE SERVICE PER LINE WHICH IS THE NAME OF ONE OF THE SCRIPTS IN DEBIAN'S /etc/init.d/"
+        #
+        return 1
+    fi
+}
+#
+########## END ##########
+#
+#
+########## PORTAL ##########
+#
+PATH="/opt/bin:/opt/sbin:/sbin:/bin:/usr/sbin:/usr/bin"
+#
+case ${#} in
+    1)
+        MOUNTED_DIR_COUNT="$(/bin/mount | /opt/bin/grep ''"${CHROOT_DIR}"'' | /opt/bin/wc -l)"
+        #
+        case "${1}" in
+            "start")
+                checkServiceList
+                if [ ${?} -eq 0 ]
+                then
+                    start
+                else
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: START CHROOTED DEBIAN SERVICES"
+                    exit 1
+                fi
+                ;;
+            "stop")
+                checkServiceList
+                if [ ${?} -eq 0 ]
+                then
+                    stop
+                else
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STOP CHROOTED DEBIAN SERVICES"
+                    exit 1
+                fi
+                ;;
+            "restart")
+                checkServiceList
+                if [ ${?} -eq 0 ]
+                then
+                    restart
+                else
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: RESTART CHROOTED DEBIAN SERVICES"
+                    exit 1
+                fi
+                ;;
+            "enter")
+                checkServiceList
+                if [ ${?} -eq 0 ]
+                then
+                    enter
+                else
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ENTER DEBIAN ENVIRONMENT"
+                    exit 1
+                fi
+                ;;
+            "status")
+                checkServiceList
+                if [ ${?} -eq 0 ]
+                then
+                    status
+                else
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: CHECK STATUS OF CHROOTED DEBIAN SERVICES"
+                    exit 1
+                fi
+                ;;
+            *)
+                /opt/bin/echo -e "Usage: $0 (start|stop|restart|enter|status)"
+                exit 1
+                ;;
+        esac
+        ;;
+    *)
+        /opt/bin/echo -e "Usage: $0 (start|stop|restart|enter|status)"
+        exit 1
+        ;;
+esac
+#
+########## END ##########

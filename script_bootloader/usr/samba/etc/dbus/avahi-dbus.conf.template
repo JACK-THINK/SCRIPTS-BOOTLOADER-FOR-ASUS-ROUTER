@@ -7,7 +7,7 @@
   <policy user="nobody">
     <allow own="org.freedesktop.Avahi"/>
   </policy>
-  <policy user="root">
+  <policy user="ADMINUSER">
     <allow own="org.freedesktop.Avahi"/>
   </policy>
 
@@ -21,7 +21,7 @@
   </policy>
 
   <!-- Allow everything, including access to SetHostName to users of the group "netdev" -->
-  <policy user="root">
+  <policy user="ADMINUSER">
     <allow send_destination="org.freedesktop.Avahi"/>
     <allow receive_sender="org.freedesktop.Avahi"/>
   </policy>

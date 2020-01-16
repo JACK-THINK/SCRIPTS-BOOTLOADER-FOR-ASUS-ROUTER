@@ -33,7 +33,8 @@
 
 | 权限      | 名称                                               | 属性     | 说明                           |
 | --------- | -------------------------------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | shadowsocks_install                                | 普通文件 | 安装文件                       |
+| rwxrwxrwx | shadowsocks_install                                | 普通文件 | 安装程序                       |
+| rwxrwxrwx | shadowsocks_configure                              | 普通文件 | 配置程序                       |
 | rwxrwxrwx | fw_ss_transparent_proxy_enable.service             | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | fw_ss_transparent_proxy_disable.service            | 普通文件 | 插件的可执行程序，用于结束程序 |
 | rwxrwxrwx | ss_local_enable.service                            | 普通文件 | 插件的可执行程序，用于启动程序 |
@@ -59,6 +60,8 @@
 | rwxrwxrwx | config_redir.json                          | 普通文件 | ss_redir_enable.service的配置文件  |
 | rwxrwxrwx | config_server.json                         | 普通文件 | ss_server_enable.service的配置文件 |
 | rwxrwxrwx | config_tunnel.json                         | 普通文件 | ss_tunnel_enable.service的配置文件 |
+| rwxrwxrwx | fw.d/ss_server_open                        | 普通文件 | fw.d配置文件                       |
+| rwxrwxrwx | monit.d/fw_filter_INPUT_ss_server          | 普通文件 | monit.d配置文件                    |
 | rwxrwxrwx | monit.d/ss_local                           | 普通文件 | monit.d配置文件                    |
 | rwxrwxrwx | monit.d/ss_redir                           | 普通文件 | monit.d配置文件                    |
 | rwxrwxrwx | monit.d/ss_server                          | 普通文件 | monit.d配置文件                    |
@@ -88,7 +91,6 @@
 | ---- | -----------------| ------------------------------- |
 | 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
 | 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
-| 5    | `"local_port":`  | 本地监听端口                    |
 | 6    | `"password":`    | 密码                            |
 
 `shadowsocks/etc/config_redir.json`
@@ -97,7 +99,6 @@
 | ---- | -----------------| ------------------------------- |
 | 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
 | 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
-| 5    | `"local_port":`  | 本地监听端口                    |
 | 6    | `"password":`    | 密码                            |
 
 `shadowsocks/etc/config_server.json`
@@ -112,7 +113,6 @@
 | ---- | ---------------- | ------------------------------- |
 | 2    | `"server":`      | Shadowsocks服务器的IP地址或域名 |
 | 3    | `"server_port":` | Shadowsocks服务器的监听端口     |
-| 5    | `"local_port":`  | 本地监听端口                    |
 | 6    | `"password":`    | 密码                            |
 
 ## 注意事项

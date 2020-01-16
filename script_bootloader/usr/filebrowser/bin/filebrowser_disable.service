@@ -7,7 +7,7 @@
 #
 # FILEBROWSER_PID_FILE: The path to filebrowser.pid
 # 设置自定义变量FILEBROWSER_PID_FILE为文件filebrowser.pid的绝对路径
-FILEBROWSER_PID_FILE=/var/run/filebrowser.pid
+FILEBROWSER_PID_FILE="/var/run/filebrowser.pid"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -22,23 +22,29 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## DISABLE FILE-BROWSER ##########
 #
-/opt/bin/kill $(/opt/bin/cat ${FILEBROWSER_PID_FILE}) > /dev/null 2>&1
-/opt/bin/rm -f ${FILEBROWSER_PID_FILE} > /dev/null 2>&1
+for PID in $(/opt/bin/cat "${FILEBROWSER_PID_FILE}")
+do
+    /opt/bin/kill ${PID}
+done
 #
-/opt/bin/monit stop FW_PORT_OPENING_FILE_BROWSER
+/opt/bin/rm -f "${FILEBROWSER_PID_FILE}"
+#
+/opt/bin/monit stop "FW_PORT_OPENING_FILE_BROWSER" > /dev/null 2>&1
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

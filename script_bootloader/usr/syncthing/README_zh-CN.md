@@ -3,7 +3,6 @@
 ## 概述
 
 1. 本插件用于安装、启动和结束syncthing
-2. 默认端口：8384
 
 ## 安装前提
 
@@ -23,8 +22,8 @@
 
 | 权限      | 名称                      | 属性     | 说明                           |
 | --------- | ------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | syncthing_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | syncthing_update          | 普通文件 | 升级文件                       |
+| rwxrwxrwx | syncthing_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | syncthing_update          | 普通文件 | 升级程序                       |
 | rwxrwxrwx | syncthing_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | syncthing_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -32,7 +31,6 @@
 
 | 权限      | 名称              | 属性     | 说明            |
 | --------- | ----------------- | -------- | --------------- |
-| rwxrwxrwx | S92syncthing.bak  | 普通文件 | 安装时自动生成  |
 | rwxrwxrwx | monit.d/syncthing | 普通文件 | monit.d配置文件 |
 
 ## 安装方法
@@ -53,3 +51,7 @@
 | ------------------------- | ----------------- |
 | syncthing_enable.service  | monit.d/syncthing |
 | syncthing_disable.service | monit.d/syncthing |
+
+## 使用方法
+
+> Web页面登陆地址：http://<路由器IP地址>:8384

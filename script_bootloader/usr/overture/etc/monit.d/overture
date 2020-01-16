@@ -1,0 +1,4 @@
+check process OVERTURE with pidfile "/var/run/overture.pid"
+    start program = "/opt/script_bootloader/usr/overture/bin/overture_enable.service"
+    stop program = "/opt/script_bootloader/usr/overture/bin/overture_disable.service"
+    if does not exist then restart

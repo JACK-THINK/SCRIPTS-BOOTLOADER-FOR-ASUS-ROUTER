@@ -1,4 +1,2 @@
-check file FREE_MEMORY path "/var/run/freemem_enabled"
-    start program = "/opt/script_bootloader/usr/freemem/bin/freemem_enable.service"
-    stop program = "/opt/script_bootloader/usr/freemem/bin/freemem_disable.service"
-    if does not exist then restart
+check program FREE_MEMORY path "/opt/script_bootloader/usr/freemem/bin/freemem_enable.service" every 120 cycles
+    if status != 0 then unmonitor

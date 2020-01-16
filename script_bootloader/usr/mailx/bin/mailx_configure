@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+        read VALUE_1
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SET PARAMETERS ##########
+#
+case ${#} in
+    0)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSMTP SERVER\033[0m: smtp.example.com"
+        doubleCheckAndConfirm SMTP_SERVER
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSMTP AUTH USER\033[0m: email address of sender"
+        doubleCheckAndConfirm SMTP_AUTH_USER
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSMTP AUTH PASSWORD\033[0m: password of sender"
+        doubleCheckAndConfirm SMTP_AUTH_PASSWORD
+        #
+        SMTP_AUTH="login"
+        ;;
+    4)
+        SMTP_SERVER="${1}"
+        SMTP_AUTH_USER="${2}"
+        SMTP_AUTH_PASSWORD="${3}"
+        SMTP_AUTH="${4}"
+        ;;
+    *)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
+        #
+        exit 1
+        ;;
+esac
+#
+########## END ##########
+#
+#
+########## CONFIGURE MAILX ##########
+#
+# Modify /opt/etc/nail.rc
+# 修改/opt/etc/nail.rc
+/opt/bin/sed -E -i 's/^(set smtp=).*/\1\"'"${SMTP_SERVER}"'\"/' "/opt/etc/nail.rc"
+/opt/bin/sed -E -i 's/^(set from=).*/\1\"'"${SMTP_AUTH_USER}"'\"/' "/opt/etc/nail.rc"
+/opt/bin/sed -E -i 's/^(set smtp-auth-user=).*/\1\"'"${SMTP_AUTH_USER}"'\"/' "/opt/etc/nail.rc"
+/opt/bin/sed -E -i 's/^(set smtp-auth-password=).*/\1\"'"${SMTP_AUTH_PASSWORD}"'\"/' "/opt/etc/nail.rc"
+/opt/bin/sed -E -i 's/^(set smtp-auth=).*/\1\"'"${SMTP_AUTH}"'\"/' "/opt/etc/nail.rc"
+#
+########## END ##########

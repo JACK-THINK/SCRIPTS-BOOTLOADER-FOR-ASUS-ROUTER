@@ -7,27 +7,27 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/onu_access
+PRIVATE_ROOT="${SBL_SYS_USR}/onu_access"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 ########## END ##########
 #
@@ -36,7 +36,7 @@ PRIVATE_ETC=${PRIVATE_ROOT}/etc
 #
 isValidIpAddress()
 {
-    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/') != "0.0.0.0" ]
+    if [ "$(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/')" != "0.0.0.0" ]
     then
         return 1
     fi
@@ -46,10 +46,10 @@ isValidIpAddress()
     local IP_ADDRESS_PART_3
     local IP_ADDRESS_PART_4
     #
-    IP_ADDRESS_PART_1=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_2=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_3=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_4=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
+    IP_ADDRESS_PART_1=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_2=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_3=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_4=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
     #
     if [ ${IP_ADDRESS_PART_1} -ge 0 ] && [ ${IP_ADDRESS_PART_1} -le 255 ] && \
     [ ${IP_ADDRESS_PART_2} -ge 0 ] && [ ${IP_ADDRESS_PART_2} -le 255 ] && \
@@ -69,9 +69,9 @@ doubleCheckAndConfirm()
         local VALUE_1
         local VALUE_2
         #
-        /opt/bin/echo -ne "Input the value of ${1}: "
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
         read VALUE_1
-        /opt/bin/echo -ne "Input the value of ${1} again to confirm: "
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
         read VALUE_2
         #
         if [ "${VALUE_1}" == "${VALUE_2}" ]
@@ -79,7 +79,7 @@ doubleCheckAndConfirm()
             eval ${1}="${VALUE_1}"
             break
         else
-            /opt/bin/echo -e "The two values you entered were inconsistent."
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
         fi
     done
 }
@@ -93,13 +93,13 @@ case ${#} in
     0)
         while [ 1 ]
         do
-            /opt/bin/echo -e "ONU_IP_ADDRESS: The IP address of ONU"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mONU IP ADDRESS\033[0m: IP address of ONU"
             doubleCheckAndConfirm ONU_IP_ADDRESS
             #
-            isValidIpAddress ${ONU_IP_ADDRESS}
+            isValidIpAddress "${ONU_IP_ADDRESS}"
             if [ ${?} -eq 1 ]
             then
-                /opt/bin/echo -e "The IP address of ONU is invalid."
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ONU_IP_ADDRESS} IS INVALID"
             else
                 break
             fi
@@ -109,7 +109,8 @@ case ${#} in
         ONU_IP_ADDRESS="${1}"
         ;;
     *)
-        /opt/bin/echo -e "\033[1;41;37m***** ERROR: WRONG NUMBER OF PARAMETERS *****\033[0m"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
+        #
         exit 1
         ;;
 esac
@@ -118,7 +119,7 @@ IP_COMMAND="$(which ip)"
 #
 WAN_IFNAME="$(nvram get wan0_ifname)"
 #
-ONU_NET_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -E -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\1/')
+ONU_NET_PART="$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -E -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\1/')"
 ONU_HOST_PART=$(/opt/bin/echo "${ONU_IP_ADDRESS}" | /opt/bin/sed -E -e 's/([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*)\.([[:digit:]]*)/\2/')
 #
 WAN_HOST_PART=$((${ONU_HOST_PART}+1))
@@ -136,29 +137,29 @@ CIDR_MASK="24"
 #
 ########## CONFIGURE ONU_ACCESS ##########
 #
-/opt/bin/cp -f ${PRIVATE_ETC}/monit.d/onu_access_template ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's#IP_COMMAND#'"${IP_COMMAND}"'#g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/ONU_IP_ADDRESS/'"${ONU_IP_ADDRESS}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/ONU_NET_PART/'"${ONU_NET_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/WAN_HOST_PART/'"${WAN_HOST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/CIDR_MASK/'"${CIDR_MASK}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/BROADCAST_PART/'"${BROADCAST_PART}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/sed -E -i 's/WAN_IFNAME/'"${WAN_IFNAME}"'/g' ${PRIVATE_ETC}/monit.d/onu_access
+/opt/bin/cp -f "${PRIVATE_ETC}/monit.d/onu_access_template" "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's#IP_COMMAND#'"${IP_COMMAND}"'#g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/ONU_IP_ADDRESS/'"${ONU_IP_ADDRESS}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/ONU_NET_PART/'"${ONU_NET_PART}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/WAN_HOST_PART/'"${WAN_HOST_PART}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/CIDR_MASK/'"${CIDR_MASK}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/BROADCAST_PART/'"${BROADCAST_PART}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
+/opt/bin/sed -E -i 's/WAN_IFNAME/'"${WAN_IFNAME}"'/g' "${PRIVATE_ETC}/monit.d/onu_access"
 #
 ########## END ##########
 #
 #
 ########## CONFIGURE MONIT ##########
 #
-if [ -e ${ENTWARE_MONITD}/onu_access ] || [ -e ${ENTWARE_MONITD}/onu_access.on ]
+if [ -e "${ENTWARE_MONITD}/onu_access" ] || [ -e "${ENTWARE_MONITD}/onu_access.on" ]
 then
-    /opt/bin/rm -f ${ENTWARE_MONITD}/onu_access > /dev/null 2>&1
-    /opt/bin/rm -f ${ENTWARE_MONITD}/onu_access.on > /dev/null 2>&1
+    /opt/bin/rm -f "${ENTWARE_MONITD}/onu_access"
+    /opt/bin/rm -f "${ENTWARE_MONITD}/onu_access.on"
 fi
 #
-/opt/bin/chmod 600 ${PRIVATE_ETC}/monit.d/onu_access
-/opt/bin/cp ${PRIVATE_ETC}/monit.d/onu_access ${ENTWARE_MONITD}/
-/opt/bin/mv ${ENTWARE_MONITD}/onu_access ${ENTWARE_MONITD}/onu_access.on
+/opt/bin/cp -f "${PRIVATE_ETC}/monit.d/onu_access" "${ENTWARE_MONITD}"
+/opt/bin/chmod 600 "${ENTWARE_MONITD}/onu_access"
+/opt/bin/mv -f "${ENTWARE_MONITD}/onu_access" "${ENTWARE_MONITD}/onu_access.on"
 /opt/bin/monit reload
 #
 ########## END ##########

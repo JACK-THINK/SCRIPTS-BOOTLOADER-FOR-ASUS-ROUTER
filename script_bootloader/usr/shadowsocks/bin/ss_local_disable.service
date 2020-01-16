@@ -5,6 +5,10 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# SS_LOCAL_PID_FILE: The path to ss_local.pid
+# 设置自定义变量SS_LOCAL_PID_FILE为文件ss_local.pid的绝对路径
+SS_LOCAL_PID_FILE="/var/run/ss_local.pid"
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SS-LOCAL"
@@ -18,21 +22,27 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## DISABLE SS-LOCAL ##########
 #
-/opt/bin/kill $(/opt/bin/cat /var/run/ss_local.pid) > /dev/null 2>&1
-/opt/bin/rm -f /var/run/ss_local.pid > /dev/null 2>&1
+for PID in $(/opt/bin/cat "${SS_LOCAL_PID_FILE}")
+do
+    /opt/bin/kill ${PID}
+done
+#
+/opt/bin/rm -f "${SS_LOCAL_PID_FILE}"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

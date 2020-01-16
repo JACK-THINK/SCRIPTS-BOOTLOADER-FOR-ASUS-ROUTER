@@ -4,7 +4,6 @@
 
 1. 本插件用于安装、配置、启动和结束caddy
 2. 本插件为web服务器
-3. 监听端口：默认为2015，依赖etc/Caddyfile
 
 ## 安装前提
 
@@ -24,8 +23,8 @@
 
 | 权限      | 名称                  | 属性     | 说明                           |
 | --------- | --------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | caddy_install         | 普通文件 | 安装文件                       |
-| rwxrwxrwx | caddy_update          | 普通文件 | 升级文件                       |
+| rwxrwxrwx | caddy_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | caddy_update          | 普通文件 | 升级程序                       |
 | rwxrwxrwx | caddy_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | caddy_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -53,3 +52,9 @@
 | --------------------- | ------------- |
 | caddy_enable.service  | monit.d/caddy |
 | caddy_disable.service | monit.d/caddy |
+
+## 使用方法
+
+> Web页面登陆地址：http://<路由器IP地址>:2015
+>
+> 站点目录：`/opt/www`

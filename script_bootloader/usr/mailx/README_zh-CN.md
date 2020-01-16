@@ -20,15 +20,11 @@
 
 `ASUS_ROUTER/script_bootloader/usr/mailx/bin/`
 
-| 权限      | 名称          | 属性     | 说明           |
-| --------- | ------------- | -------- | -------------- |
-| rwxrwxrwx | mailx_install | 普通文件 | 插件的安装程序 |
-
-`ASUS_ROUTER/script_bootloader/usr/mailx/etc/`
-
-| 权限      | 名称        | 属性     | 说明           |
-| --------- | ----------- | -------- | -------------- |
-| rwxrwxrwx | nail.rc.bak | 普通文件 | 安装时自动生成 |
+| 权限      | 名称            | 属性     | 说明     |
+| --------- | --------------- | -------- | -------- |
+| rwxrwxrwx | mailx_install   | 普通文件 | 安装程序 |
+| rwxrwxrwx | mailx_uninstall | 普通文件 | 卸载程序 |
+| rwxrwxrwx | mailx_configure | 普通文件 | 配置程序 |
 
 ## 安装方法
 
@@ -41,13 +37,3 @@
    > | **aarch64** | GT-AC2900, GT-AC5300, GT-AX11000, RT-AC86U, RT-AX88U, RT-AX92U                                                                                                    |
    > | **armv7**   | Lyra Voice, RT-AC56U, RT-AC66U B1, RT-AC68P, RT-AC68U, RT-AC87U, RT-AC88U, RT-AC1200G, RT-AC1900P, RT-AC3100, RT-AC3200, RT-AC5300, RT-ACRH13, RT-AX56U, RT-AX58U |
    > | **mipsel**  | RT-N16, RT-N56U, RT-N66R, RT-N600, RT-AC51U, RT-AC66U, RT-AC66R, RT-AC1200, RT-AC1750, RT-AC1750 B1                                                               |
-
-## 需修改部分
-
-`mailx/bin/mailx_install`
-
-| 行号 | 代码             | 说明                   |
-| ---- | ---------------- | ---------------------- |
-| 37   | `SMTP_SERVER=''` | 发件人的SMTP服务器地址 |
-| 41   | `SENDER=''`      | 发件人邮箱地址         |
-| 45   | `PASSWORD=""`    | 发件人密码             |

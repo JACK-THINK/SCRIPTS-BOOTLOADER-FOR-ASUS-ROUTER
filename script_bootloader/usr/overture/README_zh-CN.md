@@ -4,7 +4,8 @@
 
 1. 本插件用于安装、配置、启动和结束overture
 2. 本插件用于将本机的DNS请求转发至ss-local，实现杜绝DNS污染
-3. 监听端口：依赖shadowsocks/etc/config_local.json和shadowsocks/etc/config_tunnel.json
+3. 监听端口：依赖`shadowsocks/etc/config_local.json`和`shadowsocks/etc/config_tunnel.json`
+4. 本程序默认作为shadowsocks透明代理的插件使用，若要单独使用，需另行配置
 
 ## 安装前提
 
@@ -25,13 +26,10 @@
 
 | 权限      | 名称                      | 属性     | 说明                                                         |
 | --------- | ------------------------- | -------- | ------------------------------------------------------------ |
-| rwxrwxrwx | overture_install          | 普通文件 | 安装文件                                                     |
-| rwxrwxrwx | overture_update           | 普通文件 | 升级文件                                                     |
+| rwxrwxrwx | overture_install          | 普通文件 | 安装程序                                                     |
+| rwxrwxrwx | overture_update           | 普通文件 | 升级程序                                                     |
 | rwxrwxrwx | overture_enable.service   | 普通文件 | 插件的可执行程序，用于启动程序（路由器启用SS全局代理时使用） |
 | rwxrwxrwx | overture_disable.service  | 普通文件 | 插件的可执行程序，用于结束程序（路由器启用SS全局代理时使用） |
-| rwxrwxrwx | overture-linux-arm.zip    | 普通文件 | overture预编译文件，适用于arm架构                            |
-| rwxrwxrwx | overture-linux-arm64.zip  | 普通文件 | overture预编译文件，适用于arm64架构                          |
-| rwxrwxrwx | overture-linux-mipsle.zip | 普通文件 | overture预编译文件，适用于mipsle架构                         |
 
 `ASUS_ROUTER/script_bootloader/usr/overture/etc/`
 

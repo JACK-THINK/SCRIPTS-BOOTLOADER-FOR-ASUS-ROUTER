@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,35 +14,43 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
 # 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+ENTWARE_BIN="${USB_MOUNT_POINT}/bin"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/debian
+PRIVATE_ROOT="${SBL_SYS_USR}/debian"
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
-PRIVATE_USR=${PRIVATE_ROOT}/usr
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(/opt/bin/uname -m) in
+case "$(/opt/bin/uname -m)" in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
         ;;
@@ -56,16 +64,14 @@ case $(/opt/bin/uname -m) in
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsel"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${ROUTER_ARCHITECTURE} IS NOT SUPPORTED TEMPORARILY"
         #
-        # Prompt the user that Debian doesn't support ${ROUTER_ARCHITECTURE}
-        # 提示用户Debian不支持${ROUTER_ARCHITECTURE}
-        /opt/bin/echo "($(basename $0)): $$ ***** DEBIAN DOESN'T SUPPORT ${ROUTER_ARCHITECTURE} *****"
         exit 6
         ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
         #
         exit 3
         ;;
@@ -73,7 +79,7 @@ esac
 #
 # DEBIAN_VERSION: Version of Debian
 # 设置自定义变量DEBIAN_VERSION为Debian版本
-case $(/opt/bin/uname -r | /opt/bin/sed -E -n -e 's/^([[:digit:]]).*/\1/p') in
+case "$(/opt/bin/uname -r | /opt/bin/sed -E -n -e 's/^([[:digit:]]).*/\1/p')" in
     "2")
         DEBIAN_VERSION="jessie"
         ;;
@@ -83,7 +89,7 @@ case $(/opt/bin/uname -r | /opt/bin/sed -E -n -e 's/^([[:digit:]]).*/\1/p') in
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** VERSION OF KERNEL IS UNKNOWN *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: KERNEL VERSION IS UNKNOWN"
         #
         exit 7
         ;;
@@ -99,14 +105,14 @@ SERVICE_NAME="DEBIAN"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -115,36 +121,57 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
-    # Download Debian
-    # 下载Debian
-    /opt/bin/mkdir -p ${PRIVATE_USR}
-    /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P ${PRIVATE_USR} ${DOWNLOAD_LINK}
-    #
-    # Prepare Debian Environment
-    # 准备Debian环境
-    /opt/bin/tar -xzvf ${PRIVATE_USR}/debian-${DEBIAN_VERSION}-${ROUTER_ARCHITECTURE}.tar.gz -C ${USB_MOUNT_POINT}/
-    /opt/bin/mkdir -p ${USB_MOUNT_POINT}/debian_mnt/
-    /opt/bin/cp ${PRIVATE_ETC}/S99debian ${ENTWARE_ETC}/init.d/
-    /opt/bin/chmod 755 ${ENTWARE_ETC}/init.d/S99debian
-    /opt/bin/cp ${PRIVATE_ETC}/chroot-services.list ${ENTWARE_ETC}/
-    /opt/bin/chmod 755 ${ENTWARE_ETC}/chroot-services.list
-    /opt/bin/cp -s ${ENTWARE_ETC}/init.d/S99debian ${ENTWARE_BIN}/debian
-    /opt/bin/cp /etc/hosts ${USB_MOUNT_POINT}/debian/etc/
-    #
-    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
-    #
-    exit 0
+    # Check if MONIT MANAGEMENT SYSTEM has been deployed
+    # 检查MONIT MANAGEMENT SYSTEM是否已部署
+    if [ -e "/opt/bin/monit" ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Download Debian
+        # 下载Debian
+        /opt/bin/mkdir -p "${PRIVATE_USR}"
+        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_USR}" "${DOWNLOAD_LINK}"
+        #
+        # Prepare Debian Environment
+        # 准备Debian环境
+        /opt/bin/tar -xzvf "${PRIVATE_USR}/debian-${DEBIAN_VERSION}-${ROUTER_ARCHITECTURE}.tar.gz" -C "/opt"
+        /opt/bin/mkdir -p "/opt/debian_mnt"
+        /opt/bin/touch "/opt/etc/chroot-services.list"
+        /opt/bin/chmod 755 "/opt/etc/chroot-services.list"
+        /opt/bin/cp -f "/etc/hosts" "/opt/debian/etc"
+        /opt/bin/cp -fs "${PRIVATE_BIN}/debian" "${ENTWARE_BIN}/debian"
+        #
+        # Configure monit
+        # 配置monit
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/debian" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/debian"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/debian" "${ENTWARE_MONITD}/debian.on"
+        /opt/bin/monit reload
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+    fi
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi

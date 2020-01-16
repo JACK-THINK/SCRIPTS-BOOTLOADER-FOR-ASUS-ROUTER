@@ -15,7 +15,7 @@
   <type>system</type>
 
   <!-- Run as special user -->
-  <user>root</user>
+  <user>ADMINUSER</user>
 
   <!-- Fork into daemon mode -->
   <fork/>
@@ -80,13 +80,13 @@
   </policy>
 
   <!-- Only systemd, which runs as root, may report activation failures. -->
-  <policy user="root">
+  <policy user="ADMINUSER">
     <allow send_destination="org.freedesktop.DBus"
            send_interface="org.freedesktop.systemd1.Activator"/>
   </policy>
 
   <!-- root may monitor the system bus. -->
-  <policy user="root">
+  <policy user="ADMINUSER">
     <allow send_destination="org.freedesktop.DBus"
            send_interface="org.freedesktop.DBus.Monitoring"/>
   </policy>
@@ -94,7 +94,7 @@
   <!-- If the Stats interface was enabled at compile-time, root may use it.
        Copy this into system.local.conf or system.d/*.conf if you want to
        enable other privileged users to view statistics and debug info -->
-  <policy user="root">
+  <policy user="ADMINUSER">
     <allow send_destination="org.freedesktop.DBus"
            send_interface="org.freedesktop.DBus.Debug.Stats"/>
   </policy>

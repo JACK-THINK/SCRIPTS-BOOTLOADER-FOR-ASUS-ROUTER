@@ -31,8 +31,6 @@
 | 权限      | 名称                 | 属性     | 说明         |
 | --------- | -------------------- | -------- | ------------ |
 | rwxrwxrwx | https_open           | 普通文件 | fw.d配置文件 |
-| rwxrwxrwx | ss_server_open       | 普通文件 | fw.d配置文件 |
-| rwxrwxrwx | v2ray_proxy_open     | 普通文件 | fw.d配置文件 |
 | rwxrwxrwx | ipsec_forward        | 普通文件 | fw.d配置文件 |
 | rwxrwxrwx | qbittorrent_forward  | 普通文件 | fw.d配置文件 |
 | rwxrwxrwx | softethervpn_forward | 普通文件 | fw.d配置文件 |
@@ -42,8 +40,6 @@
 | 权限      | 名称                           | 属性     | 说明            | 默认状态 |
 | --------- | ------------------------------ | -------- | --------------- | -------- |
 | rwxrwxrwx | fw_filter_INPUT_https          | 普通文件 | monit.d配置文件 | 默认禁用 |
-| rwxrwxrwx | fw_filter_INPUT_ss_server      | 普通文件 | monit.d配置文件 | 默认禁用 |
-| rwxrwxrwx | fw_filter_INPUT_v2ray_proxy    | 普通文件 | monit.d配置文件 | 默认禁用 |
 | rwxrwxrwx | fw_nat_PREROUTING_ipsec        | 普通文件 | monit.d配置文件 | 默认禁用 |
 | rwxrwxrwx | fw_nat_PREROUTING_qbittorrent  | 普通文件 | monit.d配置文件 | 默认禁用 |
 | rwxrwxrwx | fw_nat_PREROUTING_softethervpn | 普通文件 | monit.d配置文件 | 默认禁用 |

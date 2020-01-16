@@ -37,8 +37,8 @@
         max connections = 5
 
 
-[ROUTER-SMB-SHARE]
-        comment = Samba Share on ROUTER
+[ROUTER_MODEL-SMB-SHARE]
+        comment = Samba Share on ROUTER_MODEL
         path = /home/root
         writable = yes
         browseable = yes

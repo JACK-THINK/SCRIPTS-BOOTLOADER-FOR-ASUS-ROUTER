@@ -10,23 +10,23 @@
 
 ## 文件结构
 
-`ASUS_ROUTER/script_bootloader/usr/aliyun/`
+`ASUS_ROUTER/script_bootloader/usr/aliyun-cli/`
 
 | 权限      | 名称            | 属性     | 说明           |
 | --------- | --------------- | -------- | -------------- |
 | rwxrwxrwx | README_zh-CN.md | 普通文件 | 说明文件       |
 | rwxrwxrwx | bin             | 目录     | 可执行文件目录 |
 
-`ASUS_ROUTER/script_bootloader/usr/aliyun/bin/`
+`ASUS_ROUTER/script_bootloader/usr/aliyun-cli/bin/`
 
-| 权限      | 名称           | 属性     | 说明     |
-| --------- | -------------- | -------- | -------- |
-| rwxrwxrwx | aliyun_install | 普通文件 | 安装文件 |
-| rwxrwxrwx | aliyun_update  | 普通文件 | 升级文件 |
+| 权限      | 名称               | 属性     | 说明     |
+| --------- | ------------------ | -------- | -------- |
+| rwxrwxrwx | aliyun-cli_install | 普通文件 | 安装程序 |
+| rwxrwxrwx | aliyun-cli_update  | 普通文件 | 升级程序 |
 
 ## 安装方法
 
-执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/aliyun/bin/aliyun_install`。程序会根据路由器架构，自动安装适当版本的aliyun
+执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/aliyun-cli/bin/aliyun-cli_install`。程序会根据路由器架构，自动安装适当版本的aliyun-cli
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >

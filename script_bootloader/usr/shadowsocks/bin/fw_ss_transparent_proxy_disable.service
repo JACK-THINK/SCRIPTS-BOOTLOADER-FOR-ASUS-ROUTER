@@ -26,38 +26,40 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## UNSET TCP PROXY ##########
 #
-# Check if ${USER_DEFINED_CHAIN_NAME} exists
-# 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+# Check if ${USER_DEFINED_CHAIN_NAME}_TCP exists
+# 检查${USER_DEFINED_CHAIN_NAME}_TCP是否存在
+if [ -z "$(iptables -t nat -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'_TCP')" ]
 then
     # Stop and Exit
-    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
+    # 如果${USER_DEFINED_CHAIN_NAME}_TCP不存在，则该程序终止"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_NAME} HAS BEEN ${SERVICE_FUNCTION}D ALREADY"
+    #
     exit 1
     #
 else
-    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
-    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ -n "$(iptables -t nat -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
+    # Check if ${USER_DEFINED_CHAIN_NAME}_TCP is referenced by ${BUILT_IN_CHAIN_NAME}
+    # 检查${USER_DEFINED_CHAIN_NAME}_TCP是否被${BUILT_IN_CHAIN_NAME}所引用
+    if [ -n "$(iptables -t nat -nvL "${BUILT_IN_CHAIN_NAME}" | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'_TCP')" ]
     then
-        # Disable chain ${USER_DEFINED_CHAIN_NAME}
-        # 禁用${USER_DEFINED_CHAIN_NAME}链
-        iptables -t nat -D ${BUILT_IN_CHAIN_NAME} -p tcp -j ${USER_DEFINED_CHAIN_NAME}
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}_TCP
+        # 禁用${USER_DEFINED_CHAIN_NAME}_TCP链
+        iptables -t nat -D "${BUILT_IN_CHAIN_NAME}" -p tcp -j "${USER_DEFINED_CHAIN_NAME}_TCP"
     fi
     #
-    # Flush chain ${USER_DEFINED_CHAIN_NAME}
-    # 清空${USER_DEFINED_CHAIN_NAME}链
-    iptables -t nat -F ${USER_DEFINED_CHAIN_NAME}
+    # Flush chain ${USER_DEFINED_CHAIN_NAME}_TCP
+    # 清空${USER_DEFINED_CHAIN_NAME}_TCP链
+    iptables -t nat -F "${USER_DEFINED_CHAIN_NAME}_TCP"
     #
-    # Remove chain ${USER_DEFINED_CHAIN_NAME}
-    # 删除${USER_DEFINED_CHAIN_NAME}链
-    iptables -t nat -X ${USER_DEFINED_CHAIN_NAME}
+    # Remove chain ${USER_DEFINED_CHAIN_NAME}_TCP
+    # 删除${USER_DEFINED_CHAIN_NAME}_TCP链
+    iptables -t nat -X "${USER_DEFINED_CHAIN_NAME}_TCP"
 fi
 #
 ########## END ##########
@@ -65,31 +67,31 @@ fi
 #
 ########## UNSET UDP PROXY ##########
 #
-# Check if ${USER_DEFINED_CHAIN_NAME} exists
-# 检查${USER_DEFINED_CHAIN_NAME}是否存在
-if [ -z "$(iptables -t mangle -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}")" ]
+# Check if ${USER_DEFINED_CHAIN_NAME}_UDP exists
+# 检查${USER_DEFINED_CHAIN_NAME}_UDP是否存在
+if [ -z "$(iptables -t mangle -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'_UDP')" ]
 then
-    # Stop and Exit
-    # 如果${USER_DEFINED_CHAIN_NAME}不存在，则该程序终止
-    exit 2
+    # Do nothing but prompt the user
+    # 如果${USER_DEFINED_CHAIN_NAME}_UDP不存在，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: NO UDP PROXY"
     #
 else
-    # Check if ${USER_DEFINED_CHAIN_NAME} is referenced by ${BUILT_IN_CHAIN_NAME}
-    # 检查${USER_DEFINED_CHAIN_NAME}是否被${BUILT_IN_CHAIN_NAME}所引用
-    if [ -n "$(iptables -t mangle -nvL ${BUILT_IN_CHAIN_NAME} | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME})" ]
+    # Check if ${USER_DEFINED_CHAIN_NAME}_UDP is referenced by ${BUILT_IN_CHAIN_NAME}
+    # 检查${USER_DEFINED_CHAIN_NAME}_UDP是否被${BUILT_IN_CHAIN_NAME}所引用
+    if [ -n "$(iptables -t mangle -nvL "${BUILT_IN_CHAIN_NAME}" | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'_UDP')" ]
     then
-        # Disable chain ${USER_DEFINED_CHAIN_NAME}
-        # 禁用${USER_DEFINED_CHAIN_NAME}链
-        iptables -t mangle -D ${BUILT_IN_CHAIN_NAME} -j ${USER_DEFINED_CHAIN_NAME}
+        # Disable chain ${USER_DEFINED_CHAIN_NAME}_UDP
+        # 禁用${USER_DEFINED_CHAIN_NAME}_UDP链
+        iptables -t mangle -D "${BUILT_IN_CHAIN_NAME}" -j "${USER_DEFINED_CHAIN_NAME}_UDP"
     fi
     #
-    # Flush chain ${USER_DEFINED_CHAIN_NAME}
-    # 清空${USER_DEFINED_CHAIN_NAME}链
-    iptables -t mangle -F ${USER_DEFINED_CHAIN_NAME}
+    # Flush chain ${USER_DEFINED_CHAIN_NAME}_UDP
+    # 清空${USER_DEFINED_CHAIN_NAME}_UDP链
+    iptables -t mangle -F "${USER_DEFINED_CHAIN_NAME}_UDP"
     #
-    # Remove chain ${USER_DEFINED_CHAIN_NAME}
-    # 删除${USER_DEFINED_CHAIN_NAME}链
-    iptables -t mangle -X ${USER_DEFINED_CHAIN_NAME}
+    # Remove chain ${USER_DEFINED_CHAIN_NAME}_UDP
+    # 删除${USER_DEFINED_CHAIN_NAME}_UDP链
+    iptables -t mangle -X "${USER_DEFINED_CHAIN_NAME}_UDP"
     #
     # Remove IP route and rules
     # 删除IP路由及规则
@@ -104,6 +106,8 @@ fi
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

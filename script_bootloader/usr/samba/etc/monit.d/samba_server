@@ -1,4 +1,4 @@
-check process SAMBA_SERVER with pidfile '/var/run/smbd.pid'
+check process SAMBA_SERVER with pidfile "/var/run/smbd.pid"
     start program = "/opt/script_bootloader/usr/samba/bin/samba_server_enable.service"
     stop program = "/opt/script_bootloader/usr/samba/bin/samba_server_disable.service"
     if does not exist then restart

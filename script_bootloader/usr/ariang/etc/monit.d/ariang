@@ -1,4 +1,4 @@
-check process ARIANG with pidfile '/var/run/ariang.pid'
+check process ARIANG with pidfile "/var/run/ariang.pid"
     start program = "/opt/script_bootloader/usr/ariang/bin/ariang_enable.service"
     stop program = "/opt/script_bootloader/usr/ariang/bin/ariang_disable.service"
     if does not exist then restart

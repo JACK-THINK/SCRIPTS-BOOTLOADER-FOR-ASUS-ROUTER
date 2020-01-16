@@ -26,7 +26,7 @@
 
 | 权限      | 名称                         | 属性     | 说明                           |
 | --------- | ---------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | samba_install                | 普通文件 | 安装文件                       |
+| rwxrwxrwx | samba_install                | 普通文件 | 安装程序                       |
 | rwxrwxrwx | samba_uninstall              | 普通文件 | 卸载文件                       |
 | rwxrwxrwx | samba_server_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | samba_server_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |

@@ -1,0 +1,5 @@
+check file DEBIAN path "/var/run/debian_enabled"
+    start program = "/opt/script_bootloader/usr/debian/bin/debian start"
+    stop program = "/opt/script_bootloader/usr/debian/bin/debian stop"
+    restart program = "/opt/script_bootloader/usr/debian/bin/debian restart"
+    if does not exist then restart

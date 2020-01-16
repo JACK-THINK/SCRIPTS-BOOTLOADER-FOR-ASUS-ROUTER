@@ -25,7 +25,6 @@
 | --------- | ----------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | freemem_install         | 普通文件 | 插件的安装程序                 |
 | rwxrwxrwx | freemem_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | freemem_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/freemem/etc/`
 

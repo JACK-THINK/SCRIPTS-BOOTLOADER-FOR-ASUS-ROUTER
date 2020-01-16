@@ -1,33 +1,17 @@
 #!/bin/sh
 #
-########## SET THE CUSTOM VARIABLES ##########
-#
-# 设置自定义变量
-# 当该程序运行结束，此处设置的变量自动取消
-#
-# USB_MOUNT_POINT: The mount point of the USB flash drive
-# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
-#
-# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
-# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
-#
-########## END ##########
-#
-#
 ########## LOAD FUNCTIONS ##########
 #
 isValidPort()
 {
-    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*/0/') != "0" ]
+    if [ "$(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*/0/')" == "0" ]
     then
-        return 1
-    fi
-    #
-    if [ ${1} -ge 0 ] && [ ${1} -le 65535 ]
-    then
-        return 0
+        if [ ${1} -ge 0 ] && [ ${1} -le 65535 ]
+        then
+            return 0
+        else
+            return 1
+        fi
     else
         return 1
     fi
@@ -40,9 +24,9 @@ doubleCheckAndConfirm()
         local VALUE_1
         local VALUE_2
         #
-        /opt/bin/echo -ne "Input the value of ${1}: "
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
         read VALUE_1
-        /opt/bin/echo -ne "Input the value of ${1} again to confirm: "
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
         read VALUE_2
         #
         if [ "${VALUE_1}" == "${VALUE_2}" ]
@@ -50,7 +34,7 @@ doubleCheckAndConfirm()
             eval ${1}="${VALUE_1}"
             break
         else
-            /opt/bin/echo -e "The two values you entered were inconsistent."
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
         fi
     done
 }
@@ -61,26 +45,27 @@ doubleCheckAndConfirm()
 ########## SET PARAMETERS ##########
 #
 case ${#} in
-    1)
-        PORT="${1}"
-        ;;
     0)
         while [ 1 ]
         do
-            /opt/bin/echo -e "PORT: The listening port of sshd"
-            doubleCheckAndConfirm PORT
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSSHD PORT\033[0m: listening port of sshd"
+            doubleCheckAndConfirm SSHD_PORT
             #
-            isValidPort ${PORT}
+            isValidPort "${SSHD_PORT}"
             if [ ${?} -eq 1 ]
             then
-                /opt/bin/echo -e "The listening port of sshd is invalid."
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${SSHD_PORT} IS INVALID"
             else
                 break
             fi
         done
         ;;
+    1)
+        SSHD_PORT="${1}"
+        ;;
     *)
-        /opt/bin/echo -e "\033[1;41;37m***** ERROR: WRONG NUMBER OF PARAMETERS *****\033[0m"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
+        #
         exit 1
         ;;
 esac
@@ -90,18 +75,18 @@ esac
 #
 ########## CONFIGURE OPENSSH_SERVER ##########
 #
-if [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ] && \
-[ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+if [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' "/opt/etc/ssh/sshd_config")" ] && \
+[ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' "/opt/etc/ssh/sshd_config")" ]
 then
-    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
-elif [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${SSHD_PORT}"'/' "/opt/etc/ssh/sshd_config"
+elif [ -n "$(/opt/bin/grep -E '^#Port [[:digit:]]*$' "/opt/etc/ssh/sshd_config")" ]
 then
-    /opt/bin/sed -E -i 's/^#(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
-elif [ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' ${ENTWARE_ETC}/ssh/sshd_config)" ]
+    /opt/bin/sed -E -i 's/^#(Port) [[:digit:]]*$/\1 '"${SSHD_PORT}"'/' "/opt/etc/ssh/sshd_config"
+elif [ -n "$(/opt/bin/grep -E '^Port [[:digit:]]*$' "/opt/etc/ssh/sshd_config")" ]
 then
-    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${PORT}"'/' ${ENTWARE_ETC}/ssh/sshd_config
+    /opt/bin/sed -E -i 's/^(Port) [[:digit:]]*$/\1 '"${SSHD_PORT}"'/' "/opt/etc/ssh/sshd_config"
 else
-    /opt/bin/echo "Port ${PORT}" >> ${ENTWARE_ETC}/ssh/sshd_config
+    /opt/bin/echo -e "Port ${SSHD_PORT}" >> "/opt/etc/ssh/sshd_config"
 fi
 #
 ########## END ##########

@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,35 +14,27 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
-#
-# SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
-SBL_SYS_ROOT=${USB_MOUNT_POINT}/script_bootloader
-#
-# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
-SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${SBL_SYS_ROOT}/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/samba
+PRIVATE_ROOT="${SBL_SYS_USR}/samba"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -50,35 +42,81 @@ SERVICE_NAME="SAMBA"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="UNINSTALLATION"
+SERVICE_FUNCTION="UNINSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
 #
-########## INSTALL SAMBA ##########
+########## UNINSTALL SAMBA ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Check if ${SERVICE_NAME} has been installed
+        # 检查${SERVICE_NAME}是否已安装
+        if [ ! -e "/opt/sbin/smbd" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${SERVICE_NAME} IS NOT INSTALLED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 3
+        fi
         #
         # Stop SAMBA_SERVER service
         # 停止SAMBA_SERVER服务
-        /opt/bin/monit stop 'SAMBA_SERVER'
+        /opt/bin/monit stop "SAMBA_SERVER" > /dev/null 2>&1
+        #
+        # Wait until SAMBA_SERVER service is terminated
+        # 等待直至SAMBA_SERVER service被终止
+        while [ -n "$(pidof smbd)" ] || [ -n "$(pidof wsdd2)" ]
+        do
+            /opt/bin/sleep 5
+        done
+        #
+        # Configure dbus-daemon
+        # 配置dbus-daemon
+        /opt/bin/rm -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
+        /opt/bin/mv -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf.bak" "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
+        /opt/bin/rm -f "${PRIVATE_ETC}/dbus/avahi-dbus.conf"
+        #
+        /opt/bin/rm -f "/opt/share/dbus-1/system.conf"
+        /opt/bin/mv -f "/opt/share/dbus-1/system.conf.bak" "/opt/share/dbus-1/system.conf"
+        /opt/bin/rm -f "${PRIVATE_ETC}/dbus/system.conf"
+        #
+        # Enable /opt/etc/init.d/S91smb
+        # 启用/opt/etc/init.d/S91smb
+        /opt/bin/mv -f "${PRIVATE_ETC}"/S*smb "/opt/etc/init.d"
+        #
+        # Configure samba
+        # 配置samba
+        /opt/bin/rm -f "/opt/etc/samba/smb.conf"
+        /opt/bin/mv -f "/opt/etc/samba/smb.conf.bak" "/opt/etc/samba/smb.conf"
+        #
+        /opt/bin/rm -f "${PRIVATE_ETC}/smb.conf.add"
+        #
+        /opt/bin/rm -f "/opt/etc/printcap"
+        /opt/bin/rm -rf "/opt/var/log/samba"
+        /opt/bin/rm -rf "/opt/var/log/cores/smbd"
+        /opt/bin/rm -f "/opt/var/log/log.smbd"
+        /opt/bin/rm -rf "/opt/var/lib/samba"
+        /opt/bin/rm -rf "/opt/var/cache/samba"
+        /opt/bin/rm -rf "/opt/var/run/samba"
         #
         # Uninstall samba
         # 卸载samba
@@ -88,45 +126,46 @@ then
         /opt/bin/opkg remove samba4-server
         /opt/bin/opkg remove samba4-libs
         #
+        # Configure wsdd2
+        # 配置wsdd2
+        /opt/bin/mv -f "${PRIVATE_ETC}"/S*wsdd2 "/opt/etc/init.d"
+        #
         # Uninstall wsdd2
         # 卸载wsdd2
         /opt/bin/opkg remove wsdd2
         #
         # Remove residue
         # 删除残留文件
-        /opt/bin/rm -rf /opt/etc/samba
-        #
-        /opt/bin/rm -f /opt/etc/printcap
-        /opt/bin/rm -rf /opt/var/log/samba
-        /opt/bin/rm -rf /opt/var/lib/samba
-        /opt/bin/rm -rf /opt/var/cache/samba
-        /opt/bin/rm -rf /opt/var/run/samba
-        /opt/bin/rm -rf ${PRIVATE_ROOT}
-        /opt/bin/rm -f ${SBL_SYS_TMP}/samba
-        #
-        #/opt/bin/mkdir /home/root/samba_share
+        /opt/bin/rm -rf "/opt/etc/samba"
         #
         # Configure monit
         # 配置monit
-        /opt/bin/rm -f ${ENTWARE_MONITD}/samba_server.on
+        /opt/bin/rm -f "${ENTWARE_MONITD}/samba_server.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/samba_server"
         /opt/bin/monit reload
         #
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        logger -st "($(basename $0))" $$ "***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        logger -st "($(basename $0))" $$ "***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
     fi
     #
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    logger -st "($(basename $0))" $$ "***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    logger -st "($(basename $0))" $$ "***** PLEASE ENABLE ENTWARE FIRST *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
 fi
 #
 ########## END ##########

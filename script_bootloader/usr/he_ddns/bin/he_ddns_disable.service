@@ -21,6 +21,21 @@ INVALID_IPV4_ADDRESS="8.8.8.8"
 # 设置自定义变量INVALID_IPV6_ADDRESS为用于更新目标DNS记录的无效IPv6地址
 INVALID_IPV6_ADDRESS="2001:4860:4860::8888"
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="HE_DDNS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
+#
 ########## END ##########
 #
 #
@@ -47,6 +62,15 @@ INVALID_IPV6_ADDRESS="2001:4860:4860::8888"
 #
 ########## STOP SERVICE ##########
 #
-/opt/bin/monit stop HE_DDNS
+/opt/bin/monit unmonitor "HE_DDNS"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

@@ -22,7 +22,9 @@
 
 | 权限      | 名称                 | 属性     | 说明                           |
 | --------- | -------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | ntpd_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | ntpd_install         | 普通文件 | 安装程序                       |
+| rwxrwxrwx | ntpd_uninstall       | 普通文件 | 卸载程序                       |
+| rwxrwxrwx | ntpd_configure       | 普通文件 | 配置程序                       |
 | rwxrwxrwx | ntpd_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | ntpd_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
@@ -30,7 +32,6 @@
 
 | 权限      | 名称         | 属性     | 说明            |
 | --------- | ------------ | -------- | --------------- |
-| rwxrwxrwx | ntp.conf     | 普通文件 | ntpd配置文件    |
 | rwxrwxrwx | monit.d/ntpd | 普通文件 | monit.d配置文件 |
 
 ## 安装方法
