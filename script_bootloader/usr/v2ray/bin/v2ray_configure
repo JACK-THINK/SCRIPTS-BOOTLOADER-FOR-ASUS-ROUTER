@@ -60,7 +60,7 @@ case ${#} in
             /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mTRANSPORT SETTINGS\033[0m: tcp | https"
             doubleCheckAndConfirm TRANSPORT
             #
-            case "$(/opt/bin/echo "${TRANSPORT}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
+            case "$(/opt/bin/echo "${TRANSPORT}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
                 "tcp")
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUPSTREAM DNS IP\033[0m: IP address of upstream DNS server"
                     doubleCheckAndConfirm UPSTREAM_DNS_IP
@@ -118,7 +118,7 @@ esac
 #
 ########## CONFIGURE V2RAY ##########
 #
-case "$(/opt/bin/echo "${TRANSPORT}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
+case "$(/opt/bin/echo "${TRANSPORT}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
     "tcp")
         # Create ${PRIVATE_ETC}/config_proxy.json
         # 创建${PRIVATE_ETC}/config_proxy.json

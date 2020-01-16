@@ -60,7 +60,7 @@ case ${#} in
             /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mROLE\033[0m: client | server"
             doubleCheckAndConfirm ROLE
             #
-            case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
+            case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
                 "server")
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of local shadowsocks server"
                     doubleCheckAndConfirm PASSWORD
@@ -109,7 +109,7 @@ esac
 #
 ########## CONFIGURE SHADOWSOCKS ##########
 #
-case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
+case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
     "server")
         # Modify ${PRIVATE_ETC}/config_server.json
         # 修改${PRIVATE_ETC}/config_server.json
@@ -121,7 +121,7 @@ case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
         NUM_TARGET_LINE=$((${NUM_LAST_LINE}-1))
         /opt/bin/sed -E -i ''"${NUM_TARGET_LINE}"'s#,$##' "${PRIVATE_ETC}/config_server.json"
         #
-        if [ "$(/opt/bin/echo "${OBFUSCATION}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" == "enable" ]
+        if [ "$(/opt/bin/echo "${OBFUSCATION}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" == "enable" ]
         then
             /opt/bin/sed -E -i ''"${NUM_TARGET_LINE}"'s#$#,#' "${PRIVATE_ETC}/config_server.json"
             /opt/bin/sed -E -i '\#\}#iAAAA\"plugin\":\"obfs-server\",' "${PRIVATE_ETC}/config_server.json"
@@ -142,7 +142,7 @@ case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" in
             NUM_TARGET_LINE=$((${NUM_LAST_LINE}-1))
             /opt/bin/sed -E -i ''"${NUM_TARGET_LINE}"'s#,$##' "${CONFIG_FOR_CLIENT}"
             #
-            if [ "$(/opt/bin/echo "${OBFUSCATION}" | /opt/bin/sed -E 's/([[:upper:]])/\l\1/g')" == "enable" ]
+            if [ "$(/opt/bin/echo "${OBFUSCATION}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" == "enable" ]
             then
                 /opt/bin/sed -E -i ''"${NUM_TARGET_LINE}"'s#$#,#' "${CONFIG_FOR_CLIENT}"
                 /opt/bin/sed -E -i '\#\}#iAAAA\"plugin\":\"obfs\-local\",' "${CONFIG_FOR_CLIENT}"
