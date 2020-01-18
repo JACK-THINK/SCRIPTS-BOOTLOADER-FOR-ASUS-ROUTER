@@ -30,7 +30,7 @@ start()
 {
     if [ ${MOUNTED_DIR_COUNT} -gt 0 ]
     then
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
         #
         exit 1
     fi
@@ -52,14 +52,14 @@ start()
     #
     /opt/bin/touch "/var/run/debian_enabled"
     #
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: START CHROOTED DEBIAN SERVICES"
+    /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: START CHROOTED DEBIAN SERVICES"
 }
 #
 stop()
 {
     if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
     then
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
         #
         exit 1
     fi
@@ -79,14 +79,14 @@ stop()
     #
     /opt/bin/rm -f "/var/run/debian_enabled"
     #
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STOP CHROOTED DEBIAN SERVICES"
+    /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: STOP CHROOTED DEBIAN SERVICES"
 }
 #
 restart()
 {
     if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
     then
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STOPPED ALREADY"
         #
         for DIR in dev proc sys
         do
@@ -103,7 +103,7 @@ restart()
             /opt/bin/chroot "${CHROOT_DIR}" "/etc/init.d/${ITEM}" start
         done
     else
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: STOP CHROOTED DEBIAN SERVICES"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: STOP CHROOTED DEBIAN SERVICES"
         #
         for ITEM in $(cat "${CHROOT_SERVICES_LIST}")
         do
@@ -138,14 +138,14 @@ restart()
     #
     /opt/bin/touch "/var/run/debian_enabled"
     #
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: RESTART CHROOTED DEBIAN SERVICES"
+    /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: RESTART CHROOTED DEBIAN SERVICES"
 }
 #
 enter()
 {
     if [ ${MOUNTED_DIR_COUNT} -eq 0 ]
     then
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: START CHROOTED DEBIAN SERVICES"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: START CHROOTED DEBIAN SERVICES"
         #
         for DIR in dev proc sys
         do
@@ -159,7 +159,7 @@ enter()
         #
         /opt/bin/touch "/var/run/debian_enabled"
     else
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES HAVE BEEN STARTED ALREADY"
     fi
     #
     if [ -z "$(/bin/mount | /opt/bin/grep ''"${CHROOT_DIR}"'/dev/pts')" ]
@@ -174,9 +174,9 @@ status()
 {
     if [ ${MOUNTED_DIR_COUNT} -gt 0 ]
     then
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE RUNNING"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE RUNNING"
     else
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE NOT RUNNING"
+        /opt/bin/echo -e "\033[1;44;37mINFO\033[0m: CHROOTED SERVICES ARE NOT RUNNING"
     fi
 }
 #
@@ -186,8 +186,8 @@ checkServiceList()
     then
         return 0
     else
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEFINE DEBIAN SERVICES TO START IN ${CHROOT_SERVICES_LIST} FIRST"
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ONE SERVICE PER LINE WHICH IS THE NAME OF ONE OF THE SCRIPTS IN DEBIAN'S /etc/init.d/"
+        /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: PLEASE DEFINE DEBIAN SERVICES TO START IN ${CHROOT_SERVICES_LIST} FIRST"
+        /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: ONE SERVICE PER LINE WHICH IS THE NAME OF ONE OF THE SCRIPTS IN DEBIAN'S /etc/init.d/"
         #
         return 1
     fi
@@ -211,7 +211,7 @@ case ${#} in
                 then
                     start
                 else
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: START CHROOTED DEBIAN SERVICES"
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: START CHROOTED DEBIAN SERVICES"
                     exit 1
                 fi
                 ;;
@@ -221,7 +221,7 @@ case ${#} in
                 then
                     stop
                 else
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STOP CHROOTED DEBIAN SERVICES"
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: STOP CHROOTED DEBIAN SERVICES"
                     exit 1
                 fi
                 ;;
@@ -231,7 +231,7 @@ case ${#} in
                 then
                     restart
                 else
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: RESTART CHROOTED DEBIAN SERVICES"
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: RESTART CHROOTED DEBIAN SERVICES"
                     exit 1
                 fi
                 ;;
@@ -241,7 +241,7 @@ case ${#} in
                 then
                     enter
                 else
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ENTER DEBIAN ENVIRONMENT"
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: ENTER DEBIAN ENVIRONMENT"
                     exit 1
                 fi
                 ;;
@@ -251,18 +251,18 @@ case ${#} in
                 then
                     status
                 else
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: CHECK STATUS OF CHROOTED DEBIAN SERVICES"
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: CHECK STATUS OF CHROOTED DEBIAN SERVICES"
                     exit 1
                 fi
                 ;;
             *)
-                /opt/bin/echo -e "Usage: $0 (start|stop|restart|enter|status)"
+                /opt/bin/echo -e "Usage: $(basename "${0}") (start|stop|restart|enter|status)"
                 exit 1
                 ;;
         esac
         ;;
     *)
-        /opt/bin/echo -e "Usage: $0 (start|stop|restart|enter|status)"
+        /opt/bin/echo -e "Usage: $(basename "${0}") (start|stop|restart|enter|status)"
         exit 1
         ;;
 esac
