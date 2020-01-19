@@ -7,11 +7,11 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # FMW_DNSMASQ_CONF: The file /etc/dnsmasq.conf from firmware
 # 设置自定义变量FMW_DNSMASQ_CONF为固件内/etc/dnsmasq.conf
@@ -19,7 +19,7 @@ FMW_DNSMASQ_CONF="/etc/dnsmasq.conf"
 #
 # ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
 # 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
-ENTWARE_DNSMASQD=${ENTWARE_ETC}/dnsmasq.d
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -34,7 +34,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -45,6 +45,8 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查目录${ENTWARE_DNSMASQD}是否存在
 if [ -d "${ENTWARE_DNSMASQD}" ]
 then
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
+    #
     # Modify ${FMW_DNSMASQ_CONF} and restart dnsmasq
     # 如果目录${ENTWARE_DNSMASQD}存在，则执行
     service restart_dnsmasq
@@ -52,29 +54,39 @@ then
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用
-    if [ -n "$(/opt/bin/grep -e '^dhcp-range=' ${FMW_DNSMASQ_CONF})" ] && \
-    [ -e ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq ]
+    if [ -n "$(/opt/bin/grep -e '^dhcp-range=' "${FMW_DNSMASQ_CONF}")" ] && \
+    [ -e "${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq" ]
     then
-        /opt/bin/sed -i '/^dhcp-/s/^/#/' ${FMW_DNSMASQ_CONF}
-        /opt/bin/cat ${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq >> ${FMW_DNSMASQ_CONF}
+        /opt/bin/sed -i '/^dhcp-/s/^/#/' "${FMW_DNSMASQ_CONF}"
+        /opt/bin/cat "${ENTWARE_DNSMASQD}/dhcp_opts.dnsmasq" >> "${FMW_DNSMASQ_CONF}"
         #
         # Check if ${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq exists
         # 检查文件${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq是否存在
-        if [ -e ${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq ]
+        if [ -e "${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq" ]
         then
-            /opt/bin/echo "dhcp-hostsfile=${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq" >> ${FMW_DNSMASQ_CONF}
+            /opt/bin/echo "dhcp-hostsfile=\"${ENTWARE_DNSMASQD}/dhcp_hosts.dnsmasq\"" >> "${FMW_DNSMASQ_CONF}"
         fi
         #
     fi
     #
     # Load ${ENTWARE_DNSMASQD}
     # 加载目录${ENTWARE_DNSMASQD}
-    /opt/bin/sed -i '/^conf-dir=/s/^/#/' ${FMW_DNSMASQ_CONF}
-    /opt/bin/echo "conf-dir=${ENTWARE_DNSMASQD},*.conf" >> ${FMW_DNSMASQ_CONF}
-    /opt/bin/killall dnsmasq > /dev/null 2>&1
-    dnsmasq --log-async --conf-file=${FMW_DNSMASQ_CONF}
+    /opt/bin/sed -i '/^conf-dir=/s/^/#/' "${FMW_DNSMASQ_CONF}"
+    /opt/bin/echo "conf-dir=\"${ENTWARE_DNSMASQD}\",*.conf" >> "${FMW_DNSMASQ_CONF}"
+    /opt/bin/killall -q "dnsmasq"
+    dnsmasq --log-async --conf-file="${FMW_DNSMASQ_CONF}"
     #
-    logger -st "($(basename $0))" $$ "***** RULES IN ${ENTWARE_DNSMASQD} HAVE BEEN APPLIED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 0
+    #
+else
+    # Do nothing but prompt the user
+    # 如果目录${ENTWARE_DNSMASQD}不存在，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
 fi
 #
 ########## END ##########

@@ -9,7 +9,7 @@ main()
     local ACTION="${1}"
     #
     # 设置自定义局部变量CONFIGURATION为调用函数formatRuleConfig格式化位置参数2的值
-    local CONFIGURATION=$(formatRuleConfig "${2}")
+    local CONFIGURATION="$(formatRuleConfig "${2}")"
     #
     # 调用函数isValidRuleSet检验自定义局部变量CONFIGURATION是否合法
     isValidRuleSet "${CONFIGURATION}"
@@ -31,6 +31,7 @@ main()
                 if [ ${?} -eq 0 ]
                 then
                     /opt/bin/echo -e "\nOK"
+                    #
                     exit 0
                 #
                 # 如果函数isAliveRuleSet的返回值不为0
@@ -45,6 +46,8 @@ main()
                     # 调用函数enableRuleSet加载自定义局部变量CONFIGURATION定义的规则集
                     enableRuleSet "${CONFIGURATION}"
                     /opt/bin/echo -e "DONE"
+                    #
+                    exit 0
                 fi
                 ;;
             #
@@ -54,11 +57,14 @@ main()
                 # 调用函数disableRuleSet禁用自定义局部变量CONFIGURATION定义的规则集
                 disableRuleSet "${CONFIGURATION}"
                 /opt/bin/echo -e "DONE"
+                #
+                exit 0
                 ;;
             #
             # 如果自定义局部变量ACTION的值为其它
             *)
                 /opt/bin/echo -e "UNKNOWN OPERATION"
+                #
                 exit 1
                 ;;
         esac
@@ -66,6 +72,7 @@ main()
     # 如果函数isValidRuleSet的返回值不为0
     else
         /opt/bin/echo -e "ERROR: COLLATE RULES IN FILE ${2}"
+        #
         exit 1
     fi
 }
@@ -97,7 +104,7 @@ isValidRuleSet()
     local RULE_COUNT=$(/opt/bin/echo "${1}" | /opt/bin/grep -c '^RULE=')
     #
     # 设置自定义局部变量RULE_SET为位置参数1中RULE的值（允许多行）
-    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local RULE_SET="$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')"
     #
     while [ ${RULE_COUNT} -gt 0 ]
     do
@@ -125,10 +132,10 @@ isAliveRuleSet()
     local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量RULE_SET为位置参数1中RULE的值（允许多行）
-    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local RULE_SET="$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量ACTION_SET为自定义局部变量RULE_SET的值中的动作值（允许多行，去重）
-    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    local ACTION_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)"
     #
     # 设置自定义局部变量ACTION_TERM为自定义局部变量ACTION_SET的值中的动作值
     local ACTION_TERM
@@ -142,21 +149,21 @@ isAliveRuleSet()
             "OPEN" | "CLOSE")
                 #
                 # 设置自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN为Chain ${USER_DEFINED_CHAIN_NAME}是否存在的测试值
-                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_EXIST_USER_DEFINED_CHAIN="$(iptables -t filter -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN的值非空
                 if [ -n "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 设置自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN为${USER_DEFINED_CHAIN_NAME}是否被filter表中INPUT链引用的测试值
-                    local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                    local TEST_REFERENCE_USER_DEFINED_CHAIN="$(iptables -t filter -nvL INPUT | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')"
                     #
                     # 如果自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN的值非空
                     if [ -n "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
                     then
                         #
                         # 设置自定义局部变量RULE_SET为自定义局部变量RULE_SET的值中的${ACTION_TERM}动作值（允许多行）
-                        local RULE_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep "^${ACTION_TERM}#")
+                        local RULE_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^'"${ACTION_TERM}"'#')"
                         #
                         # 设置自定义局部变量RULE_COUNT为自定义局部变量RULE_SET的值的行数
                         local RULE_COUNT=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/wc -l)
@@ -194,34 +201,34 @@ isAliveRuleSet()
             "FORWARD")
                 #
                 # 设置自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN为Chain ${USER_DEFINED_CHAIN_NAME}是否存在的测试值
-                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_EXIST_USER_DEFINED_CHAIN="$(iptables -t nat -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN的值非空
                 if [ -n "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 设置自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN为${USER_DEFINED_CHAIN_NAME}是否被nat表中PREROUTING链引用的测试值
-                    local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                    local TEST_REFERENCE_USER_DEFINED_CHAIN="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')"
                     #
                     # 如果自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN的值非空
                     if [ -n "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
                     then
                         #
                         # 设置自定义局部变量WAN0_GW_IFNAME为网关设备名
-                        local WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+                        local WAN0_GW_IFNAME="$(nvram get wan0_gw_ifname)"
                         #
                         # 设置自定义局部变量WAN_IP_ADDRESS为网关IP地址
-                        local WAN_IP_ADDRESS=$(ip address show dev "${WAN0_GW_IFNAME}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+                        local WAN_IP_ADDRESS="$(ip address show dev "${WAN0_GW_IFNAME}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')"
                         #
                         # 设置自定义局部变量DESTINATION_IP_ADDRESS为当前DNAT使用的报文目标IP地址
-                        local DESTINATION_IP_ADDRESS=$(/opt/bin/echo "${TEST_REFERENCE_USER_DEFINED_CHAIN}" | /opt/bin/gawk '{print $9}')
+                        local DESTINATION_IP_ADDRESS="$(/opt/bin/echo "${TEST_REFERENCE_USER_DEFINED_CHAIN}" | /opt/bin/gawk '{print $9}')"
                         #
                         # 如果自定义局部变量DESTINATION_IP_ADDRESS的值等于自定义局部变量WAN_IP_ADDRESS的值
                         if [ "${DESTINATION_IP_ADDRESS}" == "${WAN_IP_ADDRESS}" ]
                         then
                             #
                             # 设置自定义局部变量RULE_SET为自定义局部变量RULE_SET的值中的${ACTION_TERM}动作值（允许多行）
-                            local RULE_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep "^${ACTION_TERM}#")
+                            local RULE_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^'"${ACTION_TERM}"'#')"
                             #
                             # 设置自定义局部变量RULE_COUNT为自定义局部变量RULE_SET的值的行数
                             local RULE_COUNT=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/wc -l)
@@ -275,10 +282,10 @@ enableRuleSet()
     local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量RULE_SET为位置参数1中RULE的值（允许多行）
-    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local RULE_SET="$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量ACTION_SET为自定义局部变量RULE_SET的值中的动作值（允许多行，去重）
-    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    local ACTION_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)"
     #
     # 设置自定义局部变量ACTION_TERM为自定义局部变量ACTION_SET的值中的动作值
     local ACTION_TERM
@@ -292,18 +299,18 @@ enableRuleSet()
             "OPEN" | "CLOSE")
                 #
                 # 设置自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN为Chain ${USER_DEFINED_CHAIN_NAME}是否存在的测试值
-                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t filter -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_EXIST_USER_DEFINED_CHAIN="$(iptables -t filter -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN的值为空
                 if [ -z "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 在filter表中新建自定义链${USER_DEFINED_CHAIN_NAME}
-                    iptables -t filter -N ${USER_DEFINED_CHAIN_NAME}
+                    iptables -t filter -N "${USER_DEFINED_CHAIN_NAME}"
                 fi
                 #
                 # 设置自定义局部变量RULE_SET为自定义局部变量RULE_SET的值中的${ACTION_TERM}动作值（允许多行）
-                local RULE_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep "^${ACTION_TERM}#")
+                local RULE_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^'"${ACTION_TERM}"'#')"
                 #
                 # 设置自定义局部变量RULE_COUNT为自定义局部变量RULE_SET的值的行数
                 local RULE_COUNT=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/wc -l)
@@ -321,14 +328,14 @@ enableRuleSet()
                 done
                 #
                 # 设置自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN为${USER_DEFINED_CHAIN_NAME}是否被filter表中INPUT链引用的测试值
-                local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t filter -nvL INPUT | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_REFERENCE_USER_DEFINED_CHAIN="$(iptables -t filter -nvL INPUT | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN的值为空
                 if [ -z "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 在filter表中INPUT链插入规则，引用自定义链${USER_DEFINED_CHAIN_NAME}
-                    iptables -t filter -I INPUT 1 -j ${USER_DEFINED_CHAIN_NAME}
+                    iptables -t filter -I INPUT 1 -j "${USER_DEFINED_CHAIN_NAME}"
                 fi
                 ;;
             #
@@ -336,27 +343,27 @@ enableRuleSet()
             "FORWARD")
                 #
                 # 设置自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN为Chain ${USER_DEFINED_CHAIN_NAME}是否存在的测试值
-                local TEST_EXIST_USER_DEFINED_CHAIN=$(iptables -t nat -nvL | /opt/bin/grep "Chain ${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_EXIST_USER_DEFINED_CHAIN="$(iptables -t nat -nvL | /opt/bin/grep 'Chain '"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_EXIST_USER_DEFINED_CHAIN的值为空
                 if [ -z "${TEST_EXIST_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 在nat表中新建自定义链${USER_DEFINED_CHAIN_NAME}
-                    iptables -t nat -N ${USER_DEFINED_CHAIN_NAME}
+                    iptables -t nat -N "${USER_DEFINED_CHAIN_NAME}"
                 fi
                 #
                 # 设置自定义局部变量RULE_SET为自定义局部变量RULE_SET的值中的${ACTION_TERM}动作值（允许多行）
-                local RULE_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep "^${ACTION_TERM}#")
+                local RULE_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/grep '^'"${ACTION_TERM}"'#')"
                 #
                 # 设置自定义局部变量RULE_COUNT为自定义局部变量RULE_SET的值的行数
                 local RULE_COUNT=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/wc -l)
                 #
                 # 设置自定义局部变量WAN0_GW_IFNAME为网关设备名
-                local WAN0_GW_IFNAME=$(nvram get wan0_gw_ifname)
+                local WAN0_GW_IFNAME="$(nvram get wan0_gw_ifname)"
                 #
                 # 设置自定义局部变量WAN_IP_ADDRESS为网关IP地址
-                local WAN_IP_ADDRESS=$(ip address show dev ${WAN0_GW_IFNAME} | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')
+                local WAN_IP_ADDRESS="$(ip address show dev "${WAN0_GW_IFNAME}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*inet[[:space:]]*([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*).*/\1/p')"
                 #
                 while [ ${RULE_COUNT} -gt 0 ]
                 do
@@ -371,14 +378,14 @@ enableRuleSet()
                 done
                 #
                 # 设置自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN为${USER_DEFINED_CHAIN_NAME}是否被nat表中PREROUTING链引用的测试值
-                local TEST_REFERENCE_USER_DEFINED_CHAIN=$(iptables -t nat -nvL PREROUTING | /opt/bin/grep "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null)
+                local TEST_REFERENCE_USER_DEFINED_CHAIN="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')"
                 #
                 # 如果自定义局部变量TEST_REFERENCE_USER_DEFINED_CHAIN的值为空
                 if [ -z "${TEST_REFERENCE_USER_DEFINED_CHAIN}" ]
                 then
                     #
                     # 在nat表中PREROUTING链插入规则，设置DNAT使用的报文目标IP地址为${WAN_IP_ADDRESS}，引用自定义链${USER_DEFINED_CHAIN_NAME}
-                    iptables -t nat -I PREROUTING 1 -d ${WAN_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME}
+                    iptables -t nat -I PREROUTING 1 -d "${WAN_IP_ADDRESS}" -j "${USER_DEFINED_CHAIN_NAME}"
                 fi
                 ;;
             #
@@ -399,10 +406,10 @@ disableRuleSet()
     local USER_DEFINED_CHAIN_NAME="FWD_$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^NAME=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量RULE_SET为位置参数1中RULE的值（允许多行）
-    local RULE_SET=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')
+    local RULE_SET="$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/^RULE=\"(.*)\"/\1/p')"
     #
     # 设置自定义局部变量ACTION_SET为自定义局部变量RULE_SET的值中的动作值（允许多行，去重）
-    local ACTION_SET=$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)
+    local ACTION_SET="$(/opt/bin/echo "${RULE_SET}" | /opt/bin/cut -d '#' -f 1 | /opt/bin/uniq)"
     #
     # 设置自定义局部变量ACTION_TERM为自定义局部变量ACTION_SET的值中的动作值
     local ACTION_TERM
@@ -416,13 +423,13 @@ disableRuleSet()
             "OPEN" | "CLOSE")
                 #
                 # 在filter表中INPUT链删除规则，取消引用自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t filter -D INPUT -j ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -D INPUT -j "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 #
                 # 在filter表中清空自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t filter -F ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -F "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 #
                 # 在filter表中删除自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t filter -X ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t filter -X "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 continue
                 ;;
             #
@@ -430,16 +437,16 @@ disableRuleSet()
             "FORWARD")
                 #
                 # 设置自定义局部变量DESTINATION_IP_ADDRESS为当前DNAT使用的报文目标IP地址
-                local DESTINATION_IP_ADDRESS="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $9}')"
+                local DESTINATION_IP_ADDRESS="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'' | /opt/bin/gawk '{print $9}')"
                 #
                 # 在nat表中PREROUTING链删除规则，取消设置DNAT使用的报文目标IP地址为${DESTINATION_IP_ADDRESS}，取消引用自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t nat -D PREROUTING -d ${DESTINATION_IP_ADDRESS} -j ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t nat -D PREROUTING -d "${DESTINATION_IP_ADDRESS}" -j "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 #
                 # 在filter表中清空自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t nat -F ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t nat -F "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 #
                 # 在filter表中删除自定义链${USER_DEFINED_CHAIN_NAME}
-                iptables -t nat -X ${USER_DEFINED_CHAIN_NAME} 2> /dev/null
+                iptables -t nat -X "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
                 continue
                 ;;
             #
@@ -478,7 +485,7 @@ isValidRuleTerm()
             then
                 #
                 # 设置自定义局部变量PROTOCOL为位置参数1中的协议名
-                local PROTOCOL="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+                local PROTOCOL="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
                 #
                 # 设置自定义局部变量LOCAL_PORT为位置参数1中的路由器端口号
                 local LOCAL_PORT="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 3)"
@@ -512,7 +519,7 @@ isValidRuleTerm()
             then
                 #
                 # 设置自定义局部变量PROTOCOL为位置参数1中的协议名
-                local PROTOCOL="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+                local PROTOCOL="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
                 #
                 # 设置自定义局部变量LOCAL_PORT为位置参数1中的路由器端口号
                 local LOCAL_PORT="$(/opt/bin/echo "${1}" | /opt/bin/cut -d '#' -f 3)"
@@ -570,13 +577,13 @@ isAliveRuleTerm()
         "OPEN" | "CLOSE")
             #
             # 设置自定义局部变量PROTOCOL为位置参数2中的协议名
-            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
             #
             # 设置自定义局部变量LOCAL_PORT为位置参数2中的路由器端口号
             local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
             #
             # 设置自定义局部变量TEST_EXIST_RULE为此规则是否被filter表中${USER_DEFINED_CHAIN_NAME}链引用的测试值
-            local TEST_EXIST_RULE=$(iptables -t filter -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
+            local TEST_EXIST_RULE="$(iptables -t filter -nvL "${USER_DEFINED_CHAIN_NAME}" | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep '^'"${PROTOCOL}"'#.*:'"${LOCAL_PORT}"'')"
             #
             # 如果自定义局部变量TEST_EXIST_RULE的值非空
             if [ -n "${TEST_EXIST_RULE}" ]
@@ -594,7 +601,7 @@ isAliveRuleTerm()
         "FORWARD")
             #
             # 设置自定义局部变量PROTOCOL为位置参数2中的协议名
-            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
             #
             # 设置自定义局部变量LOCAL_PORT为位置参数2中的路由器端口号
             local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
@@ -606,7 +613,7 @@ isAliveRuleTerm()
             local TARGET_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 5)"
             #
             # 设置自定义局部变量TEST_EXIST_RULE为此规则是否被nat表中${USER_DEFINED_CHAIN_NAME}链引用的测试值
-            local TEST_EXIST_RULE=$(iptables -t nat -nvL ${USER_DEFINED_CHAIN_NAME} | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep "^${PROTOCOL}#.*:${LOCAL_PORT}")
+            local TEST_EXIST_RULE="$(iptables -t nat -nvL "${USER_DEFINED_CHAIN_NAME}" | /opt/bin/gawk '{print $4"#"$11}' | /opt/bin/grep '^'"${PROTOCOL}"'#.*:'"${LOCAL_PORT}"'')"
             #
             # 如果自定义局部变量TEST_EXIST_RULE的值非空
             if [ -n "${TEST_EXIST_RULE}" ]
@@ -643,31 +650,31 @@ enableRuleTerm()
         "OPEN")
             #
             # 设置自定义局部变量PROTOCOL为位置参数2中的协议名
-            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
             #
             # 设置自定义局部变量LOCAL_PORT为位置参数2中的路由器端口号
             local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
             # 在filter表中${USER_DEFINED_CHAIN_NAME}链插入规则，接收发往${LOCAL_PORT}/${PROTOCOL}的报文
-            iptables -t filter -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j ACCEPT
+            iptables -t filter -I "${USER_DEFINED_CHAIN_NAME}" 1 -p "${PROTOCOL}" --dport "${LOCAL_PORT}" -j ACCEPT
             ;;
         #
         # 如果自定义局部变量ACTION_TERM的值为CLOSE
         "CLOSE")
             #
             # 设置自定义局部变量PROTOCOL为位置参数2中的协议名
-            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
             #
             # 设置自定义局部变量LOCAL_PORT为位置参数2中的路由器端口号
             local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
             # 在filter表中${USER_DEFINED_CHAIN_NAME}链插入规则，丢弃发往${LOCAL_PORT}/${PROTOCOL}的报文
-            iptables -t filter -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j DROP
+            iptables -t filter -I "${USER_DEFINED_CHAIN_NAME}" 1 -p "${PROTOCOL}" --dport "${LOCAL_PORT}" -j DROP
             ;;
         #
         # 如果自定义局部变量ACTION_TERM的值为FORWARD
         "FORWARD")
             #
             # 设置自定义局部变量PROTOCOL为位置参数2中的协议名
-            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/tr '[:upper:]' '[:lower:]')"
+            local PROTOCOL="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 2 | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
             #
             # 设置自定义局部变量LOCAL_PORT为位置参数2中的路由器端口号
             local LOCAL_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 3)"
@@ -679,7 +686,7 @@ enableRuleTerm()
             local TARGET_PORT="$(/opt/bin/echo "${2}" | /opt/bin/cut -d '#' -f 5)"
             #
             # 在nat表中${USER_DEFINED_CHAIN_NAME}链插入规则，将发往${LOCAL_PORT}/${PROTOCOL}的报文转发至${TARGET_IP_ADDRESS}:${TARGET_PORT}/${PROTOCOL}
-            iptables -t nat -I ${USER_DEFINED_CHAIN_NAME} 1 -p ${PROTOCOL} --dport ${LOCAL_PORT} -j DNAT --to-destination ${TARGET_IP_ADDRESS}:${TARGET_PORT}
+            iptables -t nat -I "${USER_DEFINED_CHAIN_NAME}" 1 -p "${PROTOCOL}" --dport "${LOCAL_PORT}" -j DNAT --to-destination "${TARGET_IP_ADDRESS}":"${TARGET_PORT}"
             ;;
         #
         # 如果自定义局部变量ACTION_TERM的值为其它
@@ -698,10 +705,10 @@ enableRuleTerm()
 isValidProtocol()
 {
     # 根据位置参数1的值进行后续操作
-    case "${1}" in
+    case "$(/opt/bin/echo "${1}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
         #
         # 如果位置参数1的值为TCP或tcp或UDP或udp
-        "TCP" | "tcp" | "UDP" | "udp")
+        "tcp" | "udp")
             /opt/bin/echo 0
             ;;
         #
@@ -727,7 +734,7 @@ isValidPort()
 # 函数isValidIP用于检验IP是否合法
 isValidIP()
 {
-    if [ $(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/') != "0.0.0.0" ]
+    if [ "$(/opt/bin/echo "${1}" | /opt/bin/sed -E -e 's/^[[:digit:]]*\.[[:digit:]]*.[[:digit:]]*.[[:digit:]]*/0.0.0.0/')" != "0.0.0.0" ]
     then
         /opt/bin/echo 1
         return 1
@@ -738,10 +745,10 @@ isValidIP()
     local IP_ADDRESS_PART_3
     local IP_ADDRESS_PART_4
     #
-    IP_ADDRESS_PART_1=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_2=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_3=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
-    IP_ADDRESS_PART_4=$(/opt/bin/echo ${1} | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
+    IP_ADDRESS_PART_1=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_2=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_3=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+/\1/p')
+    IP_ADDRESS_PART_4=$(/opt/bin/echo "${1}" | /opt/bin/sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+)/\1/p')
     #
     if [ ${IP_ADDRESS_PART_1} -ge 0 ] && [ ${IP_ADDRESS_PART_1} -le 255 ] && \
     [ ${IP_ADDRESS_PART_2} -ge 0 ] && [ ${IP_ADDRESS_PART_2} -le 255 ] && \
@@ -762,11 +769,13 @@ isValidIP()
 # 程序入口
 if [ ${#} -ne 2 ]
 then
-    /opt/bin/echo -e "Usage:\nfwd enable RULE\nfwd disable RULE"
-else
+    /opt/bin/echo -e "Usage: $(basename "${0}") (enable|disable) RULE"
     #
+    exit 1
+    #
+else
     # 设置自定义局部变量ACTION为位置参数1的小写值
-    ACTION="$(/opt/bin/echo ${1} | /opt/bin/tr '[:upper:]' '[:lower:]')"
+    ACTION="$(/opt/bin/echo "${1}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
     #
     # 根据自定义局部变量ACTION的值进行后续操作
     case "${ACTION}" in
@@ -775,12 +784,22 @@ else
         "enable" | "disable")
             #
             # 调用函数main
-            main "${ACTION}" "${2}"
+            RULE_REAL_PATH="$(/opt/bin/realpath "${2}")"
+            #
+            if [ -e "${RULE_REAL_PATH}" ]
+            then
+                main "${ACTION}" "${RULE_REAL_PATH}"
+            else
+                /opt/bin/echo -e "UNABLE TO LOCATE ${RULE_REAL_PATH}"
+                #
+                exit 1
+            fi
             ;;
         #
         # 如果自定义局部变量ACTION的值为其它
         *)
-            /opt/bin/echo -e "Usage:\nfwd enable RULE\nfwd disable RULE"
+            /opt/bin/echo -e "Usage: $(basename "${0}") (enable|disable) RULE"
+            #
             exit 1
             ;;
     esac

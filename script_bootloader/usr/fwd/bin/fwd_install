@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,35 +14,39 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
 # 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
-ENTWARE_BIN=${USB_MOUNT_POINT}/bin
+ENTWARE_BIN="${USB_MOUNT_POINT}/bin"
 #
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 #
 # ENTWARE_MONITD: The directory which contains all the configuration files used by monit
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
-ENTWARE_MONITD=${ENTWARE_ETC}/monit.d
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
+#
+# ENTWARE_FWD: The directory which contains all the configuration files used by fwd
+# 设置自定义变量ENTWARE_FWD为fwd配置文件目录
+ENTWARE_FWD="${ENTWARE_ETC}/fw.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/fwd
+PRIVATE_ROOT="${SBL_SYS_USR}/fwd"
 #
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
-PRIVATE_BIN=${PRIVATE_ROOT}/bin
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -50,14 +54,14 @@ SERVICE_NAME="FWD"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-/opt/bin/echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -66,49 +70,83 @@ SERVICE_FUNCTION="INSTALLATION"
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
-if [ $(which opkg) == "/opt/bin/opkg" ]
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS BEEN LOADED *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
     # Check if MONIT MANAGEMENT SYSTEM has been deployed
     # 检查MONIT MANAGEMENT SYSTEM是否已部署
     if [ -e "/opt/bin/monit" ]
     then
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #
-        /opt/bin/cp ${PRIVATE_BIN}/fwd ${ENTWARE_BIN}
-        /opt/bin/cp -r ${PRIVATE_ETC}/fw.d ${ENTWARE_ETC}/fw.d
+        # Check if ${ENTWARE_FWD} exists
+        # 检查目录${ENTWARE_FWD}是否存在
+        if [ -d "${ENTWARE_FWD}" ]
+        then
+            # Remove previous backup
+            # 删除旧备份
+            /opt/bin/rm -rf "${ENTWARE_FWD}.bak"
+            #
+            # Back up previous edition
+            # 备份旧版本
+            /opt/bin/mv -f "${ENTWARE_FWD}" "${ENTWARE_FWD}.bak"
+        fi
+        #
+        # Check if ${PRIVATE_ETC}/fw.d exists
+        # 检查目录${PRIVATE_ETC}/fw.d是否存在
+        if [ -d "${PRIVATE_ETC}/fw.d" ]
+        then
+            # Copy ${PRIVATE_ETC}/fw.d to ${ENTWARE_FWD}
+            # 复制目录${PRIVATE_ETC}/fw.d至目录${ENTWARE_FWD}
+            /opt/bin/cp -rf "${PRIVATE_ETC}/fw.d" "${ENTWARE_FWD}"
+            #
+        else
+            # Create ${ENTWARE_FWD}
+            # 创建目录${ENTWARE_FWD}
+            /opt/bin/mkdir "${ENTWARE_FWD}"
+        fi
+        #
+        /opt/bin/cp -f "${PRIVATE_BIN}/fwd" "${ENTWARE_BIN}"
         #
         # Configure monit
         # 配置monit
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_filter_INPUT_https ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_filter_INPUT_https
-        #/opt/bin/mv ${ENTWARE_MONITD}/fw_filter_INPUT_https ${ENTWARE_MONITD}/fw_filter_INPUT_https.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_filter_INPUT_https" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_filter_INPUT_https"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_filter_INPUT_https" "${ENTWARE_MONITD}/fw_filter_INPUT_https.on"
         #
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec
-        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec ${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ipsec" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec" "${ENTWARE_MONITD}/fw_nat_PREROUTING_ipsec.on"
         #
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent
-        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent ${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_qbittorrent" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent" "${ENTWARE_MONITD}/fw_nat_PREROUTING_qbittorrent.on"
         #
-        /opt/bin/cp ${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softethervpn ${ENTWARE_MONITD}/
-        /opt/bin/chmod 600 ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn
-        #/opt/bin/mv ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn ${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn.on
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_softethervpn" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn" "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn.on"
+        #
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ss_server" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server" "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server.on"
+        #
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_v2ray_proxy" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy" "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy.on"
         #
         /opt/bin/monit reload
         #
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 0
         #
     else
         # Do nothing but prompt the user
         # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
-        /opt/bin/echo "($(basename $0)): $$ ***** MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST *****"
-        /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 2
     fi
@@ -116,9 +154,9 @@ then
 else
     # Do nothing but prompt the user
     # 如果ENTWARE_ENABLE SERVICE未启用，则执行
-    /opt/bin/echo "($(basename $0)): $$ ***** ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** PLEASE ENABLE ENTWARE FIRST *****"
-    /opt/bin/echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi
