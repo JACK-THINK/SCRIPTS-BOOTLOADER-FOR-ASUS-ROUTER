@@ -64,14 +64,16 @@ case "$(/opt/bin/uname -m)" in
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsel"
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${ROUTER_ARCHITECTURE} IS NOT SUPPORTED TEMPORARILY"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ROUTER_ARCHITECTURE} IS NOT SUPPORTED TEMPORARILY"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 6
         ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 3
         ;;

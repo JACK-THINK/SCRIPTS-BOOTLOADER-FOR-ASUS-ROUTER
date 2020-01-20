@@ -162,4 +162,6 @@ fi
 /opt/bin/mv -f "${ENTWARE_MONITD}/onu_access" "${ENTWARE_MONITD}/onu_access.on"
 /opt/bin/monit reload
 #
+exit 0
+#
 ########## END ##########

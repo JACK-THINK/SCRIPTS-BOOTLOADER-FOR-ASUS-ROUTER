@@ -89,4 +89,6 @@ else
     /opt/bin/echo -e "Port ${SSHD_PORT}" >> "/opt/etc/ssh/sshd_config"
 fi
 #
+exit 0
+#
 ########## END ##########

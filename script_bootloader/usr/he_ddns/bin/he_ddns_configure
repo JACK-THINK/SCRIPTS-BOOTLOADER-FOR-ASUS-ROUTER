@@ -107,4 +107,6 @@ esac
 /opt/bin/sed -E -i 's/^(FQDN=).*/\1\"'"${FQDN}"'\"/' "${PRIVATE_BIN}/he_ddns_disable.service"
 /opt/bin/sed -E -i 's/^(DDNS_PASSWORD=).*/\1\"'"${DDNS_PASSWORD}"'\"/' "${PRIVATE_BIN}/he_ddns_disable.service"
 #
+exit 0
+#
 ########## END ##########

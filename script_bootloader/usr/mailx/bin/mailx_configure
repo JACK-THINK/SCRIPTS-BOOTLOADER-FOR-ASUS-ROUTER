@@ -68,4 +68,6 @@ esac
 /opt/bin/sed -E -i 's/^(set smtp-auth-password=).*/\1\"'"${SMTP_AUTH_PASSWORD}"'\"/' "/opt/etc/nail.rc"
 /opt/bin/sed -E -i 's/^(set smtp-auth=).*/\1\"'"${SMTP_AUTH}"'\"/' "/opt/etc/nail.rc"
 #
+exit 0
+#
 ########## END ##########

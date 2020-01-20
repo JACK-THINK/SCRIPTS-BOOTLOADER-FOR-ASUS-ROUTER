@@ -119,4 +119,6 @@ esac
 /opt/bin/sed -E -i 's/^(DOMAIN_NAME=).*/\1\"'"${DOMAIN_NAME}"'\"/' "${PRIVATE_BIN}/ali_ddns_disable.service"
 /opt/bin/sed -E -i 's/^(RR_KEY_WORD=).*/\1\"'"${RR_KEY_WORD}"'\"/' "${PRIVATE_BIN}/ali_ddns_disable.service"
 #
+exit 0
+#
 ########## END ##########

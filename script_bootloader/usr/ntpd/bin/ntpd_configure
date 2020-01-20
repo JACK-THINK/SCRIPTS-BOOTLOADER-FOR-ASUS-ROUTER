@@ -83,4 +83,6 @@ esac
 /opt/bin/echo -e "server ${SECONDARY_NTP_SERVER} iburst" >> "${PRIVATE_ETC}/ntp.conf"
 /opt/bin/chmod 600 "${PRIVATE_ETC}/ntp.conf"
 #
+exit 0
+#
 ########## END ##########
