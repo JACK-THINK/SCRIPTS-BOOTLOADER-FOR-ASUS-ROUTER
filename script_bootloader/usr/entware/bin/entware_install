@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,19 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/entware
+PRIVATE_ROOT="${SBL_SYS_USR}/entware"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -34,7 +34,7 @@ SERVICE_NAME="ENTWARE"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 # FILES_TO_COPY: The list of files that should be copied
 # 设置自定义变量FILES_TO_COPY为待复制文件列表
@@ -45,7 +45,7 @@ FILES_TO_COPY="${PRIVATE_ETC}/files_to_copy.autosave"
 #
 ########## NOTIFICATION ##########
 #
-echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -58,11 +58,11 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET=$(ls -al /opt | sed -E -n -e 's/.*->[[:space:]]*([^[:space:]]*)/\/\1/p')
+    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*$)#/\1#p')"
     #
     # Create symbolic link file ${OPT_TARGET}
     # 创建符号链接文件${OPT_TARGET}
-    ln -sf ${USB_MOUNT_POINT} ${OPT_TARGET}
+    ln -fs "${USB_MOUNT_POINT}" "${OPT_TARGET}"
     #
     sleep 5
     #
@@ -71,24 +71,38 @@ then
     # If it is a directory, then copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT} and mount ${USB_MOUNT_POINT} to /opt
     # 如果是目录，则将目录/opt下全部非符号链接文件复制至目录${USB_MOUNT_POINT}，之后挂载目录${USB_MOUNT_POINT}至目录/opt
     #
-    mkdir ${PRIVATE_ETC}
-    ls -al /opt/ | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:space:]]+(.*[^.]$)/\1/p' > ${FILES_TO_COPY}
-    sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
-    cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
-    echo "($(basename $0)): $$ ***** FILES IN /opt HAVE BEEN COPIED *****"
+    mkdir "${PRIVATE_ETC}"
+    ls -al "/opt" | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:digit:]:]+[[:space:]]+(.*[^.]$)/\1/p' > "${FILES_TO_COPY}"
+    sed -i 's#^#/opt/#' "${FILES_TO_COPY}"
+    cp -f "${FILES_TO_COPY}" "${FILES_TO_COPY}.stack"
+    #
+    while [ 1 ]
+    do
+        STACK_TOP="$(head -n 1 "${FILES_TO_COPY}.stack")"
+        if [ -n "${STACK_TOP}" ]
+        then
+            cp -rf "${STACK_TOP}" "${USB_MOUNT_POINT}"
+            sed -i '1d' "${FILES_TO_COPY}.stack"
+        else
+            rm -f "${FILES_TO_COPY}.stack"
+            break
+        fi
+    done
+    #
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: FILES IN /opt ARE COPIED"
     #
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
-    mount ${USB_MOUNT_POINT} /opt
+    mount "${USB_MOUNT_POINT}" "/opt"
     #
     sleep 5
     #
 else
     # Do nothing but prompt the user
     # 如果/opt的类型不符合上述两种情况，则执行
-    echo "($(basename $0)): $$ ***** TYPE OF /opt IS UNKNOWN *****"
-    echo "($(basename $0)): $$ ***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
-    echo "($(basename $0)): $$ ***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: TYPE OF /opt IS UNKNOWN"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENVIRONMENT FOR ENTWARE CAN'T BE SET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi
@@ -100,24 +114,48 @@ fi
 #
 # Install Entware according to the architecture of the ASUS Router
 # 根据路由器架构，自动安装适当版本的Entware
-case $(uname -m) in
+case "$(uname -m)" in
     "aarch64")
-        wget -O - http://bin.entware.net/aarch64-k3.10/installer/generic.sh | sh
-        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        wget -O - "http://bin.entware.net/aarch64-k3.10/installer/generic.sh" | sh
+        #
+        if [ ${?} -eq 0 ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        else
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 2
+        fi
         ;;
     "armv7l")
-        wget -O - http://bin.entware.net/armv7sf-k2.6/installer/generic.sh | sh
-        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        wget -O - "http://bin.entware.net/armv7sf-k2.6/installer/generic.sh" | sh
+        #
+        if [ ${?} -eq 0 ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        else
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 2
+        fi
         ;;
     "mips")
-        wget -O - http://pkg.entware.net/binaries/mipsel/installer/installer.sh | sh
-        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+        wget -O - "http://pkg.entware.net/binaries/mipsel/installer/installer.sh" | sh
+        #
+        if [ ${?} -eq 0 ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        else
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 2
+        fi
         ;;
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        echo "($(basename $0)): $$ ***** ROUTER ARCHITECTURE IS UNKNOWN *****"
-        echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
         exit 2
         ;;
@@ -128,35 +166,30 @@ esac
 #
 ########## COPY FILES FROM FIRMWARE ##########
 #
-echo "($(basename $0)): $$ ***** COPY FILES FROM FIRMWARE TO USB FLASH DRIVE *****"
+cp -f "/etc/passwd" "${USB_MOUNT_POINT}/etc/passwd_from_firmware"
+cp -f "/etc/shadow" "${USB_MOUNT_POINT}/etc/shadow_from_firmware"
 #
-cp /etc/passwd ${USB_MOUNT_POINT}/etc/passwd_from_firmware
-cp /etc/shadow ${USB_MOUNT_POINT}/etc/shadow_from_firmware
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: FILES FROM FIRMWARE ARE COPIED"
 #
 ########## END ##########
 #
 #
 ########## COPY HOME ##########
 #
-echo "($(basename $0)): $$ ***** COPY HOME TO USB FLASH DRIVE *****"
-#
 # Check if HOME is already in the USB flash drive
-# 检查目录${USB_MOUNT_POINT}/home/root/是否存在
-if [ ! -d "${USB_MOUNT_POINT}/home/root/" ]
+# 检查目录${USB_MOUNT_POINT}/home/root是否存在
+if [ ! -d "${USB_MOUNT_POINT}/home/root" ]
 then
-    # Copy /tmp/home/root to ${USB_MOUNT_POINT}/home/
-    # 如果目录${USB_MOUNT_POINT}/home/root/不存在，则执行
-    cp -r /tmp/home/root ${USB_MOUNT_POINT}/home/
-    echo "($(basename $0)): $$ ***** HOME HAS BEEN COPIED *****"
-    #
-    exit 0
-    #
+    # Copy /tmp/home/root to ${USB_MOUNT_POINT}/home
+    # 如果目录${USB_MOUNT_POINT}/home/root不存在，则执行
+    cp -rf "/tmp/home/root" "${USB_MOUNT_POINT}/home"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: HOME IS COPIED"
 else
     # Do nothing but prompt the user
-    # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
-    echo "($(basename $0)): $$ ***** HOME EXISTS *****"
-    #
-    exit 0
+    # 如果目录${USB_MOUNT_POINT}/home/root存在，则执行
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: HOME EXISTS"
 fi
+#
+exit 0
 #
 ########## END ##########

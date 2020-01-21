@@ -23,12 +23,13 @@
 | 权限      | 名称                 | 属性     | 说明                           |
 | --------- | -------------------- | -------- | ------------------------------ |
 | rwxrwxrwx | swap_install         | 普通文件 | 安装文件                       |
+| rwxrwxrwx | swap_configure       | 普通文件 | 配置文件                       |
 | rwxrwxrwx | swap_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
 | rwxrwxrwx | swap_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 ## 安装方法
 
-执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/swap/bin/swap_install`。安装512M虚拟内存
+执行`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/swap/bin/swap_install`。安装256M/512M/1024M/2048M虚拟内存
 
    > [受支持的路由器型号](https://github.com/Entware/Entware/wiki/Install-on-Asus-stock-firmware)：
    >

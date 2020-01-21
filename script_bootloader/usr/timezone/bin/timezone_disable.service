@@ -18,20 +18,22 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
 #
 ########## DISABLE TIMEZONE ##########
 #
-rm -f /etc/localtime
+rm -f "/etc/localtime"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

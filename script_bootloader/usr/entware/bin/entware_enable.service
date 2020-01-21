@@ -7,19 +7,19 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/entware
+PRIVATE_ROOT="${SBL_SYS_USR}/entware"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # ENTWARE_ENVIRONMENT: The path to entware environment configuration
 # 设置自定义变量ENTWARE_ENVIRONMENT为entware环境配置文件
@@ -42,7 +42,7 @@ FILES_TO_COPY="${PRIVATE_ETC}/files_to_copy.autosave"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -58,11 +58,11 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET=$(ls -al /opt | sed -E -n -e 's/.*->[[:space:]]*([^[:space:]]*)/\/\1/p')
+    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*$)#/\1#p')"
     #
     # Create symbolic link file ${OPT_TARGET}
     # 创建符号链接文件${OPT_TARGET}
-    ln -sf ${USB_MOUNT_POINT} ${OPT_TARGET}
+    ln -fs "${USB_MOUNT_POINT}" "${OPT_TARGET}"
     #
     sleep 5
     #
@@ -77,33 +77,48 @@ then
     then
         # Create directory ${PRIVATE_ETC}
         # 如果目录${PRIVATE_ETC}不存在，则执行
-        mkdir ${PRIVATE_ETC}
+        mkdir "${PRIVATE_ETC}"
     fi
     #
     # Check if ${FILES_TO_COPY} exists
     # 检查文件${FILES_TO_COPY}是否存在
-    if [ ! -e ${FILES_TO_COPY} ]
+    if [ ! -e "${FILES_TO_COPY}" ]
     then
         # Copy all files except symbolic link files in /opt to ${USB_MOUNT_POINT}
         # 如果文件${FILES_TO_COPY}不存在，则执行
-        ls -al /opt/ | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:space:]]+(.*[^.]$)/\1/p' > ${FILES_TO_COPY}
-        sed -i "s/^/\/opt\//" ${FILES_TO_COPY}
-        cp -r $(cat ${FILES_TO_COPY}) ${USB_MOUNT_POINT}
-        logger -st "($(basename $0))" $$ "***** FILES IN /opt HAVE BEEN COPIED *****"
+        ls -al "/opt" | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:digit:]:]+[[:space:]]+(.*[^.]$)/\1/p' > "${FILES_TO_COPY}"
+        sed -i 's#^#/opt/#' "${FILES_TO_COPY}"
+        cp -f "${FILES_TO_COPY}" "${FILES_TO_COPY}.stack"
+        #
+        while [ 1 ]
+        do
+            STACK_TOP="$(head -n 1 "${FILES_TO_COPY}.stack")"
+            if [ -n "${STACK_TOP}" ]
+            then
+                cp -rf "${STACK_TOP}" "${USB_MOUNT_POINT}"
+                sed -i '1d' "${FILES_TO_COPY}.stack"
+            else
+                rm -f "${FILES_TO_COPY}.stack"
+                break
+            fi
+        done
+        #
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: FILES IN /opt ARE COPIED"
+        #
     fi
     #
     # Mount the USB flash drive to /opt
     # 挂载U盘至目录/opt
-    mount ${USB_MOUNT_POINT} /opt
+    mount "${USB_MOUNT_POINT}" "/opt"
     #
     sleep 5
     #
 else
     # Do nothing but prompt the user
     # 如果/opt的类型不符合上述两种情况，则执行
-    logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
-    logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE SET *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: TYPE OF /opt IS UNKNOWN"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENVIRONMENT FOR ENTWARE CAN'T BE SET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi
@@ -112,20 +127,22 @@ fi
 # 检查文件${ENTWARE_ENVIRONMENT}是否存在
 if [ -e "${ENTWARE_ENVIRONMENT}" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${ENTWARE_ENVIRONMENT} EXISTS *****"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
+    #
     # Start ${ENTWARE_ENVIRONMENT}
     # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
-    ${ENTWARE_ENVIRONMENT} start
+    "${ENTWARE_ENVIRONMENT}" start
     sleep 5
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    #
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 2
 fi

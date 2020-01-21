@@ -2,14 +2,6 @@
 #
 ########## SET THE CUSTOM VARIABLES ##########
 #
-# USB_MOUNT_POINT: The mount point of the USB flash drive
-# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')
-#
-# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
-# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
-ENTWARE_ETC=${USB_MOUNT_POINT}/etc
-#
 # GCC_ENVIRONMENT: The path to gcc environment configuration
 # 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
 GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
@@ -27,7 +19,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -38,17 +30,17 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查文件${GCC_ENVIRONMENT}是否存在
 if [ -e "${GCC_ENVIRONMENT}" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${GCC_ENVIRONMENT} EXISTS *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Load ${GCC_ENVIRONMENT}
     # 如果文件${GCC_ENVIRONMENT}存在，则执行
-    /opt/bin/sed -i '/source \/opt\/bin\/gcc_env\.sh/d' ${ENTWARE_ETC}/profile
-    /opt/bin/echo "source ${GCC_ENVIRONMENT}" >> ${ENTWARE_ETC}/profile
+    /opt/bin/sed -i '\#^source \"/opt/bin/gcc_env\.sh\"#d' "/opt/etc/profile"
+    /opt/bin/echo "source \"${GCC_ENVIRONMENT}\"" >> "/opt/etc/profile"
     #
 else
     # Do nothing but prompt the user
     # 如果文件${GCC_ENVIRONMENT}不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${GCC_ENVIRONMENT} *****"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
 fi
 #
 ########## END ##########
@@ -56,7 +48,7 @@ fi
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 #
 exit 0
 #

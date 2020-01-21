@@ -2,7 +2,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -14,19 +14,19 @@ ROUTER_MODEL=$(nvram get model)
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/timezone
+PRIVATE_ROOT="${SBL_SYS_USR}/timezone"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -34,14 +34,14 @@ SERVICE_NAME="TIMEZONE"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
-SERVICE_FUNCTION="INSTALLATION"
+SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVICE_FUNCTION} ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -50,7 +50,7 @@ echo "($(basename $0)): $$ *--------- ${SERVICE_NAME} ON ${ROUTER_MODEL} ${SERVI
 #
 # TARGET_TIME_ZONE: The target time zone of the system
 # 设置自定义变量TARGET_TIME_ZONE为系统目标时区
-TARGET_TIME_ZONE=$(find ${USB_MOUNT_POINT}/ -name 'Shanghai' | grep -e "${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai" | tail -n 1)
+TARGET_TIME_ZONE="$(find "${USB_MOUNT_POINT}" -name 'Shanghai' | grep -e ''"${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai"'' | tail -n 1)"
 #
 ########## END ##########
 #
@@ -63,16 +63,17 @@ if [ -n "${TARGET_TIME_ZONE}" ]
 then
     # Create a symbolic link file named ${PRIVATE_ETC}/localtime
     # 如果文件${TARGET_TIME_ZONE}存在，则执行
-    mkdir ${PRIVATE_ETC}
-    cp -s ${TARGET_TIME_ZONE} ${PRIVATE_ETC}/localtime
-    echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS BEEN COMPLETE *****"
+    mkdir "${PRIVATE_ETC}"
+    cp -fs "${TARGET_TIME_ZONE}" "${PRIVATE_ETC}/localtime"
+    #
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${TARGET_TIME_ZONE}不存在，则执行
-    echo "($(basename $0)): $$ ***** ${SERVICE_FUNCTION} HAS NOT BEEN COMPLETE *****"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi

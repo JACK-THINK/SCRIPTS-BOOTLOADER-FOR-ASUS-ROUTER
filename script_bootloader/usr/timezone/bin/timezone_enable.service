@@ -7,23 +7,23 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/timezone
+PRIVATE_ROOT="${SBL_SYS_USR}/timezone"
 #
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC=${PRIVATE_ROOT}/etc
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 # TARGET_TIME_ZONE: The target time zone of the system
 # 设置自定义变量TARGET_TIME_ZONE为系统目标时区
-TARGET_TIME_ZONE=${PRIVATE_ETC}/localtime
+TARGET_TIME_ZONE="${PRIVATE_ETC}/localtime"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -38,7 +38,7 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -48,20 +48,20 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # FAIL_COUNT: The count of fail tests of IP address
 # 设置自定义变量FAIL_COUNT为IP地址测试失败计数
 FAIL_COUNT=0
+#
 while [ ${FAIL_COUNT} -lt 3 ]
 do
     # Only set the time zone if router has itself synchronised with Internet
     # 仅当路由器与互联网成功同步时间后，才设置系统时区
     if [ "$(nvram get ntp_ready)" == "1" ]
     then
-        logger -st "($(basename $0))" $$ "***** NTP IS READY *****"
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: NTP IS READY"
         #
         # Check if ${TARGET_TIME_ZONE} exists
         # 检查文件${TARGET_TIME_ZONE}是否存在
         if [ -e "${TARGET_TIME_ZONE}" ]
         then
-            # Set time zone to ${TARGET_TIME_ZONE}
-            logger -st "($(basename $0))" $$ "***** SET TIME ZONE *****"
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
             #
             # Check if ${USB_MOUNT_POINT}/bin/date and ${USB_MOUNT_POINT}/etc/localtime exists
             # 检查文件${USB_MOUNT_POINT}/bin/date和文件${USB_MOUNT_POINT}/etc/localtime是否存在
@@ -69,19 +69,19 @@ do
             then
                 # Copy ${TARGET_TIME_ZONE} to ${USB_MOUNT_POINT}/etc/
                 # 如果文件${USB_MOUNT_POINT}/bin/date存在且文件${USB_MOUNT_POINT}/etc/localtime不存在，则执行
-                cp -P ${TARGET_TIME_ZONE} ${USB_MOUNT_POINT}/etc/
+                cp -fP "${TARGET_TIME_ZONE}" "${USB_MOUNT_POINT}/etc"
             fi
-            cp -P ${TARGET_TIME_ZONE} /tmp/etc/
+            cp -fP "${TARGET_TIME_ZONE}" "/tmp/etc"
             #
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+            echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #
             exit 0
             #
         else
             # Do nothing but prompt the user
             # 如果文件${TARGET_TIME_ZONE}不存在，则执行
-            logger -st "($(basename $0))" $$ "***** RUN timezone_install FIRST *****"
-            logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #
             exit 1
         fi
@@ -89,8 +89,8 @@ do
     else
         # Do nothing but prompt the user
         # 如果路由器不能与互联网成功同步时间，则执行
-        logger -st "($(basename $0))" $$ "***** NTP IS NOT READY *****"
-        logger -st "($(basename $0))" $$ "***** WAIT FOR 10 SECONDS *****"
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NTP IS NOT READY"
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: WAIT FOR 10 SECONDS"
         #
         # Add 1 to ${FAIL_COUNT}
         # ${FAIL_COUNT}加1
@@ -104,7 +104,7 @@ done
 #
 # Do nothing but prompt the user
 # 如果路由器不能与互联网成功同步时间，则执行
-logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 #
 exit 2
 #

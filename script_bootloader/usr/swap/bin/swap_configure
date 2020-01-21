@@ -1,0 +1,106 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/swap"
+#
+# PRIVATE_VAR: The directory which contains all the variable files related to this program
+# 设置自定义变量PRIVATE_VAR为此程序可变文件目录
+PRIVATE_VAR="${PRIVATE_ROOT}/var"
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+        read VALUE_1
+        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SET PARAMETERS ##########
+#
+case ${#} in
+    0)
+        while [ 1 ]
+        do
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSWAP SIZE (MB)\033[0m: 256 | 512 | 1024 | 2048"
+            doubleCheckAndConfirm SWAP_SIZE
+            #
+            case ${SWAP_SIZE} in
+                256 | 512 | 1024 | 2048)
+                    break
+                    ;;
+                *)
+                    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${SWAP_SIZE} IS INVALID"
+                    ;;
+            esac
+        done
+        ;;
+    1)
+        SWAP_SIZE=${1}
+        ;;
+    *)
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
+        #
+        exit 1
+        ;;
+esac
+#
+BLOCK_SIZE=1024
+COUNT=$((${SWAP_SIZE}*1024))
+#
+########## END ##########
+#
+#
+########## CONFIGURE SWAP ##########
+#
+TEST_SWAP=$(free | sed -E -n -e 's/^Swap:[[:space:]]+([[:digit:]]+).*/\1/p')
+#
+if [ ${TEST_SWAP} -ne 0 ]
+then
+    swapoff "${PRIVATE_VAR}/swapfile.var"
+    sleep 30
+fi
+#
+rm -f "${PRIVATE_VAR}/swapfile.var"
+dd if="/dev/zero" of="${PRIVATE_VAR}/swapfile.var" bs=${BLOCK_SIZE} count=${COUNT}
+mkswap -L "ASUS_SWAP" "${PRIVATE_VAR}/swapfile.var"
+chmod 600 "${PRIVATE_VAR}/swapfile.var"
+#
+exit 0
+#
+########## END ##########

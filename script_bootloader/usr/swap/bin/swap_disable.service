@@ -7,19 +7,19 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${USB_MOUNT_POINT}/script_bootloader/usr
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT=${SBL_SYS_USR}/swap
+PRIVATE_ROOT="${SBL_SYS_USR}/swap"
 #
 # PRIVATE_VAR: The directory which contains all the variable files related to this program
 # 设置自定义变量PRIVATE_VAR为此程序可变文件目录
-PRIVATE_VAR=${PRIVATE_ROOT}/var
+PRIVATE_VAR="${PRIVATE_ROOT}/var"
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -34,7 +34,7 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -45,20 +45,20 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查文件${PRIVATE_VAR}/swapfile.var是否存在
 if [ -e "${PRIVATE_VAR}/swapfile.var" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME} EXISTS *****"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     # Unload swapfile.var
     # 如果文件${PRIVATE_VAR}/swapfile.var存在，则执行
-    swapoff ${PRIVATE_VAR}/swapfile.var
+    swapoff "${PRIVATE_VAR}/swapfile.var"
     sleep 30
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果文件${PRIVATE_VAR}/swapfile.var不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${SERVICE_NAME} *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi

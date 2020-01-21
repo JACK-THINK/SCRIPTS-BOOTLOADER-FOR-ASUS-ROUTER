@@ -22,7 +22,7 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE ---------*"
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
 #
 ########## END ##########
 #
@@ -33,19 +33,17 @@ logger -st "($(basename $0))" $$ "*--------- ${SERVICE_NAME}_${SERVICE_FUNCTION}
 # 检查文件${ENTWARE_ENVIRONMENT}是否存在
 if [ -e "${ENTWARE_ENVIRONMENT}" ]
 then
-    logger -st "($(basename $0))" $$ "***** ${ENTWARE_ENVIRONMENT} EXISTS *****"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
+    #
     # Stop ${ENTWARE_ENVIRONMENT}
     # 如果文件${ENTWARE_ENVIRONMENT}存在，则执行
-    ${ENTWARE_ENVIRONMENT} stop
+    "${ENTWARE_ENVIRONMENT}" stop
     sleep 5
-    #
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS BEEN LOADED *****"
     #
 else
     # Do nothing but prompt the user
     # 如果文件${ENTWARE_ENVIRONMENT}不存在，则执行
-    logger -st "($(basename $0))" $$ "***** UNABLE TO LOCATE ${ENTWARE_ENVIRONMENT} *****"
-    logger -st "($(basename $0))" $$ "***** ${SERVICE_NAME}_${SERVICE_FUNCTION} SERVICE HAS NOT BEEN LOADED *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
 fi
 #
 # Take the appropriate way to disconnect /opt with the USB flash drive according to the type of /opt
@@ -54,13 +52,14 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET=$(ls -al /opt | sed -E -n -e 's/.*->[[:space:]]*([^[:space:]]*)/\/\1/p')
+    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*$)#/\1#p')"
     #
     # Remove symbolic link file ${OPT_TARGET}
     # 删除符号链接文件${OPT_TARGET}
     # Never append a /. Otherwise all the files in the USB flash drive will be removed
     # 绝不能在下面一行追加/。否则U盘上的全部文件都会被删除
-    rm ${OPT_TARGET}
+    rm -f "${OPT_TARGET}"
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
@@ -68,17 +67,18 @@ elif [ -d "/opt" ]
 then
     # If it is a directory, then unmount /opt
     # 如果是目录，则卸载目录/opt
-    umount /opt
-    #
+    umount "/opt"
     sleep 5
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
     # 如果/opt的类型不符合上述两种情况，则执行
-    logger -st "($(basename $0))" $$ "***** TYPE OF /opt IS UNKNOWN *****"
-    logger -st "($(basename $0))" $$ "***** ENVIRONMENT FOR ENTWARE CAN'T BE UNSET *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: TYPE OF /opt IS UNKNOWN"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENVIRONMENT FOR ENTWARE CAN'T BE SET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1
 fi
