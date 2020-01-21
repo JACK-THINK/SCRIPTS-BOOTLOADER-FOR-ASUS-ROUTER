@@ -127,14 +127,6 @@ then
         /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn"
         #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn" "${ENTWARE_MONITD}/fw_nat_PREROUTING_softethervpn.on"
         #
-        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_ss_server" "${ENTWARE_MONITD}"
-        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server"
-        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server" "${ENTWARE_MONITD}/fw_nat_PREROUTING_ss_server.on"
-        #
-        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_nat_PREROUTING_v2ray_proxy" "${ENTWARE_MONITD}"
-        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy"
-        #/opt/bin/mv -f "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy" "${ENTWARE_MONITD}/fw_nat_PREROUTING_v2ray_proxy.on"
-        #
         /opt/bin/monit reload
         #
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
