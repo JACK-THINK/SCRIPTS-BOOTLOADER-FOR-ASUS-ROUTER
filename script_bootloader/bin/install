@@ -51,7 +51,7 @@ SERVICE_FUNCTION="INSTALL"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM="$(uname | sed -E 's/[[:upper:]]/\l&/g')"
+OPERATING_SYSTEM="$(uname | tr '[A-Z]' '[a-z]')"
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构

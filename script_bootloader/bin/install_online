@@ -12,7 +12,7 @@ SERVICE_FUNCTION="ONLINE-INSTALL"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM="$(uname | sed -E 's/[[:upper:]]/\l&/g')"
+OPERATING_SYSTEM="$(uname | tr '[A-Z]' '[a-z]')"
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
@@ -160,7 +160,7 @@ do
     # 读取用户输入值
     read INPUT_VALUE
     #
-    case "$(echo "${INPUT_VALUE}" | sed -E 's/[[:upper:]]/\l&/g')" in
+    case "$(echo "${INPUT_VALUE}" | tr '[A-Z]' '[a-z]')" in
         "y" | "yes")
             echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: START INSTALLATION"
             #
