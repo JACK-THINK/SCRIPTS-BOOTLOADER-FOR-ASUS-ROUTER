@@ -1,0 +1,79 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/webdav"
+#
+# PRIVATE_ETC: The directory which contains all the WORKING DIRECTORYs related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
+#
+# WEBDAV_PID_FILE: The path to webdav.pid
+# 设置自定义变量WEBDAV_PID_FILE为文件webdav.pid的绝对路径
+WEBDAV_PID_FILE="/var/run/webdav.pid"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="WEBDAV"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
+#
+########## END ##########
+#
+#
+########## CHECK AND ENABLE WEBDAV ##########
+#
+# Check if ${PRIVATE_USR}/webdav and ${PRIVATE_ETC}/config.yaml exist
+# 检查文件${PRIVATE_USR}/webdav和${PRIVATE_ETC}/config.yaml是否存在
+if [ -e "${PRIVATE_USR}/webdav" ] && [ -e "${PRIVATE_ETC}/config.yaml" ]
+then
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
+    #
+    # Load ${PRIVATE_USR}/webdav
+    # 如果文件${PRIVATE_USR}/webdav和${PRIVATE_ETC}/config.yaml存在，则执行
+    /opt/bin/nohup "${PRIVATE_USR}/webdav" --config "${PRIVATE_ETC}/config.yaml" &> /dev/null &
+    PID="$(pidof webdav)"
+    /opt/bin/echo "${PID}" > "${WEBDAV_PID_FILE}"
+    #
+    /opt/bin/monit start "FW_PORT_OPENING_WEBDAV"
+    #
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 0
+    #
+else
+    # Do nothing but prompt the user
+    # 如果文件${PRIVATE_USR}/webdav或目录${PRIVATE_ETC}不存在，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
+fi
+#
+########## END ##########
