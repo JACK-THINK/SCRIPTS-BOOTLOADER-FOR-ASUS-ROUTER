@@ -187,7 +187,7 @@ checkServiceList()
         return 0
     else
         /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: PLEASE DEFINE DEBIAN SERVICES TO START IN ${CHROOT_SERVICES_LIST} FIRST"
-        /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: ONE SERVICE PER LINE WHICH IS THE NAME OF ONE OF THE SCRIPTS IN DEBIAN'S /etc/init.d/"
+        /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: ONE SERVICE PER LINE WHICH IS THE NAME OF ONE OF THE SCRIPTS IN DEBIAN'S /etc/init.d"
         #
         return 1
     fi

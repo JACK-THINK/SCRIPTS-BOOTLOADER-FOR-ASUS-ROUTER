@@ -315,11 +315,13 @@ else
     exit 10
 fi
 #
+cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
+#
 sleep 10
 #
-# Check if ${USB_MOUNT_POINT}/home/root/ exists
-# 检查目录${USB_MOUNT_POINT}/home/root/是否存在
-if [ -d "${USB_MOUNT_POINT}/home/root/" ]
+# Check if ${USB_MOUNT_POINT}/home/root exists
+# 检查目录${USB_MOUNT_POINT}/home/root是否存在
+if [ -d "${USB_MOUNT_POINT}/home/root" ]
 then
     # Mount ${USB_MOUNT_POINT}/home/ to /tmp/home/
     # 如果目录${USB_MOUNT_POINT}/home/root/存在，则执行
@@ -654,8 +656,6 @@ echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STAGE 2"
 ########## STAGE 3 ##########
 #
 echo -e "\033[1;45;37m############### STAGE 3: INSTALL ADDONS ###############\033[0m"
-#
-cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
 #
 # Install essential tools
 # 安装必备工具
