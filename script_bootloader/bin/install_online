@@ -67,7 +67,7 @@ CURRENT_FINGERPRINT="/tmp/sys_update_fingerprint_current"
 #
 # Check integrity of ${CURRENT_FINGERPRINT}
 # 检查文件${CURRENT_FINGERPRINT}的完整性
-if [ ! -e "${LATEST_FINGERPRINT}" ] || \
+if [ ! -e "${CURRENT_FINGERPRINT}" ] || \
 [ $(cat "${CURRENT_FINGERPRINT}" | wc -l) -lt 100 ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
