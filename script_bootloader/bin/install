@@ -9,6 +9,33 @@ ROUTER_MODEL="$(nvram get model)"
 ########## END ##########
 #
 #
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+        read VALUE_1
+        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
 ########## SET THE CUSTOM VARIABLES ##########
 #
 # 设置自定义变量
@@ -21,6 +48,33 @@ SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="INSTALL"
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM="$(uname | sed -E 's/[[:upper:]]/\l&/g')"
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case "$(uname -m)" in
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
+        #
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 1
+        ;;
+esac
 #
 echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
@@ -45,6 +99,10 @@ case ${USB_MOUNT_POINT_COUNT} in
         exit 2
         ;;
 esac
+#
+# ENTWARE_BIN: The directory which contains all the common executable files installed by Entware
+# 设置自定义变量ENTWARE_BIN为Entware安装的普通可执行文件目录
+ENTWARE_BIN="${USB_MOUNT_POINT}/bin"
 #
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
@@ -78,6 +136,33 @@ then
 else
     TEST_FMW_TEE="true"
 fi
+#
+########## END ##########
+#
+#
+########## SAVE CREDENTIALS ##########
+#
+while [ 1 ]
+do
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: login username of the router"
+    doubleCheckAndConfirm ADMINUSER
+    #
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: login password of the router"
+    doubleCheckAndConfirm ADMINPASSWORD
+    #
+    if [ "${ADMINUSER}" != "$(nvram get http_username)" ]
+    then
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUTS ARE NOT IDENTICAL TO THE INFORMATION SAVED IN THE ROUTER, PLEASE INPUT AGAIN"
+    else
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: ${ADMINUSER}"
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: ${ADMINPASSWORD}"
+        #
+        echo -e "ADMINUSER=\"${ADMINUSER}\"" > "${SBL_SYS_ETC}/sbl_credentials"
+        echo -e "ADMINPASSWORD=\"${ADMINPASSWORD}\"" >> "${SBL_SYS_ETC}/sbl_credentials"
+        #
+        break
+    fi
+done
 #
 ########## END ##########
 #
@@ -569,6 +654,15 @@ echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STAGE 2"
 ########## STAGE 3 ##########
 #
 echo -e "\033[1;45;37m############### STAGE 3: INSTALL ADDONS ###############\033[0m"
+#
+cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
+#
+# Install essential tools
+# 安装必备工具
+for TOOL_NAME in "bcrypt-tool" "gohash" "gotee"
+do
+    cp -f "${SBL_SYS_BIN}/${TOOL_NAME}/${TOOL_NAME}-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}" "${ENTWARE_BIN}/${TOOL_NAME}"
+done
 #
 # Temporary Solution: The 4-line code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息

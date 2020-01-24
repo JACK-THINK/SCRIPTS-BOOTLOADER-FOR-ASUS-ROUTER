@@ -26,7 +26,6 @@
 
 | 权限      | 名称                        | 属性     | 说明                           |
 | --------- | --------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | bcrypt-tool                 | 目录     | bcrypt-tool加密工具目录        |
 | rwxrwxrwx | adguardhome_install         | 普通文件 | 安装程序                       |
 | rwxrwxrwx | adguardhome_update          | 普通文件 | 升级程序（暂不可用）           |
 | rwxrwxrwx | adguardhome_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |

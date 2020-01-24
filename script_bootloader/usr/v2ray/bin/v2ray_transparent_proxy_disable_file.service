@@ -31,7 +31,7 @@ SERVER_DOMAIN="$(/opt/bin/sed -E -n -e '/outbounds/,/port/s/^[[:space:]]*\"addre
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(nvram get http_username)"
+ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
 #
 # NAME OF THE SERVICE
 # 服务名称
