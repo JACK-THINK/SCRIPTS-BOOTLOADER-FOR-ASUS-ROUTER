@@ -30,9 +30,9 @@ SETTING_SENTINEL=0
 #
 essentialCommandChecker()
 {
-    if [ -z "$(which ${1})" ]
+    if [ -z "$(which "${1}")" ]
     then
-        echo -e "${1}: \033[1;41;37mNO\033[0m"
+        echo -e "${1}: \033[1;41;37mNOT FOUND\033[0m"
         COMMAND_SENTINEL=$((${COMMAND_SENTINEL}+1))
     fi
 }
@@ -41,14 +41,14 @@ essentialFileChecker()
 {
     if [ ! -e "${1}" ]
     then
-        echo -e "${1}: \033[1;41;37mNO\033[0m"
+        echo -e "${1}: \033[1;41;37mNOT FOUND\033[0m"
         FILE_SENTINEL=$((${FILE_SENTINEL}+1))
     fi
 }
 #
 essentialSettingOffChecker()
 {
-    if [ -n "$(nvram get ${1})" ] && [ $(nvram get ${1}) -ne 0 ]
+    if [ -n "$(nvram get "${1}")" ] && [ $(nvram get "${1}") -ne 0 ]
     then
         echo -e "${2}"
         SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
@@ -57,7 +57,7 @@ essentialSettingOffChecker()
 #
 essentialSettingOnChecker()
 {
-    if [ -n "$(nvram get ${1})" ] && [ $(nvram get ${1}) -ne 1 ]
+    if [ -n "$(nvram get "${1}")" ] && [ $(nvram get "${1}") -ne 1 ]
     then
         echo -e "${2}"
         SETTING_SENTINEL=$((${SETTING_SENTINEL}+1))
@@ -78,39 +78,41 @@ sentinelChecker()
 #
 ########## CHECK ESSENTIAL COMMANDS ##########
 #
-essentialCommandChecker awk
-essentialCommandChecker basename
-essentialCommandChecker cat
-essentialCommandChecker chmod
-essentialCommandChecker cp
-essentialCommandChecker date
-essentialCommandChecker dd
-essentialCommandChecker echo
-essentialCommandChecker find
-essentialCommandChecker grep
-essentialCommandChecker ln
-essentialCommandChecker logger
-essentialCommandChecker ls
-essentialCommandChecker mkdir
-essentialCommandChecker mkfs.ext3
-essentialCommandChecker mkswap
-essentialCommandChecker mount
-essentialCommandChecker mv
-essentialCommandChecker nvram
-essentialCommandChecker reboot
-essentialCommandChecker rm
-essentialCommandChecker sed
-essentialCommandChecker sleep
-essentialCommandChecker swapoff
-essentialCommandChecker swapon
-essentialCommandChecker tail
-essentialCommandChecker tar
-essentialCommandChecker umount
-essentialCommandChecker uname
-essentialCommandChecker wc
-essentialCommandChecker wget
+essentialCommandChecker "awk"
+essentialCommandChecker "basename"
+essentialCommandChecker "cat"
+essentialCommandChecker "chmod"
+essentialCommandChecker "cp"
+essentialCommandChecker "date"
+essentialCommandChecker "dd"
+essentialCommandChecker "dirname"
+essentialCommandChecker "echo"
+essentialCommandChecker "find"
+essentialCommandChecker "grep"
+essentialCommandChecker "ln"
+essentialCommandChecker "logger"
+essentialCommandChecker "ls"
+essentialCommandChecker "mkdir"
+essentialCommandChecker "mkfs.ext3"
+essentialCommandChecker "mkswap"
+essentialCommandChecker "mount"
+essentialCommandChecker "mv"
+essentialCommandChecker "nvram"
+essentialCommandChecker "reboot"
+essentialCommandChecker "rm"
+essentialCommandChecker "sed"
+essentialCommandChecker "sleep"
+essentialCommandChecker "swapoff"
+essentialCommandChecker "swapon"
+essentialCommandChecker "tail"
+essentialCommandChecker "tar"
+essentialCommandChecker "tr"
+essentialCommandChecker "umount"
+essentialCommandChecker "uname"
+essentialCommandChecker "wc"
+essentialCommandChecker "wget"
 #
-sentinelChecker ${COMMAND_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL COMMANDS *****"
+sentinelChecker ${COMMAND_SENTINEL} "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MISSING ESSENTIAL COMMANDS"
 #
 ########## END ##########
 #
@@ -119,37 +121,37 @@ sentinelChecker ${COMMAND_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIA
 #
 essentialFileChecker "/tmp/usb.log"
 #
-sentinelChecker ${FILE_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL FILES *****"
+sentinelChecker ${FILE_SENTINEL} "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MISSING ESSENTIAL FILES"
 #
 ########## END ##########
 #
 #
 ########## CHECK FEATURES OF COMMANDS ##########
 #
-if [ "$(echo '1st2nd3rd' | sed -E -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" != "123" ]
+if [ "$(echo "1st2nd3rd" | sed -E -n -e 's/([[:digit:]])[[:alpha:]]+([[:digit:]])[[:alpha:]]{2}([[:digit:]])[[:lower:]]+/\1\2\3/p')" != "123" ]
 then
-    echo -e "extended regular expression: \033[1;41;37mNO\033[0m"
+    echo -e "extended regular expression: \033[1;41;37mNOT WORKING\033[0m"
     FEATURE_SENTINEL=$((${FEATURE_SENTINEL}+1))
 fi
 #
-sentinelChecker ${FEATURE_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL FEATURES *****"
+sentinelChecker ${FEATURE_SENTINEL} "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MISSING ESSENTIAL FEATURES"
 #
 ########## END ##########
 #
 #
 ########## CHECK SETTINGS ##########
 #
-essentialSettingOffChecker daapd_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable iTunes Server\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker dms_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable UPnP Media Server\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker enable_samba "Go to \"USB Application\" -> \"Servers Center\" -> \"Network Place (Samba) Share / Cloud Disk\", and set \"Enable Share\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker nfsd_enable "Go to \"USB Application\" -> \"Servers Center\" -> \"NFS Exports\", and set \"Enable NFSD\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker enable_ftp "Go to \"USB Application\" -> \"Servers Center\" -> \"FTP Share\", and set \"Enable FTP\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker timemachine_enable "Go to \"USB Application\" -> \"Time Machine\", and set \"Enable Time Machine\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker webdav_aidisk "Go to \"AiCloud 2.0\" -> \"AiCloud 2.0\", and set \"Cloud Disk\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker enable_cloudsync "Go to \"AiCloud 2.0\" -> \"AiCloud Sync\", and set \"AiCloud Sync\" to \033[1;43;31mOFF\033[0m."
-essentialSettingOffChecker usb_idle_enable "Go to \"Administration\" -> \"System\", and set \"Enable HDD Hibernation\" to \033[1;43;31mNo\033[0m."
-essentialSettingOnChecker ntp_ready "Go to \"Administration\" -> \"System\", and set \"NTP Server\" to \"\033[1;43;31mntp.aliyun.com\033[0m\"."
+essentialSettingOffChecker "daapd_enable" "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable iTunes Server\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "dms_enable" "Go to \"USB Application\" -> \"Servers Center\" -> \"Media Server\", and set \"Enable UPnP Media Server\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "enable_samba" "Go to \"USB Application\" -> \"Servers Center\" -> \"Network Place (Samba) Share / Cloud Disk\", and set \"Enable Share\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "nfsd_enable" "Go to \"USB Application\" -> \"Servers Center\" -> \"NFS Exports\", and set \"Enable NFSD\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "enable_ftp" "Go to \"USB Application\" -> \"Servers Center\" -> \"FTP Share\", and set \"Enable FTP\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "timemachine_enable" "Go to \"USB Application\" -> \"Time Machine\", and set \"Enable Time Machine\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "webdav_aidisk" "Go to \"AiCloud 2.0\" -> \"AiCloud 2.0\", and set \"Cloud Disk\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "enable_cloudsync" "Go to \"AiCloud 2.0\" -> \"AiCloud Sync\", and set \"AiCloud Sync\" to \033[1;43;31mOFF\033[0m."
+essentialSettingOffChecker "usb_idle_enable" "Go to \"Administration\" -> \"System\", and set \"Enable HDD Hibernation\" to \033[1;43;31mNo\033[0m."
+essentialSettingOnChecker "ntp_ready" "Go to \"Administration\" -> \"System\", and set \"NTP Server\" to \"\033[1;43;31mntp.aliyun.com\033[0m\"."
 #
-sentinelChecker ${SETTING_SENTINEL} "($(basename $0)): $$ ***** MISSING ESSENTIAL SETTINGS *****\n($(basename $0)): $$ Modify settings as instructions above, reboot the router and then try again."
+sentinelChecker ${SETTING_SENTINEL} "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MISSING ESSENTIAL SETTINGS\n($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MODIFY SETTINGS AS INSTRUCTIONS ABOVE, REBOOT THE ROUTER AND THEN TRY AGAIN."
 #
 ########## END ##########

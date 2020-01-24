@@ -9,31 +9,39 @@
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
-SBL_SYS_ROOT=${USB_MOUNT_POINT}/script_bootloader
+SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
 #
 # SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
-SBL_SYS_BIN=${SBL_SYS_ROOT}/bin
+SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
 #
 # SBL_SYS_ETC: The directory which contains all the configuration files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
-SBL_SYS_ETC=${SBL_SYS_ROOT}/etc
+SBL_SYS_ETC="${SBL_SYS_ROOT}/etc"
 #
 # SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
-SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
+SBL_SYS_TMP="${SBL_SYS_ROOT}/tmp"
 #
 # SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${SBL_SYS_ROOT}/usr
+SBL_SYS_USR="${SBL_SYS_ROOT}/usr"
 #
 # SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
-SBL_SYS_VAR=${SBL_SYS_ROOT}/var
+SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="CUSTOM SCRIPTS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="LOAD"
 #
 ########## END ##########
 #
@@ -47,16 +55,20 @@ SBL_SYS_VAR=${SBL_SYS_ROOT}/var
 #
 # 例如：
 # SOFTWARE SERVICE（使用时，删除下一行行首的#）
-#${SBL_SYS_USR}/software/bin/software_enable.service
+#"${SBL_SYS_USR}/software/bin/software_enable.service"
 #
 # NEXT SERVICE
-#${SBL_SYS_USR}/
+#"${SBL_SYS_USR}"
 #
 ########## END ##########
 #
 #
 ########## NOTIFICATION ##########
 #
-logger -st "($(basename $0))" $$ "***** ALL THE USER'S CUSTOM SCRIPTS HAVE BEEN LOADED SUCCESSFULLY *****"
+sleep 10
+#
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
 #
 ########## END ##########

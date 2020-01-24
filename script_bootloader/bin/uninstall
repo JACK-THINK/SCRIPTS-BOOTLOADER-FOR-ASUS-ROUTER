@@ -4,9 +4,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
-#
-logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${ROUTER_MODEL} UNINSTALLATION ---------*"
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -18,35 +16,34 @@ logger -st "($(basename $0))" $$ "*--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER 
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
-SBL_SYS_ROOT=${USB_MOUNT_POINT}/script_bootloader
+SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
 #
 # SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
-SBL_SYS_BIN=${SBL_SYS_ROOT}/bin
-#
-# SBL_SYS_ETC: The directory which contains all the configuration files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_ETC为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统配置文件目录
-SBL_SYS_ETC=${SBL_SYS_ROOT}/etc
-#
-# SBL_SYS_TMP: The directory which contains all the temporary files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_TMP为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统临时文件目录
-SBL_SYS_TMP=${SBL_SYS_ROOT}/tmp
-#
-# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR=${SBL_SYS_ROOT}/usr
-#
-# SBL_SYS_VAR: The directory which contains all the variable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_VAR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可变文件目录
-SBL_SYS_VAR=${SBL_SYS_ROOT}/var
+SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
 #
 # USB_UMOUNT_SCRIPT: The script runs automatically when the USB flash drive is unmounted
 # 设置自定义变量USB_UMOUNT_SCRIPT为U盘卸载时自动运行文件
 USB_UMOUNT_SCRIPT="${SBL_SYS_BIN}/script_bootloader_usb_umount"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UNINSTALL"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
@@ -55,15 +52,14 @@ USB_UMOUNT_SCRIPT="${SBL_SYS_BIN}/script_bootloader_usb_umount"
 #
 # Load ${USB_UMOUNT_SCRIPT}
 # 执行文件${USB_UMOUNT_SCRIPT}
-${USB_UMOUNT_SCRIPT}
-logger -st "($(basename $0))" $$ "***** ANYTHING RELATED HAS BEEN TERMINATED *****"
+"${USB_UMOUNT_SCRIPT}"
+#
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ANYTHING RELEVANT HAS BEEN TERMINATED"
 #
 ########## END ##########
 #
 #
 ########## ROUTER CONFIGURATION ##########
-#
-logger -st "($(basename $0))" $$ "***** RESTORE ${ROUTER_MODEL} SETTINGS *****"
 #
 # When the USB flash drive is mounted, nothing will run automatically
 # 使用nvram对变量script_usbmount进行设置，将其恢复为默认状态
@@ -77,15 +73,12 @@ nvram unset script_usbumount
 # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
 nvram commit
 #
-########## END ##########
+sync
+sleep 10
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+sync
+sleep 10
 #
-#
-########## REBOOT ##########
-#
-# Reboot the router
-# 需使用reboot命令重启路由器，确保设置生效
-logger -st "($(basename $0))" $$ "***** UNINSTALLATION HAS BEEN COMPLETE *****"
-logger -st "($(basename $0))" $$ "***** REBOOTING THE ROUTER *****"
 reboot
 #
 ########## END ##########

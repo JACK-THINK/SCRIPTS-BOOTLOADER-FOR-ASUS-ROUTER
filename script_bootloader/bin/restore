@@ -4,9 +4,7 @@
 #
 ########## CHECK ASUS ROUTER MODEL ##########
 #
-ROUTER_MODEL=$(nvram get model)
-#
-echo "($(basename $0)): $$ *--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${ROUTER_MODEL} RESTORATION ---------*"
+ROUTER_MODEL="$(nvram get model)"
 #
 ########## END ##########
 #
@@ -16,22 +14,37 @@ echo "($(basename $0)): $$ *--------- SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ON ${RO
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="RESTORE"
+#
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
-if [ ${USB_MOUNT_POINT_COUNT} == "0" ]
-then
-    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE DIRECTORY script_bootloader *****"
-    exit 1
-    #
-elif [ ${USB_MOUNT_POINT_COUNT} == "1" ]
-then
-    USB_MOUNT_POINT=$(find / -name 'script_bootloader' | sed 's/\/script_bootloader//')
-    #
-else
-    echo "($(basename $0)): $$ ***** NUMBER OF DIRECTORY script_bootloader MUST BE ONE *****"
-    exit 2
-fi
+#
+case ${USB_MOUNT_POINT_COUNT} in
+    0)
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE DIRECTORY script_bootloader"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 1
+        ;;
+    1)
+        USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
+        ;;
+    *)
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+        ;;
+esac
 #
 # USB_MOUNT_SCRIPT: The script runs automatically when the USB flash drive is mounted
 # 设置自定义变量USB_MOUNT_SCRIPT为U盘挂载时自动运行文件
@@ -50,8 +63,7 @@ USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_us
 # 检查文件${USB_MOUNT_SCRIPT}和${USB_UMOUNT_SCRIPT}是否存在
 if [ -e "${USB_MOUNT_SCRIPT}" ] && [ -e "${USB_UMOUNT_SCRIPT}" ]
 then
-    echo "($(basename $0)): $$ ***** ALL THE ESSENTIAL FILES EXIST *****"
-    echo "($(basename $0)): $$ ***** SETTING THE ROUTER *****"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Set nvram variable "script_usbmount" and "script_usbumount"
     # 如果两个文件都存在，则设置nvram变量script_usbmount和script_usbumount
@@ -65,25 +77,22 @@ then
     # Commit the changes
     # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
     nvram commit
-    echo "($(basename $0)): $$ ***** RESTORATION HAS BEEN COMPLETE *****"
+    #
+    sync
+    sleep 10
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    sync
+    sleep 10
+    #
+    reboot
     #
 else
     # Stop and Exit
     # 如果两个文件不同时存在，则该程序终止
-    echo "($(basename $0)): $$ ***** UNABLE TO LOCATE THE ESSENTIAL FILES *****"
-    echo "($(basename $0)): $$ ***** RESTORATION HAS NOT BEEN COMPLETE *****"
-    echo "($(basename $0)): $$ ***** EXIT *****"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
     exit 3
 fi
-#
-########## END ##########
-#
-#
-########## REBOOT ##########
-#
-# Reboot the router
-# 需使用reboot命令重启路由器，确保设置生效
-echo "($(basename $0)): $$ ***** REBOOTING THE ROUTER *****"
-reboot
 #
 ########## END ##########

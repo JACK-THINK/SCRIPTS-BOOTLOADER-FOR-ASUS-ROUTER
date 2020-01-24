@@ -1,21 +1,22 @@
 #!/bin/sh
 #
-########## CHECK ASUS ROUTER MODEL ##########
-#
-ROUTER_MODEL=$(nvram get model)
-#
-########## END ##########
-#
-#
 ########## CHECK PREREQUISITES ##########
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ONLINE-INSTALL"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
-OPERATING_SYSTEM=$(uname | sed 's/L/l/g')
+OPERATING_SYSTEM="$(uname | sed -E 's/[[:upper:]]/\l&/g')"
 #
 # ROUTER_ARCHITECTURE: Architecture of the ASUS Router
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
-case $(uname -m) in
+case "$(uname -m)" in
     "aarch64")
         ROUTER_ARCHITECTURE="arm64"
         ;;
@@ -28,99 +29,111 @@ case $(uname -m) in
     *)
         # Do nothing but prompt the user
         # 如果路由器架构不符合上述三种情况，则执行
-        echo -e "\033[1;41;37m***** ERROR: ROUTER ARCHITECTURE IS UNKNOWN *****\033[0m"
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
         #
-        echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
         exit 1
         ;;
 esac
 #
 # Download checksum generator and checker
 # 下载checksum generator and checker
-wget -q -c -t 10 -T 120 -O /tmp/gohash --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/gohash/gohash-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}"
+wget -q -c -t 10 -T 120 -O "/tmp/gohash" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/gohash/gohash-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}"
 #
-chmod 777 /tmp/gohash
+chmod 777 "/tmp/gohash"
 #
 # Check integrity of /tmp/gohash
 # 检查文件/tmp/gohash的完整性
-if [ ! -s /tmp/gohash ] || \
-[ "$(md5sum /tmp/gohash | cut -d ' ' -f 1)" != "$(/tmp/gohash -a md5 /tmp/gohash | cut -d ' ' -f 1)" ]
+if [ ! -s "/tmp/gohash" ] || \
+[ "$(md5sum "/tmp/gohash" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/tmp/gohash -a md5 "/tmp/gohash" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
-wget -q -c -t 10 -T 120 -O /tmp/sys_update_fingerprint_current --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/var/update/sys_update_fingerprint_current"
+wget -q -c -t 10 -T 120 -O "/tmp/sys_update_fingerprint_current" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/var/update/sys_update_fingerprint_current"
 #
 # CURRENT_FINGERPRINT: System update fingerprint of the current SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
-CURRENT_FINGERPRINT=/tmp/sys_update_fingerprint_current
+CURRENT_FINGERPRINT="/tmp/sys_update_fingerprint_current"
 #
 # Check integrity of ${CURRENT_FINGERPRINT}
 # 检查文件${CURRENT_FINGERPRINT}的完整性
-if [ $(cat ${CURRENT_FINGERPRINT} | wc -l) -lt 100 ]
+if [ ! -e "${LATEST_FINGERPRINT}" ] || \
+[ $(cat "${CURRENT_FINGERPRINT}" | wc -l) -lt 100 ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Check integrity of /tmp/install_online
 # 检查文件/tmp/install_online的完整性
-if [ ! -s /tmp/install_online ] || \
-[ "$(/tmp/gohash -a sha256 /tmp/install_online | cut -d ' ' -f 1)" != "$(grep 'bin/install_online' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
+if [ ! -s "/tmp/install_online" ] || \
+[ "$(/tmp/gohash -a sha256 "/tmp/install_online" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/install_online' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Download prerequisite_checker
 # 下载文件prerequisite_checker
-wget -q -c -t 10 -T 120 -O /tmp/prerequisite_checker --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
+wget -q -c -t 10 -T 120 -O "/tmp/prerequisite_checker" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
 #
 # Check integrity of /tmp/prerequisite_checker
 # 检查文件/tmp/prerequisite_checker的完整性
-if [ ! -s /tmp/prerequisite_checker ] || \
-[ "$(/tmp/gohash -a sha256 /tmp/prerequisite_checker | cut -d ' ' -f 1)" != "$(grep 'bin/prerequisite_checker' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
+if [ ! -s "/tmp/prerequisite_checker" ] || \
+[ "$(/tmp/gohash -a sha256 "/tmp/prerequisite_checker" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/prerequisite_checker' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Change the mode of /tmp/prerequisite_checker
 # 更改文件/tmp/prerequisite_checker权限
-chmod 777 /tmp/prerequisite_checker
+chmod 777 "/tmp/prerequisite_checker"
 #
 # Run /tmp/prerequisite_checker
 # 执行/tmp/prerequisite_checker
-/tmp/prerequisite_checker
+"/tmp/prerequisite_checker"
 #
 # Check if /tmp/prerequisite_checker returns 0
 # 检查/tmp/prerequisite_checker的返回值是否为0
 if [ ${?} -ne 0 ]
 then
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 2
 fi
 #
@@ -129,10 +142,10 @@ fi
 #
 ########## NOTIFICATION ##########
 #
-echo -e "\033[1;41;37m***** WARNING *****\033[0m"
-echo -e "This program will erase ALL THE DATA on the target USB flash drive and install SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.\nBefore the installation, you must:\n1. Back up all the data on the target USB flash drive.\n2. Unplug all the USB flash drives except the target one.\n"
-echo -e "\033[1;41;37m***** 警告 *****\033[0m"
-echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER。\n开始安装前，你必须：\n1. 备份目标U盘上的全部数据。\n2. 除目标U盘外，移除一切其它U盘。\n"
+echo -e "\033[1;41;37m############### WARNING ###############\033[0m"
+echo -e "This program will erase ALL THE DATA on the target USB flash drive and install SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER.\nBefore installation, you must:\n1. Back up all the data on the target USB flash drive.\n2. Remove all the USB flash drives from the router except the target one.\n"
+echo -e "\033[1;41;37m############### 警告 ###############\033[0m"
+echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER。\n开始安装前，请务必：\n1. 备份目标U盘上的全部数据。\n2. 除目标U盘外，移除全部连接至路由器的U盘。\n"
 #
 ########## END ##########
 #
@@ -141,27 +154,30 @@ echo -e "本程序将清除目标U盘中全部数据并安装SCRIPTS-BOOTLOADER-
 #
 while [ 1 ]
 do
-    echo -n "Do you want to start the installation right now? (YES/NO): "
+    echo -n "Do you want to start installation right now? (YES/NO): "
     #
     # Read the input of user
     # 读取用户输入值
     read INPUT_VALUE
     #
-    case ${INPUT_VALUE} in
-        "Y" | "y" | "YES" | "yes" | "Yes")
-            echo "($(basename $0)): $$ ***** START INSTALLATION *****"
+    case "$(echo "${INPUT_VALUE}" | sed -E 's/[[:upper:]]/\l&/g')" in
+        "y" | "yes")
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: START INSTALLATION"
+            #
             break
             ;;
-        "N" | "n" | "NO" | "no" | "No")
-            echo "($(basename $0)): $$ ***** STOP INSTALLATION *****"
-            rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-            rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-            rm -f /tmp/gohash > /dev/null 2>&1
-            rm -f /tmp/install_online > /dev/null 2>&1
+        "n" | "no")
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ABORT INSTALLATION"
+            #
+            rm -f "/tmp/prerequisite_checker"
+            rm -f "${CURRENT_FINGERPRINT}"
+            rm -f "/tmp/gohash"
+            rm -f "/tmp/install_online"
+            #
             exit 3
             ;;
         *)
-            echo "($(basename $0)): $$ ***** WRONG SELECTION *****"
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: WRONG SELECTION"
             ;;
     esac
 done
@@ -173,41 +189,44 @@ done
 #
 # Download drive_modifier
 # 下载文件drive_modifier
-wget -c -t 10 -T 120 -O /tmp/drive_modifier --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
+wget -c -t 10 -T 120 -O "/tmp/drive_modifier" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
 #
 # Check integrity of /tmp/drive_modifier
 # 检查文件/tmp/drive_modifier的完整性
-if [ ! -s /tmp/drive_modifier ] || \
-[ "$(/tmp/gohash -a sha256 /tmp/drive_modifier | cut -d ' ' -f 1)" != "$(grep 'bin/drive_modifier' ${CURRENT_FINGERPRINT} | cut -d ' ' -f 1)" ]
+if [ ! -s "/tmp/drive_modifier" ] || \
+[ "$(/tmp/gohash -a sha256 "/tmp/drive_modifier" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/drive_modifier' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/drive_modifier > /dev/null 2>&1
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/drive_modifier"
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Change the mode of /tmp/drive_modifier
 # 更改文件/tmp/drive_modifier权限
-chmod 777 /tmp/drive_modifier
+chmod 777 "/tmp/drive_modifier"
 #
 # Run /tmp/drive_modifier
 # 执行/tmp/drive_modifier
-/tmp/drive_modifier
+"/tmp/drive_modifier"
 #
 # Check if /tmp/drive_modifier returns 0
 # 检查/tmp/drive_modifier的返回值是否为0
 if [ ${?} -ne 0 ]
 then
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/drive_modifier > /dev/null 2>&1
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/drive_modifier"
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
     exit 4
 fi
 #
@@ -221,31 +240,33 @@ fi
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
-USB_DRIVE_LABEL=$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' /tmp/drive_modifier)
+USB_DRIVE_LABEL="$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' "/tmp/drive_modifier")"
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT=$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DRIVE_LABEL}"'[^[:space:]]*)[[:space:]]+.*/\1/p')
+USB_MOUNT_POINT="$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_DRIVE_LABEL}"'[^[:space:]]*)[[:space:]]+.*/\1/p')"
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
-wget -c -t 10 -T 120 -O /tmp/sbl_download_link.html --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+wget -c -t 10 -T 120 -O "/tmp/sbl_download_link.html" --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 #
-if [ ! -s '/tmp/sbl_download_link.html' ] || \
-[ $(cat ${CURRENT_FINGERPRINT} | wc -l) -lt 20 ]
+if [ ! -s "/tmp/sbl_download_link.html" ] || \
+[ $(cat "${CURRENT_FINGERPRINT}" | wc -l) -lt 20 ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
-    rm -f /tmp/drive_modifier > /dev/null 2>&1
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/sbl_download_link.html"
+    rm -f "/tmp/drive_modifier"
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
-DOWNLOAD_LINK=$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' /tmp/sbl_download_link.html 2> /dev/null)
+DOWNLOAD_LINK="$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' "/tmp/sbl_download_link.html")"
 #
 # NAME OF THE ARCHIVE
 # 设置自定义变量ARCHIVE_NAME为包文件名
@@ -258,11 +279,11 @@ ARCHIVE_NAME="sbl_setup.tar.gz"
 #
 # Remove vestigial ${ARCHIVE_NAME} package
 # 删除遗留的${ARCHIVE_NAME}包
-rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
 #
 # Download ${ARCHIVE_NAME} package
 # 下载${ARCHIVE_NAME}包
-wget -c -t 10 -T 120 -O ${USB_MOUNT_POINT}/${ARCHIVE_NAME} --no-check-certificate "${DOWNLOAD_LINK}"
+wget -c -t 10 -T 120 -O "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" --no-check-certificate "${DOWNLOAD_LINK}"
 #
 sleep 30
 #
@@ -270,33 +291,37 @@ sleep 30
 # 检查文件${USB_MOUNT_POINT}/${ARCHIVE_NAME}是否存在
 if [ ! -s "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
 then
-    echo "($(basename $0)): $$ ***** CONNECTION FAILED *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
-    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
-    rm -f /tmp/drive_modifier > /dev/null 2>&1
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+    rm -f "/tmp/sbl_download_link.html"
+    rm -f "/tmp/drive_modifier"
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
 # Untar ${ARCHIVE_NAME} package
 # 解压${ARCHIVE_NAME}包
-tar -zvxf ${USB_MOUNT_POINT}/${ARCHIVE_NAME} -C ${USB_MOUNT_POINT}/ > /dev/null 2>&1
+tar -xzvf "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" -C "${USB_MOUNT_POINT}"
 #
 if [ ${?} -ne 0 ]
 then
-    echo "($(basename $0)): $$ ***** ${ARCHIVE_NAME} IS CORRUPT *****"
-    echo "($(basename $0)): $$ ***** ABORT INSTALLATION *****"
-    rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
-    rm -f /tmp/sbl_download_link.html > /dev/null 2>&1
-    rm -f /tmp/drive_modifier > /dev/null 2>&1
-    rm -f /tmp/prerequisite_checker > /dev/null 2>&1
-    rm -f ${CURRENT_FINGERPRINT} > /dev/null 2>&1
-    rm -f /tmp/gohash > /dev/null 2>&1
-    rm -f /tmp/install_online > /dev/null 2>&1
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+    rm -f "/tmp/sbl_download_link.html"
+    rm -f "/tmp/drive_modifier"
+    rm -f "/tmp/prerequisite_checker"
+    rm -f "${CURRENT_FINGERPRINT}"
+    rm -f "/tmp/gohash"
+    rm -f "/tmp/install_online"
+    #
     exit 5
 fi
 #
@@ -304,47 +329,47 @@ sleep 30
 #
 # Move directory script_bootloader to directory ${USB_MOUNT_POINT}
 # 移动目录script_bootloader至目录${USB_MOUNT_POINT}
-mv ${USB_MOUNT_POINT}/JACK*/script_bootloader/ ${USB_MOUNT_POINT}/script_bootloader/ > /dev/null 2>&1
+mv -f "${USB_MOUNT_POINT}"/JACK*/script_bootloader "${USB_MOUNT_POINT}"
 #
 sleep 10
 #
 # Remove directory JACK*
 # 删除目录JACK*
-rm -rf ${USB_MOUNT_POINT}/JACK*/ > /dev/null 2>&1
+rm -rf "${USB_MOUNT_POINT}"/JACK*
 #
 # Remove ${ARCHIVE_NAME} package
 # 删除${ARCHIVE_NAME}包
-rm -f ${USB_MOUNT_POINT}/${ARCHIVE_NAME} > /dev/null 2>&1
+rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
 #
 # Remove /tmp/drive_modifier
 # 删除文件/tmp/drive_modifier
-rm -f /tmp/drive_modifier > /dev/null 2>&1
+rm -f "/tmp/drive_modifier"
 #
 # Change the mode of the files
 # 更改文件权限
-chmod -R 777 ${USB_MOUNT_POINT}/script_bootloader/
+chmod -R 777 "${USB_MOUNT_POINT}/script_bootloader"
 #
 sleep 10
 #
 # Start installation
 # 开始安装
-cd /tmp/
+cd "/tmp"
 #
-echo -e "\033[1;43;31mNOTICE\033[0m: ${USB_MOUNT_POINT}/sbl_install_log will be generated.\n"
+echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${USB_MOUNT_POINT}/sbl_install_log will be generated.\n"
 #
 if [ -n "$(which tee)" ]
 then
-    ${USB_MOUNT_POINT}/script_bootloader/bin/install 2>&1 | tee /tmp/sbl_install_log
+    "${USB_MOUNT_POINT}/script_bootloader/bin/install" 2>&1 | tee "/tmp/sbl_install_log"
 else
-    ${USB_MOUNT_POINT}/script_bootloader/bin/install 2>&1 | ${USB_MOUNT_POINT}/script_bootloader/bin/gotee/gotee-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE} /tmp/sbl_install_log
+    "${USB_MOUNT_POINT}/script_bootloader/bin/install" 2>&1 | "${USB_MOUNT_POINT}/script_bootloader/bin/gotee/gotee-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}" "/tmp/sbl_install_log"
     #
     # Temporary Solution: The code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
     # 临时解决方案：以下代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
-    ${USB_MOUNT_POINT}/script_bootloader/bin/addons_install | /opt/bin/tee -a /tmp/sbl_install_log
-    echo -e "\033[1;42;37m***** STAGE 3: SUCCEEDED *****\033[0m"
+    "${USB_MOUNT_POINT}/script_bootloader/bin/addons_install" | /opt/bin/tee -a "/tmp/sbl_install_log"
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STAGE 3"
 fi
 #
-mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/
+mv -f "/tmp/sbl_install_log" "${USB_MOUNT_POINT}"
 #
 ########## END ##########
 #
@@ -353,8 +378,12 @@ mv /tmp/sbl_install_log ${USB_MOUNT_POINT}/
 #
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
-echo "($(basename $0)): $$ ***** INSTALLATION HAS BEEN COMPLETE *****"
-echo "($(basename $0)): $$ ***** REBOOTING THE ROUTER *****"
+sync
+sleep 60
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+sync
+sleep 10
+#
 reboot
 #
 ########## END ##########
