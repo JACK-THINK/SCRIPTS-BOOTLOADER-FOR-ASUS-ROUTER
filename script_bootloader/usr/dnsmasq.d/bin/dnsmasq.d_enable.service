@@ -50,7 +50,7 @@ then
     # Modify ${FMW_DNSMASQ_CONF} and restart dnsmasq
     # 如果目录${ENTWARE_DNSMASQD}存在，则执行
     service restart_dnsmasq
-    sleep 5
+    /opt/bin/sleep 5
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用

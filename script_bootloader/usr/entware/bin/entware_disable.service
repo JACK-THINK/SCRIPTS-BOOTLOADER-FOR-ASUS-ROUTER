@@ -52,7 +52,7 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*$)#/\1#p')"
+    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*)$#/\1#p')"
     #
     # Remove symbolic link file ${OPT_TARGET}
     # 删除符号链接文件${OPT_TARGET}

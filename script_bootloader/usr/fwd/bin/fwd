@@ -41,7 +41,7 @@ main()
                     disableRuleSet "${CONFIGURATION}"
                     #
                     # 等待10秒
-                    sleep 10
+                    /opt/bin/sleep 10
                     #
                     # 调用函数enableRuleSet加载自定义局部变量CONFIGURATION定义的规则集
                     enableRuleSet "${CONFIGURATION}"

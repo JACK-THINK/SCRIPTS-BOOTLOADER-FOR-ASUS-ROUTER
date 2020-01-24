@@ -8,9 +8,9 @@ free | /opt/bin/sed -n -e 's/Mem:    /'"${DATE_BEFORE}"'/' -e '2p'
 #
 # Sync
 # 将缓存写入磁盘
-/bin/sync
+/opt/bin/sync
 /opt/bin/sleep 120
-/bin/sync
+/opt/bin/sync
 /opt/bin/sleep 10
 #
 # Free memory

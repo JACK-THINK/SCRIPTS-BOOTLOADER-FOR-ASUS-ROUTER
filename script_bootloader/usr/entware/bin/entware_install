@@ -58,7 +58,7 @@ if [ -L "/opt" ]
 then
     # OPT_TARGET: The target of the symbolic link /opt
     # 设置自定义变量OPT_TARGET为符号链接文件/opt的目标
-    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*$)#/\1#p')"
+    OPT_TARGET="$(ls -al "/opt" | sed -E -n -e 's#.*->[[:space:]]+([^[:space:]]+.*)$#/\1#p')"
     #
     # Create symbolic link file ${OPT_TARGET}
     # 创建符号链接文件${OPT_TARGET}
@@ -72,7 +72,7 @@ then
     # 如果是目录，则将目录/opt下全部非符号链接文件复制至目录${USB_MOUNT_POINT}，之后挂载目录${USB_MOUNT_POINT}至目录/opt
     #
     mkdir "${PRIVATE_ETC}"
-    ls -al "/opt" | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:digit:]:]+[[:space:]]+(.*[^.]$)/\1/p' > "${FILES_TO_COPY}"
+    ls -al "/opt" | sed -E -n -e 's/^[^l[:space:]]{10}.*[[:digit:]:]+[[:space:]]+(.*[^.])$/\1/p' > "${FILES_TO_COPY}"
     sed -i 's#^#/opt/#' "${FILES_TO_COPY}"
     cp -f "${FILES_TO_COPY}" "${FILES_TO_COPY}.stack"
     #

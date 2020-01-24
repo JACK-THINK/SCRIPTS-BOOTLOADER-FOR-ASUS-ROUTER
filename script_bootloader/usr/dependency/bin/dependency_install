@@ -77,7 +77,7 @@ then
             #
             if [ -e "/opt/bin/gcc" ]
             then
-                /opt/bin/wget-ssl -qO- "http://bin.entware.net/aarch64-k3.10/include/include.tar.gz" | /opt/bin/tar -xvz -C "/opt/include"
+                /opt/bin/wget-ssl -qO- "http://bin.entware.net/aarch64-k3.10/include/include.tar.gz" | /opt/bin/tar -xzv -C "/opt/include"
             fi
             #
             ;;
@@ -95,7 +95,7 @@ then
             #
             if [ -e "/opt/bin/gcc" ]
             then
-                /opt/bin/wget-ssl -qO- "http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz" | /opt/bin/tar -xvz -C "/opt/include"
+                /opt/bin/wget-ssl -qO- "http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz" | /opt/bin/tar -xzv -C "/opt/include"
             fi
             #
             ;;

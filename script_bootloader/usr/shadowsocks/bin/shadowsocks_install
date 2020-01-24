@@ -96,9 +96,9 @@ if [ "$(which opkg)" == "/opt/bin/opkg" ]
 then
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
     #
-    # Check if MONIT MANAGEMENT SYSTEM has been deployed
-    # 检查MONIT MANAGEMENT SYSTEM是否已部署
-    if [ -e "/opt/bin/monit" ]
+    # Check if MONIT MANAGEMENT SYSTEM is enabled
+    # 检查MONIT MANAGEMENT SYSTEM是否已启用
+    if [ "$(which monit)" == "/opt/bin/monit" ]
     then
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #

@@ -113,8 +113,8 @@ case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
     "server")
         # Modify ${PRIVATE_ETC}/config_server.json
         # 修改${PRIVATE_ETC}/config_server.json
-        /opt/bin/sed -E -i 's#(^[[:space:]]+\"password\":).*#\1\"'"${PASSWORD}"'\",#' "${PRIVATE_ETC}/config_server.json"
-        /opt/bin/sed -E -i 's#(^[[:space:]]+\"method\":).*#\1\"'"${ENCRYPTION_METHOD}"'\",#' "${PRIVATE_ETC}/config_server.json"
+        /opt/bin/sed -E -i 's#^([[:space:]]+\"password\":).*#\1\"'"${PASSWORD}"'\",#' "${PRIVATE_ETC}/config_server.json"
+        /opt/bin/sed -E -i 's#^([[:space:]]+\"method\":).*#\1\"'"${ENCRYPTION_METHOD}"'\",#' "${PRIVATE_ETC}/config_server.json"
         /opt/bin/sed -E -i '\#^[[:space:]]+\"plugin\":#d' "${PRIVATE_ETC}/config_server.json"
         /opt/bin/sed -E -i '\#^[[:space:]]+\"plugin_opts\":#d' "${PRIVATE_ETC}/config_server.json"
         NUM_LAST_LINE=$(/opt/bin/sed -ne '/}/=' "${PRIVATE_ETC}/config_server.json")
@@ -132,10 +132,10 @@ case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
     "client")
         for CONFIG_FOR_CLIENT in "${PRIVATE_ETC}/config_local.json" "${PRIVATE_ETC}/config_redir.json" "${PRIVATE_ETC}/config_tunnel.json"
         do
-            /opt/bin/sed -E -i 's#(^[[:space:]]+\"server\":).*#\1\"'"${SERVER_ADDRESS}"'\",#' "${CONFIG_FOR_CLIENT}"
-            /opt/bin/sed -E -i 's#(^[[:space:]]+\"server_port\":).*#\1\"'"${SERVER_PORT}"'\",#' "${CONFIG_FOR_CLIENT}"
-            /opt/bin/sed -E -i 's#(^[[:space:]]+\"password\":).*#\1\"'"${PASSWORD}"'\",#' "${CONFIG_FOR_CLIENT}"
-            /opt/bin/sed -E -i 's#(^[[:space:]]+\"method\":).*#\1\"'"${ENCRYPTION_METHOD}"'\",#' "${CONFIG_FOR_CLIENT}"
+            /opt/bin/sed -E -i 's#^([[:space:]]+\"server\":).*#\1\"'"${SERVER_ADDRESS}"'\",#' "${CONFIG_FOR_CLIENT}"
+            /opt/bin/sed -E -i 's#^([[:space:]]+\"server_port\":).*#\1\"'"${SERVER_PORT}"'\",#' "${CONFIG_FOR_CLIENT}"
+            /opt/bin/sed -E -i 's#^([[:space:]]+\"password\":).*#\1\"'"${PASSWORD}"'\",#' "${CONFIG_FOR_CLIENT}"
+            /opt/bin/sed -E -i 's#^([[:space:]]+\"method\":).*#\1\"'"${ENCRYPTION_METHOD}"'\",#' "${CONFIG_FOR_CLIENT}"
             /opt/bin/sed -E -i '\#^[[:space:]]+\"plugin\":#d' "${CONFIG_FOR_CLIENT}"
             /opt/bin/sed -E -i '\#^[[:space:]]+\"plugin_opts\":#d' "${CONFIG_FOR_CLIENT}"
             NUM_LAST_LINE=$(/opt/bin/sed -ne '/}/=' "${CONFIG_FOR_CLIENT}")
