@@ -27,7 +27,7 @@
 | bash              | 在线安装 | 全功能bash shell                                    |
 | caddy             | 在线安装 | Web服务器                                           |
 | debian            | 在线安装 | Debian的chroot环境。可安装Debian系统下大部分软件包  |
-| filebrowser       | 在线安装 | 私有云盘服务器                                        |
+| filebrowser       | 在线安装 | 私有云盘服务器                                      |
 | freemem           |          | 自动清理内存工具                                    |
 | he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
 | ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
@@ -41,7 +41,7 @@
 | syncthing         | 在线安装 | 开源分布式同步工具                                  |
 | v2ray             | 在线安装 | v2ray网络代理                                       |
 | vlmcsd            | 1112     | 给予巨硬套装活力                                    |
-| webdav            |          | webdav服务器                                        |
+| webdav            | 在线安装 | webdav服务器                                        |
 | wol               |          | 定时开机                                            |
 
 ## 版本15.1（2020-01-16）
@@ -73,7 +73,7 @@
 | bash              | 在线安装 | 全功能bash shell                                    |
 | caddy             | 在线安装 | Web服务器                                           |
 | debian            | 在线安装 | Debian的chroot环境。可安装Debian系统下大部分软件包  |
-| filebrowser       | 在线安装 | 私有云盘服务器                                        |
+| filebrowser       | 在线安装 | 私有云盘服务器                                      |
 | freemem           |          | 自动清理内存工具                                    |
 | he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
 | ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
@@ -122,7 +122,7 @@
 | bash              | 在线安装 | 全功能bash shell                                    |
 | caddy             | 在线安装 | Web服务器                                           |
 | debian            | 在线安装 | Debian的chroot环境。可安装Debian系统下大部分软件包  |
-| filebrowser       | 在线安装 | 私有云盘服务器                                        |
+| filebrowser       | 在线安装 | 私有云盘服务器                                      |
 | freemem           |          | 自动清理内存工具                                    |
 | he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
 | ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
