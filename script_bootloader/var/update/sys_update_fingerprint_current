@@ -1,4 +1,4 @@
-3ed4894790e4caff0e0cccdbde3e7023156914f01301a40d74f594215c83364b ./script_bootloader/bin/addons_install
+0ca8772356378551a4faa743f0e6ffde0c837b5375d4f27433c43eefdca60fc6 ./script_bootloader/bin/addons_install
 7051155a612ff58b771a57dde47f47a4c1ddda1e6ceada1254165d455c168018 ./script_bootloader/bin/bcrypt-tool/bcrypt-tool-linux-arm
 c61994dbe3c42c4521810227d89528b7d80084a3d2657878c1d01f1c97ad331b ./script_bootloader/bin/bcrypt-tool/bcrypt-tool-linux-arm64
 9f42808340a4ce3c4627fe72da067c0a24398e6cd1d9d520e7a4cd5502a667c8 ./script_bootloader/bin/bcrypt-tool/bcrypt-tool-linux-mipsle

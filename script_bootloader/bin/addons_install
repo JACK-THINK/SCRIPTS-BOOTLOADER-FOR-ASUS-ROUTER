@@ -124,9 +124,11 @@ then
     # 配置MONIT MANAGEMENT SYSTEM
     /opt/bin/sed -E -i 's/allow[[:space:]]+[[:alnum:]_]+:[[:alnum:]_]+/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' "/opt/etc/monitrc"
     #
-    # Start MONIT MANAGEMENT SYSTEM
-    # 启动MONIT MANAGEMENT SYSTEM
+    # Start MONIT MANAGEMENT SYSTEM及其全部服务
+    # 启动MONIT MANAGEMENT SYSTEM及其全部服务
     /opt/etc/init.d/S*monit start
+    /opt/bin/sleep 5
+    /opt/bin/monit start all
     #
     sleep 10
 fi
