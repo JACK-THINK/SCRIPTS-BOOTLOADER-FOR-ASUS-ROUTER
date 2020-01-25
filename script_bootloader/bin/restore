@@ -54,6 +54,14 @@ USB_MOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb
 # 设置自定义变量USB_UMOUNT_SCRIPT为U盘卸载时自动运行文件
 USB_UMOUNT_SCRIPT="${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_umount"
 #
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER="$(sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "${USB_MOUNT_POINT}/script_bootloader/etc/sbl_credentials")"
+#
+# ADMINPASSWORD: The administrator's password of the router
+# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
+ADMINPASSWORD="$(sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "${USB_MOUNT_POINT}/script_bootloader/etc/sbl_credentials")"
+#
 ########## END ##########
 #
 #
@@ -73,6 +81,12 @@ then
     #
     # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行程序会自动执行
     nvram set script_usbumount="${USB_UMOUNT_SCRIPT}"
+    #
+    # 使用nvram对变量sbl_username进行设置
+    nvram set sbl_username="${ADMINUSER}"
+    #
+    # 使用nvram对变量sbl_password进行设置
+    nvram set sbl_password="${ADMINPASSWORD}"
     #
     # Commit the changes
     # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器

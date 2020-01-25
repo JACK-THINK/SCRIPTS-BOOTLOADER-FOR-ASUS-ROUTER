@@ -69,6 +69,14 @@ nvram unset script_usbmount
 # 使用nvram对变量script_usbumount进行设置，将其恢复为默认状态
 nvram unset script_usbumount
 #
+# When the USB flash drive is unmounted, nothing will run automatically
+# 使用nvram对变量sbl_username进行设置，将其恢复为默认状态
+nvram unset sbl_username
+#
+# When the USB flash drive is unmounted, nothing will run automatically
+# 使用nvram对变量sbl_password进行设置，将其恢复为默认状态
+nvram unset sbl_password
+#
 # Commit the changes
 # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
 nvram commit

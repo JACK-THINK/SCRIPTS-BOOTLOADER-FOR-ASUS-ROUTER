@@ -9,33 +9,33 @@ ROUTER_MODEL="$(nvram get model)"
 ########## END ##########
 #
 #
-########## LOAD FUNCTIONS ##########
-#
-doubleCheckAndConfirm()
-{
-    while [ 1 ]
-    do
-        local VALUE_1
-        local VALUE_2
-        #
-        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
-        read VALUE_1
-        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
-        read VALUE_2
-        #
-        if [ "${VALUE_1}" == "${VALUE_2}" ]
-        then
-            eval ${1}="${VALUE_1}"
-            break
-        else
-            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
-        fi
-    done
-}
-#
-########## END ##########
-#
-#
+#R########### LOAD FUNCTIONS ##########
+#R##
+#R#doubleCheckAndConfirm()
+#R#{
+#R#    while [ 1 ]
+#R#    do
+#R#        local VALUE_1
+#R#        local VALUE_2
+#R#        #
+#R#        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+#R#        read VALUE_1
+#R#        echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+#R#        read VALUE_2
+#R#        #
+#R#        if [ "${VALUE_1}" == "${VALUE_2}" ]
+#R#        then
+#R#            eval ${1}="${VALUE_1}"
+#R#            break
+#R#        else
+#R#            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+#R#        fi
+#R#    done
+#R#}
+#R##
+#R########### END ##########
+#R##
+#R##
 ########## SET THE CUSTOM VARIABLES ##########
 #
 # 设置自定义变量
@@ -140,33 +140,37 @@ fi
 ########## END ##########
 #
 #
-########## SAVE CREDENTIALS ##########
-#
-while [ 1 ]
-do
-    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: login username of the router"
-    doubleCheckAndConfirm ADMINUSER
-    #
-    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: login password of the router"
-    doubleCheckAndConfirm ADMINPASSWORD
-    #
-    if [ "${ADMINUSER}" != "$(nvram get http_username)" ]
-    then
-        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUTS ARE NOT IDENTICAL TO THE INFORMATION SAVED IN THE ROUTER, PLEASE INPUT AGAIN"
-    else
-        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: ${ADMINUSER}"
-        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: ${ADMINPASSWORD}"
-        #
-        echo -e "ADMINUSER=\"${ADMINUSER}\"" > "${SBL_SYS_ETC}/sbl_credentials"
-        echo -e "ADMINPASSWORD=\"${ADMINPASSWORD}\"" >> "${SBL_SYS_ETC}/sbl_credentials"
-        #
-        break
-    fi
-done
-#
-########## END ##########
-#
-#
+#R########### SAVE CREDENTIALS ##########
+#R##
+#R#while [ 1 ]
+#R#do
+#R#    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: login username of the router"
+#R#    doubleCheckAndConfirm ADMINUSER
+#R#    #
+#R#    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: login password of the router"
+#R#    doubleCheckAndConfirm ADMINPASSWORD
+#R#    #
+#R#    if [ "${ADMINUSER}" != "$(nvram get http_username)" ]
+#R#    then
+#R#        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUTS ARE NOT IDENTICAL TO THE INFORMATION SAVED IN THE ROUTER, PLEASE INPUT AGAIN"
+#R#    else
+#R#        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: ${ADMINUSER}"
+#R#        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: ${ADMINPASSWORD}"
+#R#        #
+#R#        echo -e "ADMINUSER=\"${ADMINUSER}\"" > "${SBL_SYS_ETC}/sbl_credentials"
+#R#        echo -e "ADMINPASSWORD=\"${ADMINPASSWORD}\"" >> "${SBL_SYS_ETC}/sbl_credentials"
+#R#        #
+#R#        nvram set sbl_username="${ADMINUSER}"
+#R#        nvram set sbl_password="${ADMINPASSWORD}"
+#R#        nvram commit
+#R#        #
+#R#        break
+#R#    fi
+#R#done
+#R##
+#R########### END ##########
+#R##
+#R##
 ########## STAGE 1 ##########
 #
 echo -e "\033[1;45;37m############### STAGE 1: SET BOOT PARAMETERS ###############\033[0m"
@@ -315,7 +319,7 @@ else
     exit 10
 fi
 #
-cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
+#R#cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
 #
 sleep 10
 #
@@ -531,8 +535,8 @@ fi
 #
 sleep 10
 #
-# Enable monit
-# 启用monit
+# Start MONIT MANAGEMENT SYSTEM
+# 启动MONIT MANAGEMENT SYSTEM
 /opt/etc/init.d/S*monit start
 #
 sleep 10

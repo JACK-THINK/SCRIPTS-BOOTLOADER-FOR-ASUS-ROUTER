@@ -43,6 +43,97 @@ SERVICE_FUNCTION="INSTALL"
 ########## END ##########
 #
 #
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+        read VALUE_1
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SAVE AND APPLY CREDENTIALS ##########
+#
+# Temporary Solution: The code in this section is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
+# 临时解决方案：本节代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
+#
+if [ ! -e "${SBL_SYS_ETC}/sbl_credentials" ] && \
+[ -z "$(nvram get sbl_password)" ]
+then
+    while [ 1 ]
+    do
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: login username of the router"
+        doubleCheckAndConfirm ADMINUSER
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: login password of the router"
+        doubleCheckAndConfirm ADMINPASSWORD
+        #
+        if [ "${ADMINUSER}" != "$(nvram get http_username)" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUTS ARE NOT IDENTICAL TO THE INFORMATION SAVED IN THE ROUTER, PLEASE INPUT AGAIN"
+        else
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mUSERNAME\033[0m: ${ADMINUSER}"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: ${ADMINPASSWORD}"
+            #
+            /opt/bin/echo -e "ADMINUSER=\"${ADMINUSER}\"" > "${SBL_SYS_ETC}/sbl_credentials"
+            /opt/bin/echo -e "ADMINPASSWORD=\"${ADMINPASSWORD}\"" >> "${SBL_SYS_ETC}/sbl_credentials"
+            /opt/bin/cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
+            #
+            nvram set sbl_username="${ADMINUSER}"
+            nvram set sbl_password="${ADMINPASSWORD}"
+            nvram commit
+            #
+            break
+        fi
+    done
+    #
+    # Disable MONIT MANAGEMENT SYSTEM and all its services
+    # 禁用MONIT MANAGEMENT SYSTEM及其全部服务
+    if [ "$(which monit)" == "/opt/bin/monit" ]
+    then
+        /opt/bin/monit stop all
+        /opt/bin/sleep 5
+        #
+        /opt/bin/monit quit
+        #
+        while [ -n "$(pidof monit)" ]
+        do
+            /opt/bin/sleep 5
+        done
+    fi
+    #
+    # Configure MONIT MANAGEMENT SYSTEM
+    # 配置MONIT MANAGEMENT SYSTEM
+    /opt/bin/sed -E -i 's/allow[[:space:]]+[[:alnum:]_]+:[[:alnum:]_]+/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' "/opt/etc/monitrc"
+    #
+    # Start MONIT MANAGEMENT SYSTEM
+    # 启动MONIT MANAGEMENT SYSTEM
+    /opt/etc/init.d/S*monit start
+    #
+    sleep 10
+fi
+#
+########## END ##########
+#
+#
 ########## GENERATE ADDON LIST ##########
 #
 /opt/bin/mkdir -p "${SBL_SYS_VAR}/addons"

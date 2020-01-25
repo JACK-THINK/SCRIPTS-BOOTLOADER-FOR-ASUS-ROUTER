@@ -36,14 +36,14 @@ PRIVATE_ROOT="${SBL_SYS_USR}/monit"
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
-# ADMINUSER: The administrator of the router
-# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
-#
-# ADMINPASSWORD: The administrator's password of the router
-# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
-ADMINPASSWORD="$(/opt/bin/sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
-#
+#R## ADMINUSER: The administrator of the router
+#R## 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+#R#ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+#R##
+#R## ADMINPASSWORD: The administrator's password of the router
+#R## 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
+#R#ADMINPASSWORD="$(/opt/bin/sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+#R##
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="MONIT"
@@ -95,7 +95,7 @@ then
     /opt/bin/sed -i '/^# set statefile \/var\/.monit.state/s/# //' "${PRIVATE_ETC}/monitrc"
     /opt/bin/sed -i '/^set httpd port/,+2d' "${PRIVATE_ETC}/monitrc"
     /opt/bin/sed -i '/allow admin:monit/i\set httpd port 35490 and\n    use address 0.0.0.0  # only accept connection from localhost\n    allow 0.0.0.0/0.0.0.0        # allow localhost to connect to the server and' "${PRIVATE_ETC}/monitrc"
-    /opt/bin/sed -i 's/allow admin:monit/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' "${PRIVATE_ETC}/monitrc"
+    #R#/opt/bin/sed -i 's/allow admin:monit/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' "${PRIVATE_ETC}/monitrc"
     /opt/bin/sed -i '/^#  include \/etc\/monit.d/a\include /opt/etc/monit.d/*.on' "${PRIVATE_ETC}/monitrc"
     /opt/bin/cp -f "${PRIVATE_ETC}/monitrc" "${ENTWARE_ETC}/monitrc"
     #
