@@ -38,11 +38,11 @@ PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
 #R## ADMINUSER: The administrator of the router
 #R## 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-#R#ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+#R#ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "${USB_MOUNT_POINT}/etc/sbl_credentials")"
 #R##
 #R## ADMINPASSWORD: The administrator's password of the router
 #R## 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
-#R#ADMINPASSWORD="$(/opt/bin/sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+#R#ADMINPASSWORD="$(/opt/bin/sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "${USB_MOUNT_POINT}/etc/sbl_credentials")"
 #R##
 # NAME OF THE SERVICE
 # 服务名称

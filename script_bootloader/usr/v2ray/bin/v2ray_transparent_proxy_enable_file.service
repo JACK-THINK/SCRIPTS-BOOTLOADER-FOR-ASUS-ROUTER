@@ -43,7 +43,7 @@ USER_DEFINED_CHAIN_NAME="$(/opt/bin/sed -E -n -e 's/^USER_DEFINED_CHAIN_NAME=\"(
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+ADMINUSER="$(nvram get sbl_username)"
 #
 # TEST_FW: Test for firewall rules
 # 设置环境变量TEST_FW为防火墙规则测试值

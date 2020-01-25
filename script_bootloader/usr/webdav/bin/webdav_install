@@ -86,11 +86,11 @@ DOWNLOAD_LINK="https://github.com/hacdias/webdav/releases/download/${LATEST_VERS
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(/opt/bin/sed -E -n -e 's#^ADMINUSER=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+ADMINUSER="$(nvram get sbl_username)"
 #
 # ADMINPASSWORD: The administrator's password of the router
 # 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
-ADMINPASSWORD="$(/opt/bin/sed -E -n -e 's#^ADMINPASSWORD=\"(.*)\"#\1#p' "/opt/etc/sbl_credentials")"
+ADMINPASSWORD="$(nvram get sbl_password)"
 #
 # NAME OF THE SERVICE
 # 服务名称
