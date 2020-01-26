@@ -18,11 +18,13 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 2. Installation script of [Entware](https://entware.net/) has been rewritten thoroughly. It will deploy Entware matching the architecture of your router automatically in the USB flash drive with no attendence.
 
-3. 512M swap will be created during installation and mounted automatically at every startup.
+3. Users can choose the size of swap to install from 256M, 512M, 1024M and 2048M and the swap will be created during installation and mounted automatically at every startup.
 
-4. One-key deploying script of this system and addon-installation script are offered, which are very easy to use.
+4. One-key deploying script, one-key updating script and addon-installation script are offered, which are very easy to use.
 
 5. Management Webpage powered by [Monit](https://mmonit.com/monit/) is offered and you can start or stop your customized scripts, addons and services easily.
+
+6. Update day is 1st every month.
 
 ## Features of code
 
@@ -62,11 +64,11 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
    >    - No attendance required.
    >
    > 2. STAGE 2: Deploy programs required by system.
-   >    - No attendance required.
+   >    - Choose the size of swap.
    >    - Long time needed, please wait patiently.
-   >    - less than 5 errors in red or yellow color will appear during the process of python deployment, which is no need to worry.
    >
    > 3. STAGE 3: Install optional addons.
+   >    - Input the username and password to web login of the router to continue installation.
    >    - Choose the addon you want from the list shown on the screen by typing in its order number (just one addon every time) and pressing \<Enter\>.
    >    - Repeat the process stated above to install next addon.
    >    - When all the addons needed have been installed, type in `0` to finish installation.

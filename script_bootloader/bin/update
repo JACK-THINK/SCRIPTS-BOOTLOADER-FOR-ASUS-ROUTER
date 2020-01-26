@@ -255,6 +255,16 @@ else
         fi
     done
     #
+    # Run update_patch when it is updated
+    # 当文件update_patch被更新，运行update_patch
+    if [ "$(/opt/bin/grep 'script_bootloader\/bin\/update_patch$' "${LATEST_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/opt/bin/grep 'script_bootloader\/bin\/update_patch$' "${CURRENT_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
+    then
+        /opt/bin/echo -e "\n\033[1;43;31mNOTICE\033[0m: PATCH SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+        "${SBL_SYS_BIN}/update_patch"
+    fi
+    #
+    # Tell users to run update again, when it is updated
+    # 当文件update被更新，通知用户再次运行update
     if [ "$(/opt/bin/grep 'script_bootloader\/bin\/update$' "${LATEST_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/opt/bin/grep 'script_bootloader\/bin\/update$' "${CURRENT_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
     then
         /opt/bin/echo -e "\n\033[1;43;31mNOTICE\033[0m: ${SBL_SYS_BIN}/update IS UPDATED, PLEASE EXECUTE IT AGAIN"

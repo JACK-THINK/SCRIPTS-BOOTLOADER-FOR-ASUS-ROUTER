@@ -161,6 +161,19 @@ checkAndLoadComponent "${SBL_SYS_BIN}/list_of_user_custom_scripts" "NOTICE: CUST
 ########## END ##########
 #
 #
+########## MISCELLANEOUS FUNCTIONS ##########
+#
+# Auto update (3:00 on 2nd every month)
+# 自动更新（每月2日3点）
+AUTO_UPDATE=""
+if [ "${AUTO_UPDATE}" == "enable" ]
+then
+    echo "0 3 2 * * \"${0}\"" >> "/var/spool/cron/crontabs/$(nvram get sbl_username)"
+fi
+#
+########## END ##########
+#
+#
 ########## NOTIFICATION ##########
 #
 logger -st "($(basename $0))" $$ "SUCCESS: ${SERVICE_FUNCTION} ${SERVICE_NAME}"

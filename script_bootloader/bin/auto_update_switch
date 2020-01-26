@@ -1,0 +1,87 @@
+#!/bin/sh
+#
+# Due to GFW in China, auto update is disabled
+# 因GFW，自动更新功能已禁用
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: Due to GFW in China, auto update is disabled"
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: 因GFW，自动更新功能已禁用"
+exit 0
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
+SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
+#
+# SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
+SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+doubleCheckAndConfirm()
+{
+    while [ 1 ]
+    do
+        local VALUE_1
+        local VALUE_2
+        #
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE: "
+        read VALUE_1
+        /opt/bin/echo -ne "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INPUT THE VALUE AGAIN TO CONFIRM: "
+        read VALUE_2
+        #
+        if [ "${VALUE_1}" == "${VALUE_2}" ]
+        then
+            eval ${1}="${VALUE_1}"
+            break
+        else
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: THE TWO VALUES ARE INCONSISTENT"
+        fi
+    done
+}
+#
+########## END ##########
+#
+#
+########## SET PARAMETERS ##########
+#
+case ${#} in
+    0)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mAUTO UPDATE\033[0m: enable | disable"
+        doubleCheckAndConfirm AUTO_UPDATE
+        ;;
+    1)
+        AUTO_UPDATE="${1}"
+        ;;
+    *)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
+        #
+        exit 1
+        ;;
+esac
+#
+########## END ##########
+#
+#
+########## CONFIGURE ALI_DDNS ##########
+#
+# Modify script_bootloader_usb_mount
+# 修改script_bootloader_usb_mount
+if [ "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" == "enable" ]
+then
+    /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"enable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+fi
+#
+exit 0
+#
+########## END ##########
