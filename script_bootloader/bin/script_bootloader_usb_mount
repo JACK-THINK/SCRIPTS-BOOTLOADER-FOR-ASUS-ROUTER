@@ -168,7 +168,7 @@ checkAndLoadComponent "${SBL_SYS_BIN}/list_of_user_custom_scripts" "NOTICE: CUST
 AUTO_UPDATE=""
 if [ "${AUTO_UPDATE}" == "enable" ]
 then
-    echo "0 3 2 * * \"${0}\"" >> "/var/spool/cron/crontabs/$(nvram get sbl_username)"
+    echo "0 3 2 * * \"${SBL_SYS_BIN}/update\"" >> "/var/spool/cron/crontabs/$(nvram get sbl_username)"
 fi
 #
 ########## END ##########
