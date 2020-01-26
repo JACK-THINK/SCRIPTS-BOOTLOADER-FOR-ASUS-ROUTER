@@ -57,8 +57,23 @@ doubleCheckAndConfirm()
 #
 case ${#} in
     0)
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mAUTO UPDATE\033[0m: enable | disable"
-        doubleCheckAndConfirm AUTO_UPDATE
+        while [ 1 ]
+        do
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mAUTO UPDATE\033[0m: enable | disable"
+            doubleCheckAndConfirm AUTO_UPDATE
+            #
+            case "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
+                "enable")
+                    break
+                    ;;
+                "disable")
+                    break
+                    ;;
+                *)
+                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUT VALUE IS INVALID"
+                    ;;
+            esac
+        done
         ;;
     1)
         AUTO_UPDATE="${1}"
@@ -77,10 +92,14 @@ esac
 #
 # Modify script_bootloader_usb_mount
 # 修改script_bootloader_usb_mount
-if [ "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" == "enable" ]
-then
-    /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"enable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
-fi
+case "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
+    "enable")
+        /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"enable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+        ;;
+    "disable")
+        /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"disable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+        ;;
+esac
 #
 exit 0
 #
