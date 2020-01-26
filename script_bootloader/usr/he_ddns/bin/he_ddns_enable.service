@@ -17,6 +17,10 @@ SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/he_ddns"
 #
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
 # PRIVATE_TMP: The directory which contains all the temporary files related to this program
 # 设置自定义变量PRIVATE_TMP为此程序临时文件目录
 PRIVATE_TMP="${PRIVATE_ROOT}/tmp"
@@ -36,35 +40,27 @@ SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
 #
 # FQDN: The FQDN of the target server
 # 设置自定义变量FQDN为目标服务器FQDN
-FQDN=""
+FQDN="$(/opt/bin/sed -E -n -e 's#^FQDN=\"(.+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # DDNS_PASSWORD: The password to update the target DNS record
 # 设置自定义变量DDNS_PASSWORD为用于更新目标DNS记录的密码
-DDNS_PASSWORD=""
+DDNS_PASSWORD="$(/opt/bin/sed -E -n -e 's#^DDNS_PASSWORD=\"([[:alnum:]]+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # MAIL_SMTP_SERVER: The SMTP server of the sender
 # 设置自定义变量MAIL_SMTP_SERVER为通知邮件发件人的SMTP服务器地址
-MAIL_SMTP_SERVER=""
+MAIL_SMTP_SERVER="$(/opt/bin/sed -E -n -e 's#^MAIL_SMTP_SERVER=\"(.+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # MAIL_PASSWORD: The password of sender
 # 设置自定义变量MAIL_PASSWORD为通知邮件发件人密码
-MAIL_PASSWORD=""
+MAIL_PASSWORD="$(/opt/bin/sed -E -n -e 's#^MAIL_PASSWORD=\"([[:alnum:]]+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # MAIL_FROM: The sender of the notification email
 # 设置自定义变量MAIL_FROM为通知邮件发件人
-MAIL_FROM=""
+MAIL_FROM="$(/opt/bin/sed -E -n -e 's#^MAIL_FROM=\"(.+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # MAIL_TO: The recipient of the notification email
 # 设置自定义变量MAIL_TO为通知邮件收件人
-MAIL_TO=""
-#
-# MAIL_SUBJECT: The subject of the notification email
-# 设置自定义变量MAIL_SUBJECT为通知邮件主题
-MAIL_SUBJECT=""
-#
-# MAIL_CONTENTS: The contents of the notification email
-# 设置自定义变量MAIL_CONTENTS为通知邮件内容
-MAIL_CONTENTS=""
+MAIL_TO="$(/opt/bin/sed -E -n -e 's#^MAIL_TO=\"(.+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 ########## END ##########
 #

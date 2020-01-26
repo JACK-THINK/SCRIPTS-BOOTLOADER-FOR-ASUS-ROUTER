@@ -5,13 +5,29 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/he_ddns"
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
 # FQDN: The FQDN of the target server
 # 设置自定义变量FQDN为目标服务器FQDN
-FQDN=""
+FQDN="$(/opt/bin/sed -E -n -e 's#^FQDN=\"(.+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # DDNS_PASSWORD: The password to update the target DNS record
 # 设置自定义变量DDNS_PASSWORD为用于更新目标DNS记录的密码
-DDNS_PASSWORD=""
+DDNS_PASSWORD="$(/opt/bin/sed -E -n -e 's#^DDNS_PASSWORD=\"([[:alnum:]]+)\"#\1#p' "${PRIVATE_ETC}/he_ddns.config")"
 #
 # INVALID_IPV4_ADDRESS: The invalid IPv4 address used to update the target DNS record
 # 设置自定义变量INVALID_IPV4_ADDRESS为用于更新目标DNS记录的无效IPv4地址
