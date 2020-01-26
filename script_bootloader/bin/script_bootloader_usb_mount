@@ -171,6 +171,17 @@ then
     echo "0 3 2 * * \"${SBL_SYS_BIN}/update\"" >> "/var/spool/cron/crontabs/$(nvram get sbl_username)"
 fi
 #
+# Update the value of DOWNLOAD_LINK_PREFIX in file update according to the location
+# 根据地理位置更新文件update中变量DOWNLOAD_LINK_PREFIX
+SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
+SOURCE_OF_LOCATION="http://ip.taobao.com/service/getIpInfo.php?ip"
+PUBLIC_IPV4_ADDRESS="$("${USB_MOUNT_POINT}/bin/curl" -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")"
+LOCATION="$("${USB_MOUNT_POINT}/bin/curl" -s -4 "${SOURCE_OF_LOCATION}=${PUBLIC_IPV4_ADDRESS}" | "${USB_MOUNT_POINT}/bin/sed" -E -n -e 's#.*"country_id":"([[:alpha:]]+)".*#\1#p')"
+if [ "${LOCATION}" == "CN" ]
+then
+    "${USB_MOUNT_POINT}/bin/sed" -E -i 's#^(DOWNLOAD_LINK_PREFIX=).*#\1\"https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader\"#' "${SBL_SYS_BIN}/update"
+fi
+#
 ########## END ##########
 #
 #

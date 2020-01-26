@@ -55,7 +55,7 @@
    > 确保用于登录路由器Web页面的用户名和密码**不含有**除*大小写字母、数字、下划线*之外的其它任何字符
 
    ```shell
-   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
+   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online_china" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
    > 安装过程分为三阶段：
