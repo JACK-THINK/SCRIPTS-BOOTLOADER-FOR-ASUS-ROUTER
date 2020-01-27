@@ -1,11 +1,5 @@
 #!/bin/sh
 #
-# Due to GFW in China, auto update is disabled
-# 因GFW，自动更新功能已禁用
-/opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: Due to GFW in China, auto update is disabled"
-/opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: 因GFW，自动更新功能已禁用"
-exit 0
-#
 ########## SET THE CUSTOM VARIABLES ##########
 #
 # 设置自定义变量
@@ -22,6 +16,10 @@ SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
 # SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
 SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER="$(nvram get sbl_username)"
 #
 ########## END ##########
 #
@@ -94,10 +92,22 @@ esac
 # 修改script_bootloader_usb_mount
 case "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
     "enable")
+        # Auto update at 3:00 on 2nd day every month
+        # 每月2日3:00自动更新
+        /opt/bin/echo "0 3 2 * * \"${SBL_SYS_BIN}/update\"" >> "/var/spool/cron/crontabs/${ADMINUSER}"
+        #
         /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"enable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+        #
+        /opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
+        #
+        /opt/bin/touch "/var/run/auto_update_enabled"
         ;;
     "disable")
+        /opt/bin/sed -i '\#\"'"${SBL_SYS_BIN}"'/update\"#d' "/var/spool/cron/crontabs/${ADMINUSER}"
+        #
         /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"disable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+        #
+        /opt/bin/rm -f "/var/run/auto_update_enabled"
         ;;
 esac
 #

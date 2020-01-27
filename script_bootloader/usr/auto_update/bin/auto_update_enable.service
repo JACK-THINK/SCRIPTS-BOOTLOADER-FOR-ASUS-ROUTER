@@ -42,6 +42,7 @@ SERVICE_FUNCTION="ENABLE"
 ########## ENABLE AUTO_UPDATE ##########
 #
 # Auto update at 3:00 on 2nd day every month
+# 每月2日3:00自动更新
 /opt/bin/echo "0 3 2 * * \"${SBL_SYS_BIN}/update\"" >> "/var/spool/cron/crontabs/${ADMINUSER}"
 #
 /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"enable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
