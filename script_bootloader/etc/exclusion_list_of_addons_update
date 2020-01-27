@@ -8,6 +8,7 @@
 #
 ########## SYSTEM COMPONENTS ##########
 #
+auto_update
 dependency
 dnsmasq.d
 entware

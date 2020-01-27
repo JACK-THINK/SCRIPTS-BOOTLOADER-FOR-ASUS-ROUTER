@@ -97,7 +97,16 @@ fi
 #
 # DOWNLOAD_LINK_PREFIX: The prefix of download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK_PREFIX为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接前缀
-DOWNLOAD_LINK_PREFIX="https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader"
+SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
+SOURCE_OF_LOCATION="http://ip.taobao.com/service/getIpInfo.php?ip"
+PUBLIC_IPV4_ADDRESS="$(/opt/bin/curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")"
+LOCATION="$(/opt/bin/curl -s -4 "${SOURCE_OF_LOCATION}=${PUBLIC_IPV4_ADDRESS}" | /opt/bin/sed -E -n -e 's#.*"country_id":"([[:alpha:]]+)".*#\1#p')"
+if [ "${LOCATION}" == "CN" ]
+then
+    DOWNLOAD_LINK_PREFIX="https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader"
+else
+    DOWNLOAD_LINK_PREFIX="https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader"
+fi
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -310,7 +319,7 @@ else
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_update不存在，则执行
     /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_update, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
     #
-    /opt/bin/find "${SBL_SYS_USR}" -name '*_update' | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -f "${SBL_SYS_UPDATE}/addons_installed.tmp" > "${SBL_SYS_UPDATE}/addons_to_update.stack"
+    /opt/bin/find "${SBL_SYS_USR}" -name '*_update' | /opt/bin/grep -vE '(auto_update|dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -f "${SBL_SYS_UPDATE}/addons_installed.tmp" > "${SBL_SYS_UPDATE}/addons_to_update.stack"
 fi
 #
 # Update addons
