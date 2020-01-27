@@ -31,7 +31,7 @@
 3. 执行下列代码
 
    ```shell
-   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online_china" && chmod 777 /tmp/install_online && /tmp/install_online
+   cd /tmp && wget -q -O /tmp/install_online_china --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online_china" && chmod 777 /tmp/install_online_china && /tmp/install_online_china
    ```
 
    ![](./Documents_Assets/How_to_Use/install/online_step3.jpg)

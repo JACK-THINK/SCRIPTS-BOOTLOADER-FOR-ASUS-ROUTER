@@ -52,7 +52,7 @@ then
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -75,22 +75,22 @@ then
     #
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
 #
-# Check integrity of /tmp/install_online
-# 检查文件/tmp/install_online的完整性
-if [ ! -s "/tmp/install_online" ] || \
-[ "$(/tmp/gohash -a sha256 "/tmp/install_online" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/install_online' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
+# Check integrity of /tmp/install_online_china
+# 检查文件/tmp/install_online_china的完整性
+if [ ! -s "/tmp/install_online_china" ] || \
+[ "$(/tmp/gohash -a sha256 "/tmp/install_online_china" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/install_online_china$' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -102,7 +102,7 @@ wget -q -c -t 10 -T 120 -O "/tmp/prerequisite_checker" --no-check-certificate "h
 # Check integrity of /tmp/prerequisite_checker
 # 检查文件/tmp/prerequisite_checker的完整性
 if [ ! -s "/tmp/prerequisite_checker" ] || \
-[ "$(/tmp/gohash -a sha256 "/tmp/prerequisite_checker" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/prerequisite_checker' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
+[ "$(/tmp/gohash -a sha256 "/tmp/prerequisite_checker" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/prerequisite_checker$' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
@@ -110,7 +110,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -132,7 +132,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 2
 fi
@@ -172,7 +172,7 @@ do
             rm -f "/tmp/prerequisite_checker"
             rm -f "${CURRENT_FINGERPRINT}"
             rm -f "/tmp/gohash"
-            rm -f "/tmp/install_online"
+            rm -f "/tmp/install_online_china"
             #
             exit 3
             ;;
@@ -194,7 +194,7 @@ wget -c -t 10 -T 120 -O "/tmp/drive_modifier" --no-check-certificate "https://cd
 # Check integrity of /tmp/drive_modifier
 # 检查文件/tmp/drive_modifier的完整性
 if [ ! -s "/tmp/drive_modifier" ] || \
-[ "$(/tmp/gohash -a sha256 "/tmp/drive_modifier" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/drive_modifier' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
+[ "$(/tmp/gohash -a sha256 "/tmp/drive_modifier" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(grep 'bin/drive_modifier$' "${CURRENT_FINGERPRINT}" | sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
@@ -203,7 +203,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -226,7 +226,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     exit 4
 fi
 #
@@ -261,7 +261,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -300,7 +300,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
@@ -320,7 +320,7 @@ then
     rm -f "/tmp/prerequisite_checker"
     rm -f "${CURRENT_FINGERPRINT}"
     rm -f "/tmp/gohash"
-    rm -f "/tmp/install_online"
+    rm -f "/tmp/install_online_china"
     #
     exit 5
 fi
