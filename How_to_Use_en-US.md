@@ -11,7 +11,7 @@
 
 ## Notice
 
-1. Make sure your username and password which are used to log into the web GUI contain **NO** character beyond the range of *underline, numbers and lower-case and upper-case letters*.
+1. Make sure your username and password which are used to log into the web GUI contain **ONLY** characters within the range of *underline, numbers and lower-case and upper-case letters*.
 
 ## Installation (Online)
 
@@ -20,7 +20,7 @@
 > 1. White characters with purple background: notice of stage.
 > 2. White characters with green background: notice of success.
 > 3. White characters with red background: notice of failure.
->    - Above the notice of failure should be the line stating the related file which runs into error.
+>    - The line above the notice of failure will show the name of script which runs into error and relevant details.
 
 1. Insert a USB flash drive with no files into a USB port of the Router.
 
@@ -54,15 +54,16 @@
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-3.jpg)
 
-   - **STAGE 1**: Set the router.
+   - **STAGE 1**: Set boot parameters.
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-4.jpg)
 
    - **STAGE 2**: Install the requisite components.
 
-     - Install and enable component swap (512M).
+     - Input and confirm the size of swap (512M is adopted in this example), and then install and enable component swap.
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-5.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-5-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-5-2.jpg)
 
      - Install and enable component entware.
 
@@ -74,7 +75,7 @@
 
      - Install and enable component dependency.
 
-       > It's OK even if some yellow characters show up on the screen.
+       > It's OK even if some caveats show up on the screen.
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-8.jpg)
 
@@ -90,7 +91,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
 
-     - Register user costum components which need no surveillance.
+     - Install component auto_update.
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
@@ -100,23 +101,29 @@
 
    - **STAGE 3**: Install the optional components (the add-ons).
 
+     - Input and confirm your username and password which are used to log into the web GUI. (This is only executed when you first run `addons_install`)
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-2.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-3.jpg)
+
      - Input the index number of the favored add-on according to the menu.
-
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14.jpg)
-
-     - When the previous add-on has been installed successfully, install the next add-on.
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
 
-     - Input `0` to exit the installation and reboot the router after all the favored add-ons are installed.
+     - When the previous add-on has been installed successfully, install the next add-on.
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
+
+     - Input `0` to exit the installation and reboot the router after all the favored add-ons are installed.
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-17.jpg)
 
 ## Installation (Offline)
 
 > **NOTICE**
 >
-> 1. In all the instances of `SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0` below, the version part `15.0-15.0` can vary when the system gets updates. Please replace it with the latest version number. Plus, you can auto-complete this part by hitting key \<Tab\>.
+> 1. In all the instances of `SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0` below, the version part `16.0-16.0` can vary when the system gets updates. Please replace it with the latest version number. Plus, you can auto-complete this part by hitting key \<Tab\>.
 
 1. Insert a USB flash drive with no files into a USB port of the Router.
 
@@ -124,21 +131,21 @@
 
 3. Download the latest installation package from Github and upload it to `/tmp/home/root` of the router.
 
-   ![](./Documents_Assets/How_to_Use/install/offline_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/offline_step3_en-US.jpg)
 
 4. Execute the code below to unzip the installation package.
 
    ```shell
    cd /tmp/home/root
-   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
-   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
+   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
+   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
    ```
 
 5. Execute the code below to move the files and change their rights.
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/script_bootloader/ ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader/ ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/
    chmod -R 777 script_bootloader/
    cp script_bootloader/bin/prerequisite_checker /tmp/
    cp script_bootloader/bin/drive_modifier /tmp/

@@ -11,7 +11,7 @@
 
 ## 注意事项
 
-1. 确保用于登录路由器Web页面的用户名和密码**不含有**除*大小写字母、数字、下划线*之外的其它任何字符
+1. 确保用于登录路由器Web页面的用户名和密码**仅含有***大小写字母、数字、下划线*
 
 ## 在线安装
 
@@ -20,7 +20,7 @@
 > 1. 紫底白字：安装阶段提示信息
 > 2. 绿底白字：安装成功提示信息
 > 3. 红底白字：安装失败提示信息
->    - 出现错误时，其上面一行即错误详情及相关文件，可根据此信息排错
+>    - 出现安装失败提示信息时，其上一行会表明出错程序及错误详情
 
 1. 准备一个空白U盘，插入路由器USB接口
 
@@ -54,15 +54,16 @@
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-3.jpg)
 
-   - **阶段一**：设置路由器
+   - **阶段一**：设置启动参数
 
      ![](./Documents_Assets/How_to_Use/install/online_step5-4.jpg)
 
    - **阶段二**：安装系统必备程序
 
-     - 安装并启用虚拟内存（512M）
+     - 输入并确认虚拟内存容量（在本例中，设置虚拟内存容量为512M），安装并启用
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-5.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-5-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-5-2.jpg)
 
      - 安装并启用entware
 
@@ -74,7 +75,7 @@
 
      - 安装并启用dependency
 
-       > 在此过程中，会出现少量黄字/红字警告，这是正常现象
+       > 在此过程中，可能出现少量黄字/红字警告，这是正常现象
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-8.jpg)
 
@@ -90,7 +91,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
 
-     - 注册用户自定义插件（无需监控类型）
+     - 安装auto_update
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
@@ -100,23 +101,29 @@
 
    - **阶段三**：安装用户可选插件
 
+     - 输入并确认路由器登录用户名和密码（此操作仅在首次安装时被执行）
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-2.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14-3.jpg)
+
      - 阅读插件菜单，输入插件编号，安装对应插件
-
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14.jpg)
-
-     - 插件安装成功，安装下一个插件
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
 
-     - 全部插件安装完毕后，输入`0`，退出安装程序并重启路由器
+     - 插件安装成功，安装下一个插件
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
+
+     - 全部插件安装完毕后，输入`0`，退出安装程序并重启路由器
+
+       ![](./Documents_Assets/How_to_Use/install/online_step5-17.jpg)
 
 ## 离线安装
 
 > **说明**
 >
-> 1. 以下出现的所有`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0`中的版本号部分（即`15.0-15.0`）会随着系统更新而改变。输入命令时请替换为最新版本号（可使用\<Tab\>键自动补全）
+> 1. 以下出现的所有`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0`中的版本号部分（即`16.0-16.0`）会随着系统更新而改变。输入命令时请替换为最新版本号（可使用\<Tab\>键自动补全）
 
 1. 准备一个空白U盘，插入路由器USB接口
 
@@ -124,21 +131,21 @@
 
 3. 下载最新版安装包（[国内下载地址](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引#系统使用说明)），并将其上传至路由器`/tmp/home/root`
 
-   ![](./Documents_Assets/How_to_Use/install/offline_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/offline_step3_zh-CN.jpg)
 
 4. 执行下列代码，解压安装包
 
    ```shell
    cd /tmp/home/root
-   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
-   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0.tar.gz
+   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
+   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
    ```
 
 5. 执行下列代码，将文件移动至指定位置并修改程序权限
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/script_bootloader/ ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-15.0-15.0/
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader/ ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/
    chmod -R 777 script_bootloader/
    cp script_bootloader/bin/prerequisite_checker /tmp/
    cp script_bootloader/bin/drive_modifier /tmp/
@@ -228,13 +235,13 @@
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
-## 升级
+## 更新
 
 1. 用ssh登陆路由器后台
 
    ![](./Documents_Assets/How_to_Use/update/step1.jpg)
 
-2. 执行下列代码升级本系统
+2. 执行下列代码更新本系统
 
    ```shell
    cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/update
