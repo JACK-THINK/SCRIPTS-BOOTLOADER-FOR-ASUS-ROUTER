@@ -91,33 +91,29 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
 
-     - 安装auto_update
-
-       ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
-
      - 阶段二完成
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-13.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
    - **阶段三**：安装用户可选插件
 
      - 输入并确认路由器登录用户名和密码（此操作仅在首次安装时被执行）
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-1.jpg)
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-2.jpg)
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-3.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-2.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-3.jpg)
 
      - 阅读插件菜单，输入插件编号，安装对应插件
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14.jpg)
 
      - 插件安装成功，安装下一个插件
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
 
      - 全部插件安装完毕后，输入`0`，退出安装程序并重启路由器
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-17.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
 
 ## 离线安装
 
@@ -201,10 +197,10 @@
 
 > 本系统插件管理由两个部分组成，如下表所示：
 >
-> | 插件管理者 | 插件类型 | 使用说明 |
-> | ---------- | -------- | -------- |
-> | list_of_user_custom_scripts | 仅需在开机时调用一次且无需监控的插件，例如修改环境变量等 | 见下文 |
-> | Monit进程管理系统 | 除上述类型外的全部插件 | [点击查看](./script_bootloader/usr/monit/README_zh-CN.md) |
+> | 插件管理者                  | 插件类型                                                 | 使用说明                                                  |
+> | --------------------------- | -------------------------------------------------------- | --------------------------------------------------------- |
+> | list_of_user_custom_scripts | 仅需在开机时调用一次且无需监控的插件，例如修改环境变量等 | 见下文                                                    |
+> | Monit进程管理系统           | 除上述类型外的全部插件                                   | [点击查看](./script_bootloader/usr/monit/README_zh-CN.md) |
 
 1. 用ssh登陆路由器后台
 

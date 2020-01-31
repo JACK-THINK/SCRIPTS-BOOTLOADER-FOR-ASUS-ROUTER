@@ -91,33 +91,29 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
 
-     - Install component auto_update.
-
-       ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
-
      - STAGE 2 completed
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-13.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
    - **STAGE 3**: Install the optional components (the add-ons).
 
      - Input and confirm your username and password which are used to log into the web GUI. (This is only executed when you first run `addons_install`)
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-1.jpg)
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-2.jpg)
-       ![](./Documents_Assets/How_to_Use/install/online_step5-14-3.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-1.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-2.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-13-3.jpg)
 
      - Input the index number of the favored add-on according to the menu.
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-14.jpg)
 
      - When the previous add-on has been installed successfully, install the next add-on.
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-15.jpg)
 
      - Input `0` to exit the installation and reboot the router after all the favored add-ons are installed.
 
-       ![](./Documents_Assets/How_to_Use/install/online_step5-17.jpg)
+       ![](./Documents_Assets/How_to_Use/install/online_step5-16.jpg)
 
 ## Installation (Offline)
 
