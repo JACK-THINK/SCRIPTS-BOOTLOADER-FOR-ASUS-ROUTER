@@ -219,7 +219,7 @@ then
 else
     # Generate list of files to add or modify
     # 生成文件新增或修改列表
-    /opt/bin/grep -vf "${CURRENT_FINGERPRINT}" "${LATEST_FINGERPRINT}" > "${SBL_SYS_UPDATE}/files_to_add_or_modify.tmp"
+    /opt/bin/grep -Fxvf "${CURRENT_FINGERPRINT}" "${LATEST_FINGERPRINT}" > "${SBL_SYS_UPDATE}/files_to_add_or_modify.tmp"
     /opt/bin/sed -E -i 's#^[[:alnum:]]+[[:space:]]+\./script_bootloader/##' "${SBL_SYS_UPDATE}/files_to_add_or_modify.tmp"
     /opt/bin/cp -f "${SBL_SYS_UPDATE}/files_to_add_or_modify.tmp" "${SBL_SYS_UPDATE}/files_to_add_or_modify.stack"
     #
@@ -227,7 +227,7 @@ else
     # 生成文件删除列表
     /opt/bin/sed -E -e 's#^[[:alnum:]]+[[:space:]]+\./script_bootloader#'"${SBL_SYS_ROOT}"'#' "${LATEST_FINGERPRINT}" > "${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp"
     /opt/bin/sed -E -e 's#^[[:alnum:]]+[[:space:]]+\./script_bootloader#'"${SBL_SYS_ROOT}"'#' "${CURRENT_FINGERPRINT}" > "${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp"
-    /opt/bin/grep -vf "${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp" "${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp" > "${SBL_SYS_UPDATE}/files_to_remove.tmp"
+    /opt/bin/grep -Fxvf "${SBL_SYS_UPDATE}/files_to_remove_part_latest.tmp" "${SBL_SYS_UPDATE}/files_to_remove_part_current.tmp" > "${SBL_SYS_UPDATE}/files_to_remove.tmp"
     /opt/bin/cp -f "${SBL_SYS_UPDATE}/files_to_remove.tmp" "${SBL_SYS_UPDATE}/files_to_remove.stack"
     #
     /opt/bin/echo -e "UPDATE:" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
