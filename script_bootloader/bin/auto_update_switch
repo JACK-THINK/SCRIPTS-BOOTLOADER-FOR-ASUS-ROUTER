@@ -19,7 +19,12 @@ SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
 #
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(nvram get sbl_username)"
+if [ -n "$(nvram get sbl_username)" ]
+then
+    ADMINUSER="$(nvram get sbl_username)"
+else
+    ADMINUSER="$(nvram get http_username)"
+fi
 #
 ########## END ##########
 #
