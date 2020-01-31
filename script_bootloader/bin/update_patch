@@ -11,6 +11,22 @@
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
+# ENTWARE_FWD: The directory which contains all the configuration files used by fwd
+# 设置自定义变量ENTWARE_FWD为fwd配置文件目录
+ENTWARE_FWD="${ENTWARE_ETC}/fw.d"
+#
+# ENTWARE_MONITD: The directory which contains all the configuration files used by monit
+# 设置自定义变量ENTWARE_MONITD为monit配置文件目录
+ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
+#
 # SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
 SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
@@ -46,5 +62,16 @@ SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
 #
 ########## PATCH SYSTEM ##########
 #
+/opt/bin/rm -rf "${SBL_SYS_USR}/auto_update"
+/opt/bin/rm -f "${ENTWARE_MONITD}/auto_update.on"
+/opt/bin/rm -f "${ENTWARE_MONITD}/auto_update"
+#
+/opt/bin/monit reload
+#
+/opt/bin/rm -f "/var/run/auto_update_enabled"
+#
+"${SBL_SYS_BIN}/auto_update_switch" "disable"
+/opt/bin/sleep 10
+"${SBL_SYS_BIN}/auto_update_switch" "enable"
 #
 ########## END ##########

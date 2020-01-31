@@ -86,7 +86,7 @@ esac
 ########## END ##########
 #
 #
-########## CONFIGURE ALI_DDNS ##########
+########## CONFIGURE script_bootloader_usb_mount ##########
 #
 # Modify script_bootloader_usb_mount
 # 修改script_bootloader_usb_mount
@@ -100,14 +100,14 @@ case "$(/opt/bin/echo "${AUTO_UPDATE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
         #
         /opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
         #
-        /opt/bin/touch "/var/run/auto_update_enabled"
+        #/opt/bin/touch "/var/run/sbl_auto_update_enabled"
         ;;
     "disable")
         /opt/bin/sed -i '\#\"'"${SBL_SYS_BIN}"'/update\"#d' "/var/spool/cron/crontabs/${ADMINUSER}"
         #
         /opt/bin/sed -E -i 's#^(AUTO_UPDATE=).*#\1\"disable\"#' "${SBL_SYS_BIN}/script_bootloader_usb_mount"
         #
-        /opt/bin/rm -f "/var/run/auto_update_enabled"
+        #/opt/bin/rm -f "/var/run/sbl_auto_update_enabled"
         ;;
 esac
 #

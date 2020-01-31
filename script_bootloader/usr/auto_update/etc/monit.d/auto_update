@@ -1,4 +1,0 @@
-check file AUTO_UPDATE path "/var/run/auto_update_enabled"
-    start program = "/opt/script_bootloader/usr/auto_update/bin/auto_update_enable.service"
-    stop program = "/opt/script_bootloader/usr/auto_update/bin/auto_update_disable.service"
-    if does not exist then alert

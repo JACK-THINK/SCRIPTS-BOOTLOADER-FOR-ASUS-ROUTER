@@ -8,7 +8,6 @@
 #
 ########## SYSTEM COMPONENTS ##########
 #
-auto_update
 dependency
 dnsmasq.d
 entware
@@ -23,6 +22,7 @@ timezone
 ########## SUBSIDIARY ADDONS ##########
 #
 adguardhome
+webdav
 #
 ########## END ##########
 #

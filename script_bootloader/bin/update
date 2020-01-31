@@ -319,7 +319,7 @@ else
     # 如果文件${SBL_SYS_ETC}/exclusion_list_of_addons_update不存在，则执行
     /opt/bin/echo -e "\033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE ${SBL_SYS_ETC}/exclusion_list_of_addons_update, EXCLUDE SYSTEM COMPONENTS AND ADDONS WITH SPECIAL FLAGS INSTEAD\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
     #
-    /opt/bin/find "${SBL_SYS_USR}" -name '*_update' | /opt/bin/grep -vE '(auto_update|dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -f "${SBL_SYS_UPDATE}/addons_installed.tmp" > "${SBL_SYS_UPDATE}/addons_to_update.stack"
+    /opt/bin/find "${SBL_SYS_USR}" -name '*_update' | /opt/bin/grep -vE '(dependency|dnsmasq.d|entware|fwd|monit|software|swap|timezone|dev_|old_|deprecated)' | /opt/bin/grep -f "${SBL_SYS_UPDATE}/addons_installed.tmp" > "${SBL_SYS_UPDATE}/addons_to_update.stack"
 fi
 #
 # Update addons
