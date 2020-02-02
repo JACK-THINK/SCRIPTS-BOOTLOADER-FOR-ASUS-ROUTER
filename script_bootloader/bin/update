@@ -160,31 +160,39 @@ updateFile()
 removeFile()
 {
     local ACTION="REMOVE"
-    /opt/bin/rm -f "${1}"
-    if [ ${?} -eq 0 ]
+    if [ -e "${1}" ]
     then
-        /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
-    else
-        /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+        /opt/bin/rm -f "${1}"
+        if [ ${?} -eq 0 ]
+        then
+            /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+        else
+            /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: ${ACTION} ${1}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+        fi
     fi
     #
     local PARENT_DIRECTORY="$(/opt/bin/dirname "${1}")"
     while [ 1 ]
     do
-        if [ $(/opt/bin/ls -A "${PARENT_DIRECTORY}" | /opt/bin/wc -w) -eq 0 ]
+        if [ -d "${PARENT_DIRECTORY}" ]
         then
-            /opt/bin/rmdir "${PARENT_DIRECTORY}"
-            if [ ${?} -eq 0 ]
+            if [ $(/opt/bin/ls -A "${PARENT_DIRECTORY}" | /opt/bin/wc -w) -eq 0 ]
             then
-                /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+                /opt/bin/rmdir "${PARENT_DIRECTORY}"
+                if [ ${?} -eq 0 ]
+                then
+                    /opt/bin/echo -e "\033[1;42;37mSUCCESS\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+                else
+                    /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+                    break
+                fi
+                #
+                PARENT_DIRECTORY="$(/opt/bin/dirname "${PARENT_DIRECTORY}")"
             else
-                /opt/bin/echo -e "\033[1;41;37mFAILURE\033[0m: ${ACTION} ${PARENT_DIRECTORY}" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
                 break
             fi
-            #
-            PARENT_DIRECTORY="$(/opt/bin/dirname "${PARENT_DIRECTORY}")"
         else
-            break
+            PARENT_DIRECTORY="$(/opt/bin/dirname "${PARENT_DIRECTORY}")"
         fi
     done
 }
@@ -292,17 +300,20 @@ fi
 #
 ########## UPDATE ENTWARE ##########
 #
-/opt/bin/echo -e "\nPART 2: ENTWARE\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+# Deprecated due to the unwanted changes made by opkg
+# 因opkg会对已安装插件做出破坏性修改，故废弃此功能
 #
-/opt/bin/opkg update | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
-/opt/bin/opkg upgrade | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+#/opt/bin/echo -e "\nPART 2: ENTWARE\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+#
+#/opt/bin/opkg update | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+#/opt/bin/opkg upgrade | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
 #
 ########## END ##########
 #
 #
 ########## UPDATE APPS FROM OTHER SOURCES ##########
 #
-/opt/bin/echo -e "\nPART 3: ADDONS\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
+/opt/bin/echo -e "\nPART 2: ADDONS\n" | /opt/bin/tee -a "${SBL_UPDATE_LOG}"
 #
 # Generate list of addons installed
 # 生成已安装插件列表

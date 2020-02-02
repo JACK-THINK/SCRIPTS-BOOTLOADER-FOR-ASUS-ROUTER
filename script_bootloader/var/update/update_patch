@@ -62,16 +62,5 @@ SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
 #
 ########## PATCH SYSTEM ##########
 #
-/opt/bin/rm -rf "${SBL_SYS_USR}/auto_update"
-/opt/bin/rm -f "${ENTWARE_MONITD}/auto_update.on"
-/opt/bin/rm -f "${ENTWARE_MONITD}/auto_update"
-#
-/opt/bin/monit reload
-#
-/opt/bin/rm -f "/var/run/auto_update_enabled"
-#
-"${SBL_SYS_BIN}/auto_update_switch" "disable"
-/opt/bin/sleep 10
-"${SBL_SYS_BIN}/auto_update_switch" "enable"
 #
 ########## END ##########
