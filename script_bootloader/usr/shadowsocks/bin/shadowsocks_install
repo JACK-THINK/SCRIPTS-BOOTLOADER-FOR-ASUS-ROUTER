@@ -154,8 +154,8 @@ then
         #
         # Disable /opt/etc/init.d/S*shadowsocks
         # 禁用/opt/etc/init.d/S*shadowsocks
-        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*shadowsocks
-        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^ENABLED=/s/^/#/' /opt/etc/init.d/S*shadowsocks
+        /opt/bin/sed -i '/^#ENABLED=/a\ENABLED=no' /opt/etc/init.d/S*shadowsocks
         #
         # Configure fwd
         # 配置fwd
