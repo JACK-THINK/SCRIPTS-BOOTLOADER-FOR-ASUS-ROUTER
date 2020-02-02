@@ -251,7 +251,7 @@ USB_MOUNT_POINT="$(mount | sed -E -n -e 's/.*[[:space:]]+([^[:space:]]*'"${USB_D
 wget -c -t 10 -T 120 -O "/tmp/sbl_download_link.html" --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 #
 if [ ! -s "/tmp/sbl_download_link.html" ] || \
-[ $(cat "${CURRENT_FINGERPRINT}" | wc -l) -lt 20 ]
+[ $(cat "/tmp/sbl_download_link.html" | wc -l) -lt 20 ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
