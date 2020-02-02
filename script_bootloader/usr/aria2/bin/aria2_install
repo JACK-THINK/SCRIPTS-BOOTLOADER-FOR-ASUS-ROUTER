@@ -86,8 +86,8 @@ then
         #
         # Disable /opt/etc/init.d/S*aria2
         # 禁用/opt/etc/init.d/S*aria2
-        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*aria2
-        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^ENABLED=/s/^/#/' /opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^#ENABLED=/a\ENABLED=no' /opt/etc/init.d/S*aria2
         /opt/bin/sed -i '/^\[/s/^/#/' /opt/etc/init.d/S*aria2
         #
         # Create directory ${PRIVATE_VAR}

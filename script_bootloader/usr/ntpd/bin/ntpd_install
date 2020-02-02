@@ -82,8 +82,8 @@ then
         #
         # Disable /opt/etc/init.d/S*ntpd
         # 禁用/opt/etc/init.d/S*ntpd
-        /opt/bin/sed -i '/^ENABLED.*/s/^/#/' /opt/etc/init.d/S*ntpd
-        /opt/bin/sed -i '/^#ENABLED.*/a\ENABLED=no' /opt/etc/init.d/S*ntpd
+        /opt/bin/sed -i '/^ENABLED=/s/^/#/' /opt/etc/init.d/S*ntpd
+        /opt/bin/sed -i '/^#ENABLED=/a\ENABLED=no' /opt/etc/init.d/S*ntpd
         #
         # Configure ntpd
         # 配置ntpd

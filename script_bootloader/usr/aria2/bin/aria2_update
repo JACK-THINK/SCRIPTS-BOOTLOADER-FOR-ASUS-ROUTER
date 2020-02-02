@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL="$(nvram get model)"
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ARIA2"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UPDATE"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
+########## END ##########
+#
+#
+########## UPDATE ARIA2 ##########
+#
+# Check if ENTWARE_ENABLE SERVICE has been loaded
+# 检查ENTWARE_ENABLE SERVICE是否已启用
+if [ "$(which opkg)" == "/opt/bin/opkg" ]
+then
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ENTWARE_ENABLE SERVICE HAS BEEN LOADED"
+    #
+    # Check if MONIT MANAGEMENT SYSTEM is enabled
+    # 检查MONIT MANAGEMENT SYSTEM是否已启用
+    if [ "$(which monit)" == "/opt/bin/monit" ]
+    then
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
+        #
+        # Update the list of available packages
+        # 更新可用程序包列表
+        /opt/bin/opkg update
+        #
+        # Update aria2
+        # 更新aria2
+        /opt/bin/opkg upgrade aria2
+        #
+        # Disable /opt/etc/init.d/S*aria2
+        # 禁用/opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^#*ENABLED=/d' /opt/etc/init.d/S*aria2
+        /opt/bin/sed -i '/^PROCS=/i\#ENABLED=yes\nENABLED=no' /opt/etc/init.d/S*aria2
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 0
+        #
+    else
+        # Do nothing but prompt the user
+        # 如果MONIT MANAGEMENT SYSTEM未部署，则执行
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: MONIT MANAGEMENT SYSTEM HAS NOT BEEN DEPLOYED"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE DEPLOY MONIT MANAGEMENT SYSTEM FIRST"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+    fi
+    #
+else
+    # Do nothing but prompt the user
+    # 如果ENTWARE_ENABLE SERVICE未启用，则执行
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ENTWARE_ENABLE SERVICE HAS NOT BEEN LOADED"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: PLEASE ENABLE ENTWARE FIRST"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    exit 1
+fi
+#
+########## END ##########
