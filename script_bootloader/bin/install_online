@@ -10,6 +10,19 @@ SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
 # 服务功能
 SERVICE_FUNCTION="ONLINE-INSTALL"
 #
+# DOWNLOAD_LINK_PREFIX: The prefix of download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量DOWNLOAD_LINK_PREFIX为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接前缀
+SOURCE_OF_PUBLIC_IP_ADDRESS="whatismyip.akamai.com"
+SOURCE_OF_LOCATION="http://api.ipaddress.com/iptocountry?ip"
+PUBLIC_IPV4_ADDRESS="$(curl -s -4 "${SOURCE_OF_PUBLIC_IP_ADDRESS}")"
+LOCATION="$(curl -s -4 "${SOURCE_OF_LOCATION}=${PUBLIC_IPV4_ADDRESS}")"
+if [ "${LOCATION}" == "CN" ]
+then
+    DOWNLOAD_LINK_PREFIX="https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader"
+else
+    DOWNLOAD_LINK_PREFIX="https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader"
+fi
+#
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
 OPERATING_SYSTEM="$(uname | tr '[A-Z]' '[a-z]')"
@@ -39,7 +52,7 @@ esac
 #
 # Download checksum generator and checker
 # 下载checksum generator and checker
-wget -q -c -t 10 -T 120 -O "/tmp/gohash" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/gohash/gohash-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}"
+wget -q -c -t 10 -T 120 -O "/tmp/gohash" --no-check-certificate "${DOWNLOAD_LINK_PREFIX}/bin/gohash/gohash-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}"
 #
 chmod 777 "/tmp/gohash"
 #
@@ -59,7 +72,7 @@ fi
 #
 # Download system update fingerprint of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 下载最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
-wget -q -c -t 10 -T 120 -O "/tmp/sys_update_fingerprint_current" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/var/update/sys_update_fingerprint_current"
+wget -q -c -t 10 -T 120 -O "/tmp/sys_update_fingerprint_current" --no-check-certificate "${DOWNLOAD_LINK_PREFIX}/var/update/sys_update_fingerprint_current"
 #
 # CURRENT_FINGERPRINT: System update fingerprint of the current SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量CURRENT_FINGERPRINT为当前SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的系统更新指纹
@@ -97,7 +110,7 @@ fi
 #
 # Download prerequisite_checker
 # 下载文件prerequisite_checker
-wget -q -c -t 10 -T 120 -O "/tmp/prerequisite_checker" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/prerequisite_checker"
+wget -q -c -t 10 -T 120 -O "/tmp/prerequisite_checker" --no-check-certificate "${DOWNLOAD_LINK_PREFIX}/bin/prerequisite_checker"
 #
 # Check integrity of /tmp/prerequisite_checker
 # 检查文件/tmp/prerequisite_checker的完整性
@@ -189,7 +202,7 @@ done
 #
 # Download drive_modifier
 # 下载文件drive_modifier
-wget -c -t 10 -T 120 -O "/tmp/drive_modifier" --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/drive_modifier"
+wget -c -t 10 -T 120 -O "/tmp/drive_modifier" --no-check-certificate "${DOWNLOAD_LINK_PREFIX}/bin/drive_modifier"
 #
 # Check integrity of /tmp/drive_modifier
 # 检查文件/tmp/drive_modifier的完整性

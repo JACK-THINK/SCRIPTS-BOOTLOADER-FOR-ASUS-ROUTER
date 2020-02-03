@@ -1,0 +1,290 @@
+#!/bin/sh
+#
+# 此程序用于升级安装“华硕路由器开机自动运行程序系统”
+#
+########## CHECK ASUS ROUTER STATUS ##########
+#
+if [ -n "$(nvram get script_usbmount)" ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNINSTALL SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER FIRST"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: UPGRADE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+    #
+    exit 1
+fi
+#
+########## END ##########
+#
+#
+########## CHECK ASUS ROUTER MODEL ##########
+#
+ROUTER_MODEL="$(nvram get model)"
+#
+########## END ##########
+#
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UPGRADE"
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
+#
+case ${USB_MOUNT_POINT_COUNT} in
+    0)
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE DIRECTORY script_bootloader"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 2
+        ;;
+    1)
+        USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
+        ;;
+    *)
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 3
+        ;;
+esac
+#
+# TARGET_DIRECTORY: The target directory to remove
+# 设置自定义变量TARGET_DIRECTORY为待删除目录
+TARGET_DIRECTORY="${USB_MOUNT_POINT}"
+#
+# EXCLUDED_DIRECTORY: The target directory excluded
+# 设置自定义变量EXCLUDED_DIRECTORY为被排除目录
+EXCLUDED_DIRECTORY="${USB_MOUNT_POINT}/home/root"
+#
+# DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
+wget -c -t 10 -T 120 -O "/tmp/sbl_download_link.html" --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+#
+if [ ! -s "/tmp/sbl_download_link.html" ] || \
+[ $(cat "/tmp/sbl_download_link.html" | wc -l) -lt 20 ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "/tmp/sbl_download_link.html"
+    #
+    exit 5
+fi
+#
+DOWNLOAD_LINK="$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' "/tmp/sbl_download_link.html")"
+#
+# NAME OF THE ARCHIVE
+# 设置自定义变量ARCHIVE_NAME为包文件名
+ARCHIVE_NAME="sbl_setup.tar.gz"
+#
+# OPERATING_SYSTEM: Operating system of the ASUS Router
+# 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
+OPERATING_SYSTEM="$(uname | tr '[A-Z]' '[a-z]')"
+#
+# ROUTER_ARCHITECTURE: Architecture of the ASUS Router
+# 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
+case "$(uname -m)" in
+    "aarch64")
+        ROUTER_ARCHITECTURE="arm64"
+        ;;
+    "armv7l")
+        ROUTER_ARCHITECTURE="arm"
+        ;;
+    "mips")
+        ROUTER_ARCHITECTURE="mipsle"
+        ;;
+    *)
+        # Do nothing but prompt the user
+        # 如果路由器架构不符合上述三种情况，则执行
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ROUTER ARCHITECTURE IS UNKNOWN"
+        #
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 4
+        ;;
+esac
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+removeFile()
+{
+    local FILE_TO_REMOVE="${1}"
+    rm -f "${FILE_TO_REMOVE}"
+}
+#
+removeDirectory()
+{
+    local DIRECTORY_TO_REMOVE="${1}"
+    while [ 1 ]
+    do
+        if [ -d "${DIRECTORY_TO_REMOVE}" ]
+        then
+            if [ $(ls -A "${DIRECTORY_TO_REMOVE}" | wc -w) -eq 0 ]
+            then
+                rmdir "${DIRECTORY_TO_REMOVE}"
+                #
+                DIRECTORY_TO_REMOVE="$(dirname "${DIRECTORY_TO_REMOVE}")"
+            else
+                break
+            fi
+        else
+            DIRECTORY_TO_REMOVE="$(dirname "${DIRECTORY_TO_REMOVE}")"
+        fi
+    done
+}
+#
+removeTarget()
+{
+    local TARGET_TO_REMOVE="${1}"
+    if [ -d "${TARGET_TO_REMOVE}" ]
+    then
+        removeDirectory "${TARGET_TO_REMOVE}"
+    else
+        removeFile "${TARGET_TO_REMOVE}"
+    fi
+}
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
+########## END ##########
+#
+#
+########## REMOVE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
+#
+COUNT=0
+while [ ${COUNT} -lt 2 ]
+do
+    find "${TARGET_DIRECTORY}" -print | grep -v ''"${EXCLUDED_DIRECTORY}"'' > "/tmp/files_to_remove.stack"
+    #
+    while [ 1 ]
+    do
+        STACK_TOP="$(head -n 1 "/tmp/files_to_remove.stack")"
+        if [ -n "${STACK_TOP}" ]
+        then
+            removeTarget "${STACK_TOP}"
+            sed -i '1d' "/tmp/files_to_remove.stack"
+        else
+            rm -f "/tmp/files_to_remove.stack"
+            break
+        fi
+    done
+    #
+    COUNT=$((${COUNT}+1))
+done
+#
+########## END ##########
+#
+#
+########## INSTALL SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
+#
+# Remove vestigial ${ARCHIVE_NAME} package
+# 删除遗留的${ARCHIVE_NAME}包
+rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+#
+# Download ${ARCHIVE_NAME} package
+# 下载${ARCHIVE_NAME}包
+wget -c -t 10 -T 120 -O "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" --no-check-certificate "${DOWNLOAD_LINK}"
+#
+sleep 30
+#
+# Check if ${USB_MOUNT_POINT}/${ARCHIVE_NAME} exists
+# 检查文件${USB_MOUNT_POINT}/${ARCHIVE_NAME}是否存在
+if [ ! -s "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+    #
+    exit 5
+fi
+#
+# Untar ${ARCHIVE_NAME} package
+# 解压${ARCHIVE_NAME}包
+tar -xzvf "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" -C "${USB_MOUNT_POINT}" > /dev/null 2>&1
+#
+if [ ${?} -ne 0 ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+    #
+    exit 5
+fi
+#
+sleep 30
+#
+# Move directory script_bootloader to directory ${USB_MOUNT_POINT}
+# 移动目录script_bootloader至目录${USB_MOUNT_POINT}
+mv -f "${USB_MOUNT_POINT}"/JACK*/script_bootloader "${USB_MOUNT_POINT}"
+#
+sleep 10
+#
+# Remove directory JACK*
+# 删除目录JACK*
+rm -rf "${USB_MOUNT_POINT}"/JACK*
+#
+# Remove ${ARCHIVE_NAME} package
+# 删除${ARCHIVE_NAME}包
+rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+#
+# Change the mode of the files
+# 更改文件权限
+chmod -R 777 "${USB_MOUNT_POINT}/script_bootloader"
+#
+sleep 10
+#
+# Start installation
+# 开始安装
+cd "/tmp"
+#
+echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${USB_MOUNT_POINT}/sbl_install_log will be generated.\n"
+#
+if [ -n "$(which tee)" ]
+then
+    "${USB_MOUNT_POINT}/script_bootloader/bin/install" 2>&1 | tee "/tmp/sbl_install_log"
+else
+    "${USB_MOUNT_POINT}/script_bootloader/bin/install" 2>&1 | "${USB_MOUNT_POINT}/script_bootloader/bin/gotee/gotee-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}" "/tmp/sbl_install_log"
+    #
+    # Temporary Solution: The code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
+    # 临时解决方案：以下代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
+    "${USB_MOUNT_POINT}/script_bootloader/bin/addons_install" | /opt/bin/tee -a "/tmp/sbl_install_log"
+    echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: STAGE 3"
+fi
+#
+mv -f "/tmp/sbl_install_log" "${USB_MOUNT_POINT}"
+#
+########## END ##########
+#
+#
+########## REBOOT ##########
+#
+# Reboot the router
+# 需使用reboot命令重启路由器，确保设置生效
+sync
+sleep 60
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+sync
+sleep 10
+#
+reboot
+#
+########## END ##########

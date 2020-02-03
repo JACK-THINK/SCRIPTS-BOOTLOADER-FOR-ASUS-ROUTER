@@ -9,8 +9,8 @@ ROUTER_MODEL="$(nvram get model)"
 ########## END ##########
 #
 #
-#R########### LOAD FUNCTIONS ##########
-#R##
+########## LOAD FUNCTIONS ##########
+#
 #R#doubleCheckAndConfirm()
 #R#{
 #R#    while [ 1 ]
@@ -32,10 +32,45 @@ ROUTER_MODEL="$(nvram get model)"
 #R#        fi
 #R#    done
 #R#}
-#R##
-#R########### END ##########
-#R##
-#R##
+#
+checkAndExecute()
+{
+    local TARGET="${1}"
+    local EXIT_CODE_1=${2}
+    local EXIT_CODE_1=${3}
+    #
+    # Check if ${TARGET} exists
+    # 检查文件${TARGET}是否存在
+    if [ -e "${TARGET}" ]
+    then
+        # Invoke ${TARGET}
+        # 如果文件${TARGET}存在，则执行
+        "${TARGET}"
+        #
+        # Check if ${TARGET} returns 0
+        # 检查文件${TARGET}的返回值是否为0
+        if [ ${?} -ne 0 ]
+        then
+            # Stop and Exit
+            # 如果返回值不为0，则该程序终止
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
+            #
+            exit ${EXIT_CODE_1}
+        fi
+        #
+    else
+        # Stop and Exit
+        # 如果文件${TARGET}不存在，则该程序终止
+        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${TARGET}"
+        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
+        #
+        exit ${EXIT_CODE_2}
+    fi
+}
+#
+########## END ##########
+#
+#
 ########## SET THE CUSTOM VARIABLES ##########
 #
 # 设置自定义变量
@@ -231,93 +266,15 @@ echo -e "\033[1;45;37m############### STAGE 2: INSTALL ESSENTIAL COMPONENTS ####
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/swap/bin/swap_install exists
-# 检查文件${SBL_SYS_USR}/swap/bin/swap_install是否存在
-if [ -e "${SBL_SYS_USR}/swap/bin/swap_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/swap/bin/swap_install
-    # 如果文件${SBL_SYS_USR}/swap/bin/swap_install存在，则执行
-    "${SBL_SYS_USR}/swap/bin/swap_install"
-    #
-    # Check if ${SBL_SYS_USR}/swap/bin/swap_install returns 0
-    # 检查文件${SBL_SYS_USR}/swap/bin/swap_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 5
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/swap/bin/swap_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 6
-fi
+checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_install" 5 6
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service exists
-# 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/swap/bin/swap_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/swap/bin/swap_enable.service
-    # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service存在，则执行
-    "${SBL_SYS_USR}/swap/bin/swap_enable.service"
-    #
-    # Check if ${SBL_SYS_USR}/swap/bin/swap_enable.service returns 0
-    # 检查文件${SBL_SYS_USR}/swap/bin/swap_enable.service的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 7
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/swap/bin/swap_enable.service不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/swap/bin/swap_enable.service"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 8
-fi
+checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_enable.service" 7 8
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/entware/bin/entware_install exists
-# 检查文件${SBL_SYS_USR}/entware/bin/entware_install是否存在
-if [ -e "${SBL_SYS_USR}/entware/bin/entware_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/entware/bin/entware_install
-    # 如果文件${SBL_SYS_USR}/entware/bin/entware_install存在，则执行
-    "${SBL_SYS_USR}/entware/bin/entware_install"
-    #
-    # Check if ${SBL_SYS_USR}/entware/bin/entware_install returns 0
-    # 检查文件${SBL_SYS_USR}/entware/bin/entware_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 9
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/entware/bin/entware_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/entware/bin/entware_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 10
-fi
+checkAndExecute "${SBL_SYS_USR}/entware/bin/entware_install" 9 10
 #
 #R#cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
 #
@@ -369,169 +326,45 @@ sleep 10
 #
 # Create Public directories
 # 创建公共目录
-mkdir "${USB_MOUNT_POINT}/www"
-echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: PUBLIC DIRECTORIES ARE CREATED"
+for PUBLIC_DIRECTORY in "www"
+do
+    if [ ! -d "${USB_MOUNT_POINT}/${PUBLIC_DIRECTORY}" ]
+    then
+        mkdir "${USB_MOUNT_POINT}/${PUBLIC_DIRECTORY}"
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: PUBLIC DIRECTORY ${PUBLIC_DIRECTORY} IS CREATED"
+    fi
+done
 #
 # Create Private directories
 # 创建私有目录
-mkdir "${USB_MOUNT_POINT}/home/root/Developments"
-mkdir "${USB_MOUNT_POINT}/home/root/Documents"
-mkdir "${USB_MOUNT_POINT}/home/root/Downloads"
-mkdir "${USB_MOUNT_POINT}/home/root/Music"
-mkdir "${USB_MOUNT_POINT}/home/root/Pictures"
-mkdir "${USB_MOUNT_POINT}/home/root/Shared"
-mkdir "${USB_MOUNT_POINT}/home/root/Videos"
-echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: PRIVATE DIRECTORIES ARE CREATED"
+for PRIVATE_DIRECTORY in "Developments" "Documents" "Downloads" "Music" "Pictures" "Shared" "Videos"
+do
+    if [ ! -d "${USB_MOUNT_POINT}/home/root/${PRIVATE_DIRECTORY}" ]
+    then
+        mkdir "${USB_MOUNT_POINT}/home/root/${PRIVATE_DIRECTORY}"
+        echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: PRIVATE DIRECTORY ${PRIVATE_DIRECTORY} IS CREATED"
+    fi
+done
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/timezone/bin/timezone_install exists
-# 检查文件${SBL_SYS_USR}/timezone/bin/timezone_install是否存在
-if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_install
-    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install存在，则执行
-    "${SBL_SYS_USR}/timezone/bin/timezone_install"
-    #
-    # Check if ${SBL_SYS_USR}/timezone/bin/timezone_install returns 0
-    # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 13
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 14
-fi
+checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_install" 13 14
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service exists
-# 检查文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/timezone/bin/timezone_enable.service
-    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service存在，则执行
-    "${SBL_SYS_USR}/timezone/bin/timezone_enable.service"
-    #
-    # Check if ${SBL_SYS_USR}/timezone/bin/timezone_enable.service returns 0
-    # 检查文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 15
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/timezone/bin/timezone_enable.service不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/timezone/bin/timezone_enable.service"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 16
-fi
+checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" 15 16
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/dependency/bin/dependency_install exists
-# 检查文件${SBL_SYS_USR}/dependency/bin/dependency_install是否存在
-if [ -e "${SBL_SYS_USR}/dependency/bin/dependency_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/dependency/bin/dependency_install
-    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_install存在，则执行
-    "${SBL_SYS_USR}/dependency/bin/dependency_install"
-    #
-    # Check if ${SBL_SYS_USR}/dependency/bin/dependency_install returns 0
-    # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 17
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/dependency/bin/dependency_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 18
-fi
+checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_install" 17 18
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/dependency/bin/dependency_enable.service exists
-# 检查文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/dependency/bin/dependency_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/dependency/bin/dependency_enable.service
-    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service存在，则执行
-    "${SBL_SYS_USR}/dependency/bin/dependency_enable.service"
-    #
-    # Check if ${SBL_SYS_USR}/dependency/bin/dependency_enable.service returns 0
-    # 检查文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 19
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/dependency/bin/dependency_enable.service不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/dependency/bin/dependency_enable.service"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 20
-fi
+checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_enable.service" 19 20
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/monit/bin/monit_install exists
-# 检查文件${SBL_SYS_USR}/monit/bin/monit_install是否存在
-if [ -e "${SBL_SYS_USR}/monit/bin/monit_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/monit/bin/monit_install
-    # 如果文件${SBL_SYS_USR}/monit/bin/monit_install存在，则执行
-    "${SBL_SYS_USR}/monit/bin/monit_install"
-    #
-    # Check if ${SBL_SYS_USR}/monit/bin/monit_install returns 0
-    # 检查文件${SBL_SYS_USR}/monit/bin/monit_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 21
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/monit/bin/monit_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/monit/bin/monit_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 22
-fi
+checkAndExecute "${SBL_SYS_USR}/monit/bin/monit_install" 21 22
 #
 sleep 10
 #
@@ -541,93 +374,15 @@ sleep 10
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install exists
-# 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install是否存在
-if [ -e "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install
-    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install存在，则执行
-    "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install"
-    #
-    # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install returns 0
-    # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 23
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 24
-fi
+checkAndExecute "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install" 23 24
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service exists
-# 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service是否存在
-if [ -e "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service" ]
-then
-    # Invoke ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service
-    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service存在，则执行
-    "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service"
-    #
-    # Check if ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service returns 0
-    # 检查文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 25
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 26
-fi
+checkAndExecute "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service" 25 26
 #
 sleep 10
 #
-# Check if ${SBL_SYS_USR}/fwd/bin/fwd_install exists
-# 检查文件${SBL_SYS_USR}/fwd/bin/fwd_install是否存在
-if [ -e "${SBL_SYS_USR}/fwd/bin/fwd_install" ]
-then
-    # Invoke ${SBL_SYS_USR}/fwd/bin/fwd_install
-    # 如果文件${SBL_SYS_USR}/fwd/bin/fwd_install存在，则执行
-    "${SBL_SYS_USR}/fwd/bin/fwd_install"
-    #
-    # Check if ${SBL_SYS_USR}/fwd/bin/fwd_install returns 0
-    # 检查文件${SBL_SYS_USR}/fwd/bin/fwd_install的返回值是否为0
-    if [ ${?} -ne 0 ]
-    then
-        # Stop and Exit
-        # 如果返回值不为0，则该程序终止
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-        #
-        exit 27
-    fi
-    #
-else
-    # Stop and Exit
-    # 如果文件${SBL_SYS_USR}/fwd/bin/fwd_install不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_USR}/fwd/bin/fwd_install"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
-    #
-    exit 28
-fi
+checkAndExecute "${SBL_SYS_USR}/fwd/bin/fwd_install" 27 28
 #
 sleep 10
 #
