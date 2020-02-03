@@ -34,11 +34,11 @@
    cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://raw.githubusercontent.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/master/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
-   ![](./Documents_Assets/How_to_Use/install/online_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/online_step3_en-US.jpg)
 
 4. Read the WARNING, and input `YES` to continue the installation.
 
-   ![](./Documents_Assets/How_to_Use/install/online_step4.jpg)
+   ![](./Documents_Assets/How_to_Use/install/online_step4_en-US.jpg)
 
 5. Demonstration of the installation process:
 
@@ -140,11 +140,11 @@
 5. Execute the code below to move the files and change their rights.
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader/ ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/
-   chmod -R 777 script_bootloader/
-   cp script_bootloader/bin/prerequisite_checker /tmp/
-   cp script_bootloader/bin/drive_modifier /tmp/
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0
+   chmod -R 777 script_bootloader
+   cp script_bootloader/bin/prerequisite_checker /tmp
+   cp script_bootloader/bin/drive_modifier /tmp
    cd /tmp
    ```
 
@@ -157,13 +157,13 @@
 7. Execute the code below to re-partition and format the USB flash drive.
 
    ```shell
-   /tmp/prerequisite_checker
+   /tmp/drive_modifier
    ```
 
 8. Execute the code below to move the files.
 
    ```shell
-   mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER/
+   mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER
    ```
 
 9. Execute the code below to start installation.
@@ -175,7 +175,7 @@
 10. (Optional) If command `tee` doesn't exist in the firmware, installation will come to an end after outputing `***** STAGE 3: INSTALL ADDONS *****`. Execute the code below to install add-ons.
 
    ```shell
-   /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install
+   /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/addons_install
    ```
 
 11. Execute the code below to reboot the router after all the favored add-ons are installed.
@@ -190,7 +190,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
 > **NOTICE**
 >
-> - LF needs to be set in Windows before you edit the source files. Otherwise the files will be damaged.
+> - `LF` needs to be set in Windows before you edit the source files. Otherwise the files will be damaged.
 > - NO extra setting is required in Linux before you edit the source files.
 
 ## Enable/Disable add-ons
@@ -245,6 +245,32 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/update/step2.jpg)
 
+## Upgrade
+
+> When new version of Entware is released, execute upgrade, which could preserve all the files in directory `/tmp/mnt/ASUS_ROUTER/home/root` and reinstall the system.
+
+1. Login the router with ssh client.
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step1.jpg)
+
+2. Execute the code below to upgrade the system.
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
+
+3. Execute the code below after restart.
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
+
+4. Following steps are same with those in section [Installation (Online)](#installation-online)
+
 ## Uninstallation
 
 1. Login the router with ssh client.
@@ -279,4 +305,4 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
 1. [Uninstall](#Uninstallation) the system.
 
-2. [Install](#installation-online) the system again.
+2. [Installation (Online)](#installation-online) the system again.

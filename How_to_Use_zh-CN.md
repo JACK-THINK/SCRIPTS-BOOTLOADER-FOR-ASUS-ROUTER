@@ -31,14 +31,14 @@
 3. 执行下列代码
 
    ```shell
-   cd /tmp && wget -q -O /tmp/install_online_china --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online_china" && chmod 777 /tmp/install_online_china && /tmp/install_online_china
+   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
-   ![](./Documents_Assets/How_to_Use/install/online_step3.jpg)
+   ![](./Documents_Assets/How_to_Use/install/online_step3_zh-CN.jpg)
 
 4. 阅读提示信息，确认无误后，输入`YES`继续安装
 
-   ![](./Documents_Assets/How_to_Use/install/online_step4.jpg)
+   ![](./Documents_Assets/How_to_Use/install/online_step4_zh-CN.jpg)
 
 5. 安装过程开始
 
@@ -140,11 +140,11 @@
 5. 执行下列代码，将文件移动至指定位置并修改程序权限
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader/ ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/
-   chmod -R 777 script_bootloader/
-   cp script_bootloader/bin/prerequisite_checker /tmp/
-   cp script_bootloader/bin/drive_modifier /tmp/
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0
+   chmod -R 777 script_bootloader
+   cp script_bootloader/bin/prerequisite_checker /tmp
+   cp script_bootloader/bin/drive_modifier /tmp
    cd /tmp
    ```
 
@@ -163,7 +163,7 @@
 8. 执行下列代码，将文件移动至指定位置
 
    ```shell
-   mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER/
+   mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER
    ```
 
 9. 执行下列代码，开始安装
@@ -190,7 +190,7 @@
 
 > **注意**
 >
-> - 在Windows下对程序进行修改，必须将编辑器的换行符设置为LF，否则程序将被损坏，无法运行
+> - 在Windows下对程序进行修改，必须将编辑器的换行符设置为`LF`，否则程序将被损坏，无法运行
 > - 在Linux下对程序进行修改，无需特别设置
 
 ## 启用/禁用插件
@@ -245,6 +245,32 @@
 
    ![](./Documents_Assets/How_to_Use/update/step2.jpg)
 
+## 升级
+
+> 当Entware发布新版本时，执行升级。此操作可在保留`/tmp/mnt/ASUS_ROUTER/home/root`中全部文件的同时全新安装本系统
+
+1. 用ssh登陆路由器后台
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step1.jpg)
+
+2. 执行下列代码升级本系统
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
+
+3. 路由器重启后，再次执行
+
+   ```shell
+   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
+
+4. 后续步骤同[在线安装](#在线安装)
+
 ## 卸载
 
 1. 用ssh登陆路由器后台
@@ -279,4 +305,4 @@
 
 1. 执行[卸载](#卸载)
 
-2. 执行[安装](#在线安装)
+2. 执行[在线安装](#在线安装)

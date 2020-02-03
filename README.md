@@ -10,7 +10,7 @@
 
 3. 根据个人使用经验，梅林固件本身的稳定性并不算太高（比如经常出现web页面崩溃的问题），而且一些华硕原厂固件的特定功能并不能得到及时更新（例如AiMesh）
 
-因此，本人写了一个可同时运行于华硕路由器官方固件和梅林固件的，且无需向/jffs分区写入任何内容的开机启动引导程序
+因此，本人写了一个可同时运行于华硕路由器官方固件和梅林固件的，且无需向`/jffs`分区写入任何内容的开机启动引导程序
 
 ## 功能介绍
 
@@ -55,7 +55,7 @@
    > 确保用于登录路由器Web页面的用户名和密码**不含有**除*大小写字母、数字、下划线*之外的其它任何字符
 
    ```shell
-   cd /tmp && wget -q -O /tmp/install_online_china --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online_china" && chmod 777 /tmp/install_online_china && /tmp/install_online_china
+   cd /tmp && wget -q -O /tmp/install_online --no-check-certificate "https://cdn.jsdelivr.net/gh/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER@latest/script_bootloader/bin/install_online" && chmod 777 /tmp/install_online && /tmp/install_online
    ```
 
    > 安装过程分为三阶段：
