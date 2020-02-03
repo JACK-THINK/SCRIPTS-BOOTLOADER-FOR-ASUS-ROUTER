@@ -6,8 +6,11 @@
 #
 if [ -n "$(nvram get script_usbmount)" ]
 then
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNINSTALL SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER FIRST"
-    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: UPGRADE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+    USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
+    #
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: EXECUTE ${USB_MOUNT_POINT}/script_bootloader/bin/upgrade AFTER RESTART"
+    #
+    "${USB_MOUNT_POINT}/script_bootloader/bin/uninstall" > /dev/null 2>&1
     #
     exit 1
 fi
@@ -57,9 +60,9 @@ case ${USB_MOUNT_POINT_COUNT} in
         ;;
 esac
 #
-# TARGET_DIRECTORY: The target directory to remove
-# 设置自定义变量TARGET_DIRECTORY为待删除目录
-TARGET_DIRECTORY="${USB_MOUNT_POINT}"
+# SOURCE_DIRECTORY: The source directory to remove
+# 设置自定义变量SOURCE_DIRECTORY为删除起始目录
+SOURCE_DIRECTORY="${USB_MOUNT_POINT}"
 #
 # EXCLUDED_DIRECTORY: The target directory excluded
 # 设置自定义变量EXCLUDED_DIRECTORY为被排除目录
@@ -67,7 +70,7 @@ EXCLUDED_DIRECTORY="${USB_MOUNT_POINT}/home/root"
 #
 # DOWNLOAD_LINK: Download link of the latest SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
 # 设置自定义变量DOWNLOAD_LINK为最新版SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER的下载链接
-wget -c -t 10 -T 120 -O "/tmp/sbl_download_link.html" --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
+wget -q -c -t 10 -T 120 -O "/tmp/sbl_download_link.html" --no-check-certificate "https://api.github.com/repos/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/releases/latest"
 #
 if [ ! -s "/tmp/sbl_download_link.html" ] || \
 [ $(cat "/tmp/sbl_download_link.html" | wc -l) -lt 20 ]
@@ -116,49 +119,6 @@ esac
 ########## END ##########
 #
 #
-########## LOAD FUNCTIONS ##########
-#
-removeFile()
-{
-    local FILE_TO_REMOVE="${1}"
-    rm -f "${FILE_TO_REMOVE}"
-}
-#
-removeDirectory()
-{
-    local DIRECTORY_TO_REMOVE="${1}"
-    while [ 1 ]
-    do
-        if [ -d "${DIRECTORY_TO_REMOVE}" ]
-        then
-            if [ $(ls -A "${DIRECTORY_TO_REMOVE}" | wc -w) -eq 0 ]
-            then
-                rmdir "${DIRECTORY_TO_REMOVE}"
-                #
-                DIRECTORY_TO_REMOVE="$(dirname "${DIRECTORY_TO_REMOVE}")"
-            else
-                break
-            fi
-        else
-            DIRECTORY_TO_REMOVE="$(dirname "${DIRECTORY_TO_REMOVE}")"
-        fi
-    done
-}
-#
-removeTarget()
-{
-    local TARGET_TO_REMOVE="${1}"
-    if [ -d "${TARGET_TO_REMOVE}" ]
-    then
-        removeDirectory "${TARGET_TO_REMOVE}"
-    else
-        removeFile "${TARGET_TO_REMOVE}"
-    fi
-}
-#
-########## END ##########
-#
-#
 ########## NOTIFICATION ##########
 #
 echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
@@ -168,25 +128,29 @@ echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON 
 #
 ########## REMOVE SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
 #
-COUNT=0
-while [ ${COUNT} -lt 2 ]
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: REMOVE OUTDATED ${SERVICE_NAME}"
+#
+WORKING_PATH="$(dirname "${EXCLUDED_DIRECTORY}")"
+EXCLUDED_PATH="${EXCLUDED_DIRECTORY}"
+#
+while [ "${EXCLUDED_PATH}" != "${SOURCE_DIRECTORY}" ]
 do
-    find "${TARGET_DIRECTORY}" -print | grep -v ''"${EXCLUDED_DIRECTORY}"'' > "/tmp/files_to_remove.stack"
+    EXCLUDED_PATH_NAME="$(basename "${EXCLUDED_PATH}")"
     #
-    while [ 1 ]
+    ls -A "${WORKING_PATH}" | grep -v '^'"${EXCLUDED_PATH_NAME}"'$' > "/tmp/files_to_remove.stack"
+    #
+    STACK_TOP="$(head -n 1 "/tmp/files_to_remove.stack")"
+    while [ -n "${STACK_TOP}" ]
     do
+        #echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: REMOVE ${STACK_TOP}"
+        rm -rf "${WORKING_PATH}/${STACK_TOP}"
+        sed -i '1d' "/tmp/files_to_remove.stack"
         STACK_TOP="$(head -n 1 "/tmp/files_to_remove.stack")"
-        if [ -n "${STACK_TOP}" ]
-        then
-            removeTarget "${STACK_TOP}"
-            sed -i '1d' "/tmp/files_to_remove.stack"
-        else
-            rm -f "/tmp/files_to_remove.stack"
-            break
-        fi
     done
+    rm -f "/tmp/files_to_remove.stack"
     #
-    COUNT=$((${COUNT}+1))
+    WORKING_PATH="$(dirname "${WORKING_PATH}")"
+    EXCLUDED_PATH="$(dirname "${EXCLUDED_PATH}")"
 done
 #
 ########## END ##########
@@ -194,13 +158,15 @@ done
 #
 ########## INSTALL SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER ##########
 #
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: INSTALL LATEST ${SERVICE_NAME}"
+#
 # Remove vestigial ${ARCHIVE_NAME} package
 # 删除遗留的${ARCHIVE_NAME}包
 rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
 #
 # Download ${ARCHIVE_NAME} package
 # 下载${ARCHIVE_NAME}包
-wget -c -t 10 -T 120 -O "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" --no-check-certificate "${DOWNLOAD_LINK}"
+wget -q -c -t 10 -T 120 -O "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" --no-check-certificate "${DOWNLOAD_LINK}"
 #
 sleep 30
 #
