@@ -49,15 +49,14 @@ SERVICE_FUNCTION="ENABLE"
 #
 ########## CHECK AND ENABLE FILE-BROWSER ##########
 #
-# Check if ${PRIVATE_USR}/filebrowser, ${PRIVATE_ETC}/config.json and ${PRIVATE_ETC}/database.db exist
-# 检查文件${PRIVATE_USR}/filebrowser，${PRIVATE_ETC}/config.json和${PRIVATE_ETC}/database.db是否存在
-if [ -e "${PRIVATE_USR}/filebrowser" ] && \
-[ -e "${PRIVATE_ETC}/config.json" ] && [ -e "${PRIVATE_ETC}/database.db" ]
+# Check if ${PRIVATE_USR}/filebrowser and ${PRIVATE_ETC}/database.db exist
+# 检查文件${PRIVATE_USR}/filebrowser和${PRIVATE_ETC}/database.db是否存在
+if [ -e "${PRIVATE_USR}/filebrowser" ] && [ -e "${PRIVATE_ETC}/database.db" ]
 then
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Load ${PRIVATE_USR}/filebrowser
-    # 如果文件${PRIVATE_USR}/filebrowser，${PRIVATE_ETC}/config.json和${PRIVATE_ETC}/database.db存在，则执行
+    # 如果文件${PRIVATE_USR}/filebrowser和${PRIVATE_ETC}/database.db存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" &> /dev/null &
     PID="$(pidof filebrowser)"
     /opt/bin/echo "${PID}" > "${FILEBROWSER_PID_FILE}"

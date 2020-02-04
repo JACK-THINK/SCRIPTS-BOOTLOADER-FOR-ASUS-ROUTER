@@ -94,6 +94,17 @@ ADMINUSER="$(nvram get sbl_username)"
 # 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
 ADMINPASSWORD="$(nvram get sbl_password)"
 #
+# LANGUAGE: Preferred language set by user
+# 设置环境变量LANGUAGE为用户首选语言
+case "$(nvram get preferred_lang)" in
+    "CN")
+        LANGUAGE="zh-cn"
+        ;;
+    *)
+        LANGUAGE="en"
+        ;;
+esac
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="FILE-BROWSER"
@@ -148,11 +159,9 @@ then
         #
         # Configure filebrowser
         # 配置filebrowser
-        "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" config init --address "0.0.0.0" --branding.disableExternal --locale "zh-cn" --perm.admin --port "35248" --scope "/root" --sorting.asc --sorting.by "name" --viewMode "list"
+        "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" config init --address "0.0.0.0" --branding.disableExternal --locale "${LANGUAGE}" --perm.admin --port "35248" --scope "/root" --sorting.by "name" --viewMode "list"
         #
         "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" users add "${ADMINUSER}" "${ADMINPASSWORD}"
-        #
-        "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" config export "${PRIVATE_ETC}/config.json"
         #
         # Configure fwd
         # 配置fwd
