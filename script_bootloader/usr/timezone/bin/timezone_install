@@ -56,7 +56,8 @@ TIMEZONE_FILE="${USB_MOUNT_POINT}/share/zoneinfo/${TIMEZONE}"
 if [ ! -e "${TIMEZONE_FILE}" ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE ${TIMEZONE_FILE}, USE SHANGHAI INSTEAD"
-    TIMEZONE_FILE="${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai"
+    TIMEZONE="Asia/Shanghai"
+    TIMEZONE_FILE="${USB_MOUNT_POINT}/share/zoneinfo/${TIMEZONE}"
 fi
 #
 rm -f "/tmp/ipinfo.xml"
@@ -87,6 +88,7 @@ if [ -e "${TIMEZONE_FILE}" ]
 then
     # Create a symbolic link file named ${PRIVATE_ETC}/localtime
     # 如果文件${TIMEZONE_FILE}存在，则执行
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: SET TIMEZONE TO ${TIMEZONE}"
     mkdir "${PRIVATE_ETC}"
     cp -fs "${TIMEZONE_FILE}" "${PRIVATE_ETC}/localtime"
     #
