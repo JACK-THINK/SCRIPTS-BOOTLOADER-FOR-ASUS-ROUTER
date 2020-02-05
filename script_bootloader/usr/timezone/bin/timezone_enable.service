@@ -94,7 +94,7 @@ do
         #
         # Add 1 to ${FAIL_COUNT}
         # ${FAIL_COUNT}加1
-        FAIL_COUNT=$((${FAIL_COUNT} + 1))
+        FAIL_COUNT=$((${FAIL_COUNT}+1))
         #
         # Wait for 10 seconds
         # 等待10秒

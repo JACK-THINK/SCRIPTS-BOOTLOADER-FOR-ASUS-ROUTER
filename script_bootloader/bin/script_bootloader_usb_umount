@@ -114,6 +114,9 @@ sleep 5
 # 禁用Entware
 checkAndLoadComponent "${SBL_SYS_USR}/entware/bin/entware_disable.service"
 #
+sync
+sleep 10
+#
 # Unmount directory home
 # 卸载目录home
 if [ -d "${USB_MOUNT_POINT}/home/root" ]
@@ -129,6 +132,11 @@ checkAndLoadComponent "${SBL_SYS_USR}/swap/bin/swap_disable.service"
 # Disable timezone
 # 禁用timezone
 checkAndLoadComponent "${SBL_SYS_USR}/timezone/bin/timezone_disable.service"
+#
+sync
+sleep 10
+sync
+sleep 10
 #
 ########## END ##########
 #

@@ -324,6 +324,21 @@ fi
 #
 sleep 10
 #
+# Install zoneinfo
+# 安装zoneinfo
+/opt/bin/opkg install zoneinfo-africa
+/opt/bin/opkg install zoneinfo-asia
+/opt/bin/opkg install zoneinfo-atlantic
+/opt/bin/opkg install zoneinfo-australia-nz
+/opt/bin/opkg install zoneinfo-core
+/opt/bin/opkg install zoneinfo-europe
+/opt/bin/opkg install zoneinfo-india
+/opt/bin/opkg install zoneinfo-northamerica
+/opt/bin/opkg install zoneinfo-pacific
+/opt/bin/opkg install zoneinfo-poles
+/opt/bin/opkg install zoneinfo-simple
+/opt/bin/opkg install zoneinfo-southamerica
+#
 # Create Public directories
 # 创建公共目录
 for PUBLIC_DIRECTORY in "www"
@@ -452,6 +467,11 @@ for TOOL_NAME in "bcrypt-tool" "gohash" "gotee"
 do
     cp -f "${SBL_SYS_BIN}/${TOOL_NAME}/${TOOL_NAME}-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}" "${ENTWARE_BIN}/${TOOL_NAME}"
 done
+#
+#for CMD_NAME in "restart_router"
+#do
+#    cp -f "${SBL_SYS_BIN}/${CMD_NAME}" "${ENTWARE_BIN}/${CMD_NAME}"
+#done
 #
 # Temporary Solution: The 4-line code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息

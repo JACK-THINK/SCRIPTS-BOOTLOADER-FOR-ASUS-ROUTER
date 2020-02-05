@@ -2,22 +2,6 @@
 #
 # 此程序用于升级安装“华硕路由器开机自动运行程序系统”
 #
-########## CHECK ASUS ROUTER STATUS ##########
-#
-if [ -n "$(nvram get script_usbmount)" ]
-then
-    USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
-    #
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: EXECUTE ${USB_MOUNT_POINT}/script_bootloader/bin/upgrade AFTER RESTART"
-    #
-    "${USB_MOUNT_POINT}/script_bootloader/bin/uninstall" > /dev/null 2>&1
-    #
-    exit 1
-fi
-#
-########## END ##########
-#
-#
 ########## CHECK ASUS ROUTER MODEL ##########
 #
 ROUTER_MODEL="$(nvram get model)"
@@ -40,25 +24,40 @@ SERVICE_FUNCTION="UPGRADE"
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
-USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
-#
-case ${USB_MOUNT_POINT_COUNT} in
-    0)
-        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE DIRECTORY script_bootloader"
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-        #
-        exit 2
-        ;;
-    1)
-        USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
-        ;;
-    *)
-        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-        #
-        exit 3
-        ;;
-esac
+if [ -n "$(nvram get script_usbmount)" ]
+then
+    USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
+    #
+    cd /tmp
+    "$(nvram get script_usbumount)" > /dev/null 2>&1
+    nvram unset script_usbmount
+    nvram unset script_usbumount
+    nvram unset sbl_username
+    nvram unset sbl_password
+    nvram commit
+    sync
+    sleep 10
+else
+    USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
+    #
+    case ${USB_MOUNT_POINT_COUNT} in
+        0)
+            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE DIRECTORY script_bootloader"
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 1
+            ;;
+        1)
+            USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
+            ;;
+        *)
+            echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
+            echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            exit 2
+            ;;
+    esac
+fi
 #
 # SOURCE_DIRECTORY: The source directory to remove
 # 设置自定义变量SOURCE_DIRECTORY为删除起始目录
@@ -112,7 +111,7 @@ case "$(uname -m)" in
         #
         echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
-        exit 4
+        exit 3
         ;;
 esac
 #
@@ -245,8 +244,8 @@ mv -f "/tmp/sbl_install_log" "${USB_MOUNT_POINT}"
 #
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
-sync
-sleep 60
+"$(nvram get script_usbumount)" > /dev/null 2>&1
+umount -f "${USB_MOUNT_POINT}"
 echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 sync
 sleep 10

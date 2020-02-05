@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
+cd /tmp
+"$(nvram get script_usbumount)"
+umount -f "${USB_MOUNT_POINT}"
+sync
+sleep 10
+#
+reboot

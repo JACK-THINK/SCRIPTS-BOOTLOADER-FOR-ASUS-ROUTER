@@ -28,6 +28,39 @@ PRIVATE_ROOT="${SBL_SYS_USR}/timezone"
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
+# WAN0_GW_IFNAME: The interface name of gateway
+# 设置自定义变量WAN0_GW_IFNAME为网关设备名
+#WAN0_GW_IFNAME="$(nvram get wan0_gw_ifname)"
+#
+# REAL_IP: Real IP of WAN
+# 设置自定义变量REAL_IP为WAN真实IP地址
+REAL_IP="$(nvram get wan0_realip_ip)"
+#REAL_IP="$(ministun -t 1000 -c 1 -i "${WAN0_GW_IFNAME}" "stun.stunprotocol.org")"
+#
+# TIMEZONE: Time zone of the current location
+# 设置自定义变量TIMEZONE为当地时区
+rm -f "/tmp/ipinfo.xml"
+wget -c -t 10 -T 120 -O "/tmp/ipinfo.xml" --no-check-certificate "http://ip-api.com/xml/${REAL_IP}"
+#
+if [ ! -s "/tmp/ipinfo.xml" ] || [ $(cat "/tmp/ipinfo.xml" | wc -l) -lt 10 ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO GET IP INFORMATION, USE SHANGHAI INSTEAD"
+    TIMEZONE="Asia/Shanghai"
+else
+    TIMEZONE="$(sed -E -n -e 's#.*<timezone>(.*)</timezone>#\1#p' /tmp/ipinfo.xml)"
+fi
+#
+# TIMEZONE_FILE: The target file of time zone
+# 设置自定义变量TIMEZONE_FILE为系统时区目标文件
+TIMEZONE_FILE="${USB_MOUNT_POINT}/share/zoneinfo/${TIMEZONE}"
+if [ ! -e "${TIMEZONE_FILE}" ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE ${TIMEZONE_FILE}, USE SHANGHAI INSTEAD"
+    TIMEZONE_FILE="${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai"
+fi
+#
+rm -f "/tmp/ipinfo.xml"
+#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="TIMEZONE"
@@ -46,25 +79,16 @@ echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON 
 ########## END ##########
 #
 #
-########## INSTALLATION CONFIGURATION ##########
-#
-# TARGET_TIME_ZONE: The target time zone of the system
-# 设置自定义变量TARGET_TIME_ZONE为系统目标时区
-TARGET_TIME_ZONE="$(find "${USB_MOUNT_POINT}" -name 'Shanghai' | grep -e ''"${USB_MOUNT_POINT}/share/zoneinfo/Asia/Shanghai"'' | tail -n 1)"
-#
-########## END ##########
-#
-#
 ########## INSTALL TIMEZONE ##########
 #
 # Install timezone
 # 安装timezone
-if [ -n "${TARGET_TIME_ZONE}" ]
+if [ -e "${TIMEZONE_FILE}" ]
 then
     # Create a symbolic link file named ${PRIVATE_ETC}/localtime
-    # 如果文件${TARGET_TIME_ZONE}存在，则执行
+    # 如果文件${TIMEZONE_FILE}存在，则执行
     mkdir "${PRIVATE_ETC}"
-    cp -fs "${TARGET_TIME_ZONE}" "${PRIVATE_ETC}/localtime"
+    cp -fs "${TIMEZONE_FILE}" "${PRIVATE_ETC}/localtime"
     #
     echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
@@ -72,7 +96,7 @@ then
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${TARGET_TIME_ZONE}不存在，则执行
+    # 如果文件${TIMEZONE_FILE}不存在，则执行
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 1

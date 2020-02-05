@@ -386,3 +386,15 @@ vim-full
 vim-runtime
 vim-help
 wget
+zoneinfo-africa
+zoneinfo-asia
+zoneinfo-atlantic
+zoneinfo-australia-nz
+zoneinfo-core
+zoneinfo-europe
+zoneinfo-india
+zoneinfo-northamerica
+zoneinfo-pacific
+zoneinfo-poles
+zoneinfo-simple
+zoneinfo-southamerica

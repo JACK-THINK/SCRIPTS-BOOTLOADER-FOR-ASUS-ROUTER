@@ -18,18 +18,6 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
 #
-# SBL_SYS_ROOT: The root directory for SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_ROOT为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统根目录
-SBL_SYS_ROOT="${USB_MOUNT_POINT}/script_bootloader"
-#
-# SBL_SYS_BIN: The directory which contains all the executable files related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_BIN为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统可执行文件目录
-SBL_SYS_BIN="${SBL_SYS_ROOT}/bin"
-#
-# USB_UMOUNT_SCRIPT: The script runs automatically when the USB flash drive is unmounted
-# 设置自定义变量USB_UMOUNT_SCRIPT为U盘卸载时自动运行文件
-USB_UMOUNT_SCRIPT="${SBL_SYS_BIN}/script_bootloader_usb_umount"
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
@@ -50,9 +38,8 @@ echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON 
 #
 ########## TERMINATE ANYTHING RELATED ##########
 #
-# Load ${USB_UMOUNT_SCRIPT}
-# 执行文件${USB_UMOUNT_SCRIPT}
-"${USB_UMOUNT_SCRIPT}"
+"$(nvram get script_usbumount)"
+umount -f "${USB_MOUNT_POINT}"
 #
 echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ANYTHING RELEVANT HAS BEEN TERMINATED"
 #
@@ -84,8 +71,6 @@ nvram commit
 sync
 sleep 10
 echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-sync
-sleep 10
 #
 reboot
 #
