@@ -40,7 +40,7 @@ REAL_IP="$(nvram get wan0_realip_ip)"
 # TIMEZONE: Time zone of the current location
 # 设置自定义变量TIMEZONE为当地时区
 rm -f "/tmp/ipinfo.xml"
-wget -c -t 10 -T 120 -O "/tmp/ipinfo.xml" --no-check-certificate "http://ip-api.com/xml/${REAL_IP}"
+wget -q -c -t 10 -T 120 -O "/tmp/ipinfo.xml" --no-check-certificate "http://ip-api.com/xml/${REAL_IP}"
 #
 if [ ! -s "/tmp/ipinfo.xml" ] || [ $(cat "/tmp/ipinfo.xml" | wc -l) -lt 10 ]
 then
