@@ -160,7 +160,7 @@ checkAndLoadComponent "${SBL_SYS_BIN}/list_of_user_custom_scripts" "NOTICE: CUST
 #
 # Copy customized commands
 # 复制自定义命令
-for CMD_NAME in "restart_router" "upgrade" "uninstall"
+for CMD_NAME in "restart_router" "uninstall" "upgrade"
 do
     cp -f "${SBL_SYS_BIN}/${CMD_NAME}" "/tmp/sbl_${CMD_NAME}"
 done
