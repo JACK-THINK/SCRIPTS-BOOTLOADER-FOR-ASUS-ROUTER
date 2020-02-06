@@ -265,7 +265,15 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
 
-3. Following steps are same with those in section [Installation (Online)](#installation-online)
+3. Execute the code below after restart.
+
+   ```shell
+   cp -f "/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade" "/tmp/sbl_upgrade" && cd "/tmp" && "/tmp/sbl_upgrade"
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
+
+4. Following steps are same with those in section [Installation (Online)](#installation-online)
 
 ## Uninstallation
 

@@ -265,7 +265,15 @@
 
    ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
 
-3. 后续步骤同[在线安装](#在线安装)
+3. 路由器重启后，执行下列代码
+
+   ```shell
+   cp -f "/tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade" "/tmp/sbl_upgrade" && cd "/tmp" && "/tmp/sbl_upgrade"
+   ```
+
+   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
+
+4. 后续步骤同[在线安装](#在线安装)
 
 ## 卸载
 
