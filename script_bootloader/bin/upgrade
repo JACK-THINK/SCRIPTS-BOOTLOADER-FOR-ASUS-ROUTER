@@ -32,15 +32,12 @@ then
     #
     USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
     #
-    cd /tmp
-    "$(nvram get script_usbumount)" > /dev/null 2>&1
-    nvram unset script_usbmount
-    nvram unset script_usbumount
-    nvram unset sbl_username
-    nvram unset sbl_password
-    nvram commit
-    sync
-    sleep 10
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: EXECUTE cp -f \"${USB_MOUNT_POINT}/script_bootloader/bin/upgrade\" \"/tmp/sbl_upgrade\" && cd \"/tmp\" && \"/tmp/sbl_upgrade\" AFTER RESTART"
+    #
+    "/tmp/sbl_uninstall" > /dev/null 2>&1
+    #
+    exit 1
+    #
 else
     USB_MOUNT_POINT_COUNT=$(find / -name 'script_bootloader' | wc -l)
     #
