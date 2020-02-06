@@ -181,7 +181,7 @@
 11. Execute the code below to reboot the router after all the favored add-ons are installed.
 
    ```shell
-   reboot
+   /tmp/sbl_restart_router
    ```
 
 ## Modification to source files
@@ -227,7 +227,11 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    \<ESC\>→\<:\>→\<w\>→\<q\>→\<Enter\>
 
-5. Execute `reboot` and all the favored add-ons will boot along with the router.
+5. Execute the code below to reboot the router and all the favored add-ons will boot along with the router.
+
+   ```shell
+   cd /tmp && /tmp/sbl_restart_router
+   ```
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
@@ -256,20 +260,12 @@ Modify the source files of the target add-on according to the README_en-US.md in
 2. Execute the code below to upgrade the system.
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   cd /tmp && /tmp/sbl_upgrade
    ```
 
    ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
 
-3. Execute the code below after restart.
-
-   ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
-   ```
-
-   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
-
-4. Following steps are same with those in section [Installation (Online)](#installation-online)
+3. Following steps are same with those in section [Installation (Online)](#installation-online)
 
 ## Uninstallation
 
@@ -280,7 +276,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 2. Execute the code below to uninstall the system.
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/uninstall
+   cd /tmp && /tmp/sbl_uninstall
    ```
 
    ![](./Documents_Assets/How_to_Use/uninstall/step2.jpg)
@@ -296,7 +292,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 2. Execute the code below to restore the system.
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/restore
+   cp -f /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/restore /tmp && cd /tmp && /tmp/restore
    ```
 
    ![](./Documents_Assets/How_to_Use/restore/step2.jpg)

@@ -181,7 +181,7 @@
 11. 全部插件安装完毕后，执行下列代码，重启路由器
 
    ```shell
-   reboot
+   /tmp/sbl_restart_router
    ```
 
 ## 修改程序
@@ -227,7 +227,11 @@
 
    \<ESC\>→\<:\>→\<w\>→\<q\>→\<Enter\>
 
-5. 执行`reboot`，重启路由器，相应的插件将在开机时自动启动
+5. 执行下列代码，重启路由器，相应的插件将在开机时自动启动
+
+   ```shell
+   cd /tmp && /tmp/sbl_restart_router
+   ```
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
@@ -256,20 +260,12 @@
 2. 执行下列代码升级本系统
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
+   cd /tmp && /tmp/sbl_upgrade
    ```
 
    ![](./Documents_Assets/How_to_Use/upgrade/step2.jpg)
 
-3. 路由器重启后，再次执行
-
-   ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/upgrade
-   ```
-
-   ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
-
-4. 后续步骤同[在线安装](#在线安装)
+3. 后续步骤同[在线安装](#在线安装)
 
 ## 卸载
 
@@ -280,7 +276,7 @@
 2. 执行下列代码卸载本系统
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/uninstall
+   cd /tmp && /tmp/sbl_uninstall
    ```
 
    ![](./Documents_Assets/How_to_Use/uninstall/step2.jpg)
@@ -296,7 +292,7 @@
 2. 执行下列代码还原本系统
 
    ```shell
-   cd /tmp && /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/restore
+   cp -f /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/restore /tmp && cd /tmp && /tmp/restore
    ```
 
    ![](./Documents_Assets/How_to_Use/restore/step2.jpg)
