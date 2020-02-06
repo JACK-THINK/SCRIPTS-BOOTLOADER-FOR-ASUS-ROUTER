@@ -468,10 +468,12 @@ do
     cp -f "${SBL_SYS_BIN}/${TOOL_NAME}/${TOOL_NAME}-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}" "${ENTWARE_BIN}/${TOOL_NAME}"
 done
 #
-#for CMD_NAME in "restart_router"
-#do
-#    cp -f "${SBL_SYS_BIN}/${CMD_NAME}" "${ENTWARE_BIN}/${CMD_NAME}"
-#done
+# Copy customized commands
+# 复制自定义命令
+for CMD_NAME in "restart_router" "shutdown_router" "uninstall" "upgrade"
+do
+    cp -f "${SBL_SYS_BIN}/${CMD_NAME}" "/tmp/sbl_${CMD_NAME}"
+done
 #
 # Temporary Solution: The 4-line code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
