@@ -22,6 +22,8 @@ SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
 # 服务功能
 SERVICE_FUNCTION="UPGRADE"
 #
+echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 if [ -n "$(nvram get script_usbmount)" ]
@@ -116,13 +118,6 @@ case "$(uname -m)" in
         exit 3
         ;;
 esac
-#
-########## END ##########
-#
-#
-########## NOTIFICATION ##########
-#
-echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
 #
 ########## END ##########
 #
