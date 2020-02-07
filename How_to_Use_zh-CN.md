@@ -251,7 +251,7 @@
 
 ## 升级
 
-> 当Entware发布新版本时，执行升级。此操作可在保留`/tmp/mnt/ASUS_ROUTER/home/root`中全部文件的同时全新安装本系统
+> 当Entware发布新版本时，执行升级。此操作可在保留`/tmp/mnt/ASUS_ROUTER/home`中全部文件的同时全新安装本系统
 
 1. 用ssh登陆路由器后台
 

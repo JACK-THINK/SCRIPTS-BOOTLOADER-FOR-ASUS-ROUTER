@@ -251,7 +251,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
 ## Upgrade
 
-> When new version of Entware is released, execute upgrade, which could preserve all the files in directory `/tmp/mnt/ASUS_ROUTER/home/root` and reinstall the system.
+> When new version of Entware is released, execute upgrade, which could preserve all the files in directory `/tmp/mnt/ASUS_ROUTER/home` and reinstall the system.
 
 1. Login the router with ssh client.
 
