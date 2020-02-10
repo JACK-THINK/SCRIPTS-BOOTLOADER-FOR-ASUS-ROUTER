@@ -92,6 +92,16 @@ then
     # 使用nvram命令对路由器进行设置后，必须执行nvram commit命令，才能将已作出的修改保存至路由器
     nvram commit
     #
+    # Disable amtm
+    # 禁用amtm
+    if [ -n "$(which amtm)" ]
+    then
+        echo -e "alias amtm='echo -e \"\033[1;41;37mFAILURE\033[0m: COLLISION DETECTED\"'" >> "${USB_MOUNT_POINT}/etc/bashrc"
+        rm -rf "/jffs/addons/amtm"
+        touch "/jffs/addons/amtm"
+        chmod 000 "/jffs/addons/amtm"
+    fi
+    #
     sync
     sleep 10
     umount -f "${USB_MOUNT_POINT}"

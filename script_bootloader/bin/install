@@ -475,6 +475,16 @@ do
     cp -f "${SBL_SYS_BIN}/${CMD_NAME}" "/tmp/sbl_${CMD_NAME}"
 done
 #
+# Disable amtm
+# 禁用amtm
+if [ -n "$(which amtm)" ]
+then
+    echo -e "alias amtm='echo -e \"\033[1;41;37mFAILURE\033[0m: COLLISION DETECTED\"'" >> "${USB_MOUNT_POINT}/etc/bashrc"
+    rm -rf "/jffs/addons/amtm"
+    touch "/jffs/addons/amtm"
+    chmod 000 "/jffs/addons/amtm"
+fi
+#
 # Temporary Solution: The 4-line code below is to solve the problem that gotee can't output the lines without \n, which makes no instruction given during the installation of the addons
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
 if ${TEST_FMW_TEE}

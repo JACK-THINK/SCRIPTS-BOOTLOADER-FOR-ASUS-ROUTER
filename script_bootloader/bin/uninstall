@@ -38,6 +38,14 @@ echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON 
 #
 ########## TERMINATE ANYTHING RELATED ##########
 #
+# Enable amtm
+# 启用amtm
+if [ -n "$(which amtm)" ]
+then
+    sed -i '/^alias amtm=/d' "${USB_MOUNT_POINT}/etc/bashrc"
+    rm -rf "/jffs/addons/amtm"
+fi
+#
 "$(nvram get script_usbumount)"
 umount -f "${USB_MOUNT_POINT}"
 #
