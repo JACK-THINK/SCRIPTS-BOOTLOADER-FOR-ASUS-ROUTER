@@ -18,7 +18,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 2. Installation script of [Entware](https://entware.net/) has been rewritten thoroughly. It will deploy Entware matching the architecture of your router automatically in the USB flash drive with no attendence.
 
-3. Users can choose the size of swap to install from 64M, 128M, 256M, 512M, 1024M and 2048M and the swap will be created during installation and mounted automatically at every startup.
+3. Users can choose the size of swap to install from 256M, 512M, 1024M and 2048M and the swap will be created during installation and mounted automatically at every startup.
 
 4. One-key deploying script, one-key updating script and addon-installation script are offered, which are very easy to use.
 
