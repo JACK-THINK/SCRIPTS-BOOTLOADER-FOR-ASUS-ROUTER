@@ -12,6 +12,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ANKI-SERVER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALL"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -59,14 +67,6 @@ ADMINUSER="$(nvram get sbl_username)"
 # ADMINPASSWORD: The administrator's password of the router
 # 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
 ADMINPASSWORD="$(nvram get sbl_password)"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ANKI-SERVER"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #

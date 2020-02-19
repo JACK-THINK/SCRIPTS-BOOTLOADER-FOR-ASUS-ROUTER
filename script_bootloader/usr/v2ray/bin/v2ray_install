@@ -12,6 +12,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="V2RAY"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALL"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -81,14 +89,6 @@ esac
 # DOWNLOAD_LINK: Download link of the latest v2ray-core
 # 设置自定义变量DOWNLOAD_LINK为最新版v2ray-core的下载链接
 DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="V2RAY"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #

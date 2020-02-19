@@ -5,10 +5,6 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# OVERTURE_PID_FILE: The path to overture.pid
-# 设置自定义变量OVERTURE_PID_FILE为文件overture.pid的绝对路径
-OVERTURE_PID_FILE="/var/run/overture.pid"
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="OVERTURE"
@@ -16,6 +12,10 @@ SERVICE_NAME="OVERTURE"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
+#
+# OVERTURE_PID_FILE: The path to overture.pid
+# 设置自定义变量OVERTURE_PID_FILE为文件overture.pid的绝对路径
+OVERTURE_PID_FILE="/var/run/overture.pid"
 #
 ########## END ##########
 #

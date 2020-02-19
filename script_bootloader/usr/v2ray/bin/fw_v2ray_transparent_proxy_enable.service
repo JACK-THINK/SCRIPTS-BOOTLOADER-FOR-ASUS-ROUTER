@@ -5,6 +5,14 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="FW_V2RAY_TRANSPARENT_PROXY"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -60,14 +68,6 @@ NF_TPROXY_CORE="$(/opt/bin/find /lib/modules/ -name "nf_tproxy_core.ko")"
 # XT_TPROXY: The path to xt_TPROXY.ko
 # 设置自定义变量XT_TPROXY为文件xt_TPROXY.ko的绝对路径
 XT_TPROXY="$(/opt/bin/find /lib/modules/ -name "xt_TPROXY.ko")"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="FW_V2RAY_TRANSPARENT_PROXY"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="ENABLE"
 #
 ########## END ##########
 #

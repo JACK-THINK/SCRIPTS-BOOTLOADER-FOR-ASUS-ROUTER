@@ -2,9 +2,8 @@
 #
 ########## SET THE CUSTOM VARIABLES ##########
 #
-# GCC_ENVIRONMENT: The path to gcc environment configuration
-# 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
-GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
 #
 # NAME OF THE SERVICE
 # 服务名称
@@ -13,6 +12,10 @@ SERVICE_NAME="DEPENDENCY"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="ENABLE"
+#
+# GCC_ENVIRONMENT: The path to gcc environment configuration
+# 设置自定义变量GCC_ENVIRONMENT为gcc环境配置文件
+GCC_ENVIRONMENT="/opt/bin/gcc_env.sh"
 #
 ########## END ##########
 #

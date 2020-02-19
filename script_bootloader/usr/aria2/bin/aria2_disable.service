@@ -5,10 +5,6 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# ARIA2_PID_FILE: The path to aria2.pid
-# 设置自定义变量ARIA2_PID_FILE为文件aria2.pid的绝对路径
-ARIA2_PID_FILE="/var/run/aria2.pid"
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="ARIA2"
@@ -16,6 +12,10 @@ SERVICE_NAME="ARIA2"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
+#
+# ARIA2_PID_FILE: The path to aria2.pid
+# 设置自定义变量ARIA2_PID_FILE为文件aria2.pid的绝对路径
+ARIA2_PID_FILE="/var/run/aria2.pid"
 #
 ########## END ##########
 #

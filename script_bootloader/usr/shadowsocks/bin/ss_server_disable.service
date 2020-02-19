@@ -5,10 +5,6 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# SS_SERVER_PID_FILE: The path to ss_server.pid
-# 设置自定义变量SS_SERVER_PID_FILE为文件ss_server.pid的绝对路径
-SS_SERVER_PID_FILE="/var/run/ss_server.pid"
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="SS-SERVER"
@@ -16,6 +12,10 @@ SERVICE_NAME="SS-SERVER"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
+#
+# SS_SERVER_PID_FILE: The path to ss_server.pid
+# 设置自定义变量SS_SERVER_PID_FILE为文件ss_server.pid的绝对路径
+SS_SERVER_PID_FILE="/var/run/ss_server.pid"
 #
 ########## END ##########
 #

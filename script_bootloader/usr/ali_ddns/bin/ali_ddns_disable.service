@@ -5,6 +5,14 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ALI_DDNS"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -44,14 +52,6 @@ TYPE="$(/opt/bin/sed -E -n -e 's#^TYPE=\"([[:alnum:]]+)\"#\1#p' "${PRIVATE_ETC}/
 RR="${RR_KEY_WORD}"
 RECORD_ID="$(/opt/bin/aliyun alidns DescribeDomainRecords --DomainName "${DOMAIN_NAME}" --RRKeyWord "${RR_KEY_WORD}" --Type "${TYPE}" --mode "${MODE}" --access-key-id "${ACCESS_KEY_ID}" --access-key-secret "${ACCESS_KEY_SECRET}" --language "${LANGUAGE}" --region "${REGION}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"RecordId\":[[:space:]]*\"(.*)\".*/\1/p')"
 VALUE="8.8.8.8"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ALI_DDNS"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="DISABLE"
 #
 ########## END ##########
 #

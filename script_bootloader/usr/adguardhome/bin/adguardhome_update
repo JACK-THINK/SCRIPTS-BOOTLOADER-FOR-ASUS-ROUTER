@@ -13,6 +13,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ADGUARD-HOME"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="UPGRADE"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -74,14 +82,6 @@ esac
 # DOWNLOAD_LINK: Download link of the latest adguardhome
 # 设置自定义变量DOWNLOAD_LINK为最新版adguardhome的下载链接
 DOWNLOAD_LINK="https://github.com/AdguardTeam/AdGuardHome/releases/download/${LATEST_VERSION}/AdGuardHome_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ADGUARD-HOME"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="UPGRADE"
 #
 ########## END ##########
 #

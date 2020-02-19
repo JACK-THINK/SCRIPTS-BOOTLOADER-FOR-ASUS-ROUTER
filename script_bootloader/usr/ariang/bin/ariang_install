@@ -12,6 +12,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ARIANG"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALL"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -55,14 +63,6 @@ LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/mayswind/AriaNg
 # DOWNLOAD_LINK: Download link of the latest ariang
 # 设置自定义变量DOWNLOAD_LINK为最新版ariang的下载链接
 DOWNLOAD_LINK="https://github.com/mayswind/AriaNg/releases/download/${LATEST_VERSION}/AriaNg-${LATEST_VERSION}-AllInOne.zip"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ARIANG"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #

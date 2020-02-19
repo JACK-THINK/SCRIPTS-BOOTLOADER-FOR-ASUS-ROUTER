@@ -14,6 +14,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="SHUTDOWN"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
@@ -45,14 +53,6 @@ SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
 # SERVICES_TO_DISABLE: The list of running services that should be disabled
 # 设置自定义变量SERVICES_TO_DISABLE为待结束服务列表文件
 SERVICES_TO_DISABLE="${SBL_SYS_TMP}/services_to_disable.tmp"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="SHUTDOWN"
 #
 ########## END ##########
 #

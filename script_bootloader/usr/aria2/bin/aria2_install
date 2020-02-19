@@ -12,6 +12,14 @@ ROUTER_MODEL="$(nvram get model)"
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ARIA2"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="INSTALL"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
@@ -43,14 +51,6 @@ PRIVATE_VAR="${PRIVATE_ROOT}/var"
 # DOWNLOADS: The directory which contains all the files downloaded from Internet
 # 设置自定义变量DOWNLOADS为下载目录
 DOWNLOADS="/opt/home/root/Downloads"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ARIA2"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="INSTALL"
 #
 ########## END ##########
 #

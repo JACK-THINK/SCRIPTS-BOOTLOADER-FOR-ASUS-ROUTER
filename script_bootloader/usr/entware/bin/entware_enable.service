@@ -5,6 +5,14 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="ENTWARE"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
@@ -24,14 +32,6 @@ PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 # ENTWARE_ENVIRONMENT: The path to entware environment configuration
 # 设置自定义变量ENTWARE_ENVIRONMENT为entware环境配置文件
 ENTWARE_ENVIRONMENT="/opt/etc/init.d/rc.unslung"
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="ENTWARE"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="ENABLE"
 #
 # FILES_TO_COPY: The list of files that should be copied
 # 设置自定义变量FILES_TO_COPY为待复制文件列表

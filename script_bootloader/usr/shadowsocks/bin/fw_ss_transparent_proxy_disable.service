@@ -5,14 +5,6 @@
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
 #
-# BUILT_IN_CHAIN_NAME: Name of the built-in chain
-# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
-BUILT_IN_CHAIN_NAME="PREROUTING"
-#
-# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
-# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
-USER_DEFINED_CHAIN_NAME="SS_TPROXY"
-#
 # NAME OF THE SERVICE
 # 服务名称
 SERVICE_NAME="FW_SS_TRANSPARENT_PROXY"
@@ -20,6 +12,14 @@ SERVICE_NAME="FW_SS_TRANSPARENT_PROXY"
 # FUNCTION OF THE SERVICE
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
+#
+# BUILT_IN_CHAIN_NAME: Name of the built-in chain
+# 设置自定义变量BUILT_IN_CHAIN_NAME为防火墙默认链名
+BUILT_IN_CHAIN_NAME="PREROUTING"
+#
+# USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+# 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+USER_DEFINED_CHAIN_NAME="SS_TPROXY"
 #
 ########## END ##########
 #
