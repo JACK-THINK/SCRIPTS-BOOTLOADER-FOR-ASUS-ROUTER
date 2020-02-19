@@ -431,10 +431,14 @@ fi
 #
 sleep 10
 #
-# Check if ${SBL_SYS_BIN}/list_of_user_custom_scripts exists
-# 检查文件${SBL_SYS_BIN}/list_of_user_custom_scripts是否存在
-if [ -e "${SBL_SYS_BIN}/list_of_user_custom_scripts" ]
+# Check if ${SBL_SYS_ETC}/list_of_user_custom_scripts.template exists
+# 检查文件${SBL_SYS_ETC}/list_of_user_custom_scripts.template是否存在
+if [ -e "${SBL_SYS_ETC}/list_of_user_custom_scripts.template" ]
 then
+    cp -f "${SBL_SYS_ETC}/list_of_user_custom_scripts.template" "${SBL_SYS_BIN}/list_of_user_custom_scripts"
+    #
+    chmod 777 "${SBL_SYS_BIN}/list_of_user_custom_scripts"
+    #
     # Modify ${SBL_SYS_BIN}/list_of_user_custom_scripts
     # 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
     "${USB_MOUNT_POINT}/bin/sed" -i -e '/# NEXT SERVICE/i\# DEPENDENCY SERVICE\n\"${SBL_SYS_USR}/dependency/bin/dependency_enable.service\"\n#' "${SBL_SYS_BIN}/list_of_user_custom_scripts"
@@ -443,8 +447,8 @@ then
     #
 else
     # Stop and Exit
-    # 如果文件${SBL_SYS_BIN}/list_of_user_custom_scripts不存在，则该程序终止
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_BIN}/list_of_user_custom_scripts"
+    # 如果文件${SBL_SYS_ETC}/list_of_user_custom_scripts.template不存在，则该程序终止
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_ETC}/list_of_user_custom_scripts.template"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
     #
     exit 31
