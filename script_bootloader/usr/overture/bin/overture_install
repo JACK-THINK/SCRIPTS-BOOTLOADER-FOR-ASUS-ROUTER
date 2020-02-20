@@ -150,8 +150,9 @@ then
         /opt/bin/chmod 644 "${PRIVATE_USR}"/*
         /opt/bin/chmod 755 "${PRIVATE_USR}/overture"
         #
-        # Modify ${PRIVATE_ETC}/config.json
-        # 修改${PRIVATE_ETC}/config.json
+        # Configure overture
+        # 配置overture
+        /opt/bin/cp -f "${PRIVATE_ETC}/config.json.template" "${PRIVATE_ETC}/config.json"
         /opt/bin/sed -E -i '/^[[:space:]]+\"BindAddress\":/s/[[:digit:]]+/'"${SS_TUNNEL_LOCAL_PORT}"'/' "${PRIVATE_ETC}/config.json"
         /opt/bin/sed -E -i '/^[[:space:]]+\"SOCKS5Address\":/s/[[:digit:].:]{2,}/127.0.0.1:'"${SS_LOCAL_LOCAL_PORT}"'/' "${PRIVATE_ETC}/config.json"
         #

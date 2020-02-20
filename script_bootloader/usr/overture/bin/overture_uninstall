@@ -36,6 +36,10 @@ PRIVATE_ROOT="${SBL_SYS_USR}/overture"
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
 #
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
 # PRIVATE_USR: The directory which contains all the external software resources related to this program
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR="${PRIVATE_ROOT}/usr"
@@ -88,6 +92,7 @@ then
         # Uninstall overture
         # 卸载overture
         /opt/bin/rm -rf "${PRIVATE_USR}"
+        /opt/bin/rm -rf "${PRIVATE_ETC}/config.json"
         #
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #

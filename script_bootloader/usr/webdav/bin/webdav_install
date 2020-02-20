@@ -146,6 +146,7 @@ then
         #
         # Configure webdav
         # 配置webdav
+        /opt/bin/cp -f "${PRIVATE_ETC}/config.yaml.template" "${PRIVATE_ETC}/config.yaml"
         /opt/bin/sed -i 's/ADMINUSER/'"${ADMINUSER}"'/' "${PRIVATE_ETC}/config.yaml"
         /opt/bin/sed -i 's/ADMINPASSWORD/'"${ADMINPASSWORD}"'/' "${PRIVATE_ETC}/config.yaml"
         #

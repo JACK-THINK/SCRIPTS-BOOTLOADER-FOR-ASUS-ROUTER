@@ -31,7 +31,7 @@
 
 | 权限      | 名称                           | 属性     | 说明               |
 | --------- | ------------------------------ | -------- | ------------------ |
-| rwxrwxrwx | config.yaml                    | 普通文件 | webdav配置文件     |
+| rwxrwxrwx | config.yaml.template           | 普通文件 | webdav配置文件模板 |
 | rwxrwxrwx | config_example.yaml            | 普通文件 | webdav配置文件示例 |
 | rwxrwxrwx | fw.d/webdav_open               | 普通文件 | fw.d配置文件       |
 | rwxrwxrwx | monit.d/fw_filter_INPUT_webdav | 普通文件 | monit.d配置文件    |
