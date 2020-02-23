@@ -131,13 +131,13 @@ then
     # 安装附加依赖
     #
     # Python
-    if [ -e "/opt/bin/pip3" ]
-    then
-        /opt/bin/pip3 install --upgrade pip setuptools
-        /opt/bin/pip3 install certifi
-        /opt/bin/pip3 install chardet
-        /opt/bin/pip3 install urllib3
-    fi
+    #if [ -e "/opt/bin/pip3" ]
+    #then
+    #    /opt/bin/pip3 install --upgrade pip setuptools
+    #    /opt/bin/pip3 install certifi
+    #    /opt/bin/pip3 install chardet
+    #    /opt/bin/pip3 install urllib3
+    #fi
     #
     # Back up ${ENTWARE_ETC}/profile to ${PRIVATE_ETC}/profile.bak
     # 备份文件${ENTWARE_ETC}/profile至${PRIVATE_ETC}/profile.bak
