@@ -40,6 +40,10 @@ ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/anki_server"
 #
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE="${PRIVATE_ROOT}/alternative"
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
@@ -92,13 +96,9 @@ then
     then
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #
-        # Update the list of available packages
-        # 更新可用程序包列表
-        /opt/bin/opkg update
-        #
         # Install virtualenv
         # 安装virtualenv
-        /opt/bin/pip2 install virtualenv
+        /opt/bin/pip2 install "${PRIVATE_ALTERNATIVE}/virtualenv-16.7.9-py2.py3-none-any.whl"
         #
         # Create virtual environment
         # 创建虚拟环境
