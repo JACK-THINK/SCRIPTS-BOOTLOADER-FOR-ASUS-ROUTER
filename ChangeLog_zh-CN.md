@@ -1,5 +1,25 @@
 # 更新日志
 
+## 版本16.1（2020-04-01）
+
+#### 新增
+
+1. 无
+
+#### 变更
+
+1. 更新monit，更改验证信息格式
+2. 更新dependency，添加git和git-http
+3. 更新install_online，取消依赖curl
+4. 更新addons_install，处理.monit.id和.monit.state
+5. 更新script_bootloader_usb_umount，处理.monit.id和.monit.state
+6. 更新drive_modifier，修复零分区及分区方案问题
+7. 修复Bugs
+
+#### 删除
+
+1. 无
+
 ## 版本16.0（Chinese New Year）
 
 #### 新增

@@ -8,28 +8,39 @@
 #
 ########## SET THE LABEL OF THE USB FLASH DRIVE ##########
 #
-# USB_DEVICE: USB flash drive
-# 设置自定义变量USB_DEVICE为U盘
-USB_DEVICE="$(cat "/tmp/usb.log" | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])\):[[:space:]]+Success.*/\1/p')"
+# USB_DRIVE: USB flash drive
+# 设置自定义变量USB_DRIVE为U盘
+USB_DRIVE="$(cat "/tmp/usb.log" | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])\):[[:space:]]+Success.*/\1/p' | tail -n 1)"
 #
-if [ -z "${USB_DEVICE}" ]
+if [ -z "${USB_DRIVE}" ]
 then
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: USB FLASH DRIVE IS NOT FOUND"
     #
     exit 1
 fi
 #
-# USB_DEVICE_PARTITION: Partition 1 of the USB flash drive
-# 设置自定义变量USB_DEVICE_PARTITION为U盘第一分区
-USB_DEVICE_PARTITION="/dev/${USB_DEVICE}1"
+# USB_DRIVE_PARTITION: Partition 1 of the USB flash drive
+# 设置自定义变量USB_DRIVE_PARTITION为U盘第一分区
+USB_DRIVE_PARTITION="/dev/${USB_DRIVE}1"
+#
+# USB_DRIVE_PARTITION_SCHEME: Partitioning scheme of the USB flash drive
+# 设置自定义变量USB_DRIVE_PARTITION_SCHEME为U盘分区方案
+USB_DRIVE_PARTITION_SCHEME="$(echo -ne "q\n" | fdisk "/dev/${USB_DRIVE}" | grep -i 'gpt')"
+#
+if [ -n "${USB_DRIVE_PARTITION_SCHEME}" ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONVERT PARTITION SCHEME OF THE USB FLASH DRIVE FROM GPT TO MBR ON YOUR COMPUTER"
+    #
+    exit 2
+fi
 #
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标ASUS_ROUTER。可修改，但长度不可超过16字节
 USB_DRIVE_LABEL="ASUS_ROUTER"
 #
-# USB_DEVICE_BRAND_MODEL: Brand and model of the USB flash drive
-# 设置自定义变量USB_DEVICE_BRAND_MODEL为U盘品牌和型号
-USB_DEVICE_BRAND_MODEL="$(sed -E 's/[[:space:]]+/ /g' "/proc/scsi/sg/device_strs")"
+# USB_DRIVE_BRAND_MODEL: Brand and model of the USB flash drive
+# 设置自定义变量USB_DRIVE_BRAND_MODEL为U盘品牌和型号
+USB_DRIVE_BRAND_MODEL="$(sed -E 's/[[:space:]]+/ /g' "/proc/scsi/sg/device_strs")"
 #
 ########## END ##########
 #
@@ -40,44 +51,44 @@ cd "/tmp"
 #
 # Unmount all partitions on the USB flash drive
 # 卸载U盘上的全部分区
-MAX_PARTNUM=$(echo -ne "p\n" | fdisk "/dev/${USB_DEVICE}" | sed -E -n -e 's/[[:space:]]*\/dev\/'"${USB_DEVICE}"'([[:digit:]]+)[[:space:]]+.*/\1/p' | tail -n 1)
+MAX_PARTNUM=$(echo -ne "p\n" | fdisk "/dev/${USB_DRIVE}" | sed -E -n -e 's/[[:space:]]*\/dev\/'"${USB_DRIVE}"'([[:digit:]]+)[[:space:]]+.*/\1/p' | tail -n 1)
 #
-while [ ${MAX_PARTNUM} -gt 0 ]
+while [ -n "${MAX_PARTNUM}" ] && [ ${MAX_PARTNUM} -gt 0 ]
 do
-    umount -f "/dev/${USB_DEVICE}${MAX_PARTNUM}" 2> /dev/null
+    umount -f "/dev/${USB_DRIVE}${MAX_PARTNUM}" 2> /dev/null
     MAX_PARTNUM=$((${MAX_PARTNUM}-1))
     sleep 5
 done
 #
 sleep 10
 #
-# Re-partition /dev/${USB_DEVICE}
-# 重新分区/dev/${USB_DEVICE}
-echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: RE-PARTITION ${USB_DEVICE_BRAND_MODEL}"
-echo -ne "u\np\no\nn\np\n1\n2048\n\np\nw\n" | fdisk "/dev/${USB_DEVICE}"
+# Re-partition /dev/${USB_DRIVE}
+# 重新分区/dev/${USB_DRIVE}
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: RE-PARTITION ${USB_DRIVE_BRAND_MODEL}"
+echo -ne "u\np\no\nn\np\n1\n2048\n\np\nw\n" | fdisk "/dev/${USB_DRIVE}"
 #
 if [ ${?} -ne 0 ]
 then
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T RE-PARTITION ${USB_DEVICE_BRAND_MODEL}"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T RE-PARTITION ${USB_DRIVE_BRAND_MODEL}"
     #
-    exit 2
+    exit 3
 fi
 #
 sleep 10
 #
-# Format ${USB_DEVICE_PARTITION} with ${USB_DRIVE_LABEL}
-# 格式化${USB_DEVICE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
-echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: LABEL OF ${USB_DEVICE_BRAND_MODEL} IS ${USB_DRIVE_LABEL}"
-umount -f "/dev/${USB_DEVICE}1" 2> /dev/null
-mkfs.ext3 -FL "${USB_DRIVE_LABEL}" "${USB_DEVICE_PARTITION}"
+# Format ${USB_DRIVE_PARTITION} with ${USB_DRIVE_LABEL}
+# 格式化${USB_DRIVE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
+echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: LABEL OF ${USB_DRIVE_BRAND_MODEL} IS ${USB_DRIVE_LABEL}"
+umount -f "/dev/${USB_DRIVE}1" 2> /dev/null
+mkfs.ext3 -FL "${USB_DRIVE_LABEL}" "${USB_DRIVE_PARTITION}"
 #
 # Check if mkfs.ext3 returns 0
 # 检查mkfs.ext3的返回值是否为0
 if [ ${?} -ne 0 ]
 then
-    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${USB_DEVICE_BRAND_MODEL} IS NOT READY"
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${USB_DRIVE_BRAND_MODEL} IS NOT READY"
     #
-    exit 3
+    exit 4
 fi
 #
 sleep 120
@@ -89,13 +100,13 @@ then
     mkdir -m 777 "/tmp/mnt/${USB_DRIVE_LABEL}"
 fi
 #
-# Mount ${USB_DEVICE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
-# 挂载${USB_DEVICE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
-mount "${USB_DEVICE_PARTITION}" "/tmp/mnt/${USB_DRIVE_LABEL}" 2> /dev/null
+# Mount ${USB_DRIVE_PARTITION} to /tmp/mnt/${USB_DRIVE_LABEL}
+# 挂载${USB_DRIVE_PARTITION}至/tmp/mnt/${USB_DRIVE_LABEL}
+mount "${USB_DRIVE_PARTITION}" "/tmp/mnt/${USB_DRIVE_LABEL}" 2> /dev/null
 #
 sleep 30
 #
-echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${USB_DEVICE_BRAND_MODEL} IS READY"
+echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${USB_DRIVE_BRAND_MODEL} IS READY"
 #
 exit 0
 #

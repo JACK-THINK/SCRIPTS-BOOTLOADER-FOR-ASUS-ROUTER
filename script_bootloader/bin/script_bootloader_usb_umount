@@ -96,6 +96,18 @@ then
     do
         sleep 5
     done
+    #
+    MONIT_ID_FILE="$(sed -E -n -e 's/^set[[:space:]]+idfile[[:space:]]+([^[:space:]]+)/\1/p' "/opt/etc/monitrc")"
+    if [ "${MONIT_ID_FILE}" == "/var/.monit.id" ]
+    then
+        rm -f "${MONIT_ID_FILE}"
+    fi
+    #
+    MONIT_STATE_FILE="$(sed -E -n -e 's/^set[[:space:]]+statefile[[:space:]]+([^[:space:]]+)/\1/p' "/opt/etc/monitrc")"
+    if [ "${MONIT_STATE_FILE}" == "/var/.monit.state" ]
+    then
+        rm -f "${MONIT_STATE_FILE}"
+    fi
 fi
 #
 # Disable all custom scripts managed by ${SBL_SYS_BIN}/list_of_user_custom_scripts

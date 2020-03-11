@@ -357,6 +357,8 @@ diffutils
 drill
 empty
 gawk
+git
+git-http
 htop
 iftop
 ldconfig

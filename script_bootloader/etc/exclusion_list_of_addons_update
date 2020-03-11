@@ -21,7 +21,6 @@ timezone
 #
 ########## SUBSIDIARY ADDONS ##########
 #
-adguardhome
 webdav
 #
 ########## END ##########

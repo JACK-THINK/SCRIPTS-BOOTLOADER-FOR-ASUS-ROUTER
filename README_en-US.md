@@ -44,7 +44,7 @@ As a consequence, I decide to develop this SCRIPTS BOOTLOADER FOR ASUS ROUTER wh
 
 ## Online Installation
 
-1. Back up all the data on the target USB flash drive (no less than 4GB) and connect it to the router.
+1. Back up all the data on the target USB flash drive (not less than 4GB; MBR) and connect it to the router.
 
 2. Unplug all the USB flash drives from the router except the target one.
 

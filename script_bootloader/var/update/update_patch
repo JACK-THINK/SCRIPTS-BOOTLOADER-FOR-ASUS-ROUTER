@@ -62,14 +62,5 @@ SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
 #
 ########## PATCH SYSTEM ##########
 #
-cp -f "${SBL_SYS_ETC}/list_of_user_custom_scripts.template" "${SBL_SYS_BIN}/list_of_user_custom_scripts"
-#
-chmod 777 "${SBL_SYS_BIN}/list_of_user_custom_scripts"
-#
-# Modify ${SBL_SYS_BIN}/list_of_user_custom_scripts
-# 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
-"${USB_MOUNT_POINT}/bin/sed" -i -e '/# NEXT SERVICE/i\# DEPENDENCY SERVICE\n\"${SBL_SYS_USR}/dependency/bin/dependency_enable.service\"\n#' "${SBL_SYS_BIN}/list_of_user_custom_scripts"
-#
-"${USB_MOUNT_POINT}/bin/sed" -i -e '/# NEXT SERVICE/i\# DNSMASQ.D SERVICE\n\"${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service\"\n#' "${SBL_SYS_BIN}/list_of_user_custom_scripts"
 #
 ########## END ##########

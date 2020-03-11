@@ -22,7 +22,7 @@
 > 3. White characters with red background: notice of failure.
 >    - The line above the notice of failure will show the name of script which runs into error and relevant details.
 
-1. Insert a USB flash drive with no files into a USB port of the Router.
+1. Insert a USB flash drive (not less than 4GB; MBR) with no files into a USB port of the Router.
 
 2. Login the router with ssh client.
 
@@ -121,7 +121,7 @@
 >
 > 1. In all the instances of `SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0` below, the version part `16.0-16.0` can vary when the system gets updates. Please replace it with the latest version number. Plus, you can auto-complete this part by hitting key \<Tab\>.
 
-1. Insert a USB flash drive with no files into a USB port of the Router.
+1. Insert a USB flash drive (not less than 4GB; MBR) with no files into a USB port of the Router.
 
 2. Login the router with ssh client.
 

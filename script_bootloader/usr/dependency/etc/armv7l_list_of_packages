@@ -442,6 +442,8 @@ drill
 empty
 gawk
 gcc
+git
+git-http
 htop
 iftop
 ldconfig

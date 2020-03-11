@@ -118,19 +118,29 @@ then
         do
             /opt/bin/sleep 5
         done
+        #
+        MONIT_ID_FILE="$(/opt/bin/sed -E -n -e 's/^set[[:space:]]+idfile[[:space:]]+([^[:space:]]+)/\1/p' "/opt/etc/monitrc")"
+        if [ "${MONIT_ID_FILE}" == "/var/.monit.id" ]
+        then
+            /opt/bin/rm -f "${MONIT_ID_FILE}"
+        fi
+        #
+        MONIT_STATE_FILE="$(/opt/bin/sed -E -n -e 's/^set[[:space:]]+statefile[[:space:]]+([^[:space:]]+)/\1/p' "/opt/etc/monitrc")"
+        if [ "${MONIT_STATE_FILE}" == "/var/.monit.state" ]
+        then
+            /opt/bin/rm -f "${MONIT_STATE_FILE}"
+        fi
     fi
     #
     # Configure MONIT MANAGEMENT SYSTEM
     # 配置MONIT MANAGEMENT SYSTEM
-    /opt/bin/sed -E -i 's/allow[[:space:]]+[[:alnum:]_]+:[[:alnum:]_]+/allow '"${ADMINUSER}:${ADMINPASSWORD}"'/' "/opt/etc/monitrc"
+    /opt/bin/sed -E -i 's/allow[[:space:]]+[[:alnum:]_]+:[[:alnum:]_]+/allow '"\'${ADMINUSER}\'\:\'${ADMINPASSWORD}\'"'/' "/opt/etc/monitrc"
     #
     # Start MONIT MANAGEMENT SYSTEM及其全部服务
     # 启动MONIT MANAGEMENT SYSTEM及其全部服务
     /opt/etc/init.d/S*monit start
-    /opt/bin/sleep 5
-    /opt/bin/monit start all
     #
-    sleep 10
+    /opt/bin/sleep 10
 fi
 #
 ########## END ##########

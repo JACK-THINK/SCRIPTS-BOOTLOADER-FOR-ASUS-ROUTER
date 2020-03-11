@@ -81,9 +81,10 @@ then
     rm -f "/tmp/sbl_download_link.html"
     #
     exit 5
+else
+    DOWNLOAD_LINK="$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' "/tmp/sbl_download_link.html")"
+    rm -f "/tmp/sbl_download_link.html"
 fi
-#
-DOWNLOAD_LINK="$(sed -E -n -e 's/^[[:space:]]*\"tarball_url\":[[:space:]]*\"(.*)\".*/\1/p' "/tmp/sbl_download_link.html")"
 #
 # NAME OF THE ARCHIVE
 # 设置自定义变量ARCHIVE_NAME为包文件名
@@ -191,6 +192,10 @@ fi
 #
 sleep 30
 #
+# Remove ${ARCHIVE_NAME} package
+# 删除${ARCHIVE_NAME}包
+rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+#
 # Move directory script_bootloader to directory ${USB_MOUNT_POINT}
 # 移动目录script_bootloader至目录${USB_MOUNT_POINT}
 mv -f "${USB_MOUNT_POINT}"/JACK*/script_bootloader "${USB_MOUNT_POINT}"
@@ -200,10 +205,6 @@ sleep 10
 # Remove directory JACK*
 # 删除目录JACK*
 rm -rf "${USB_MOUNT_POINT}"/JACK*
-#
-# Remove ${ARCHIVE_NAME} package
-# 删除${ARCHIVE_NAME}包
-rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
 #
 # Change the mode of the files
 # 更改文件权限
