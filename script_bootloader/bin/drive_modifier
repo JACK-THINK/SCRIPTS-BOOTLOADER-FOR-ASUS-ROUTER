@@ -25,7 +25,7 @@ USB_DRIVE_PARTITION="/dev/${USB_DRIVE}1"
 #
 # USB_DRIVE_PARTITION_SCHEME: Partitioning scheme of the USB flash drive
 # 设置自定义变量USB_DRIVE_PARTITION_SCHEME为U盘分区方案
-USB_DRIVE_PARTITION_SCHEME="$(echo -ne "p\nq\n" | fdisk "/dev/${USB_DRIVE}" | grep -i 'gpt')"
+USB_DRIVE_PARTITION_SCHEME="$(echo -ne "p\n" | fdisk "/dev/${USB_DRIVE}" | grep -i 'gpt')"
 #
 if [ -n "${USB_DRIVE_PARTITION_SCHEME}" ]
 then
