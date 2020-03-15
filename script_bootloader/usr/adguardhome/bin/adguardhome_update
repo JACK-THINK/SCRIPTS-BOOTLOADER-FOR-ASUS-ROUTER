@@ -46,7 +46,7 @@ LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/AdguardTeam/AdG
 #
 # CURRENT_VERSION: Version of the current adguardhome
 # 设置自定义变量CURRENT_VERSION为当前adguardhome的版本号
-CURRENT_VERSION="$("${PRIVATE_USR}/AdGuardHome" --version | /opt/bin/sed -E -n -e 's/.*[[:space:]]+(v[[:digit:]\.]+)-.*/\1/p')"
+CURRENT_VERSION="$("${PRIVATE_USR}/AdGuardHome" --version | /opt/bin/sed -E -n -e 's/.*[[:space:]]+(v[[:digit:]\.]+)-{0,1}.*/\1/p')"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
