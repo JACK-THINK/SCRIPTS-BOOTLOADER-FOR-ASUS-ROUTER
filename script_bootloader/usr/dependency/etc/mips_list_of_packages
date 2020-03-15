@@ -364,6 +364,8 @@ iftop
 ldconfig
 ldd
 lrzsz
+lsblk
+lsof
 make
 mc
 ncat-ssl
@@ -384,6 +386,7 @@ tar
 tcpdump
 tmux
 unzip
+usbutils
 vim-full
 vim-runtime
 vim-help
