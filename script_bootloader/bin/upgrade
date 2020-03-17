@@ -240,7 +240,8 @@ mv -f "/tmp/sbl_install_log" "${USB_MOUNT_POINT}"
 # Reboot the router
 # 需使用reboot命令重启路由器，确保设置生效
 "$(nvram get script_usbumount)" > /dev/null 2>&1
-umount -f "${USB_MOUNT_POINT}"
+sleep 30
+umount -f "${USB_MOUNT_POINT}" > /dev/null 2>&1
 echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 sync
 sleep 10

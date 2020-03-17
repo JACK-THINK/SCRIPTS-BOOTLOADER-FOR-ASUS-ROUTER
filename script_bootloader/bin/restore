@@ -104,7 +104,7 @@ then
     #
     sync
     sleep 10
-    umount -f "${USB_MOUNT_POINT}"
+    umount -f "${USB_MOUNT_POINT}" > /dev/null 2>&1
     echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     sync
     sleep 10
