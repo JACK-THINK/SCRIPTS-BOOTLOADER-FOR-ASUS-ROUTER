@@ -46,7 +46,7 @@ then
     rm -rf "/jffs/addons/amtm"
 fi
 #
-"$(nvram get script_usbumount)" > /dev/null 2>&1
+"$(nvram get script_usbumount)"
 sleep 30
 umount -f "${USB_MOUNT_POINT}" > /dev/null 2>&1
 #
