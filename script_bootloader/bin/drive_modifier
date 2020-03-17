@@ -10,7 +10,7 @@
 #
 # USB_DRIVE: USB flash drive
 # 设置自定义变量USB_DRIVE为U盘
-USB_DRIVE="$(cat "/tmp/usb.log" | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])\):[[:space:]]+Success.*/\1/p' | tail -n 1)"
+USB_DRIVE="$(cat "/tmp/usb.log" | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])[[:digit:]]?\):[[:space:]]+Success.*/\1/p' | tail -n 1)"
 #
 if [ -z "${USB_DRIVE}" ]
 then
