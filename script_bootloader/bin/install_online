@@ -276,8 +276,6 @@ then
     rm -f "/tmp/gohash"
     rm -f "/tmp/install_online"
     exit 4
-else
-    rm -f "/tmp/drive_modifier"
 fi
 #
 ########## END ##########
@@ -291,6 +289,7 @@ fi
 # USB_DRIVE_LABEL: Default label of the USB flash drive
 # 设置自定义变量USB_DRIVE_LABEL为U盘默认卷标
 USB_DRIVE_LABEL="$(sed -E -n -e 's/^USB_DRIVE_LABEL=\"(.*)\"/\1/p' "/tmp/drive_modifier")"
+rm -f "/tmp/drive_modifier"
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
