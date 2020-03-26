@@ -106,6 +106,18 @@ then
         # 下载aliyun-cli包
         /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
         #
+        # Check if ${PRIVATE_BIN}/aliyun-cli-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip exists
+        # 检查文件${PRIVATE_BIN}/aliyun-cli-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip是否存在
+        if [ ! -s "${PRIVATE_BIN}/aliyun-cli-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            /opt/bin/rm -f "${PRIVATE_BIN}/aliyun-cli-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+            #
+            exit 5
+        fi
+        #
         # Create directory ${PRIVATE_USR}
         # 创建${PRIVATE_USR}目录
         /opt/bin/mkdir "${PRIVATE_USR}"

@@ -119,6 +119,18 @@ else
             # 下载adguardhome包
             /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
             #
+            # Check if ${PRIVATE_BIN}/AdGuardHome_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz exists
+            # 检查文件${PRIVATE_BIN}/AdGuardHome_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz是否存在
+            if [ ! -s "${PRIVATE_BIN}/AdGuardHome_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" ]
+            then
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                /opt/bin/rm -f "${PRIVATE_BIN}/AdGuardHome_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
+                #
+                exit 5
+            fi
+            #
             # Remove previous backup
             # 删除旧备份
             /opt/bin/rm -rf "${PRIVATE_ROOT}/usr_prev"

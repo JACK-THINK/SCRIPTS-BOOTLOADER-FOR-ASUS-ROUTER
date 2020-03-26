@@ -118,6 +118,18 @@ then
         # 下载syncthing
         /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
         #
+        # Check if ${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz exists
+        # 检查文件${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz是否存在
+        if [ ! -s "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz" ]
+        then
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            #
+            /opt/bin/rm -f "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz"
+            #
+            exit 5
+        fi
+        #
         # Unzip syncthing package
         # 解压syncthing包
         /opt/bin/tar -xzvf "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz" -C "${PRIVATE_ROOT}"
