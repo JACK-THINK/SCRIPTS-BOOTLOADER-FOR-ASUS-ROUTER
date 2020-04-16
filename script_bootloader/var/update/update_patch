@@ -70,7 +70,6 @@ SBL_SYS_VAR="${SBL_SYS_ROOT}/var"
 /opt/bin/cp -f "/opt/script_bootloader/usr/dnsmasq.d/etc/monit.d/dnsmasq.d" "${ENTWARE_MONITD}"
 /opt/bin/chmod 600 "${ENTWARE_MONITD}/dnsmasq.d"
 /opt/bin/mv -f "${ENTWARE_MONITD}/dnsmasq.d" "${ENTWARE_MONITD}/dnsmasq.d.on"
-/opt/bin/monit reload
 #
 ##### Adguard-Home #####
 # Configure dnsmasq.d
@@ -102,7 +101,10 @@ then
     /opt/bin/chmod 600 "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file"
     #/opt/bin/mv -f "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file" "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file.on"
     #
-    /opt/bin/monit reload
 fi
+/opt/bin/monit reload
+/opt/bin/sleep 30
+cd /tmp
+/tmp/sbl_restart_router
 #
 ########## END ##########
