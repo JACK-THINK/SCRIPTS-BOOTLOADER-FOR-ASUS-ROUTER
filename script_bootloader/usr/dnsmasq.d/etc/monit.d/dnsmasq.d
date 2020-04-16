@@ -1,5 +1,4 @@
-check directory DNSMASQ.D path "/opt/etc/dnsmasq.d"
+check program DNSMASQ.D with path "/opt/script_bootloader/usr/dnsmasq.d/bin/dnsmasq.d_enable.service" every 6 cycles
     start program = "/opt/script_bootloader/usr/dnsmasq.d/bin/dnsmasq.d_enable.service"
     stop program = "/opt/script_bootloader/usr/dnsmasq.d/bin/dnsmasq.d_disable.service"
-    if does not exist then alert
-    if changed mtime then exec "/opt/script_bootloader/usr/dnsmasq.d/bin/dnsmasq.d_enable.service"
+    if status == 1 then alert

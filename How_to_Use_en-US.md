@@ -172,7 +172,7 @@
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install
    ```
 
-10. (Optional) If command `tee` doesn't exist in the firmware, installation will come to an end after outputing `***** STAGE 3: INSTALL ADDONS *****`. Execute the code below to install add-ons.
+10. (Optional) If command `tee` doesn't exist in the firmware, installation will come to an end after outputing `***** STAGE 3: INSTALL ADDONS *****`. Execute the code below to install add-ons. (After installation of SCRIPTS BOOTLOADER FOR ASUS ROUTER, you can still execute this code to install other add-ons.)
 
    ```shell
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/addons_install
@@ -291,8 +291,6 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
 ## Restoration
 
-> You have to unplug the USB flash drive containing the system from the router before upgrade the firmware of the router every time. After the upgradation is OK, re-plug the USB flash drive containing the system to a USB port of the Router.
-
 1. Login the router with ssh client.
 
    ![](./Documents_Assets/How_to_Use/restore/step1.jpg)
@@ -310,3 +308,19 @@ Modify the source files of the target add-on according to the README_en-US.md in
 1. [Uninstall](#Uninstallation) the system.
 
 2. [Installation (Online)](#installation-online) the system again.
+
+## Upgrade firmware/restore to factory default
+
+1. [Uninstall](#Uninstallation) the system.
+
+2. Remove all the USB devices from the router after restart.
+
+3. Upgrade firmware/restore to factory default.
+
+4. Re-configure the router.
+
+5. Re-plug **ONLY** the USB flash drive containing the system to a USB port of the Router.
+
+6. [Restore](#Restoration) the system.
+
+7. Re-plug other USB devices to the router after restart.

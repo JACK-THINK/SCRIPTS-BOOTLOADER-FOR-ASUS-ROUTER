@@ -61,46 +61,59 @@ case ${#} in
             doubleCheckAndConfirm ROLE
             #
             case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
-                "server")
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of local shadowsocks server"
-                    doubleCheckAndConfirm PASSWORD
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mENCRYPTION METHOD\033[0m: aes-128-gcm | aes-192-gcm | aes-256-gcm | rc4-md5 | aes-128-cfb | aes-192-cfb | aes-256-cfb | aes-128-ctr | aes-192-ctr | aes-256-ctr | bf-cfb | camellia-128-cfb | camellia-192-cfb | camellia-256-cfb | chacha20-ietf-poly1305 | salsa20 | chacha20 and chacha20-ietf"
-                    doubleCheckAndConfirm ENCRYPTION_METHOD
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOBFUSCATION\033[0m: enable | disable"
-                    doubleCheckAndConfirm OBFUSCATION
-                    #
-                    break
-                    ;;
-                "client")
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: IP address or domain name of remote shadowsocks server"
-                    doubleCheckAndConfirm SERVER_ADDRESS
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER PORT\033[0m: port of remote shadowsocks server"
-                    doubleCheckAndConfirm SERVER_PORT
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of remote shadowsocks server"
-                    doubleCheckAndConfirm PASSWORD
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mENCRYPTION METHOD\033[0m: aes-128-gcm | aes-192-gcm | aes-256-gcm | rc4-md5 | aes-128-cfb | aes-192-cfb | aes-256-cfb | aes-128-ctr | aes-192-ctr | aes-256-ctr | bf-cfb | camellia-128-cfb | camellia-192-cfb | camellia-256-cfb | chacha20-ietf-poly1305 | salsa20 | chacha20 and chacha20-ietf"
-                    doubleCheckAndConfirm ENCRYPTION_METHOD
-                    #
-                    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOBFUSCATION\033[0m: enable | disable"
-                    doubleCheckAndConfirm OBFUSCATION
-                    #
+                "server" | "client")
                     break
                     ;;
                 *)
                     /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUT VALUE IS INVALID"
                     ;;
             esac
+            #
         done
+        ;;
+    1)
+        ROLE="${1}"
         ;;
     *)
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: WRONG NUMBER OF PARAMETERS"
         #
         exit 1
+        ;;
+esac
+#
+case "$(/opt/bin/echo "${ROLE}" | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')" in
+    "server")
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of local shadowsocks server"
+        doubleCheckAndConfirm PASSWORD
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mENCRYPTION METHOD\033[0m: aes-128-gcm | aes-192-gcm | aes-256-gcm | rc4-md5 | aes-128-cfb | aes-192-cfb | aes-256-cfb | aes-128-ctr | aes-192-ctr | aes-256-ctr | bf-cfb | camellia-128-cfb | camellia-192-cfb | camellia-256-cfb | chacha20-ietf-poly1305 | salsa20 | chacha20 and chacha20-ietf"
+        doubleCheckAndConfirm ENCRYPTION_METHOD
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOBFUSCATION\033[0m: enable | disable"
+        doubleCheckAndConfirm OBFUSCATION
+        #
+        break
+        ;;
+    "client")
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER ADDRESS\033[0m: IP address or domain name of remote shadowsocks server"
+        doubleCheckAndConfirm SERVER_ADDRESS
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mSERVER PORT\033[0m: port of remote shadowsocks server"
+        doubleCheckAndConfirm SERVER_PORT
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mPASSWORD\033[0m: password of remote shadowsocks server"
+        doubleCheckAndConfirm PASSWORD
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mENCRYPTION METHOD\033[0m: aes-128-gcm | aes-192-gcm | aes-256-gcm | rc4-md5 | aes-128-cfb | aes-192-cfb | aes-256-cfb | aes-128-ctr | aes-192-ctr | aes-256-ctr | bf-cfb | camellia-128-cfb | camellia-192-cfb | camellia-256-cfb | chacha20-ietf-poly1305 | salsa20 | chacha20 and chacha20-ietf"
+        doubleCheckAndConfirm ENCRYPTION_METHOD
+        #
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: \033[4mOBFUSCATION\033[0m: enable | disable"
+        doubleCheckAndConfirm OBFUSCATION
+        #
+        break
+        ;;
+    *)
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: INPUT VALUE IS INVALID"
         ;;
 esac
 #

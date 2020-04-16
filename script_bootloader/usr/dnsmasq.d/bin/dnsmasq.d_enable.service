@@ -29,28 +29,42 @@ FMW_DNSMASQ_CONF="/etc/dnsmasq.conf"
 # 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
 ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
 #
-########## END ##########
+# CURRENT_MTIME: The current mtime of directory ${ENTWARE_DNSMASQD}
+# 设置自定义变量CURRENT_MTIME为目录${ENTWARE_DNSMASQD}的当前mtime
+CURRENT_MTIME="$(/opt/bin/stat -c "%Y" "${ENTWARE_DNSMASQD}")"
 #
-#
-########## NOTIFICATION ##########
-#
-/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
+# LAST_MTIME: The last mtime of directory ${ENTWARE_DNSMASQD}
+# 设置自定义变量LAST_MTIME为目录${ENTWARE_DNSMASQD}的最近一次mtime
+if [ -e "/var/run/dnsmasq_last_mtime" ]
+then
+    LAST_MTIME="$(/opt/bin/head -n 1 "/var/run/dnsmasq_last_mtime")"
+else
+    LAST_MTIME="0"
+fi
 #
 ########## END ##########
 #
 #
 ########## CHECK AND ENABLE DNSMASQ.D ##########
 #
-# Check if ${ENTWARE_DNSMASQD} exists
-# 检查目录${ENTWARE_DNSMASQD}是否存在
-if [ -d "${ENTWARE_DNSMASQD}" ]
+if [ -n "ps | /opt/bin/sed -E -n -e '/sed/d' -e '\#=/etc/dnsmasq.conf#p'" ] && \
+[ "${CURRENT_MTIME}" == "${LAST_MTIME}" ]
 then
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
+    # Everything is OK
+    # 满足全部条件
+    /opt/bin/echo -e "OK"
     #
-    # Modify ${FMW_DNSMASQ_CONF} and restart dnsmasq
-    # 如果目录${ENTWARE_DNSMASQD}存在，则执行
+    exit 0
+    #
+else
+    # Stop all the relevant processes
+    # 如果有任意条件不符，则停止全部相关进程
     service restart_dnsmasq
     /opt/bin/sleep 5
+    #
+    # Start all the relevant processes
+    # 启动全部相关进程
+    /opt/bin/echo -e "LOAD DNSMASQ.D"
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用
@@ -76,17 +90,10 @@ then
     /opt/bin/killall -q "dnsmasq"
     dnsmasq --log-async --conf-file="${FMW_DNSMASQ_CONF}"
     #
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-    #
-    exit 0
-    #
-else
-    # Do nothing but prompt the user
-    # 如果目录${ENTWARE_DNSMASQD}不存在，则执行
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
-    /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    /opt/bin/stat -c "%Y" "${ENTWARE_DNSMASQD}" > "/var/run/dnsmasq_last_mtime"
     #
     exit 1
+    #
 fi
 #
 ########## END ##########

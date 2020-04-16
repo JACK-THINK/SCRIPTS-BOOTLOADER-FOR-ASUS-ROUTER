@@ -179,9 +179,9 @@ then
         /opt/bin/chmod 600 "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file"
         /opt/bin/mv -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file" "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file.on"
         #
-        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/ss_transparent_proxy_overture_prog" "${ENTWARE_MONITD}"
-        /opt/bin/chmod 600 "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog"
-        #/opt/bin/mv -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog" "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog.on"
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/ss_transparent_proxy_without_dns_file" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file" "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file.on"
         #
         /opt/bin/monit reload
         #

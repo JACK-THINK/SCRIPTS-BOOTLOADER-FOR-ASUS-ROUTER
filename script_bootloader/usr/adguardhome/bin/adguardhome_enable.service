@@ -21,6 +21,14 @@ USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootload
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/adguardhome"
@@ -60,7 +68,9 @@ DNS_PORT="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*port:[[:space:]]*([[:digit:]]*
 # Check if ${PRIVATE_USR}/AdGuardHome, ${PRIVATE_ETC}/AdGuardHome.yaml and ${PRIVATE_VAR} exist
 # 检查文件${PRIVATE_USR}/AdGuardHome，${PRIVATE_ETC}/AdGuardHome.yaml和目录${PRIVATE_VAR}是否存在
 if [ -e "${PRIVATE_USR}/AdGuardHome" ] && \
-[ -e "${PRIVATE_ETC}/AdGuardHome.yaml" ] && [ -d "${PRIVATE_VAR}" ]
+[ -e "${PRIVATE_ETC}/AdGuardHome.yaml" ] && \
+[ -e "${PRIVATE_ETC}/dnsmasq.d/adguardhome.conf" ] && \
+[ -d "${PRIVATE_VAR}" ]
 then
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
@@ -70,10 +80,8 @@ then
     #
     # Update DNS server
     # 更新DNS服务器
-    /opt/bin/sed -i '/^server=.*/s/^/#/' "/tmp/resolv.dnsmasq"
-    /opt/bin/echo "server=127.0.0.1#${DNS_PORT}" >> "/tmp/resolv.dnsmasq"
-    /opt/bin/killall -q -1 "dnsmasq"
-    /opt/bin/sleep 30
+    /opt/bin/mv -f "/tmp/resolv.dnsmasq" "/tmp/resolv.dnsmasq.bak"
+    /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/adguardhome.conf" "${ENTWARE_DNSMASQD}"
     #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #

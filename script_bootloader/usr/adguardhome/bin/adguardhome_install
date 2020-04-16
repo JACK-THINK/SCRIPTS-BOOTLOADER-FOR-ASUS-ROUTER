@@ -98,6 +98,10 @@ ADMINUSER="$(nvram get sbl_username)"
 # 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
 ADMINPASSWORD="$(nvram get sbl_password)"
 #
+# DNS_PORT: Local port of DNS service from ADGUARD-HOME
+# 设置自定义变量DNS_PORT为ADGUARD-HOME的DNS服务监听端口
+DNS_PORT="2153"
+#
 ########## END ##########
 #
 #
@@ -159,13 +163,22 @@ then
         /opt/bin/echo -e "bind_host: 0.0.0.0\nbind_port: 14711" > "${PRIVATE_ETC}/AdGuardHome.yaml"
         ADMINPASSWORD_ENCRYPTED="$(/opt/bin/bcrypt-tool hash "${ADMINPASSWORD}" 10)"
         /opt/bin/echo -e 'users:\n- name: '"${ADMINUSER}"'\n  password: '"${ADMINPASSWORD_ENCRYPTED}"'' >> "${PRIVATE_ETC}/AdGuardHome.yaml"
-        /opt/bin/echo -e "dns:\n  bind_host: 0.0.0.0\n  port: 2153" >> "${PRIVATE_ETC}/AdGuardHome.yaml"
+        /opt/bin/echo -e "dns:\n  bind_host: 0.0.0.0\n  port: ${DNS_PORT}" >> "${PRIVATE_ETC}/AdGuardHome.yaml"
         /opt/bin/echo -e "  bootstrap_dns:\n  - 9.9.9.9\n  - 149.112.112.112" >> "${PRIVATE_ETC}/AdGuardHome.yaml"
         /opt/bin/echo -e "  upstream_dns:\n  - 114.114.114.114" >> "${PRIVATE_ETC}/AdGuardHome.yaml"
         #
         # Create directory ${PRIVATE_VAR}
         # 创建目录${PRIVATE_VAR}
         /opt/bin/mkdir "${PRIVATE_VAR}"
+        #
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+        fi
+        #
+        /opt/bin/echo -e "server=127.0.0.1#${DNS_PORT}" > "${PRIVATE_ETC}/dnsmasq.d/adguardhome.conf"
         #
         # Configure monit
         # 配置monit

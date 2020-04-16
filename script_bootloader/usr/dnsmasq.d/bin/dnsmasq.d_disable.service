@@ -25,6 +25,7 @@ SERVICE_FUNCTION="DISABLE"
 #
 ########## DISABLE DNSMASQ.D ##########
 #
+/opt/bin/rm -f "/var/run/dnsmasq_last_mtime"
 service restart_dnsmasq
 #
 ########## END ##########

@@ -87,8 +87,9 @@ then
         /opt/bin/monit stop "SS_LOCAL" > /dev/null 2>&1
         /opt/bin/monit stop "SS_REDIR" > /dev/null 2>&1
         /opt/bin/monit stop "SS_SERVER" > /dev/null 2>&1
+        /opt/bin/monit stop "FW_PORT_OPENING_SS_SERVER" > /dev/null 2>&1
         /opt/bin/monit stop "SS_TUNNEL" > /dev/null 2>&1
-        /opt/bin/monit stop "SS_TRANSPARENT_PROXY_OVERTURE" > /dev/null 2>&1
+        /opt/bin/monit stop "SS_TRANSPARENT_PROXY" > /dev/null 2>&1
         #
         # Wait until SHADOWSOCKS service is terminated
         # 等待直至SHADOWSOCKS service被终止
@@ -100,10 +101,6 @@ then
         # Uninstall overture
         # 卸载overture
         "${SBL_SYS_USR}/overture/bin/overture_uninstall"
-        if [ ${?} -ne 0 ]
-        then
-            exit 7
-        fi
         #
         # Enable /opt/etc/init.d/S*shadowsocks
         # 启用/opt/etc/init.d/S*shadowsocks
@@ -148,10 +145,14 @@ then
         /opt/bin/rm -f "${ENTWARE_MONITD}/fw_filter_INPUT_ss_server"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_tunnel.on"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_tunnel"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_file.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_file"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file.on"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_file"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog.on"
         /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_overture_prog"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file.on"
+        /opt/bin/rm -f "${ENTWARE_MONITD}/ss_transparent_proxy_without_dns_file"
         /opt/bin/monit reload
         #
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"

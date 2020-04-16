@@ -46,9 +46,7 @@ LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/shawn1m/overtur
 #
 # CURRENT_VERSION: Version of the current overture
 # 设置自定义变量CURRENT_VERSION为当前overture的版本号
-#CURRENT_VERSION="$("${PRIVATE_USR}/overture" -V)"
-# 上述命令无法将版本号写入管道，以下为临时解决方案
-CURRENT_VERSION="$("${PRIVATE_USR}/overture" -V 2>&1 | /opt/bin/head -n 1)"
+CURRENT_VERSION="$("${PRIVATE_USR}/overture" -V)"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -64,10 +62,7 @@ case "$(/opt/bin/uname -m)" in
         ROUTER_ARCHITECTURE="arm"
         ;;
     "mips")
-        ROUTER_ARCHITECTURE="mipsle"
-        #
-        # When v1.6 final comes out, enable this modification
-        #ROUTER_ARCHITECTURE="mipsle-softfloat"
+        ROUTER_ARCHITECTURE="mipsle-softfloat"
         ;;
     *)
         # Do nothing but prompt the user

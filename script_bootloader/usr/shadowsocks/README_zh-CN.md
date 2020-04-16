@@ -31,44 +31,48 @@
 
 `ASUS_ROUTER/script_bootloader/usr/shadowsocks/bin/`
 
-| 权限      | 名称                                               | 属性     | 说明                           |
-| --------- | -------------------------------------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | shadowsocks_install                                | 普通文件 | 安装程序                       |
-| rwxrwxrwx | shadowsocks_configure                              | 普通文件 | 配置程序                       |
-| rwxrwxrwx | fw_ss_transparent_proxy_enable.service             | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | fw_ss_transparent_proxy_disable.service            | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_local_enable.service                            | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_local_disable.service                           | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_redir_enable.service                            | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_redir_disable.service                           | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_server_enable.service                           | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_server_disable.service                          | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_tunnel_enable.service                           | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_tunnel_disable.service                          | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_transparent_proxy_enable_file.service           | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_transparent_proxy_disable_file.service          | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_transparent_proxy_overture_enable_file.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_transparent_proxy_overture_disable_file.service | 普通文件 | 插件的可执行程序，用于结束程序 |
-| rwxrwxrwx | ss_transparent_proxy_overture_enable_prog.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | ss_transparent_proxy_overture_disable_prog.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| 权限      | 名称                                                  | 属性     | 说明                           |
+| --------- | ----------------------------------------------------- | -------- | ------------------------------ |
+| rwxrwxrwx | shadowsocks_install                                   | 普通文件 | 安装程序                       |
+| rwxrwxrwx | shadowsocks_configure                                 | 普通文件 | 配置程序                       |
+| rwxrwxrwx | shadowsocks_uninstall                                 | 普通文件 | 卸载程序                       |
+| rwxrwxrwx | fw_ss_transparent_proxy_enable.service                | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | fw_ss_transparent_proxy_disable.service               | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_local_enable.service                               | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_local_disable.service                              | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_redir_enable.service                               | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_redir_disable.service                              | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_server_enable.service                              | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_server_disable.service                             | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_tunnel_enable.service                              | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_tunnel_disable.service                             | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_transparent_proxy_enable_file.service              | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_disable_file.service             | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_enable_file.service     | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_disable_file.service    | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_enable_prog.service     | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_overture_disable_prog.service    | 普通文件 | 插件的可执行程序，用于结束程序 |
+| rwxrwxrwx | ss_transparent_proxy_without_dns_enable_file.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | ss_transparent_proxy_without_dns_disable_file.service | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/shadowsocks/etc/`
 
-| 权限      | 名称                                       | 属性     | 说明                               |
-| --------- | ------------------------------------------ | -------- | ---------------------------------- |
-| rwxrwxrwx | config_local.json                          | 普通文件 | ss_local_enable.service的配置文件  |
-| rwxrwxrwx | config_redir.json                          | 普通文件 | ss_redir_enable.service的配置文件  |
-| rwxrwxrwx | config_server.json                         | 普通文件 | ss_server_enable.service的配置文件 |
-| rwxrwxrwx | config_tunnel.json                         | 普通文件 | ss_tunnel_enable.service的配置文件 |
-| rwxrwxrwx | fw.d/ss_server_open                        | 普通文件 | fw.d配置文件                       |
-| rwxrwxrwx | monit.d/fw_filter_INPUT_ss_server          | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_local                           | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_redir                           | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_server                          | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_tunnel                          | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_transparent_proxy_file          | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_transparent_proxy_overture_file | 普通文件 | monit.d配置文件                    |
-| rwxrwxrwx | monit.d/ss_transparent_proxy_overture_prog | 普通文件 | monit.d配置文件                    |
+| 权限      | 名称                                          | 属性     | 说明                                   |
+| --------- | --------------------------------------------- | -------- | -------------------------------------- |
+| rwxrwxrwx | config_local.json.template                    | 普通文件 | ss_local_enable.service的配置模版文件  |
+| rwxrwxrwx | config_redir.json.template                    | 普通文件 | ss_redir_enable.service的配置模版文件  |
+| rwxrwxrwx | config_server.json.template                   | 普通文件 | ss_server_enable.service的配置模版文件 |
+| rwxrwxrwx | config_tunnel.json.template                   | 普通文件 | ss_tunnel_enable.service的配置模版文件 |
+| rwxrwxrwx | fw.d/ss_server_open                           | 普通文件 | fw.d配置文件                           |
+| rwxrwxrwx | monit.d/fw_filter_INPUT_ss_server             | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_local                              | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_redir                              | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_server                             | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_tunnel                             | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_transparent_proxy_file             | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_transparent_proxy_overture_file    | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_transparent_proxy_overture_prog    | 普通文件 | monit.d配置文件                        |
+| rwxrwxrwx | monit.d/ss_transparent_proxy_without_dns_file | 普通文件 | monit.d配置文件                        |
 
 ## 安装方法
 
@@ -117,6 +121,41 @@
 
 ## 注意事项
 
-1. 登录monit管理页面，可以看到SS_LOCAL和SS_TRANSPARENT_PROXY_OVERTURE
+1. 登录monit管理页面，可以看到SS_LOCAL和SS_TRANSPARENT_PROXY
 2. SS_LOCAL是浏览器代理。可以配合客户端代理工具使用，路由器和未使用代理工具的客户端均在墙内
-3. SS_TRANSPARENT_PROXY_OVERTURE是全局透明代理。必须先在monit管理页面中停止SS_LOCAL，然后再启用SS_TRANSPARENT_PROXY_OVERTURE。路由器和全体客户端均在墙外
+3. SS_TRANSPARENT_PROXY是全局透明代理。必须先在monit管理页面中停止SS_LOCAL，然后再启用SS_TRANSPARENT_PROXY。路由器和全体客户端均在墙外
+4. 若配合Adguard-Home使用，需禁用ss_transparent_proxy_overture_file，启用ss_transparent_proxy_without_dns_file，并将Adguard-Home的上游DNS服务器设置为`https://dns.adguard.com/dns-query`
+
+## 使用方法
+
+- Socks5代理服务器
+
+   功能：全局代理，配合客户端socks5代理工具使用
+
+   路由器：在monit管理页面中，停止服务`SS_TRANSPARENT_PROXY`，启动服务`SS_LOCAL`
+
+   客户端：按照文件`shadowsocks/etc/config_local.json`中相关参数配置代理程序
+
+- 透明代理服务器（使用overture作为DNS代理，默认）
+
+   功能：全局代理，客户端免配置使用
+
+   路由器：在monit管理页面中，停止服务`SS_LOCAL`，启动服务`SS_TRANSPARENT_PROXY`
+
+   客户端：免配置
+
+- 透明代理服务器（使用adguardhome作为DNS代理）
+
+   功能：全局代理，客户端免配置使用，可过滤广告
+
+   路由器：安装插件adguardhome；在adguardhome管理页面中，将上游DNS服务器设置为`https://dns.adguard.com/dns-query`；参考[Monit说明文件](../monit/README_zh-CN.md)，禁用插件`ss_transparent_proxy_overture_file`，启用插件`ss_transparent_proxy_without_dns_file`；在monit管理页面中，启动服务`ADGUARD_HOME`，启动服务`SS_TRANSPARENT_PROXY`
+
+   客户端：免配置
+
+- ShadowsSocks服务器
+
+   功能：使外网客户端接入局域网，配合客户端socks5代理工具使用
+
+   路由器：执行`/opt/script_bootloader/usr/shadowsocks/bin/shadowsocks_configure server`编辑配置文件；参考[Monit说明文件](../monit/README_zh-CN.md)，启用插件`fw_filter_INPUT_ss_server`，启用插件`ss_server`；在monit管理页面中，启动服务`FW_PORT_OPENING_SS_SERVER`，启动服务`SS_SERVER`
+
+   客户端：按照文件`shadowsocks/etc/config_server.json`中相关参数配置代理程序

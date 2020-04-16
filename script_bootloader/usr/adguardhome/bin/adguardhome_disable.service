@@ -21,6 +21,14 @@ USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootload
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/adguardhome"
@@ -58,10 +66,8 @@ done
 #
 # Update DNS server
 # 更新DNS服务器
-/opt/bin/sed -i '/^server=127\.0\.0\.1#'"${DNS_PORT}"'/d' "/tmp/resolv.dnsmasq"
-/opt/bin/sed -i '/^#server=.*/s/#//' "/tmp/resolv.dnsmasq"
-/opt/bin/killall -q -1 "dnsmasq"
-/opt/bin/sleep 30
+/opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
+/opt/bin/rm -f "${ENTWARE_DNSMASQD}/adguardhome.conf"
 #
 ########## END ##########
 #
