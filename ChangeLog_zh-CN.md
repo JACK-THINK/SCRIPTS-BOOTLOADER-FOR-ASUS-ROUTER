@@ -11,6 +11,7 @@
 1. 更新How_to_Use_zh-CN.md
 2. 更新How_to_Use_en-US.md
 3. 更新dnsmasq.d
+4. 更新update
 
 #### 删除
 

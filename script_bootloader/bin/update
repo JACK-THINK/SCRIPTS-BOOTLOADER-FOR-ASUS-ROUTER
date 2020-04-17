@@ -272,14 +272,6 @@ else
         fi
     done
     #
-    # Run update_patch when it is updated
-    # 当文件update_patch被更新，运行update_patch
-    if [ "$(/opt/bin/grep 'script_bootloader\/var\/update\/update_patch$' "${LATEST_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/opt/bin/grep 'script_bootloader\/var\/update\/update_patch$' "${CURRENT_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
-    then
-        /opt/bin/echo -e "\n\033[1;43;31mNOTICE\033[0m: PATCH SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
-        "${SBL_SYS_VAR}/update/update_patch"
-    fi
-    #
     # Tell users to run update again, when it is updated
     # 当文件update被更新，通知用户再次运行update
     if [ "$(/opt/bin/grep 'script_bootloader\/bin\/update$' "${LATEST_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/opt/bin/grep 'script_bootloader\/bin\/update$' "${CURRENT_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
@@ -292,6 +284,14 @@ else
     /opt/bin/rm -f "${CURRENT_FINGERPRINT}_prev"
     /opt/bin/mv -f "${CURRENT_FINGERPRINT}" "${CURRENT_FINGERPRINT}_prev"
     /opt/bin/mv -f "${LATEST_FINGERPRINT}" "${CURRENT_FINGERPRINT}"
+    #
+    # Run update_patch when it is updated
+    # 当文件update_patch被更新，运行update_patch
+    if [ "$(/opt/bin/grep 'script_bootloader\/var\/update\/update_patch$' "${CURRENT_FINGERPRINT}" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" != "$(/opt/bin/grep 'script_bootloader\/var\/update\/update_patch$' "${CURRENT_FINGERPRINT}_prev" | /opt/bin/sed -E -n -e 's#^([[:alnum:]]+)[[:space:]]+.*#\1#p')" ]
+    then
+        /opt/bin/echo -e "\n\033[1;43;31mNOTICE\033[0m: PATCH SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+        "${SBL_SYS_VAR}/update/update_patch"
+    fi
     #
 fi
 #
