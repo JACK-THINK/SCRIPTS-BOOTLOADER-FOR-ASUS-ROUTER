@@ -52,7 +52,7 @@ if [ -n "$(ps | /opt/bin/sed -E -n -e '/sed/d' -e '\#=/etc/dnsmasq.conf#p')" ] &
 then
     # Everything is OK
     # 满足全部条件
-    /opt/bin/echo -e "OK"
+    /opt/bin/echo -e "SUCCESS"
     #
     exit 0
     #
