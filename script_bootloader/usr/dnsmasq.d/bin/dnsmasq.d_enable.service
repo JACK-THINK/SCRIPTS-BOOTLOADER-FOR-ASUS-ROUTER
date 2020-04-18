@@ -47,7 +47,7 @@ fi
 #
 ########## CHECK AND ENABLE DNSMASQ.D ##########
 #
-if [ -n "ps | /opt/bin/sed -E -n -e '/sed/d' -e '\#=/etc/dnsmasq.conf#p'" ] && \
+if [ -n "$(ps | /opt/bin/sed -E -n -e '/sed/d' -e '\#=/etc/dnsmasq.conf#p')" ] && \
 [ "${CURRENT_MTIME}" == "${LAST_MTIME}" ]
 then
     # Everything is OK
