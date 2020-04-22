@@ -64,4 +64,4 @@
 >
 > Web页面登陆地址：http://<路由器IP地址>:14711
 >
-> 工作目录：`/opt/script_bootloader/usr/adguardhome/etc/`
+> 工作目录：`/opt/script_bootloader/usr/adguardhome/var/`

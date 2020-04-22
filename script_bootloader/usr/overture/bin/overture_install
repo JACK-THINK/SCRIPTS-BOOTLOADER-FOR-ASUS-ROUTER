@@ -40,6 +40,10 @@ ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/overture"
 #
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE="${PRIVATE_ROOT}/alternative"
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
@@ -122,20 +126,32 @@ then
         # 删除遗留的overture包
         /opt/bin/rm -f "${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
         #
-        # Download overture
-        # 下载overture
-        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
-        #
-        # Check if ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip exists
-        # 检查文件${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip是否存在
-        if [ ! -s "${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" ]
+        # Check if ${PRIVATE_ALTERNATIVE}/version exists
+        # 检查文件${PRIVATE_ALTERNATIVE}/version是否存在
+        if [ -e "${PRIVATE_ALTERNATIVE}/version" ]
         then
-            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
-            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            # Prepare to install offline
+            # 准备离线安装
+            LATEST_VERSION="$(/opt/bin/head -n 1 "${PRIVATE_ALTERNATIVE}/version")"
+            /opt/bin/cp -f "${PRIVATE_ALTERNATIVE}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" "${PRIVATE_BIN}"
             #
-            /opt/bin/rm -f "${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+        else
+            # Download overture
+            # 下载overture
+            /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
             #
-            exit 5
+            # Check if ${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip exists
+            # 检查文件${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip是否存在
+            if [ ! -s "${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" ]
+            then
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                /opt/bin/rm -f "${PRIVATE_BIN}/overture-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+                #
+                exit 5
+            fi
+            #
         fi
         #
         # Create directory overture

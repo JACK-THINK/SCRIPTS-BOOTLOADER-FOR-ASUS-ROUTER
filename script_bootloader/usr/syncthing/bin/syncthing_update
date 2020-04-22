@@ -32,6 +32,10 @@ SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/syncthing"
 #
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE="${PRIVATE_ROOT}/alternative"
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
@@ -147,9 +151,25 @@ else
             # 创建${PRIVATE_USR}目录
             /opt/bin/mv -f "${PRIVATE_ROOT}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}" "${PRIVATE_USR}"
             #
-            # Remove syncthing package
-            # 删除syncthing包
-            /opt/bin/rm -f "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz"
+            # Check if ${PRIVATE_ALTERNATIVE}/version exists
+            # 检查文件${PRIVATE_ALTERNATIVE}/version是否存在
+            if [ -e "${PRIVATE_ALTERNATIVE}/version" ]
+            then
+                # Remove outdated files
+                # 删除过时的文件
+                /opt/bin/rm -f "${PRIVATE_ALTERNATIVE}"/*
+                #
+                # Move syncthing package
+                # 移动syncthing包
+                /opt/bin/mv -f "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz" "${PRIVATE_ALTERNATIVE}"
+                #
+                /opt/bin/echo "${LATEST_VERSION}" > "${PRIVATE_ALTERNATIVE}/version"
+                #
+            else
+                # Remove syncthing package
+                # 删除syncthing包
+                /opt/bin/rm -f "${PRIVATE_BIN}/syncthing-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-${LATEST_VERSION}.tar.gz"
+            fi
             #
             /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #

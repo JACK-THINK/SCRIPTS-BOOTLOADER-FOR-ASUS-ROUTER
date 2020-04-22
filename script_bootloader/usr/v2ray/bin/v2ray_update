@@ -32,6 +32,10 @@ SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/v2ray"
 #
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE="${PRIVATE_ROOT}/alternative"
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
@@ -147,10 +151,6 @@ else
             # 解压v2ray-core包
             /opt/bin/unzip "${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" -d "${PRIVATE_USR}"
             #
-            # Remove v2ray-core package
-            # 删除v2ray-core包
-            /opt/bin/rm -f "${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
-            #
             # Change the mode of the files
             # 更改文件权限
             /opt/bin/chmod 644 "${PRIVATE_USR}"/vpoint*
@@ -158,9 +158,25 @@ else
             /opt/bin/chmod 644 "${PRIVATE_USR}/geosite.dat"
             /opt/bin/chmod 755 "${PRIVATE_USR}/geoip.dat"
             #
-            # Configure monit
-            # 配置monit
-            /opt/bin/monit reload
+            # Check if ${PRIVATE_ALTERNATIVE}/version exists
+            # 检查文件${PRIVATE_ALTERNATIVE}/version是否存在
+            if [ -e "${PRIVATE_ALTERNATIVE}/version" ]
+            then
+                # Remove outdated files
+                # 删除过时的文件
+                /opt/bin/rm -f "${PRIVATE_ALTERNATIVE}"/*
+                #
+                # Move v2ray-core package
+                # 移动v2ray-core包
+                /opt/bin/mv -f "${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" "${PRIVATE_ALTERNATIVE}"
+                #
+                /opt/bin/echo "${LATEST_VERSION}" > "${PRIVATE_ALTERNATIVE}/version"
+                #
+            else
+                # Remove v2ray-core package
+                # 删除v2ray-core包
+                /opt/bin/rm -f "${PRIVATE_BIN}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+            fi
             #
             /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
             #

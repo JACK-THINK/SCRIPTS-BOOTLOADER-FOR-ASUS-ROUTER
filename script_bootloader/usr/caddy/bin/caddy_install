@@ -44,6 +44,10 @@ SBL_SITE="${USB_MOUNT_POINT}/www"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/caddy"
 #
+# PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
+# 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
+PRIVATE_ALTERNATIVE="${PRIVATE_ROOT}/alternative"
+#
 # PRIVATE_BIN: The directory which contains all the executable files related to this program
 # 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
 PRIVATE_BIN="${PRIVATE_ROOT}/bin"
@@ -118,20 +122,32 @@ then
         # 删除遗留的caddy包
         /opt/bin/rm -f "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
         #
-        # Download caddy
-        # 下载caddy
-        /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
-        #
-        # Check if ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz exists
-        # 检查文件${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz是否存在
-        if [ ! -s "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" ]
+        # Check if ${PRIVATE_ALTERNATIVE}/version exists
+        # 检查文件${PRIVATE_ALTERNATIVE}/version是否存在
+        if [ -e "${PRIVATE_ALTERNATIVE}/version" ]
         then
-            /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
-            /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+            # Prepare to install offline
+            # 准备离线安装
+            LATEST_VERSION="$(/opt/bin/head -n 1 "${PRIVATE_ALTERNATIVE}/version")"
+            /opt/bin/cp -f "${PRIVATE_ALTERNATIVE}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${PRIVATE_BIN}"
             #
-            /opt/bin/rm -f "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
+        else
+            # Download caddy
+            # 下载caddy
+            /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -O "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" "${DOWNLOAD_LINK}"
             #
-            exit 5
+            # Check if ${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz exists
+            # 检查文件${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz是否存在
+            if [ ! -s "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz" ]
+            then
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
+                /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                /opt/bin/rm -f "${PRIVATE_BIN}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
+                #
+                exit 5
+            fi
+            #
         fi
         #
         # Create directory ${PRIVATE_USR}
