@@ -117,10 +117,6 @@
 
 ## Installation (Offline)
 
-> **NOTICE**
->
-> 1. In all the instances of `SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0` below, the version part `16.0-16.0` can vary when the system gets updates. Please replace it with the latest version number. Plus, you can auto-complete this part by hitting key \<Tab\>.
-
 1. Insert a USB flash drive (not less than 4GB; MBR) with no files into a USB port of the Router.
 
 2. Login the router with ssh client.
@@ -133,15 +129,15 @@
 
    ```shell
    cd /tmp/home/root
-   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
-   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
+   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz
+   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz
    ```
 
 5. Execute the code below to move the files and change their rights.
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*/script_bootloader ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
    chmod -R 777 script_bootloader
    cp script_bootloader/bin/prerequisite_checker /tmp
    cp script_bootloader/bin/drive_modifier /tmp

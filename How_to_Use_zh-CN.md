@@ -117,10 +117,6 @@
 
 ## 离线安装
 
-> **说明**
->
-> 1. 以下出现的所有`SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0`中的版本号部分（即`16.0-16.0`）会随着系统更新而改变。输入命令时请替换为最新版本号（可使用\<Tab\>键自动补全）
-
 1. 准备一个空白U盘（不小于4GB；MBR），插入路由器USB接口
 
 2. 用ssh登陆路由器后台
@@ -133,15 +129,15 @@
 
    ```shell
    cd /tmp/home/root
-   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
-   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0.tar.gz
+   tar -xzvf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz
+   rm -f SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz
    ```
 
 5. 执行下列代码，将文件移动至指定位置并修改程序权限
 
    ```shell
-   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0/script_bootloader ./
-   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER-16.0-16.0
+   mv SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*/script_bootloader ./
+   rm -rf SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
    chmod -R 777 script_bootloader
    cp script_bootloader/bin/prerequisite_checker /tmp
    cp script_bootloader/bin/drive_modifier /tmp
