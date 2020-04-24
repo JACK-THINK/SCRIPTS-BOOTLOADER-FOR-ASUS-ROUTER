@@ -12,8 +12,9 @@
 2. 更新How_to_Use_zh-CN.md
 3. 更新How_to_Use_en-US.md
 4. 更新dnsmasq.d
-5. 更新update
-6. 更新upgrade，增加离线升级功能
+5. 更新entware
+6. 更新update
+7. 更新upgrade，增加离线升级功能
 
 #### 删除
 

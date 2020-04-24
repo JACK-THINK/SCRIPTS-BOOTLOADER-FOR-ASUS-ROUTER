@@ -52,6 +52,11 @@ echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON 
 #
 ########## PREPARE ENVIRONMENT ##########
 #
+# Avoid 'HSTS will be disabled' errors
+# 避免HSTS will be disabled错误
+echo "" > "/root/.wget-hsts"
+chmod 644 "/root/.wget-hsts"
+#
 # Take the appropriate way to make /opt available according to the type of /opt
 # 根据/opt的类型，采用适当方法使目录/opt可用
 if [ -L "/opt" ]
