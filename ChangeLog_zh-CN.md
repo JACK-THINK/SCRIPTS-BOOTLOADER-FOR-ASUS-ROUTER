@@ -8,10 +8,11 @@
 
 #### 变更
 
-1. 更新How_to_Use_zh-CN.md
-2. 更新How_to_Use_en-US.md
-3. 更新dnsmasq.d
-4. 更新update
+1. Entware_20200401发布，请参考使用手册升级系统
+2. 更新How_to_Use_zh-CN.md
+3. 更新How_to_Use_en-US.md
+4. 更新dnsmasq.d
+5. 更新update
 
 #### 删除
 

@@ -274,7 +274,6 @@ perl-www-curl
 perl-www-mechanize
 perl-www-robotrules
 python
-python-asn1crypto
 python-attrs
 python-automat
 python-base
@@ -298,6 +297,7 @@ python-defusedxml
 python-dev
 python-distutils
 python-django1
+python-django1-common
 python-django-appconf
 python-django-compressor
 python-django-constance
@@ -306,7 +306,7 @@ python-django-jsonfield
 python-django-picklefield
 python-django-postoffice
 python-django-ranged-response
-python-django-restframework
+python-django-restframework39
 python-django-simple-captcha
 python-django-statici18n
 python-django-webpack-loader
@@ -417,6 +417,7 @@ python3-pydoc
 python3-pyopenssl
 python3-pyparsing
 python3-pyxdg
+python3-rdiff-backup
 python3-regex
 python3-rencode
 python3-requests

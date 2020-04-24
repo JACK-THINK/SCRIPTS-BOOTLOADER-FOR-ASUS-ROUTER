@@ -12,6 +12,7 @@
 2. 更新overture
 3. 更新vlmcsd
 4. 更新adguardhome
+5. 为全部来自Github的插件增加离线安装功能
 
 #### 删除
 
