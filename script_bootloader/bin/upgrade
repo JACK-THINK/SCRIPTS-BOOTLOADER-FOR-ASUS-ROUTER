@@ -76,9 +76,9 @@ ARCHIVE_NAME="sbl_setup.tar.gz"
 # 检查文件${EXCLUDED_DIRECTORY}/root/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz是否存在
 if [ -e "${EXCLUDED_DIRECTORY}/root"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz ]
 then
-    UPGRADE_ONLINE="false"
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
     #
-    mv -f "${EXCLUDED_DIRECTORY}/root"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz "${ARCHIVE_NAME}"
+    UPGRADE_ONLINE="false"
 else
     UPGRADE_ONLINE="true"
     #
@@ -212,6 +212,8 @@ then
     rm -rf "${USB_MOUNT_POINT}"/JACK*
     #
 else
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} OFFLINE"
+    #
     mv -f "${EXCLUDED_DIRECTORY}/root"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
     #
     # Untar ${ARCHIVE_NAME} package
