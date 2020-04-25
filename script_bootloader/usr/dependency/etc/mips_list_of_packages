@@ -316,7 +316,6 @@ ncat-ssl
 ngrep
 nmap-ssl
 nping
-ndiff
 openssh-client
 openssh-client-utils
 openssh-sftp-client
