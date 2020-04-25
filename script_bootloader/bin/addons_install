@@ -179,7 +179,7 @@ do
     # 打印插件菜单
     ADDON_ORDER=1
     /opt/bin/echo -e "\nCHOOSE THE ADDON YOU WANT TO INSTALL:\n"
-    /opt/bin/echo -e "\033[1;31m0. exit\033[0m"
+    /opt/bin/printf "\033[1;31m%4d. %s\033[0m\n" "0" "exit"
     #
     while [ ${ADDON_ORDER} -le ${ADDON_COUNT} ]
     do
@@ -197,7 +197,7 @@ do
                 ;;
         esac
         #
-        /opt/bin/echo -e "${ADDON_ORDER}. ${ADDON_STATUS} ${ADDON_ITEM}"
+        /opt/bin/printf "%4d. %s %s\n" "${ADDON_ORDER}" "${ADDON_STATUS}" "${ADDON_ITEM}"
         ADDON_ORDER=$((${ADDON_ORDER}+1))
     done
     #
