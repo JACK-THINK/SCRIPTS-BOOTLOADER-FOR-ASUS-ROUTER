@@ -41,7 +41,7 @@
 | openssh_server    | 在线安装 | OpenSSH服务器                                       |
 | overture          | 在线安装 | DNS服务器                                           |
 | samba             | 在线安装 | SAMBA服务器                                         |
-| shadowsocks-libev | 3.3.1-2  | shadowsocks网络代理                                 |
+| shadowsocks-libev | 3.3.4-1  | shadowsocks网络代理                                 |
 | syncthing         | 在线安装 | 开源分布式同步工具                                  |
 | v2ray             | 在线安装 | v2ray网络代理                                       |
 | vlmcsd            | 1113     | 给予巨硬套装活力                                    |
