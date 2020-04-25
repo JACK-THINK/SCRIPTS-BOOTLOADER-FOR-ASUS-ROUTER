@@ -1,4 +1,0 @@
-check process ANKI_SERVER with pidfile "/var/run/ankiserver.pid"
-    start program = "/opt/script_bootloader/usr/anki_server/bin/anki_server_enable.service"
-    stop program = "/opt/script_bootloader/usr/anki_server/bin/anki_server_disable.service"
-    if does not exist then restart
