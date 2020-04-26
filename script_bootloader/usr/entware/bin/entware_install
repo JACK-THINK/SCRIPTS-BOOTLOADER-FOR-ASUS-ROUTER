@@ -187,7 +187,12 @@ if [ ! -d "${USB_MOUNT_POINT}/home/root" ]
 then
     # Copy /tmp/home/root to ${USB_MOUNT_POINT}/home
     # 如果目录${USB_MOUNT_POINT}/home/root不存在，则执行
-    cp -rf "/tmp/home/root" "${USB_MOUNT_POINT}/home"
+    if [ ! -d "${USB_MOUNT_POINT}/home" ]
+    then
+        mkdir "${USB_MOUNT_POINT}/home"
+    fi
+    #
+    cp -rH "/root" "${USB_MOUNT_POINT}/home"
     echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: HOME IS COPIED"
 else
     # Do nothing but prompt the user
