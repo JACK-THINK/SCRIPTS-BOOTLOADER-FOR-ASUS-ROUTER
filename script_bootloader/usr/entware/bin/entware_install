@@ -192,7 +192,7 @@ then
         mkdir "${USB_MOUNT_POINT}/home"
     fi
     #
-    cp -rH "/root" "${USB_MOUNT_POINT}/home"
+    cp -rfH "/root" "${USB_MOUNT_POINT}/home"
     echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: HOME IS COPIED"
 else
     # Do nothing but prompt the user
