@@ -37,7 +37,7 @@ checkAndExecute()
 {
     local TARGET="${1}"
     local EXIT_CODE_1=${2}
-    local EXIT_CODE_1=${3}
+    local EXIT_CODE_2=${3}
     #
     # Check if ${TARGET} exists
     # 检查文件${TARGET}是否存在
@@ -122,7 +122,7 @@ case ${USB_MOUNT_POINT_COUNT} in
         echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: UNABLE TO LOCATE DIRECTORY script_bootloader"
         echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
-        exit 1
+        exit 2
         ;;
     1)
         USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
@@ -131,7 +131,7 @@ case ${USB_MOUNT_POINT_COUNT} in
         echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
         echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #
-        exit 2
+        exit 3
         ;;
 esac
 #
@@ -245,7 +245,7 @@ then
     else
         echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 1"
         #
-        exit 3
+        exit 4
     fi
     #
 else
@@ -254,7 +254,7 @@ else
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 1"
     #
-    exit 4
+    exit 5
 fi
 #
 ########## END ##########
@@ -266,15 +266,15 @@ echo -e "\033[1;45;37m############### STAGE 2: INSTALL ESSENTIAL COMPONENTS ####
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_install" 5 6
+checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_install" 6 7
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_enable.service" 7 8
+checkAndExecute "${SBL_SYS_USR}/swap/bin/swap_enable.service" 8 9
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/entware/bin/entware_install" 9 10
+checkAndExecute "${SBL_SYS_USR}/entware/bin/entware_install" 10 11
 #
 #R#cp -f "${SBL_SYS_ETC}/sbl_credentials" "/opt/etc"
 #
@@ -295,7 +295,7 @@ else
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: HOME CAN'T BE MOUNTED"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
     #
-    exit 11
+    exit 12
 fi
 #
 sleep 10
@@ -319,7 +319,7 @@ else
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${ENTWARE_ENVIRONMENT}"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
     #
-    exit 12
+    exit 13
 fi
 #
 sleep 10
@@ -363,23 +363,23 @@ done
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_install" 13 14
+checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_install" 14 15
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" 15 16
+checkAndExecute "${SBL_SYS_USR}/timezone/bin/timezone_enable.service" 16 17
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_install" 17 18
+checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_install" 18 19
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_enable.service" 19 20
+checkAndExecute "${SBL_SYS_USR}/dependency/bin/dependency_enable.service" 20 21
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/monit/bin/monit_install" 21 22
+checkAndExecute "${SBL_SYS_USR}/monit/bin/monit_install" 22 23
 #
 sleep 10
 #
@@ -389,15 +389,11 @@ sleep 10
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install" 23 24
+checkAndExecute "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_install" 24 25
 #
 sleep 10
 #
-checkAndExecute "${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service" 25 26
-#
-sleep 10
-#
-checkAndExecute "${SBL_SYS_USR}/fwd/bin/fwd_install" 27 28
+checkAndExecute "${SBL_SYS_USR}/fwd/bin/fwd_install" 26 27
 #
 sleep 10
 #
@@ -417,7 +413,7 @@ then
         # 如果返回值不为0，则该程序终止
         echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
         #
-        exit 29
+        exit 28
     fi
     #
 else
@@ -426,7 +422,7 @@ else
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_BIN}/auto_update_switch"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
     #
-    exit 30
+    exit 29
 fi
 #
 sleep 10
@@ -443,15 +439,13 @@ then
     # 修改文件${SBL_SYS_BIN}/list_of_user_custom_scripts
     "${USB_MOUNT_POINT}/bin/sed" -i -e '/# NEXT SERVICE/i\# DEPENDENCY SERVICE\n\"${SBL_SYS_USR}/dependency/bin/dependency_enable.service\"\n#' "${SBL_SYS_BIN}/list_of_user_custom_scripts"
     #
-    "${USB_MOUNT_POINT}/bin/sed" -i -e '/# NEXT SERVICE/i\# DNSMASQ.D SERVICE\n\"${SBL_SYS_USR}/dnsmasq.d/bin/dnsmasq.d_enable.service\"\n#' "${SBL_SYS_BIN}/list_of_user_custom_scripts"
-    #
 else
     # Stop and Exit
     # 如果文件${SBL_SYS_ETC}/list_of_user_custom_scripts.template不存在，则该程序终止
     echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CAN'T LOCATE ${SBL_SYS_ETC}/list_of_user_custom_scripts.template"
     echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: STAGE 2"
     #
-    exit 31
+    exit 30
 fi
 #
 sleep 10
@@ -493,7 +487,7 @@ fi
 # 临时解决方案：以下4行代码的存在是因为gotee不能输出没有\n的行，导致不显示插件安装提示信息
 if ${TEST_FMW_TEE}
 then
-    exit 32
+    exit 31
 fi
 #
 # Check if ${SBL_SYS_BIN}/addons_install exists

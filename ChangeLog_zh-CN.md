@@ -14,8 +14,10 @@
 4. 更新addons_install
 5. 更新dnsmasq.d
 6. 更新entware
-7. 更新update
-8. 更新upgrade，增加离线升级功能
+7. 更新install
+8. 更新install_online
+9. 更新update
+10. 更新upgrade，增加离线升级功能
 
 #### 删除
 

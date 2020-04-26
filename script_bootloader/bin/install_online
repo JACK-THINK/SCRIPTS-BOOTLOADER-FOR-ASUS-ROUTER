@@ -364,7 +364,7 @@ then
     rm -f "/tmp/gohash"
     rm -f "/tmp/install_online"
     #
-    exit 5
+    exit 6
 fi
 #
 sleep 30

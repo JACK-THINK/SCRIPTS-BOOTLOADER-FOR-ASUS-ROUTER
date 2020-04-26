@@ -196,7 +196,7 @@ then
         #
         rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
         #
-        exit 5
+        exit 4
     fi
     #
     sleep 30
@@ -227,7 +227,7 @@ else
         #
         rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
         #
-        exit 5
+        exit 4
     fi
     #
     sleep 30
