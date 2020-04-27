@@ -94,6 +94,10 @@ esac
 # 设置自定义变量DOWNLOAD_LINK为最新版v2ray-core的下载链接
 DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
 #
+# DNS_PORT: Port of the V2RAY-DNS
+# 设置自定义变量DNS_PORT为V2RAY-DNS的接收端口
+DNS_PORT="2053"
+#
 ########## END ##########
 #
 #
@@ -172,6 +176,16 @@ then
         # Configure v2ray
         # 配置v2ray
         "${PRIVATE_BIN}/v2ray_configure"
+        #
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+        fi
+        #
+        /opt/bin/echo -e "server=8.8.8.8" > "${PRIVATE_ETC}/dnsmasq.d/v2ray_dns_tproxy.conf"
+        /opt/bin/echo -e "server=127.0.0.1#${DNS_PORT}" > "${PRIVATE_ETC}/dnsmasq.d/v2ray_dns.conf"
         #
         # Configure fwd
         # 配置fwd

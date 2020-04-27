@@ -13,6 +13,18 @@ SERVICE_NAME="FW_V2RAY_TRANSPARENT_PROXY"
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="V2RAY_TPROXY"
@@ -49,16 +61,18 @@ UDP_STATUS="$(iptables -t mangle -nvL | /opt/bin/grep ''"Chain ${USER_DEFINED_CH
 #
 ########## UPDATE DNS SETTINGS ##########
 #
+/opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
+#
 # Check if chain ${USER_DEFINED_CHAIN_NAME}_UDP exists
 # 检查${USER_DEFINED_CHAIN_NAME}_UDP链是否存在
 if [ -z "${UDP_STATUS}" ]
 then
-    /opt/bin/sed -i '/^server=127\.0\.0\.1#.*/d' "/tmp/resolv.dnsmasq"
-    /opt/bin/sed -i '/^#server=.*/s/#//' "/tmp/resolv.dnsmasq"
+    /opt/bin/rm -f "${ENTWARE_DNSMASQD}/v2ray_dns.conf"
 else
-    /opt/bin/sed -i '/^server=8\.8\.8\.8/d' "/tmp/resolv.dnsmasq"
-    /opt/bin/sed -i '/^#server=.*/s/#//' "/tmp/resolv.dnsmasq"
+    /opt/bin/rm -f "${ENTWARE_DNSMASQD}/v2ray_dns_tproxy.conf"
 fi
+#
+/opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
 #
 ########## END ##########
 #

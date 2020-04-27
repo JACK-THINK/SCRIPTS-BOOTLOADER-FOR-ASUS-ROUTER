@@ -77,11 +77,6 @@ ADMINUSER="$(nvram get sbl_username)"
 # 更新文件/etc/hosts
 /opt/bin/sed -i '/'"${SERVER_DOMAIN}"'/d' "/etc/hosts"
 #
-# Update DNS server
-# 更新DNS服务器
-/opt/bin/killall -q -1 "dnsmasq"
-/opt/bin/sleep 30
-#
 ########## END ##########
 #
 #

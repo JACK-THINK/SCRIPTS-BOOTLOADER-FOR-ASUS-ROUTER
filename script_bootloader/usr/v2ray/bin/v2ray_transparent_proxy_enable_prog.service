@@ -117,11 +117,6 @@ else
     "${PRIVATE_BIN}/fw_v2ray_transparent_proxy_enable.service" > /dev/null 2>&1
     /opt/bin/sleep 2
     #
-    # Update DNS server
-    # 更新DNS服务器
-    /opt/bin/killall -q -1 "dnsmasq"
-    /opt/bin/sleep 30
-    #
     ########## END ##########
     #
     #

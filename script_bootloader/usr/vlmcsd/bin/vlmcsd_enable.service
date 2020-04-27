@@ -67,7 +67,7 @@ then
     # 如果两个文件都存在，则执行
     if [ -e "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" ]
     then
-        /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" "${ENTWARE_DNSMASQD}"
+        /opt/bin/cp -lf "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" "${ENTWARE_DNSMASQD}"
         /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: KMS AUTO DISCOVERY IS SET"
     else
