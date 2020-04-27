@@ -78,6 +78,7 @@ then
     # 更新DNS服务器
     /opt/bin/mv -f "/tmp/resolv.dnsmasq" "/tmp/resolv.dnsmasq.bak"
     /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/adguardhome.conf" "${ENTWARE_DNSMASQD}"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
     #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #

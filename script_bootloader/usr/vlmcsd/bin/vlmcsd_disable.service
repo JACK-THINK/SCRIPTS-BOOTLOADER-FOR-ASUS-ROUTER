@@ -56,6 +56,7 @@ done
 if [ -e "${ENTWARE_DNSMASQD}/vlmcsd.conf" ]
 then
     /opt/bin/rm -f "${ENTWARE_DNSMASQD}/vlmcsd.conf"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: KMS AUTO DISCOVERY IS UNSET"
 fi
 #

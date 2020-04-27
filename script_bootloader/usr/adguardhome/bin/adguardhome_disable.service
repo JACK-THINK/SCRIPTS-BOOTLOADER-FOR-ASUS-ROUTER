@@ -52,6 +52,7 @@ done
 # 更新DNS服务器
 /opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
 /opt/bin/rm -f "${ENTWARE_DNSMASQD}/adguardhome.conf"
+/opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
 #
 ########## END ##########
 #

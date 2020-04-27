@@ -68,6 +68,7 @@ then
     if [ -e "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" ]
     then
         /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/vlmcsd.conf" "${ENTWARE_DNSMASQD}"
+        /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: KMS AUTO DISCOVERY IS SET"
     else
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: KMS AUTO DISCOVERY CAN'T BE SET"
