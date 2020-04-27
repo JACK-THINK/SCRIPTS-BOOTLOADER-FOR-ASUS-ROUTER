@@ -91,13 +91,13 @@ then
         #
         # Configure dbus-daemon
         # 配置dbus-daemon
-        /opt/bin/rm -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
-        /opt/bin/mv -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf.bak" "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
-        /opt/bin/rm -f "${PRIVATE_ETC}/dbus/avahi-dbus.conf"
-        #
-        /opt/bin/rm -f "/opt/share/dbus-1/system.conf"
-        /opt/bin/mv -f "/opt/share/dbus-1/system.conf.bak" "/opt/share/dbus-1/system.conf"
-        /opt/bin/rm -f "${PRIVATE_ETC}/dbus/system.conf"
+        #ND#/opt/bin/rm -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
+        #ND#/opt/bin/mv -f "/opt/etc/dbus-1/system.d/avahi-dbus.conf.bak" "/opt/etc/dbus-1/system.d/avahi-dbus.conf"
+        #ND#/opt/bin/rm -f "${PRIVATE_ETC}/dbus/avahi-dbus.conf"
+        #ND##
+        #ND#/opt/bin/rm -f "/opt/share/dbus-1/system.conf"
+        #ND#/opt/bin/mv -f "/opt/share/dbus-1/system.conf.bak" "/opt/share/dbus-1/system.conf"
+        #ND#/opt/bin/rm -f "${PRIVATE_ETC}/dbus/system.conf"
         #
         # Enable /opt/etc/init.d/S91smb
         # 启用/opt/etc/init.d/S91smb
