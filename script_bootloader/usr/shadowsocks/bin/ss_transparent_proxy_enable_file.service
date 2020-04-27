@@ -13,6 +13,14 @@ USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootload
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/shadowsocks"
@@ -104,7 +112,8 @@ checkIfProcessAlive()
 checkIfProcessAlive "${SS_REDIR_PID_FILE}" TEST_SS_REDIR
 checkIfProcessAlive "${SS_TUNNEL_PID_FILE}" TEST_SS_TUNNEL
 #
-if ${TEST_SS_REDIR} && ${TEST_SS_TUNNEL} && ${TEST_FW}
+if ${TEST_SS_REDIR} && ${TEST_SS_TUNNEL} && ${TEST_FW} && \
+[ -e "${PRIVATE_ETC}/dnsmasq.d/ss_tunnel_dns.conf" ]
 then
     # Everything is OK
     # 满足全部条件
@@ -134,10 +143,9 @@ else
     #
     # Update DNS server
     # 更新DNS服务器
-    /opt/bin/sed -i '/^server=.*/s/^/#/' "/tmp/resolv.dnsmasq"
-    /opt/bin/echo "server=127.0.0.1#${DNS_PORT}" >> "/tmp/resolv.dnsmasq"
-    /opt/bin/killall -q -1 "dnsmasq"
-    /opt/bin/sleep 30
+    /opt/bin/mv -f "/tmp/resolv.dnsmasq" "/tmp/resolv.dnsmasq.bak"
+    /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/ss_tunnel_dns.conf" "${ENTWARE_DNSMASQD}"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
     #
     ########## END ##########
     #

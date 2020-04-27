@@ -81,13 +81,6 @@ ADMINUSER="$(nvram get sbl_username)"
 # 更新文件/etc/hosts
 /opt/bin/sed -i '/'"${SERVER_DOMAIN}"'/d' "/etc/hosts"
 #
-# Update DNS server
-# 更新DNS服务器
-/opt/bin/sed -i '/^server=127\.0\.0\.1#.*/d' "/tmp/resolv.dnsmasq"
-/opt/bin/sed -i '/^#server=.*/s/#//' "/tmp/resolv.dnsmasq"
-/opt/bin/killall -q -1 "dnsmasq"
-/opt/bin/sleep 30
-#
 ########## END ##########
 #
 #

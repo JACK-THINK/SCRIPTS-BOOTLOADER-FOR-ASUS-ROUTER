@@ -161,6 +161,16 @@ then
         # 配置fwd
         /opt/bin/cp -f "${PRIVATE_ETC}/fw.d/ss_server_open" "${ENTWARE_FWD}"
         #
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+        fi
+        #
+        SS_TUNNEL_LOCAL_PORT="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_tunnel.json")"
+        /opt/bin/echo -e "server=127.0.0.1#${SS_TUNNEL_LOCAL_PORT}" > "${PRIVATE_ETC}/dnsmasq.d/ss_tunnel_dns.conf"
+        #
         # Configure monit
         # 配置monit
         /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/ss_local" "${ENTWARE_MONITD}"

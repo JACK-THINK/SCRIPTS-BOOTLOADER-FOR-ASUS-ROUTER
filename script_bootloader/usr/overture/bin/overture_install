@@ -181,6 +181,15 @@ then
         /opt/bin/sed -E -i '/^[[:space:]]+\"BindAddress\":/s/[[:digit:]]+/'"${SS_TUNNEL_LOCAL_PORT}"'/' "${PRIVATE_ETC}/config.json"
         /opt/bin/sed -E -i '/^[[:space:]]+\"SOCKS5Address\":/s/[[:digit:].:]{2,}/127.0.0.1:'"${SS_LOCAL_LOCAL_PORT}"'/' "${PRIVATE_ETC}/config.json"
         #
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+        fi
+        #
+        /opt/bin/echo -e "server=127.0.0.1#${SS_TUNNEL_LOCAL_PORT}" > "${PRIVATE_ETC}/dnsmasq.d/overture.conf"
+        #
         # Configure monit
         # 配置monit
         #/opt/bin/cp -f "${PRIVATE_ETC}/monit.d/overture" "${ENTWARE_MONITD}"

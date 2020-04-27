@@ -403,7 +403,7 @@ if [ -e "${SBL_SYS_BIN}/auto_update_switch" ]
 then
     # Invoke ${SBL_SYS_BIN}/auto_update_switch
     # 如果文件${SBL_SYS_BIN}/auto_update_switch存在，则执行
-    "${SBL_SYS_BIN}/auto_update_switch" "enable"
+    "${SBL_SYS_BIN}/auto_update_switch" "disable"
     #
     # Check if ${SBL_SYS_BIN}/auto_update_switch returns 0
     # 检查文件${SBL_SYS_BIN}/auto_update_switch的返回值是否为0

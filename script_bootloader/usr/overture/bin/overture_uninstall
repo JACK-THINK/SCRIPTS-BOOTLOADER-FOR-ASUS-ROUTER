@@ -93,6 +93,7 @@ then
         # 卸载overture
         /opt/bin/rm -rf "${PRIVATE_USR}"
         /opt/bin/rm -rf "${PRIVATE_ETC}/config.json"
+        /opt/bin/rm -rf "${PRIVATE_ETC}/dnsmasq.d"
         #
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
         #

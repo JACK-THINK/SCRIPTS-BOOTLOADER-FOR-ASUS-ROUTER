@@ -21,6 +21,14 @@ USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootload
 # 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
 SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/overture"
@@ -49,24 +57,34 @@ OVERTURE_PID_FILE="/var/run/overture.pid"
 #
 ########## CHECK AND ENABLE OVERTURE ##########
 #
-# Check if ${PRIVATE_USR}/overture and ${PRIVATE_ETC}/config.json exist
-# 检查文件${PRIVATE_USR}/overture和文件${PRIVATE_ETC}/config.json是否存在
-if [ -e "${PRIVATE_USR}/overture" ] && [ -e "${PRIVATE_ETC}/config.json" ]
+# Check if ${PRIVATE_USR}/overture, ${PRIVATE_ETC}/config.json and ${PRIVATE_ETC}/dnsmasq.d/overture.conf exist
+# 检查文件${PRIVATE_USR}/overture，${PRIVATE_ETC}/config.json和${PRIVATE_ETC}/dnsmasq.d/overture.conf是否存在
+if [ -e "${PRIVATE_USR}/overture" ] && \
+[ -e "${PRIVATE_ETC}/config.json" ] && \
+[ -e "${PRIVATE_ETC}/dnsmasq.d/overture.conf" ]
 then
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
     # Load ${PRIVATE_USR}/overture
-    # 如果文件${PRIVATE_USR}/overture存在，则执行
+    # 如果文件${PRIVATE_USR}/overture，${PRIVATE_ETC}/config.json和${PRIVATE_ETC}/dnsmasq.d/overture.conf存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/overture" -c "${PRIVATE_ETC}/config.json" &> /dev/null &
     PID="$(pidof overture)"
     /opt/bin/echo "${PID}" > "${OVERTURE_PID_FILE}"
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    # Update DNS server
+    # 更新DNS服务器
+    /opt/bin/mv -f "/tmp/resolv.dnsmasq" "/tmp/resolv.dnsmasq.bak"
+    /opt/bin/cp -f "${PRIVATE_ETC}/dnsmasq.d/overture.conf" "${ENTWARE_DNSMASQD}"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
+    #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/overture不存在，则执行
+    # 如果文件${PRIVATE_USR}/overture，${PRIVATE_ETC}/config.json或${PRIVATE_ETC}/dnsmasq.d/overture.conf不存在，则执行
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #

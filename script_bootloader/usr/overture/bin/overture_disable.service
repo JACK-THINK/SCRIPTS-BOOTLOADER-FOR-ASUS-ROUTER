@@ -13,6 +13,18 @@ SERVICE_NAME="OVERTURE"
 # 服务功能
 SERVICE_FUNCTION="DISABLE"
 #
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
 # OVERTURE_PID_FILE: The path to overture.pid
 # 设置自定义变量OVERTURE_PID_FILE为文件overture.pid的绝对路径
 OVERTURE_PID_FILE="/var/run/overture.pid"
@@ -35,6 +47,12 @@ do
 done
 #
 /opt/bin/rm -f "${OVERTURE_PID_FILE}"
+#
+# Update DNS server
+# 更新DNS服务器
+/opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
+/opt/bin/rm -f "${ENTWARE_DNSMASQD}/overture.conf"
+/opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
 #
 ########## END ##########
 #

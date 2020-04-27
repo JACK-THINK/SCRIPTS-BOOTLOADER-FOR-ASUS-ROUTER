@@ -53,10 +53,6 @@ BUILT_IN_CHAIN_NAME="$(/opt/bin/sed -E -n -e 's/^BUILT_IN_CHAIN_NAME=\"(.*)\"/\1
 # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
 USER_DEFINED_CHAIN_NAME="$(/opt/bin/sed -E -n -e 's/^USER_DEFINED_CHAIN_NAME=\"(.*)\"/\1/p' "${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service")"
 #
-# DNS_PORT: Local port of ss-tunnel
-# 设置自定义变量DNS_PORT为ss-tunnel的本地端口
-DNS_PORT="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*\"local_port\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_tunnel.json")"
-#
 # ADMINUSER: The administrator of the router
 # 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
 ADMINUSER="$(nvram get sbl_username)"
@@ -138,13 +134,6 @@ else
     /opt/bin/sleep 2
     "${PRIVATE_BIN}/fw_ss_transparent_proxy_enable.service" > /dev/null 2>&1
     /opt/bin/sleep 2
-    #
-    # Update DNS server
-    # 更新DNS服务器
-    /opt/bin/sed -i '/^server=.*/s/^/#/' "/tmp/resolv.dnsmasq"
-    /opt/bin/echo "server=127.0.0.1#${DNS_PORT}" >> "/tmp/resolv.dnsmasq"
-    /opt/bin/killall -q -1 "dnsmasq"
-    /opt/bin/sleep 30
     #
     ########## END ##########
     #
