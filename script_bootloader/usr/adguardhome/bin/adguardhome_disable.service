@@ -17,10 +17,6 @@ SERVICE_FUNCTION="DISABLE"
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
 USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
 #
-# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
-# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
-SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
-#
 # ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
 # 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
 ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
@@ -29,21 +25,9 @@ ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 # 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
 ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
 #
-# PRIVATE_ROOT: The root directory for this program
-# 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT="${SBL_SYS_USR}/adguardhome"
-#
-# PRIVATE_ETC: The directory which contains all the WORKING DIRECTORYs related to this program
-# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
-PRIVATE_ETC="${PRIVATE_ROOT}/etc"
-#
 # ADGUARDHOME_PID_FILE: The path to adguardhome.pid
 # 设置自定义变量ADGUARDHOME_PID_FILE为文件adguardhome.pid的绝对路径
 ADGUARDHOME_PID_FILE="/var/run/adguardhome.pid"
-#
-# DNS_PORT: Local port of DNS service from ADGUARD-HOME
-# 设置自定义变量DNS_PORT为ADGUARD-HOME的DNS服务监听端口
-DNS_PORT="$(/opt/bin/sed -E -n -e 's/^[[:space:]]*port:[[:space:]]*([[:digit:]]*).*/\1/p' "${PRIVATE_ETC}/AdGuardHome.yaml")"
 #
 ########## END ##########
 #
