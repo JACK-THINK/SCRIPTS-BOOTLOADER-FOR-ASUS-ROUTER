@@ -79,6 +79,8 @@ then
             then
                 /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/aarch64-k3.10/include/include.tar.gz"
                 /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                /opt/bin/chown -R 0:0 "/opt/include"
+                /opt/bin/sleep 10
                 /opt/bin/rm -f "/tmp/include.tar.gz"
                 /opt/bin/sleep 30
                 /opt/bin/sync
@@ -103,6 +105,8 @@ then
             then
                 /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz"
                 /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                /opt/bin/chown -R 0:0 "/opt/include"
+                /opt/bin/sleep 10
                 /opt/bin/rm -f "/tmp/include.tar.gz"
                 /opt/bin/sleep 30
                 /opt/bin/sync

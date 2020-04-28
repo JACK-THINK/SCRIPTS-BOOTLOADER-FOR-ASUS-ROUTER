@@ -248,6 +248,12 @@ fi
 # 删除${ARCHIVE_NAME}包
 rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
 #
+# Change the owner and group of each FILE
+# 更改文件所有者
+chown -R 0:0 "${USB_MOUNT_POINT}/script_bootloader"
+#
+sleep 10
+#
 # Change the mode of the files
 # 更改文件权限
 chmod -R 777 "${USB_MOUNT_POINT}/script_bootloader"
