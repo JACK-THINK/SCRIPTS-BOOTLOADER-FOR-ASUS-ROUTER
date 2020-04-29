@@ -91,7 +91,7 @@
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-11.jpg)
 
-     - STAGE 2 completed
+     - STAGE 2 is completed.
 
        ![](./Documents_Assets/How_to_Use/install/online_step5-12.jpg)
 
@@ -121,7 +121,7 @@
 
 2. Login the router with ssh client.
 
-3. Download the latest installation package from Github and upload it to `/tmp/home/root` of the router.
+3. Download the latest installation package from [here](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions#installation-offline) and upload it to `/tmp/home/root` of the router.
 
    ![](./Documents_Assets/How_to_Use/install/offline_step3_en-US.jpg)
 
@@ -231,7 +231,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
-## Update
+## Update (Online)
 
 1. Login the router with ssh client.
 
@@ -245,7 +245,7 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/update/step2.jpg)
 
-## Upgrade
+## Upgrade (Online)
 
 > When new version of Entware is released, execute upgrade, which could preserve all the files in directory `/tmp/mnt/ASUS_ROUTER/home` and reinstall the system.
 
@@ -269,7 +269,19 @@ Modify the source files of the target add-on according to the README_en-US.md in
 
    ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
 
-4. Following steps are same with those in section [Installation (Online)](#installation-online)
+4. Following steps are same with those in section [Installation (Online)](#installation-online).
+
+## Upgrade (Offline)
+
+> When new version of Entware is released, execute upgrade, which could preserve all the files in directory `/tmp/mnt/ASUS_ROUTER/home` and reinstall the system.
+
+1. Login the router with ssh client.
+
+2. Download the latest upgrade package from [here](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions#upgrade-offline) and upload it to `/tmp/mnt/ASUS_ROUTER/home/root` of the router.
+
+   ![](./Documents_Assets/How_to_Use/upgrade/offline_step2_en-US.jpg)
+
+3. Following steps are same with those in section [Upgrade (Online)](#upgrade-online).
 
 ## Uninstallation
 

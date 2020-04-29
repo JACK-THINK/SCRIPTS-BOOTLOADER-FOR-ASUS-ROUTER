@@ -185,64 +185,42 @@ then
         exit 5
     fi
     #
-    # Untar ${ARCHIVE_NAME} package
-    # 解压${ARCHIVE_NAME}包
-    tar -xzvf "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" -C "${USB_MOUNT_POINT}" > /dev/null 2>&1
-    #
-    if [ ${?} -ne 0 ]
-    then
-        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-        #
-        rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
-        #
-        exit 4
-    fi
-    #
-    sleep 30
-    #
-    # Move directory script_bootloader to directory ${USB_MOUNT_POINT}
-    # 移动目录script_bootloader至目录${USB_MOUNT_POINT}
-    mv -f "${USB_MOUNT_POINT}"/JACK*/script_bootloader "${USB_MOUNT_POINT}"
-    #
-    sleep 10
-    #
-    # Remove directory JACK*
-    # 删除目录JACK*
-    rm -rf "${USB_MOUNT_POINT}"/JACK*
+    DIR_PREFIX="JACK-THINK-"
     #
 else
     echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} OFFLINE"
     #
     mv -f "${EXCLUDED_DIRECTORY}/root"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*.tar.gz "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
     #
-    # Untar ${ARCHIVE_NAME} package
-    # 解压${ARCHIVE_NAME}包
-    tar -xzvf "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" -C "${USB_MOUNT_POINT}" > /dev/null 2>&1
-    #
-    if [ ${?} -ne 0 ]
-    then
-        echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
-        echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-        #
-        rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
-        #
-        exit 4
-    fi
-    #
-    sleep 30
-    #
-    # Move directory script_bootloader to directory ${USB_MOUNT_POINT}
-    # 移动目录script_bootloader至目录${USB_MOUNT_POINT}
-    mv -f "${USB_MOUNT_POINT}"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*/script_bootloader "${USB_MOUNT_POINT}"
-    #
-    sleep 10
-    #
-    # Remove directory SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
-    # 删除目录SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
-    rm -rf "${USB_MOUNT_POINT}"/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
+    DIR_PREFIX=""
     #
 fi
+#
+# Untar ${ARCHIVE_NAME} package
+# 解压${ARCHIVE_NAME}包
+tar -xzvf "${USB_MOUNT_POINT}/${ARCHIVE_NAME}" -C "${USB_MOUNT_POINT}" > /dev/null 2>&1
+#
+if [ ${?} -ne 0 ]
+then
+    echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+    echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+    #
+    rm -f "${USB_MOUNT_POINT}/${ARCHIVE_NAME}"
+    #
+    exit 4
+fi
+#
+sleep 30
+#
+# Move directory script_bootloader to directory ${USB_MOUNT_POINT}
+# 移动目录script_bootloader至目录${USB_MOUNT_POINT}
+mv -f "${USB_MOUNT_POINT}"/${DIR_PREFIX}SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*/script_bootloader "${USB_MOUNT_POINT}"
+#
+sleep 10
+#
+# Remove directory SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
+# 删除目录SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
+rm -rf "${USB_MOUNT_POINT}"/${DIR_PREFIX}SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER*
 #
 # Remove ${ARCHIVE_NAME} package
 # 删除${ARCHIVE_NAME}包

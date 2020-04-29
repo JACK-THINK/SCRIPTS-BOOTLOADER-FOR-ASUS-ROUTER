@@ -121,7 +121,7 @@
 
 2. 用ssh登陆路由器后台
 
-3. 下载最新版安装包（[国内下载地址](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引#系统使用说明)），并将其上传至路由器`/tmp/home/root`
+3. 在[此处](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引#离线安装)下载最新版安装包，并将其上传至路由器`/tmp/home/root`
 
    ![](./Documents_Assets/How_to_Use/install/offline_step3_zh-CN.jpg)
 
@@ -231,7 +231,7 @@
 
    ![](./Documents_Assets/How_to_Use/services_once/step5.jpg)
 
-## 更新
+## 在线更新
 
 1. 用ssh登陆路由器后台
 
@@ -245,7 +245,7 @@
 
    ![](./Documents_Assets/How_to_Use/update/step2.jpg)
 
-## 升级
+## 在线升级
 
 > 当Entware发布新版本时，执行升级。此操作可在保留`/tmp/mnt/ASUS_ROUTER/home`中全部文件的同时全新安装本系统
 
@@ -270,6 +270,18 @@
    ![](./Documents_Assets/How_to_Use/upgrade/step3.jpg)
 
 4. 后续步骤同[在线安装](#在线安装)
+
+## 离线升级
+
+> 当Entware发布新版本时，执行升级。此操作可在保留`/tmp/mnt/ASUS_ROUTER/home`中全部文件的同时全新安装本系统
+
+1. 用ssh登陆路由器后台
+
+2. 在[此处](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引#离线升级)下载最新版离线升级包，并将其上传至路由器`/tmp/mnt/ASUS_ROUTER/home/root`
+
+   ![](./Documents_Assets/How_to_Use/upgrade/offline_step2_zh-CN.jpg)
+
+3. 后续步骤同[在线升级](#在线升级)
 
 ## 卸载
 
