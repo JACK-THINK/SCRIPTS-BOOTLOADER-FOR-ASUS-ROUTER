@@ -162,19 +162,21 @@
    mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER
    ```
 
-9. Execute the code below to start installation.
+9. (Optional) If you need to install specific version of Entware offline or have no plan to update or upgrade packages from it in the future, download the Entware offline repository from [here](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions#Entware-offline-repository) and upload it to `/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/usr/` of the router.
+
+10. Execute the code below to start installation.
 
    ```shell
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install
    ```
 
-10. (Optional) If command `tee` doesn't exist in the firmware, installation will come to an end after outputing `***** STAGE 3: INSTALL ADDONS *****`. Execute the code below to install add-ons. (After installation of SCRIPTS BOOTLOADER FOR ASUS ROUTER, you can still execute this code to install other add-ons.)
+11. (Optional) If command `tee` doesn't exist in the firmware, installation will come to an end after outputing `***** STAGE 3: INSTALL ADDONS *****`. Execute the code below to install add-ons. (After installation of SCRIPTS BOOTLOADER FOR ASUS ROUTER, you can still execute this code to install other add-ons.)
 
    ```shell
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/addons_install
    ```
 
-11. Execute the code below to reboot the router after all the favored add-ons are installed.
+12. Execute the code below to reboot the router after all the favored add-ons are installed.
 
    ```shell
    /tmp/sbl_restart_router

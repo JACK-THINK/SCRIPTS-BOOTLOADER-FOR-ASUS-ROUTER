@@ -32,9 +32,17 @@ SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
 PRIVATE_ROOT="${SBL_SYS_USR}/entware"
 #
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
+#
 # PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
+# PRIVATE_USR: The directory which contains all the external software resources related to this program
+# 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
+PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # FILES_TO_COPY: The list of files that should be copied
 # 设置自定义变量FILES_TO_COPY为待复制文件列表
@@ -121,7 +129,31 @@ fi
 # 根据路由器架构，自动安装适当版本的Entware
 case "$(uname -m)" in
     "aarch64")
-        wget -O - "http://bin.entware.net/aarch64-k3.10/installer/generic.sh" | sh
+        if [ -e "${PRIVATE_USR}/entware_repo_aarch64-k3.10.tar.gz" ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
+            #
+            tar -xzvf "${PRIVATE_USR}/entware_repo_aarch64-k3.10.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            #
+            if [ ${?} -ne 0 ]
+            then
+                echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+                echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                exit 4
+            fi
+            #
+            sleep 30
+            #
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} OFFLINE"
+            #
+            "${PRIVATE_BIN}/entware_arm_generic_installer_offline" "aarch64-k3.10"
+            #
+        else
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} ONLINE"
+            #
+            wget -O - "http://bin.entware.net/aarch64-k3.10/installer/generic.sh" | sh
+        fi
         #
         if [ ${?} -eq 0 ]
         then
@@ -133,7 +165,31 @@ case "$(uname -m)" in
         fi
         ;;
     "armv7l")
-        wget -O - "http://bin.entware.net/armv7sf-k2.6/installer/generic.sh" | sh
+        if [ -e "${PRIVATE_USR}/entware_repo_armv7sf-k2.6.tar.gz" ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
+            #
+            tar -xzvf "${PRIVATE_USR}/entware_repo_armv7sf-k2.6.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            #
+            if [ ${?} -ne 0 ]
+            then
+                echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+                echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                exit 4
+            fi
+            #
+            sleep 30
+            #
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} OFFLINE"
+            #
+            "${PRIVATE_BIN}/entware_arm_generic_installer_offline" "armv7sf-k2.6"
+            #
+        else
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} ONLINE"
+            #
+            wget -O - "http://bin.entware.net/armv7sf-k2.6/installer/generic.sh" | sh
+        fi
         #
         if [ ${?} -eq 0 ]
         then
@@ -145,7 +201,31 @@ case "$(uname -m)" in
         fi
         ;;
     "mips")
-        wget -O - "http://pkg.entware.net/binaries/mipsel/installer/installer.sh" | sh
+        if [ -e "${PRIVATE_USR}/entware_repo_mipsel.tar.gz" ]
+        then
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
+            #
+            tar -xzvf "${PRIVATE_USR}/entware_repo_mipsel.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            #
+            if [ ${?} -ne 0 ]
+            then
+                echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ARCHIVE_NAME} IS CORRUPT"
+                echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+                #
+                exit 4
+            fi
+            #
+            sleep 30
+            #
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} OFFLINE"
+            #
+            "${PRIVATE_BIN}/entware_mipsel_installer_offline"
+            #
+        else
+            echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME} ONLINE"
+            #
+            wget -O - "http://pkg.entware.net/binaries/mipsel/installer/installer.sh" | sh
+        fi
         #
         if [ ${?} -eq 0 ]
         then

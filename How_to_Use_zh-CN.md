@@ -162,19 +162,21 @@
    mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER
    ```
 
-9. 执行下列代码，开始安装
+9. （可选）如果需要离线安装特定版本Entware且无升级计划，可在[此处](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/使用说明索引#Entware离线库)下载Entware离线库，并将其上传至路由器`/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/usr/`
+
+10. 执行下列代码，开始安装
 
    ```shell
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/install
    ```
 
-10. （可选）如果固件中没有`tee`命令，则安装程序会在输出`***** STAGE 3: INSTALL ADDONS *****`后自动退出。执行下列代码，安装插件（系统安装完成后，仍可使用该命令补装其它插件）
+11. （可选）如果固件中没有`tee`命令，则安装程序会在输出`***** STAGE 3: INSTALL ADDONS *****`后自动退出。执行下列代码，安装插件（系统安装完成后，仍可使用该命令补装其它插件）
 
    ```shell
    /tmp/mnt/ASUS_ROUTER/script_bootloader/bin/addons_install
    ```
 
-11. 全部插件安装完毕后，执行下列代码，重启路由器
+12. 全部插件安装完毕后，执行下列代码，重启路由器
 
    ```shell
    /tmp/sbl_restart_router

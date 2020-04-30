@@ -72,16 +72,22 @@ then
             # 根据路由器架构，自动安装全部适当版本的include files
             if [ ! -d "/opt/include" ]
             then
-                mkdir "/opt/include"
+                /opt/bin/mkdir "/opt/include"
             fi
             #
             if [ -e "/opt/bin/gcc" ]
             then
-                /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/aarch64-k3.10/include/include.tar.gz"
-                /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                if [ -e "${SBL_SYS_USR}/entware/usr/aarch64-k3.10/include/include.tar.gz" ]
+                then
+                    /opt/bin/tar -xzvf "${SBL_SYS_USR}/entware/usr/aarch64-k3.10/include/include.tar.gz" -C "/opt/include"
+                else
+                    /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/aarch64-k3.10/include/include.tar.gz"
+                    /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                    /opt/bin/sleep 10
+                    /opt/bin/rm -f "/tmp/include.tar.gz"
+                fi
+                #
                 /opt/bin/chown -R 0:0 "/opt/include"
-                /opt/bin/sleep 10
-                /opt/bin/rm -f "/tmp/include.tar.gz"
                 /opt/bin/sleep 30
                 /opt/bin/sync
                 /opt/bin/sleep 10
@@ -98,16 +104,22 @@ then
             # 根据路由器架构，自动安装全部适当版本的include files
             if [ ! -d "/opt/include" ]
             then
-                mkdir "/opt/include"
+                /opt/bin/mkdir "/opt/include"
             fi
             #
             if [ -e "/opt/bin/gcc" ]
             then
-                /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz"
-                /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                if [ -e "${SBL_SYS_USR}/entware/usr/armv7sf-k2.6/include/include.tar.gz" ]
+                then
+                    /opt/bin/tar -xzvf "${SBL_SYS_USR}/entware/usr/armv7sf-k2.6/include/include.tar.gz" -C "/opt/include"
+                else
+                    /opt/bin/wget-ssl -q -c -t 10 -T 120 --no-cookies --no-check-certificate -O "/tmp/include.tar.gz" "http://bin.entware.net/armv7sf-k2.6/include/include.tar.gz"
+                    /opt/bin/tar -xzvf "/tmp/include.tar.gz" -C "/opt/include"
+                    /opt/bin/sleep 10
+                    /opt/bin/rm -f "/tmp/include.tar.gz"
+                fi
+                #
                 /opt/bin/chown -R 0:0 "/opt/include"
-                /opt/bin/sleep 10
-                /opt/bin/rm -f "/tmp/include.tar.gz"
                 /opt/bin/sleep 30
                 /opt/bin/sync
                 /opt/bin/sleep 10

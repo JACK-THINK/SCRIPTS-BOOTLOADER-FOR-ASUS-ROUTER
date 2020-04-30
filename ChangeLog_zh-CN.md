@@ -13,11 +13,12 @@
 3. 更新How_to_Use_en-US.md
 4. 更新addons_install
 5. 更新dnsmasq.d
-6. 更新entware
-7. 更新install
-8. 更新install_online
-9. 更新update
-10. 更新upgrade，增加离线升级功能
+6. 更新drive_modifier，增加EXT4支持
+7. 更新entware，增加安装离线库功能
+8. 更新install
+9. 更新install_online
+10. 更新update
+11. 更新upgrade，增加离线升级功能
 
 #### 删除
 

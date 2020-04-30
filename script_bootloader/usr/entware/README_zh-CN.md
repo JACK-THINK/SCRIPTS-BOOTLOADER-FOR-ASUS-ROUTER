@@ -20,11 +20,13 @@
 
 `ASUS_ROUTER/script_bootloader/usr/entware/bin/`
 
-| 权限      | 名称                    | 属性     | 说明                           |
-| --------- | ----------------------- | -------- | ------------------------------ |
-| rwxrwxrwx | entware_install         | 普通文件 | 插件的安装程序                 |
-| rwxrwxrwx | entware_enable.service  | 普通文件 | 插件的可执行程序，用于启动程序 |
-| rwxrwxrwx | entware_disable.service | 普通文件 | 插件的可执行程序，用于结束程序 |
+| 权限      | 名称                                  | 属性     | 说明                           |
+| --------- | ------------------------------------- | -------- | ------------------------------ |
+| rwxrwxrwx | entware_install                       | 普通文件 | 插件的安装程序                 |
+| rwxrwxrwx | entware_arm_generic_installer_offline | 普通文件 | 插件的离线安装程序             |
+| rwxrwxrwx | entware_mipsel_installer_offline      | 普通文件 | 插件的离线安装程序             |
+| rwxrwxrwx | entware_enable.service                | 普通文件 | 插件的可执行程序，用于启动程序 |
+| rwxrwxrwx | entware_disable.service               | 普通文件 | 插件的可执行程序，用于结束程序 |
 
 `ASUS_ROUTER/script_bootloader/usr/entware/etc/`
 

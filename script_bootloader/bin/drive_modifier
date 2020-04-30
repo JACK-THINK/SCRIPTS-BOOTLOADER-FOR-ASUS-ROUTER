@@ -42,6 +42,52 @@ USB_DRIVE_LABEL="ASUS_ROUTER"
 # 设置自定义变量USB_DRIVE_BRAND_MODEL为U盘品牌和型号
 USB_DRIVE_BRAND_MODEL="$(sed -E 's/[[:space:]]+/ /g' "/proc/scsi/sg/device_strs")"
 #
+# KERNEL_VERSION: Version of kernel
+# 设置自定义变量KERNEL_VERSION为内核版本号
+KERNEL_VERSION="$(uname -r | sed -E -n -e 's/[^[:digit:]]*([[:digit:].]+)[^[:digit:]]*/\1/p')"
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+checkSupportForExt4()
+{
+    # KERNEL_VERSION: Version of kernel
+    # 设置自定义变量KERNEL_VERSION为内核版本号
+    local KERNEL_VERSION="$(uname -r | sed -E -n -e 's/^[^[:digit:].]*([[:digit:].]+).*/\1/p')"
+    #
+    local KERNEL_VERSION_PART1="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 1)"
+    local KERNEL_VERSION_PART2="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 2)"
+    local KERNEL_VERSION_PART3="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 3)"
+    #
+    # EXT4 filesystem is only supported on the devices with kernel newer than 2.6.28
+    # EXT4文件系统仅在内核版本大于2.6.28的设备上被支持
+    # 
+    if [ ${KERNEL_VERSION_PART1} -gt 2 ]
+    then
+        echo "true"
+    elif [ ${KERNEL_VERSION_PART1} -lt 2 ]
+    then
+        echo "false"
+    else
+        if [ ${KERNEL_VERSION_PART2} -gt 6 ]
+        then
+            echo "true"
+        elif [ ${KERNEL_VERSION_PART2} -lt 6 ]
+        then
+            echo "false"
+        else
+            if [ ${KERNEL_VERSION_PART3} -ge 28 ]
+            then
+                echo "true"
+            else
+                echo "false"
+            fi
+        fi
+    fi
+}
+#
 ########## END ##########
 #
 #
@@ -80,7 +126,17 @@ sleep 10
 # 格式化${USB_DRIVE_PARTITION}并创建卷标${USB_DRIVE_LABEL}
 echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: LABEL OF ${USB_DRIVE_BRAND_MODEL} IS ${USB_DRIVE_LABEL}"
 umount -f "/dev/${USB_DRIVE}1" 2> /dev/null
-mkfs.ext3 -FL "${USB_DRIVE_LABEL}" "${USB_DRIVE_PARTITION}"
+#
+if $(checkSupportForExt4)
+then
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CREATE EXT4 FILESYSTEM"
+    #
+    mke2fs -FL "${USB_DRIVE_LABEL}" -t ext4 "${USB_DRIVE_PARTITION}"
+else
+    echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CREATE EXT3 FILESYSTEM"
+    #
+    mkfs.ext3 -FL "${USB_DRIVE_LABEL}" "${USB_DRIVE_PARTITION}"
+fi
 #
 # Check if mkfs.ext3 returns 0
 # 检查mkfs.ext3的返回值是否为0
