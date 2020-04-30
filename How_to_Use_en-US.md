@@ -162,7 +162,7 @@
    mv /tmp/home/root/script_bootloader /tmp/mnt/ASUS_ROUTER
    ```
 
-9. (Optional) If you need to install specific version of Entware offline or have no plan to update or upgrade packages from it in the future, download the Entware offline repository from [here](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions#Entware-offline-repository) and upload it to `/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/usr/` of the router.
+9. (Optional) If you need to install specific version of Entware offline or have no plan to update or upgrade packages from it in the future, download the Entware offline repository from [here](https://github.com/JACK-THINK/SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER/wiki/Indexes-for-instructions#entware-repository-offline) and upload it to `/tmp/mnt/ASUS_ROUTER/script_bootloader/usr/entware/usr/` of the router.
 
 10. Execute the code below to start installation.
 
