@@ -82,6 +82,16 @@ then
     # 使用nvram对变量script_usbumount进行设置。当U盘被卸载前，任何被该变量引用的可执行程序会自动执行
     nvram set script_usbumount="${USB_UMOUNT_SCRIPT}"
     #
+    # 使用nvram对变量usb_ext_opt进行设置
+    case "$(mount | sed -E -n -e 's#.*[[:space:]]+'"${USB_MOUNT_POINT}"'[[:space:]]+type[[:space:]]+(ext[[:digit:]])[[:space:]]+.*#\1#p')" in
+        "ext3")
+            nvram set usb_ext_opt="barrier=1,data=ordered"
+            ;;
+        "ext4")
+            nvram set usb_ext_opt="barrier=1,data=journal"
+            ;;
+    esac
+    #
     # 使用nvram对变量sbl_username进行设置
     nvram set sbl_username="${ADMINUSER}"
     #

@@ -66,6 +66,10 @@ nvram unset script_usbmount
 nvram unset script_usbumount
 #
 # When the USB flash drive is unmounted, nothing will run automatically
+# 使用nvram对变量usb_ext_opt进行设置，将其恢复为默认状态
+nvram unset usb_ext_opt
+#
+# When the USB flash drive is unmounted, nothing will run automatically
 # 使用nvram对变量sbl_username进行设置，将其恢复为默认状态
 nvram unset sbl_username
 #

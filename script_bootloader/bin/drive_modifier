@@ -10,7 +10,7 @@
 #
 # USB_DRIVE: USB flash drive
 # 设置自定义变量USB_DRIVE为U盘
-USB_DRIVE="$(cat "/tmp/usb.log" | sed -E -n -e 's/.*[[:space:]]+\((sd[[:alpha:]])[[:digit:]]?\):[[:space:]]+Success.*/\1/p' | tail -n 1)"
+USB_DRIVE="$(nvram show 2> /dev/null | sed -E -n -e 's/^usb_path[[:digit:]]_act=([[:alnum:]]+).*/\1/p' | head -n 1)"
 #
 if [ -z "${USB_DRIVE}" ]
 then
@@ -131,9 +131,16 @@ if $(checkSupportForExt4)
 then
     echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CREATE EXT4 FILESYSTEM"
     #
+    nvram set usb_ext_opt="barrier=1,data=journal"
+    nvram commit
+    #
     mke2fs -FL "${USB_DRIVE_LABEL}" -t ext4 "${USB_DRIVE_PARTITION}"
+    #
 else
     echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: CREATE EXT3 FILESYSTEM"
+    #
+    nvram set usb_ext_opt="barrier=1,data=ordered"
+    nvram commit
     #
     mkfs.ext3 -FL "${USB_DRIVE_LABEL}" "${USB_DRIVE_PARTITION}"
 fi
