@@ -57,28 +57,29 @@ checkSupportForExt4()
     # 设置自定义变量KERNEL_VERSION为内核版本号
     local KERNEL_VERSION="$(uname -r | sed -E -n -e 's/^[^[:digit:].]*([[:digit:].]+).*/\1/p')"
     #
-    local KERNEL_VERSION_PART1="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 1)"
-    local KERNEL_VERSION_PART2="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 2)"
-    local KERNEL_VERSION_PART3="$(echo "${KERNEL_VERSION}" | cut -d '.' -f 3)"
+    local KERNEL_VERSION_PART1="$(echo "${KERNEL_VERSION}" | sed -E -n -e 's/([[:digit:]]+)\.[[:digit:]]+\.[[:digit:]]+.*/\1/p')"
+    local KERNEL_VERSION_PART2="$(echo "${KERNEL_VERSION}" | sed -E -n -e 's/[[:digit:]]+\.([[:digit:]]+)\.[[:digit:]]+.*/\1/p')"
+    local KERNEL_VERSION_PART3="$(echo "${KERNEL_VERSION}" | sed -E -n -e 's/[[:digit:]]+\.[[:digit:]]+\.([[:digit:]]+).*/\1/p')"
+    local PROC_FILESYSTEM="$(grep 'ext4' "/proc/filesystems")"
     #
     # EXT4 filesystem is only supported on the devices with kernel newer than 2.6.28
     # EXT4文件系统仅在内核版本大于2.6.28的设备上被支持
     # 
-    if [ ${KERNEL_VERSION_PART1} -gt 2 ]
+    if [ ${KERNEL_VERSION_PART1} -gt 2 ] && [ -n "${PROC_FILESYSTEM}" ]
     then
         echo "true"
     elif [ ${KERNEL_VERSION_PART1} -lt 2 ]
     then
         echo "false"
     else
-        if [ ${KERNEL_VERSION_PART2} -gt 6 ]
+        if [ ${KERNEL_VERSION_PART2} -gt 6 ] && [ -n "${PROC_FILESYSTEM}" ]
         then
             echo "true"
         elif [ ${KERNEL_VERSION_PART2} -lt 6 ]
         then
             echo "false"
         else
-            if [ ${KERNEL_VERSION_PART3} -ge 28 ]
+            if [ ${KERNEL_VERSION_PART3} -ge 28 ] && [ -n "${PROC_FILESYSTEM}" ]
             then
                 echo "true"
             else
