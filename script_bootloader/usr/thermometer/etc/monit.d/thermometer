@@ -1,0 +1,2 @@
+check program THERMOMETER path "/opt/script_bootloader/usr/thermometer/bin/thermometer_enable.service"
+    if status != 0 then unmonitor

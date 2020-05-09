@@ -1,0 +1,143 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="THERMOMETER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="ENABLE"
+#
+# WLAN_INTERFACE_COUNT: Count for WLAN interface
+# 设置自定义变量WLAN_INTERFACE_COUNT为WLAN接口计数
+WLAN_INTERFACE_COUNT=0
+#
+# SEPARATOR_SENTINEL: Sentinel value for separator
+# 设置自定义变量SEPARATOR_SENTINEL为分隔符哨兵值
+SEPARATOR_SENTINEL=0
+#
+# TEMP_CPU: Sentinel value for separator
+# 设置自定义变量TEMP_CPU为分隔符哨兵值
+TEMP_CPU=""
+#
+# TEMP_WLAN_2G: Temperature of 2G
+# 设置自定义变量TEMP_WLAN_2G为2G温度值
+TEMP_WLAN_2G=""
+#
+# TEMP_WLAN_5G1: Temperature of 5G1
+# 设置自定义变量TEMP_WLAN_5G1为5G1温度值
+TEMP_WLAN_5G1=""
+#
+# TEMP_WLAN_5G2: Temperature of 5G2
+# 设置自定义变量TEMP_WLAN_5G2为5G2温度值
+TEMP_WLAN_5G2=""
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+printSeparator()
+{
+    if [ ${1} -ne 0 ]
+    then
+        /opt/bin/echo -ne " | "
+    fi
+}
+#
+########## END ##########
+#
+#
+########## ENABLE THERMOMETER ##########
+#
+# Get CPU temperature
+# 获取CPU温度
+if [ -d "/sys/module/hnd" ]
+then
+    # For HND platform
+    ORIGINAL_VALUE="$(/opt/bin/cat /sys/class/thermal/thermal_zone0/temp)"
+    if [ -n "${ORIGINAL_VALUE}" ]
+    then
+        TEMP_CPU="$((${ORIGINAL_VALUE}/1000))"
+    fi
+    #
+else
+    # For ARMv7
+    ORIGINAL_VALUE="$(/opt/bin/cat /proc/dmu/temperature)"
+    if [ -n "${ORIGINAL_VALUE}" ]
+    then
+        TEMP_CPU="${ORIGINAL_VALUE:18:2}"
+    fi
+fi
+#
+#
+# Get WLAN temperature
+# 获取WLAN温度
+for WLAN_INTERFACE in $(nvram get wl_ifnames)
+do
+    WLAN_INTERFACE_COUNT=$((${WLAN_INTERFACE_COUNT}+1))
+    TEMP_WLAN="$(wl -i "${WLAN_INTERFACE}" phy_tempsense 2> /dev/null)"
+    if [ -n "${TEMP_WLAN}" ]
+    then
+        case ${WLAN_INTERFACE_COUNT} in
+            1)
+                TEMP_WLAN_2G="$((${TEMP_WLAN:0:2}/2+20))"
+                ;;
+            2)
+                TEMP_WLAN_5G1="$((${TEMP_WLAN:0:2}/2+20))"
+                ;;
+            3)
+                TEMP_WLAN_5G2="$((${TEMP_WLAN:0:2}/2+20))"
+                ;;
+        esac
+    else
+        continue
+    fi
+done
+#
+# Format output
+# 格式化输出
+if [ -n "${TEMP_CPU}" ]
+then
+    /opt/bin/echo -ne "CPU: ${TEMP_CPU}℃"
+    SEPARATOR_SENTINEL=$((${SEPARATOR_SENTINEL}+1))
+fi
+#
+if [ -n "${TEMP_WLAN_2G}" ]
+then
+    printSeparator "${SEPARATOR_SENTINEL}"
+    /opt/bin/echo -ne "2G: ${TEMP_WLAN_2G}℃"
+    SEPARATOR_SENTINEL=$((${SEPARATOR_SENTINEL}+1))
+fi
+#
+if [ -n "${TEMP_WLAN_5G1}" ]
+then
+    if [ -n "${TEMP_WLAN_5G2}" ]
+    then
+        NUM_5G="1"
+    else
+        NUM_5G=""
+    fi
+    #
+    printSeparator "${SEPARATOR_SENTINEL}"
+    /opt/bin/echo -ne "5G${NUM_5G}: ${TEMP_WLAN_5G1}℃"
+    SEPARATOR_SENTINEL=$((${SEPARATOR_SENTINEL}+1))
+fi
+#
+if [ -n "${TEMP_WLAN_5G2}" ]
+then
+    printSeparator "${SEPARATOR_SENTINEL}"
+    /opt/bin/echo -ne "5G2: ${TEMP_WLAN_5G2}℃"
+    SEPARATOR_SENTINEL=$((${SEPARATOR_SENTINEL}+1))
+fi
+#
+/opt/bin/echo ""
+#
+exit 0
+#
+########## END ##########
