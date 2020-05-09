@@ -95,8 +95,8 @@
 1. 登录monit管理页面，可以看到V2RAY和V2RAY_TRANSPARENT_PROXY
 2. V2RAY是浏览器代理。可以配合客户端代理工具使用，路由器和未使用代理工具的客户端均在墙内
 3. V2RAY_TRANSPARENT_PROXY是全局透明代理。必须先在monit管理页面中停止V2RAY，然后再启用V2RAY_TRANSPARENT_PROXY。路由器和全体客户端均在墙外
-4. 在部分地区8.8.8.8被运营商重定向了，导致V2RAY_TRANSPARENT_PROXY全局透明代理无法正常工作。如发生此情况，修改`/opt/script_bootloader/usr/v2ray/bin/fw_v2ray_transparent_proxy_enable.service`第86行为
+4. 在部分地区8.8.8.8被运营商重定向了，导致V2RAY_TRANSPARENT_PROXY全局透明代理无法正常工作。如发生此情况，修改`/opt/script_bootloader/usr/v2ray/bin/fw_v2ray_transparent_proxy_enable.service`第90行为
    ```sh
-   TPROXY_MODULES_STATUS=false
+   TPROXY_MODULES_STATUS="false"
    ```
    保存后重启路由器即可

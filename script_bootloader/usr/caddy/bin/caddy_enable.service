@@ -57,7 +57,9 @@ then
     #
     # Load ${PRIVATE_USR}/caddy
     # 如果文件${PRIVATE_USR}/caddy和${PRIVATE_ETC}/Caddyfile存在，则执行
-    /opt/bin/nohup "${PRIVATE_USR}/caddy" -pidfile "${CADDY_PID_FILE}" -conf "${PRIVATE_ETC}/Caddyfile" &> /dev/null &
+    "${PRIVATE_USR}/caddy" start -config="${PRIVATE_ETC}/Caddyfile"
+    PID="$(pidof caddy)"
+    /opt/bin/echo "${PID}" > "${CADDY_PID_FILE}"
     #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #

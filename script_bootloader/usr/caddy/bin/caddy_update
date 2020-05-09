@@ -46,11 +46,11 @@ PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # LATEST_VERSION: Version of the latest caddy
 # 设置自定义变量LATEST_VERSION为最新版caddy的版本号
-LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/caddyserver/caddy/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
+LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/caddyserver/caddy/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"v(.*)\".*/\1/p')"
 #
 # CURRENT_VERSION: Version of the current caddy
 # 设置自定义变量CURRENT_VERSION为当前caddy的版本号
-CURRENT_VERSION="$("${PRIVATE_USR}/caddy" -version | /opt/bin/sed -E -n -e 's/.*[[:space:]]+(v[[:digit:]\.]*)[[:space:]]+.*/\1/p')"
+CURRENT_VERSION="$("${PRIVATE_USR}/caddy" version | /opt/bin/sed -E -n -e 's/.*[[:space:]]*v([[:digit:]\.]+)[[:space:]]+.*/\1/p')"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -63,10 +63,14 @@ case "$(/opt/bin/uname -m)" in
         ROUTER_ARCHITECTURE="arm64"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="arm5"
+        ROUTER_ARCHITECTURE="armv5"
         ;;
     "mips")
         ROUTER_ARCHITECTURE="mipsle"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ROUTER_ARCHITECTURE} IS NOT SUPPORTED TEMPORARILY"
+        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+        #
+        exit 6
         ;;
     *)
         # Do nothing but prompt the user
@@ -80,7 +84,7 @@ esac
 #
 # DOWNLOAD_LINK: Download link of the latest caddy
 # 设置自定义变量DOWNLOAD_LINK为最新版caddy的下载链接
-DOWNLOAD_LINK="https://caddyserver.com/download/linux/${ROUTER_ARCHITECTURE}?license=personal&telemetry=on"
+DOWNLOAD_LINK="https://github.com/caddyserver/caddy/releases/download/v${LATEST_VERSION}/caddy_${LATEST_VERSION}_${OPERATING_SYSTEM}_${ROUTER_ARCHITECTURE}.tar.gz"
 #
 ########## END ##########
 #
