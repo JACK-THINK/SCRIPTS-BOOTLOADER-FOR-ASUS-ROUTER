@@ -52,6 +52,10 @@ PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 # 设置自定义变量PRIVATE_TMP为此程序临时文件目录
 PRIVATE_TMP="${PRIVATE_ROOT}/tmp"
 #
+# PRIVATE_VAR: The directory which contains all the variable files related to this program
+# 设置自定义变量PRIVATE_VAR为此程序可变文件目录
+PRIVATE_VAR="${PRIVATE_ROOT}/var"
+#
 ########## END ##########
 #
 #
@@ -79,6 +83,10 @@ then
         # Create directory ${PRIVATE_TMP}
         # 创建目录${PRIVATE_TMP}
         /opt/bin/mkdir "${PRIVATE_TMP}"
+        #
+        # Create directory ${PRIVATE_VAR}
+        # 创建目录${PRIVATE_VAR}
+        /opt/bin/mkdir "${PRIVATE_VAR}"
         #
         # Configure he_ddns_enable.service and he_ddns_disable.service
         # 配置he_ddns_enable.service和he_ddns_disable.service

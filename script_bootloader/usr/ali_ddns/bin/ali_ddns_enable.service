@@ -29,6 +29,14 @@ PRIVATE_TMP="${PRIVATE_ROOT}/tmp"
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
+# PRIVATE_VAR: The directory which contains all the variable files related to this program
+# 设置自定义变量PRIVATE_VAR为此程序可变文件目录
+PRIVATE_VAR="${PRIVATE_ROOT}/var"
+#
+# LOGFILE: The log file
+# 设置自定义变量LOGFILE为日志文件
+LOGFILE="${PRIVATE_VAR}/log.txt"
+#
 # WAN0_GW_IFNAME: The interface name of gateway
 # 设置自定义变量WAN0_GW_IFNAME为网关设备名
 WAN0_GW_IFNAME="$(nvram get wan0_gw_ifname)"
@@ -87,9 +95,6 @@ MAIL_TO="$(/opt/bin/sed -E -n -e 's#^MAIL_TO=\"(.+)\"#\1#p' "${PRIVATE_ETC}/ali_
 #
 ########## TEST IP ADDRESS AND UPDATE DNS RECORD ##########
 #
-# Check if the IP address of the router's WAN port is equal to the public IP address. If the answer is yes, update DNS record and exit. And if the answer is no, repeat the test up to 3 times. If all the answers are no, send an email as notification and exit.
-# 检查路由器WAN口IP地址是否为公网IP地址。如果是，则更新DNS记录，退出程序；如果不是，则重复测试三次。如三次全都不是，则发送通知邮件，退出程序
-#
 # FAIL_DATE: The date on which the 1st fail test of IP address happens
 # 设置自定义变量FAIL_DATE为首次IP地址测试失败的发生日期
 FAIL_DATE=""
@@ -97,6 +102,41 @@ FAIL_DATE=""
 # FAIL_COUNT: The count of fail tests of IP address
 # 设置自定义变量FAIL_COUNT为IP地址测试失败计数
 FAIL_COUNT=0
+#
+# Test WAN connection
+# 测试WAN连接
+while [ ${FAIL_COUNT} -lt 3 ]
+do
+    ping -q -c 1 -s 32 -W 5 "${SOURCE_OF_PUBLIC_IP_ADDRESS}" > /dev/null 2>&1
+    #
+    if [ ${?} -eq 0 ]
+    then
+        FAIL_DATE=""
+        FAIL_COUNT=0
+        #
+        break
+        #
+    else
+        if [ -z "${FAIL_DATE}" ]
+        then
+            FAIL_DATE="$(/opt/bin/date "+%F %T")"
+        fi
+        #
+        FAIL_COUNT=$((${FAIL_COUNT}+1))
+        #
+        if [ ${FAIL_COUNT} -ge 3 ]
+        then
+            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] NO CONNECTION" | /opt/bin/tee -a "${LOGFILE}"
+            #
+            exit 1
+        fi
+        #
+        /opt/bin/sleep 5
+    fi
+done
+#
+# Check if the IP address of the router's WAN port is equal to the public IP address. If the answer is yes, update DNS record and exit. And if the answer is no, repeat the test up to 3 times. If all the answers are no, send an email as notification and exit.
+# 检查路由器WAN口IP地址是否为公网IP地址。如果是，则更新DNS记录，退出程序；如果不是，则重复测试三次。如三次全都不是，则发送通知邮件，退出程序
 #
 while [ ${FAIL_COUNT} -lt 3 ]
 do
@@ -131,10 +171,13 @@ do
             # 更新域名A记录
             /opt/bin/aliyun alidns UpdateDomainRecord --RR "${RR}" --RecordId "${RECORD_ID}" --Type "${TYPE}" --Value "${VALUE}" --mode "${MODE}" --access-key-id "${ACCESS_KEY_ID}" --access-key-secret "${ACCESS_KEY_SECRET}" --language "${LANGUAGE}" --region "${REGION}" --quiet
             #
-            /opt/bin/echo -e "SUCCESS\n\n$(/opt/bin/date)\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            /opt/bin/echo -e "SUCCESS: [$(/opt/bin/date "+%F %T")] ${FQDN} 👉 ${PUBLIC_IPV4_ADDRESS}" | /opt/bin/tee -a "${LOGFILE}"
         else
-            /opt/bin/echo -e "NO CHANGES\n\n$(/opt/bin/date)\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}"
+            /opt/bin/echo -e "NO-CHANGES: ${FQDN} 👉 ${PUBLIC_IPV4_ADDRESS}"
         fi
+        #
+        FAIL_DATE=""
+        FAIL_COUNT=0
         #
         exit 0
         #
@@ -143,33 +186,38 @@ do
         # 检查${FAIL_DATE}是否存在
         if [ -z "${FAIL_DATE}" ]
         then
-            FAIL_DATE="$(/opt/bin/date)"
+            FAIL_DATE="$(/opt/bin/date "+%F %T")"
         fi
         #
         # Add 1 to ${FAIL_COUNT}
         # ${FAIL_COUNT}加1
         FAIL_COUNT=$((${FAIL_COUNT}+1))
         #
+        # Check if ${FAIL_COUNT} is not less than 3
+        # 检查${FAIL_COUNT}是否不小于3
+        if [ ${FAIL_COUNT} -ge 3 ]
+        then
+            # Send an email as notification
+            # 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
+            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] PUBLIC_IP(${PUBLIC_IPV4_ADDRESS}) WAN_IP(${WAN_IPV4_ADDRESS})" | /opt/bin/tee -a "${LOGFILE}"
+            #
+            # Prepare mail contents
+            # 准备邮件内容
+            MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
+            MAIL_CONTENTS="${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS"
+            /opt/bin/sed -e '1i\From:'"${MAIL_FROM}"'\nTo:'"${MAIL_TO}"'\nSubject:'"${MAIL_SUBJECT}"'\n\nDATE: '"${FAIL_DATE}"'\nFQDN: '"${FQDN}"'\nWAN_IPV4_ADDRESS: '"${WAN_IPV4_ADDRESS}"'\nPUBLIC_IPV4_ADDRESS: '"${PUBLIC_IPV4_ADDRESS}"'' "${MAIL_CONTENTS}" > "${PRIVATE_TMP}/mail.tmp"
+            #
+            # Send
+            # 发送
+            /opt/bin/curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file "${PRIVATE_TMP}/mail.tmp" --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
+            #
+            exit 2
+        fi
+        #
         # Wait for 5 seconds
         # 等待5秒
         /opt/bin/sleep 5
     fi
 done
-#
-# Send an email as notification
-# 如果${WAN_IPV4_ADDRESS}与${PUBLIC_IPV4_ADDRESS}不等，则执行
-/opt/bin/echo -e "FAILURE\n\n$(/opt/bin/date)\nFQDN: ${FQDN}\nPUBLIC IPV4 ADDRESS: ${PUBLIC_IPV4_ADDRESS}\nWAN IPV4 ADDRESS: ${WAN_IPV4_ADDRESS}"
-#
-# Prepare mail contents
-# 准备邮件内容
-MAIL_SUBJECT="DDNS ERROR: NO PUBLIC IP ADDRESS"
-MAIL_CONTENTS="${PRIVATE_USR}/NO_PUBLIC_IP_ADDRESS"
-/opt/bin/sed -e '1i\From:'"${MAIL_FROM}"'\nTo:'"${MAIL_TO}"'\nSubject:'"${MAIL_SUBJECT}"'\n\nDATE: '"${FAIL_DATE}"'\nFQDN: '"${FQDN}"'\nWAN_IPV4_ADDRESS: '"${WAN_IPV4_ADDRESS}"'\nPUBLIC_IPV4_ADDRESS: '"${PUBLIC_IPV4_ADDRESS}"'' "${MAIL_CONTENTS}" > "${PRIVATE_TMP}/mail.tmp"
-#
-# Send
-# 发送
-/opt/bin/curl -s --url "${MAIL_SMTP_SERVER}" --mail-from "${MAIL_FROM}" --mail-rcpt "${MAIL_TO}" --upload-file "${PRIVATE_TMP}/mail.tmp" --user "${MAIL_FROM}:${MAIL_PASSWORD}" > /dev/null 2>&1
-#
-exit 1
 #
 ########## END ##########
