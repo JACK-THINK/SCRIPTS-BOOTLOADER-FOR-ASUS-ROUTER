@@ -618,7 +618,7 @@ isAliveRuleTerm()
             # 如果自定义局部变量TEST_EXIST_RULE的值非空
             if [ -n "${TEST_EXIST_RULE}" ]
             then
-                /opt/bin/echo -e "ROUTER:${LOCAL_PORT}/${PROTOCOL}\tTO\t${TARGET_IP_ADDRESS}:${TARGET_PORT}/${PROTOCOL}"
+                /opt/bin/echo -e "ROUTER:${LOCAL_PORT}/${PROTOCOL} 👉 ${TARGET_IP_ADDRESS}:${TARGET_PORT}/${PROTOCOL}"
                 return 0
             #
             # 如果自定义局部变量TEST_EXIST_RULE的值为空
