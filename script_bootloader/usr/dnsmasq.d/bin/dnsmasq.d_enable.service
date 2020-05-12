@@ -52,7 +52,7 @@ if [ -n "$(ps | /opt/bin/sed -E -n -e '/sed/d' -e '\#=/etc/dnsmasq.conf#p')" ] &
 then
     # Everything is OK
     # 满足全部条件
-    /opt/bin/echo -e "SUCCESS"
+    /opt/bin/echo -e "😎"
     #
     exit 0
     #
@@ -64,7 +64,7 @@ else
     #
     # Start all the relevant processes
     # 启动全部相关进程
-    /opt/bin/echo -e "LOAD DNSMASQ.D"
+    /opt/bin/echo -e "🏋️"
     #
     # Check if DHCP Server is enabled
     # 检查DHCP服务器是否已启用
