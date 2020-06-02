@@ -57,9 +57,6 @@ then
     #
     # Load aria2
     # 如果文件${PRIVATE_ETC}/aria2.conf存在，则执行
-    #
-    # Check if ${PRIVATE_VAR}/session.dat exists
-    # 检查文件${PRIVATE_VAR}/session.dat是否存在
     if [ ! -e "${PRIVATE_VAR}/session.dat" ]
     then
         /opt/bin/touch "${PRIVATE_VAR}/session.dat"

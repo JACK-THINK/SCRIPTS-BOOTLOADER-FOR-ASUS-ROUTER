@@ -1,4 +1,4 @@
 check process WEBDAV with pidfile "/var/run/webdav.pid"
-    start program = "/opt/script_bootloader/usr/webdav/bin/webdav_enable.service"
-    stop program = "/opt/script_bootloader/usr/webdav/bin/webdav_disable.service"
+    start program = "/opt/script_bootloader/usr/webdav/bin/webdav_enable.service" with timeout 120 seconds
+    stop program = "/opt/script_bootloader/usr/webdav/bin/webdav_disable.service" with timeout 120 seconds
     if does not exist then restart
