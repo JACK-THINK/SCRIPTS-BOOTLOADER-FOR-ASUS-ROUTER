@@ -72,13 +72,13 @@ OPERATING_SYSTEM="$(/opt/bin/uname | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
 case "$(/opt/bin/uname -m)" in
     "aarch64")
-        ROUTER_ARCHITECTURE="arm64"
+        ROUTER_ARCHITECTURE="arm64-v8a"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="arm"
+        ROUTER_ARCHITECTURE="arm32-v5"
         ;;
     "mips")
-        ROUTER_ARCHITECTURE="mipsle"
+        ROUTER_ARCHITECTURE="mips32le"
         ;;
     *)
         # Do nothing but prompt the user
