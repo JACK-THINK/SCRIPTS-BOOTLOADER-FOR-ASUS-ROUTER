@@ -36,6 +36,10 @@ ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
 # 设置自定义变量ENTWARE_MONITD为monit配置文件目录
 ENTWARE_MONITD="${ENTWARE_ETC}/monit.d"
 #
+# ENTWARE_FWD: The directory which contains all the configuration files used by fwd
+# 设置自定义变量ENTWARE_FWD为fwd配置文件目录
+ENTWARE_FWD="${ENTWARE_ETC}/fw.d"
+#
 # ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
 # 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
 ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
@@ -157,11 +161,20 @@ then
             /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: KMS AUTO DISCOVERY CAN'T BE SET"
         fi
         #
+        # Configure fwd
+        # 配置fwd
+        /opt/bin/cp -f "${PRIVATE_ETC}/fw.d/vlmcsd_open" "${ENTWARE_FWD}"
+        #
         # Configure monit
         # 配置monit
         /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/vlmcsd" "${ENTWARE_MONITD}"
         /opt/bin/chmod 600 "${ENTWARE_MONITD}/vlmcsd"
         /opt/bin/mv -f "${ENTWARE_MONITD}/vlmcsd" "${ENTWARE_MONITD}/vlmcsd.on"
+        #
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_filter_INPUT_vlmcsd" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_filter_INPUT_vlmcsd"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/fw_filter_INPUT_vlmcsd" "${ENTWARE_MONITD}/fw_filter_INPUT_vlmcsd.on"
+        #
         /opt/bin/monit reload
         #
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"

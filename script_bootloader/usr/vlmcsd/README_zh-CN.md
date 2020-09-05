@@ -29,10 +29,12 @@
 
 `ASUS_ROUTER/script_bootloader/usr/vlmcsd/etc/`
 
-| 权限      | 名称                  | 属性     | 说明              |
-| --------- | --------------------- | -------- | ----------------- |
-| rwxrwxrwx | dnsmasq.d/vlmcsd.conf | 普通文件 | dnsmasq.d配置文件 |
-| rwxrwxrwx | monit.d/vlmcsd        | 普通文件 | monit.d配置文件   |
+| 权限      | 名称                           | 属性     | 说明              |
+| --------- | ------------------------------ | -------- | ----------------- |
+| rwxrwxrwx | dnsmasq.d/vlmcsd.conf          | 普通文件 | dnsmasq.d配置文件 |
+| rwxrwxrwx | fw.d/vlmcsd_open               | 普通文件 | fw.d配置文件      |
+| rwxrwxrwx | monit.d/vlmcsd                 | 普通文件 | monit.d配置文件   |
+| rwxrwxrwx | monit.d/fw_filter_INPUT_vlmcsd | 普通文件 | monit.d配置文件   |
 
 `ASUS_ROUTER/script_bootloader/usr/vlmcsd/usr/`
 

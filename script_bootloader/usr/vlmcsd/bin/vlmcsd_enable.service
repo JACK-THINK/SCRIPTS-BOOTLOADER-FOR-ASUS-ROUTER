@@ -75,6 +75,9 @@ then
     fi
     #
     "${PRIVATE_USR}/vlmcsd" -p "${VLMCSD_PID_FILE}"
+    #
+    /opt/bin/monit start "FW_PORT_OPENING_VLMCSD"
+    #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
     exit 0

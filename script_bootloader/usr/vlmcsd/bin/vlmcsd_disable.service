@@ -48,6 +48,8 @@ done
 #
 /opt/bin/rm -f "${VLMCSD_PID_FILE}"
 #
+/opt/bin/monit stop "FW_PORT_OPENING_VLMCSD" > /dev/null 2>&1
+#
 ########## END ##########
 #
 #
