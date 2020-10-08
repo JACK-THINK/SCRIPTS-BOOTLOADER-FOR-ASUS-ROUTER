@@ -109,10 +109,10 @@ then
     # 禁用MONIT MANAGEMENT SYSTEM及其全部服务
     if [ "$(which monit)" == "/opt/bin/monit" ]
     then
-        /opt/bin/monit stop all
-        #
         for MONIT_SERVICE in $(/opt/bin/monit -B summary | /opt/bin/sed -E -n -e '1,2d' -e 's/^[[:space:]]*([^[:space:]]+)[[:space:]]+.*/\1/p')
         do
+            /opt/bin/monit stop "${MONIT_SERVICE}"
+            #
             while [ "$(/opt/bin/monit -B status "${MONIT_SERVICE}" | /opt/bin/sed -E -n -e 's/^[[:space:]]*status[[:space:]]+(.*)/\1/p')" != "Not monitored" ]
             do
                 /opt/bin/sleep 5
