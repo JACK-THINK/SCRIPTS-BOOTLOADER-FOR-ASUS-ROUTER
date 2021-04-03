@@ -29,7 +29,7 @@ ADMINUSER="$(nvram get sbl_username)"
 #
 ########## DISABLE WOL ##########
 #
-/opt/bin/sed -i '/\/usr\/sbin\/ether\-wake/d' "/var/spool/cron/crontabs/${ADMINUSER}"
+/opt/bin/sed -i '/\/usr\/sbin\/ether\-wake/d' "/var/spool/cron/crontabs/${ADMINUSER}" 2> /dev/null
 #
 ########## END ##########
 #

@@ -116,9 +116,11 @@ boost-fiber
 boost-filesystem
 boost-graph
 boost-iostreams
+boost-json
 boost-locale
 boost-log
 boost-math
+boost-nowide
 boost-program_options
 boost-python3
 boost-random
@@ -160,6 +162,7 @@ perl-sub-uplevel
 perl-test-harness
 perl-test-warn
 perl-text-csv_xs
+perl-try-tiny
 perl-uri
 perl-www
 perl-www-curl
@@ -321,6 +324,7 @@ python3-idna
 python3-incremental
 python3-jdcal
 python3-lib2to3
+python3-libtorrent
 python3-light
 python3-logging
 python3-lxml
@@ -412,7 +416,7 @@ usbutils
 vim-full
 vim-runtime
 vim-help
-wget
+wget-ssl
 zoneinfo-africa
 zoneinfo-asia
 zoneinfo-atlantic
