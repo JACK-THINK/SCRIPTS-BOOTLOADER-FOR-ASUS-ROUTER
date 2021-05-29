@@ -1,5 +1,55 @@
 # 更新日志
 
+## 版本18.7（2021-05-29）
+
+#### 新增
+
+1. 无
+
+#### 变更
+
+1. 更新AdGuard Home
+2. 更新aliyun-cli
+3. 更新caddy
+4. 更新filebrowser
+5. 更新shadowsocks-libev
+6. 更新syncthing
+7. 更新v2ray
+
+#### 删除
+
+1. 无
+
+#### 插件列表
+
+| 插件名称          | 版本     | 简介                                                |
+| ----------------- | -------- | --------------------------------------------------- |
+| AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
+| ali_ddns          |          | 阿里云DDNS                                          |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aria2             | 在线安装 | aria2下载工具                                       |
+| ariang            | 在线安装 | aria2图形界面                                       |
+| bash              | 在线安装 | 全功能bash shell                                    |
+| caddy             | 在线安装 | Web服务器                                           |
+| debian            | 在线安装 | Debian的chroot环境。可安装Debian系统下大部分软件包  |
+| filebrowser       | 在线安装 | 私有云盘服务器                                      |
+| freemem           |          | 自动清理内存工具                                    |
+| he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
+| ipmitool          | 1.8.18-3 | IPMI管理工具（仅开通lan, lanplus接口）              |
+| mailx             | 在线安装 | 邮件系统                                            |
+| ntpd              | 在线安装 | 授时服务器                                          |
+| onu_access        |          | 允许访问光猫管理页面                                |
+| openssh_server    | 在线安装 | OpenSSH服务器                                       |
+| overture          | 在线安装 | DNS服务器                                           |
+| samba             | 在线安装 | SAMBA服务器                                         |
+| shadowsocks-libev | 3.3.5-1  | shadowsocks网络代理                                 |
+| syncthing         | 在线安装 | 开源分布式同步工具                                  |
+| thermometer       | 在线安装 | CPU、WLAN温度监控工具                               |
+| v2ray             | 在线安装 | v2ray网络代理                                       |
+| vlmcsd            | 1113     | 给予巨硬套装活力                                    |
+| webdav            | 在线安装 | webdav服务器                                        |
+| wol               |          | 定时开机                                            |
+
 ## 版本18.6（2021-04-03）
 
 #### 新增
@@ -21,7 +71,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -54,7 +104,7 @@
 #### 变更
 
 1. 更新AdGuard Home
-2. 更新aliyun
+2. 更新aliyun-cli
 3. 更新ariang
 4. 更新caddy
 5. 更新filebrowser
@@ -74,7 +124,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -123,7 +173,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -169,7 +219,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -215,7 +265,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -248,7 +298,7 @@
 #### 变更
 
 1. 更新AdGuard Home
-2. 更新aliyun
+2. 更新aliyun-cli
 3. 更新caddy（无法更新至版本2.1.X，arm64架构报错）
 
 #### 删除
@@ -261,7 +311,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -313,7 +363,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -361,7 +411,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
 | bash              | 在线安装 | 全功能bash shell                                    |
@@ -404,7 +454,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -448,7 +498,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -494,7 +544,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -526,7 +576,7 @@
 #### 变更
 
 1. 更新adguardhome_update
-2. 更新aliyun_update
+2. 更新aliyun-cli_update
 3. 更新ariang_update
 4. 更新caddy_update
 5. 更新overture_update
@@ -543,7 +593,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -571,7 +621,7 @@
 #### 新增
 
 1. 新增adguardhome_update
-2. 新增aliyun_update
+2. 新增aliyun-cli_update
 3. 新增ariang_update
 4. 新增caddy_update
 5. 新增overture_update
@@ -587,7 +637,7 @@
 #### 删除
 
 1. 删除adguardhome_upgrade
-2. 删除aliyun_upgrade
+2. 删除aliyun-cli_upgrade
 3. 删除ariang_upgrade
 4. 删除caddy_upgrade
 5. 删除overture_upgrade
@@ -600,7 +650,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -643,7 +693,7 @@
 | ----------------- | -------- | --------------------------------------------------- |
 | AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件（for arm64）   |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -685,7 +735,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -726,7 +776,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -757,7 +807,7 @@
 #### 变更
 
 1. 为openssh_server增加配置程序，可在安装过程中直接配置有关参数，也可以在使用过程中重新配置有关参数。避免手工修改程序源代码引发问题
-2. 更新aliyun
+2. 更新aliyun-cli
 3. 更新ariang
 4. 更新caddy
 5. 更新openssh_server
@@ -775,7 +825,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -822,7 +872,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -867,7 +917,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -912,7 +962,7 @@
 | 插件名称          | 版本     | 简介                                                |
 | ----------------- | -------- | --------------------------------------------------- |
 | ali_ddns          |          | 阿里云DDNS                                          |
-| aliyun            | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
 | anki_server       | 在线安装 | anki记忆系统个人服务器                              |
 | aria2             | 在线安装 | aria2下载工具                                       |
 | ariang            | 在线安装 | aria2图形界面                                       |
@@ -951,7 +1001,7 @@
 
 | 插件名称          | 版本       | 简介                                                         |
 | ----------------- | --------   | ------------------------------------------------------------ |
-| aliyun            | 3.0.23     | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）              |
+| aliyun-cli        | 3.0.23     | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）              |
 | ali_ddns          |            | 阿里云DDNS                                                   |
 | anki_server       | 2.0.6      | anki记忆系统私有服务器（官方停更，除专家外不要使用）         |
 | aria2             | 1.34.0     | aria2下载工具                                                |
@@ -1522,7 +1572,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.8      | 不用说了，你们懂的                                           |
+| v2ray             | v4.8       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1552,7 +1602,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.8      | 不用说了，你们懂的                                           |
+| v2ray             | v4.8       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1583,7 +1633,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.8      | 不用说了，你们懂的                                           |
+| v2ray             | v4.8       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1614,7 +1664,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.7      | 不用说了，你们懂的                                           |
+| v2ray             | v4.7       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1644,7 +1694,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.6      | 不用说了，你们懂的                                           |
+| v2ray             | v4.6       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1675,7 +1725,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.5      | 不用说了，你们懂的                                           |
+| v2ray             | v4.5       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
@@ -1705,7 +1755,7 @@
 | sbl-firewalld     | 1.0        | 基于应用的防火墙                                             |
 | shadowsocks-libev | 3.1.3-2    | 不用说了，你们懂的                                           |
 | syncthing         | 0.14.44-1  | 开源分布式同步工具                                           |
-| v2ray             | v4.3      | 不用说了，你们懂的                                           |
+| v2ray             | v4.3       | 不用说了，你们懂的                                           |
 | vlmcsd            | 1112       | 给予巨硬套装活力                                             |
 | wol               |            | 定时开机                                                     |
 
