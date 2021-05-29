@@ -116,9 +116,11 @@ boost-fiber
 boost-filesystem
 boost-graph
 boost-iostreams
+boost-json
 boost-locale
 boost-log
 boost-math
+boost-nowide
 boost-program_options
 boost-python3
 boost-random
