@@ -62,7 +62,7 @@ PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
 # LATEST_VERSION: Version of the latest v2ray-core
 # 设置自定义变量LATEST_VERSION为最新版v2ray-core的版本号
-LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/v2ray/v2ray-core/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
+LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/v2fly/v2ray-core/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -92,7 +92,7 @@ esac
 #
 # DOWNLOAD_LINK: Download link of the latest v2ray-core
 # 设置自定义变量DOWNLOAD_LINK为最新版v2ray-core的下载链接
-DOWNLOAD_LINK="https://github.com/v2ray/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
+DOWNLOAD_LINK="https://github.com/v2fly/v2ray-core/releases/download/${LATEST_VERSION}/v2ray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
 #
 # DNS_PORT: Port of the V2RAY-DNS
 # 设置自定义变量DNS_PORT为V2RAY-DNS的接收端口
