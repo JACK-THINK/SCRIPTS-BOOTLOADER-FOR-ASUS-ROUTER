@@ -133,6 +133,7 @@ then
         /opt/bin/mkdir -p "/opt/var/run/samba/ncalrpc"
         /opt/bin/chmod 755 "/opt/var/lib/samba"
         /opt/bin/chmod 755 "/opt/var/cache/samba"
+        /opt/bin/chmod 755 "/opt/var/run/samba/ncalrpc"
         #
         # Disable /opt/etc/init.d/S99wsdd2
         # 禁用/opt/etc/init.d/S99wsdd2
