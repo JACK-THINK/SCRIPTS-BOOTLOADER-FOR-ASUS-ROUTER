@@ -58,6 +58,7 @@ then
     # Load ${PRIVATE_USR}/caddy
     # 如果文件${PRIVATE_USR}/caddy和${PRIVATE_ETC}/Caddyfile存在，则执行
     "${PRIVATE_USR}/caddy" start -config="${PRIVATE_ETC}/Caddyfile"
+    /opt/bin/sleep 10
     PID="$(pidof caddy)"
     /opt/bin/echo "${PID}" > "${CADDY_PID_FILE}"
     #

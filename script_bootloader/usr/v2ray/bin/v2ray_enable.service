@@ -58,6 +58,7 @@ then
     # Load ${PRIVATE_USR}/v2ray
     # 如果文件${PRIVATE_USR}/v2ray存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/v2ray" -config "${PRIVATE_ETC}/config_proxy.json" &> /dev/null &
+    /opt/bin/sleep 10
     PID="$(pidof v2ray)"
     /opt/bin/echo "${PID}" > "${V2RAY_PID_FILE}"
     #

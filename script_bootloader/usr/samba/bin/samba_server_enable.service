@@ -80,6 +80,7 @@ then
         /opt/bin/wsdd2 -d -w
     fi
     #
+    /opt/bin/sleep 10
     WSDD2_PID="$(pidof wsdd2)"
     /opt/bin/echo -e "${WSDD2_PID}" > "${WSDD2_PID_FILE}"
     #

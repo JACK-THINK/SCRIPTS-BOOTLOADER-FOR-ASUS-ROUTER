@@ -15,6 +15,18 @@
             "tag":"LAN_inbound_socks_VPS"
         },
         {
+            "port":2080,
+            "listen":"0.0.0.0",
+            "protocol":"http",
+            "settings":
+            {
+                "timeout": 0,
+                "allowTransparent": false,
+                "userLevel": 1
+            },
+            "tag":"LAN_inbound_http_VPS"
+        },
+        {
             "port":2053,
             "listen":"0.0.0.0",
             "protocol":"dokodemo-door",
@@ -380,6 +392,14 @@
                 "inboundTag":
                 [
                     "LAN_inbound_socks_VPS"
+                ],
+                "outboundTag":"VPS_outbound"
+            },
+            {
+                "type":"field",
+                "inboundTag":
+                [
+                    "LAN_inbound_http_VPS"
                 ],
                 "outboundTag":"VPS_outbound"
             },

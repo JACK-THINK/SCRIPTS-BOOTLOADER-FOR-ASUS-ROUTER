@@ -58,6 +58,7 @@ then
     # Load ${PRIVATE_USR}/webdav
     # 如果文件${PRIVATE_USR}/webdav和${PRIVATE_ETC}/config.yaml存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/webdav" --config "${PRIVATE_ETC}/config.yaml" &> /dev/null &
+    /opt/bin/sleep 10
     PID="$(pidof webdav)"
     /opt/bin/echo "${PID}" > "${WEBDAV_PID_FILE}"
     #

@@ -58,6 +58,7 @@ then
     # Load ${PRIVATE_USR}/filebrowser
     # 如果文件${PRIVATE_USR}/filebrowser和${PRIVATE_ETC}/database.db存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/database.db" &> /dev/null &
+    /opt/bin/sleep 10
     PID="$(pidof filebrowser)"
     /opt/bin/echo "${PID}" > "${FILEBROWSER_PID_FILE}"
     #

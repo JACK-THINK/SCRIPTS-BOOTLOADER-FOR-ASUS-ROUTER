@@ -63,7 +63,7 @@ then
     fi
     #
     /opt/bin/aria2c --conf-path="${PRIVATE_ETC}/aria2.conf" --daemon true
-    /opt/bin/sleep 5
+    /opt/bin/sleep 10
     PID="$(pidof aria2c)"
     /opt/bin/echo "${PID}" > "${ARIA2_PID_FILE}"
     #

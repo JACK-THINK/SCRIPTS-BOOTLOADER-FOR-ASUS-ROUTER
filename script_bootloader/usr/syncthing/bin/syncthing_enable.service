@@ -58,6 +58,7 @@ then
     # Load ${PRIVATE_USR}/syncthing
     # 如果文件${PRIVATE_USR}/syncthing和${PRIVATE_ETC}/config.xml存在，则执行
     /opt/bin/nohup "${PRIVATE_USR}/syncthing" -home="${PRIVATE_ETC}" &> /dev/null &
+    /opt/bin/sleep 10
     PID="$(pidof syncthing)"
     /opt/bin/echo "${PID}" > "${SYNCTHING_PID_FILE}"
     #
