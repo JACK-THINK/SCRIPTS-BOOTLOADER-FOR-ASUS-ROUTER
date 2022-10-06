@@ -9,16 +9,17 @@
 #### 变更
 
 1. 更新AdGuard Home
-1. 更新aria2，提高稳定性
-1. 更新ariang
-2. 更新caddy，提高稳定性
-3. 更新filebrowser，提高稳定性
-3. 更新overture，提高稳定性
-3. 更新samba，提高稳定性
-4. 更新shadowsocks
-5. 更新syncthing，提高稳定性
-6. 更新v2ray，提高稳定性
-7. 更新webdav，提高稳定性
+2. 更新aria2，提高稳定性
+3. 更新ariang
+4. 更新caddy，提高稳定性
+5. 更新filebrowser，提高稳定性
+6. 更新he_ddns，提高稳定性
+7. 更新overture，提高稳定性
+8. 更新samba，提高稳定性
+9. 更新shadowsocks
+10. 更新syncthing，提高稳定性
+11. 更新v2ray，提高稳定性
+12. 更新webdav，提高稳定性
 
 #### 删除
 
