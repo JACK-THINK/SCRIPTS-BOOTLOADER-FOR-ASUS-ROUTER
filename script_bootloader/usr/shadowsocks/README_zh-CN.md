@@ -25,7 +25,6 @@
 | 权限      | 名称            | 属性     | 说明             |
 | --------- | --------------- | -------- | ---------------- |
 | rwxrwxrwx | README_zh-CN.md | 普通文件 | 说明文件         |
-| rwxrwxrwx | alternative     | 目录     | 备用安装文件目录 |
 | rwxrwxrwx | bin             | 目录     | 可执行文件目录   |
 | rwxrwxrwx | etc             | 目录     | 配置文件目录     |
 

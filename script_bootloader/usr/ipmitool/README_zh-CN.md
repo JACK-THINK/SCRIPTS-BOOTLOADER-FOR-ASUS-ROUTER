@@ -16,20 +16,12 @@
 | --------- | ----------------- | -------- | --------------   |
 | rwxrwxrwx | README_zh-CN.md   | 普通文件 | 说明文件         |
 | rwxrwxrwx | bin               | 目录     | 可执行文件目录   |
-| rwxrwxrwx | alternative       | 目录     | 备用安装文件目录 |
 
 `ASUS_ROUTER/script_bootloader/usr/ipmitool/bin/`
 
 | 权限      | 名称             | 属性     | 说明     |
 | --------- | ---------------- | -------- | -------- |
 | rwxrwxrwx | ipmitool_install | 普通文件 | 安装程序 |
-
-`ASUS_ROUTER/script_bootloader/usr/ipmitool/alternative/`
-
-| 权限      | 名称                                            | 属性     | 说明                 |
-| --------- | ----------------------------------------------- | -------- | -------------------- |
-| rwxrwxrwx | aarch64-3.10/ipmitool_1.8.18-3_aarch64-3.10.ipk | 普通文件 | ipmitool备用安装文件 |
-| rwxrwxrwx | armv7-2.6/ipmitool_1.8.18-3_armv7-2.6.ipk       | 普通文件 | ipmitool备用安装文件 |
 
 ## 安装方法
 
