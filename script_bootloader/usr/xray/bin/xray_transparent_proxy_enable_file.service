@@ -1,0 +1,142 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# SBL_SYS_USR: The directory which contains all the external software resources (add-ons) related to SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER
+# 设置自定义变量SBL_SYS_USR为SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER系统外部软件资源目录，即插件目录
+SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
+#
+# PRIVATE_ROOT: The root directory for this program
+# 设置自定义变量PRIVATE_ROOT为此程序根目录
+PRIVATE_ROOT="${SBL_SYS_USR}/xray"
+#
+# PRIVATE_BIN: The directory which contains all the executable files related to this program
+# 设置自定义变量PRIVATE_BIN为此程序可执行文件目录
+PRIVATE_BIN="${PRIVATE_ROOT}/bin"
+#
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
+# 设置自定义变量PRIVATE_ETC为此程序配置文件目录
+PRIVATE_ETC="${PRIVATE_ROOT}/etc"
+#
+# BOOTSTRAP_DNS_SERVER: DNS Server to resolve the domain of the XRAY-SERVER
+# 设置自定义变量BOOTSTRAP_DNS_SERVER为解析XRAY-SERVER域名的DNS服务器
+BOOTSTRAP_DNS_SERVER="119.29.29.29"
+#
+# XRAY_PROXY_PID_FILE: The path to xray_proxy.pid
+# 设置自定义变量XRAY_PROXY_PID_FILE为文件xray_proxy.pid的绝对路径
+XRAY_PROXY_PID_FILE="/var/run/xray_proxy.pid"
+#
+# ADMINUSER: The administrator of the router
+# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
+ADMINUSER="$(nvram get sbl_username)"
+#
+# TEST_FW: Test for firewall rules
+# 设置环境变量TEST_FW为防火墙规则测试值
+CHECK_RULE_1="$(iptables -t mangle -nvL PREROUTING | /opt/bin/grep 'XRAY_TPROXY')"
+CHECK_RULE_2="$(iptables -t mangle -nvL OUTPUT | /opt/bin/grep 'XRAY_TPROXY_MASK')"
+CHECK_RULE_3="$(iptables -t nat -nvL PREROUTING | /opt/bin/grep 'XRAY_REDIRECT')"
+if [ -n "${CHECK_RULE_1}" ] && [ -n "${CHECK_RULE_2}" ] || [ -n "${CHECK_RULE_3}" ]
+then
+    TEST_FW="true"
+else
+    TEST_FW="false"
+fi
+#
+########## END ##########
+#
+#
+########## LOAD FUNCTIONS ##########
+#
+checkIfProcessAlive()
+{
+    local PROCESS_ID_FILE="${1}"
+    local PROCESS_ID
+    #
+    if [ -e "${PROCESS_ID_FILE}" ]
+    then
+        for PROCESS_ID in $(/opt/bin/cat "${PROCESS_ID_FILE}")
+        do
+            if [ -z "$(ps | /opt/bin/grep -E '^[[:space:]]*'"${PROCESS_ID}"'[[:space:]]+')" ]
+            then
+                eval ${2}="false"
+                return
+            fi
+        done
+        eval ${2}="true"
+    else
+        eval ${2}="false"
+    fi
+}
+#
+########## END ##########
+#
+#
+########## ENABLE XRAY AND XRAY-FW ##########
+#
+# Check if ${PRIVATE_BIN}/xray_proxy_enable.service and ${PRIVATE_BIN}/fw_xray_transparent_proxy_enable.service has been loaded
+# 检查${PRIVATE_BIN}/xray_proxy_enable.service和${PRIVATE_BIN}/fw_xray_transparent_proxy_enable.service是否被加载
+checkIfProcessAlive "${XRAY_PROXY_PID_FILE}" TEST_XRAY
+#
+if ${TEST_XRAY} && ${TEST_FW}
+then
+    # Everything is OK
+    # 满足全部条件
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: TRANSPARENT PROXY IS ON"
+    #
+    exit 0
+    #
+else
+    # Stop all the relevant processes
+    # 如果有任意条件不符，则停止全部相关进程
+    "${PRIVATE_BIN}/xray_transparent_proxy_disable_file.service" > /dev/null 2>&1
+    #
+    /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: LOAD TRANSPARENT PROXY"
+    #
+    # SERVER_DOMAIN: Domain of the XRAY-SERVER
+    # 设置自定义变量SERVER_DOMAIN为XRAY-SERVER的域名
+    SERVER_DOMAIN="$(/opt/bin/sed -E -n -e '/outbounds/,/port/s/^[[:space:]]*\"address\":[[:space:]]*\"(.*)\".*/\1/p' "${PRIVATE_ETC}/config_proxy.json")"
+    #
+    # SERVER_IP: Domain of the XRAY-SERVER
+    # 设置自定义变量SERVER_IP为XRAY-SERVER的IP地址
+    SERVER_IP="$(nslookup "${SERVER_DOMAIN}" "${BOOTSTRAP_DNS_SERVER}" | /opt/bin/sed -E -n -e '/Name/,$s/.*:[[:space:]]+([[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3})($|[[:space:]]+.*)/\1/p' | /opt/bin/head -n 1)"
+    #
+    # Update /etc/hosts
+    # 更新文件/etc/hosts
+    /opt/bin/echo "${SERVER_IP} ${SERVER_DOMAIN}" >> "/etc/hosts"
+    #
+    # Start all the relevant processes
+    # 启动全部相关进程
+    "${PRIVATE_BIN}/xray_proxy_enable.service" > /dev/null 2>&1
+    /opt/bin/sleep 2
+    "${PRIVATE_BIN}/fw_xray_transparent_proxy_enable.service" > /dev/null 2>&1
+    /opt/bin/sleep 2
+    #
+    ########## END ##########
+    #
+    #
+    ########## ENABLE CRONTAB ##########
+    #
+    # Enable crontab because something is wrong with the poll time of monit
+    # 因为monit的执行周期BUG，故启用crontab进行进程周期执行
+    /opt/bin/echo "*/5 * * * * \"${PRIVATE_BIN}/xray_transparent_proxy_enable_file.service\"" >> "/var/spool/cron/crontabs/${ADMINUSER}"
+    /opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
+    #
+    # Create status file
+    # 创建状态文件
+    /opt/bin/touch "/var/run/xray_transparent_proxy_enable"
+    #
+    ########## END ##########
+    #
+    #
+    exit 1
+    #
+fi
+#
+########## END ##########

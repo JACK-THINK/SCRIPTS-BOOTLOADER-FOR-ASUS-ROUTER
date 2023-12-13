@@ -89,7 +89,7 @@ if [ "$(which monit)" == "/opt/bin/monit" ]
 then
     monit stop all
     #
-    for MONIT_SERVICE in $(monit -B summary | sed -E -n -e '1,2d' -e 's/^[[:space:]]*([^[:space:]]+)[[:space:]]+.*/\1/p')
+    for MONIT_SERVICE in $(monit -vB summary | grep -E '[[:space:]]+Name[[:space:]]+=[[:space:]]+' | sed -E -n -e 's#([^=]+=[[:space:]]+)([^[:space:]]+$)#\2#p')
     do
         while [ "$(monit -B status "${MONIT_SERVICE}" | sed -E -n -e 's/^[[:space:]]*status[[:space:]]+(.*)/\1/p')" != "Not monitored" ]
         do

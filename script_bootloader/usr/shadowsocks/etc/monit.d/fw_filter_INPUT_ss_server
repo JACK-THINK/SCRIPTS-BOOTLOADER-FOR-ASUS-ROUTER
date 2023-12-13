@@ -1,4 +1,0 @@
-check program FW_PORT_OPENING_SS_SERVER with path "/opt/bin/fwd enable /opt/etc/fw.d/ss_server_open" every 6 cycles
-    start program = "/opt/bin/fwd enable /opt/etc/fw.d/ss_server_open"
-    stop program = "/opt/bin/fwd disable /opt/etc/fw.d/ss_server_open"
-    if status == 1 then alert

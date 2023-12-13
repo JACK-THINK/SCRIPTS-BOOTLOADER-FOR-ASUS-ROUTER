@@ -1,0 +1,159 @@
+#!/bin/sh
+#
+########## SET THE CUSTOM VARIABLES ##########
+#
+# 设置自定义变量
+# 当该程序运行结束，此处设置的变量自动取消
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="FW_XRAY_TRANSPARENT_PROXY"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="DISABLE"
+#
+# USB_MOUNT_POINT: The mount point of the USB flash drive
+# 设置自定义变量USB_MOUNT_POINT为U盘挂载点
+USB_MOUNT_POINT="$(nvram get script_usbmount | /opt/bin/sed 's/\/script_bootloader.*//')"
+#
+# ENTWARE_ETC: The directory which contains all the configuration files installed by Entware
+# 设置自定义变量ENTWARE_ETC为Entware安装的配置文件目录
+ENTWARE_ETC="${USB_MOUNT_POINT}/etc"
+#
+# ENTWARE_DNSMASQD: The directory which contains all the configuration files used by dnsmasq
+# 设置自定义变量ENTWARE_DNSMASQD为dnsmasq配置文件目录
+ENTWARE_DNSMASQD="${ENTWARE_ETC}/dnsmasq.d"
+#
+# ROUTING_MARK: Mark of PBR
+# 设置自定义变量ROUTING_MARK为策略路由标记
+ROUTING_MARK="0x2333"
+#
+# ROUTING_TABLE: Routing table of PBR
+# 设置自定义变量ROUTING_TABLE为策略路由表
+ROUTING_TABLE="100"
+#
+# NF_TPROXY_CORE: The path to nf_tproxy_core.ko
+# 设置自定义变量NF_TPROXY_CORE为文件nf_tproxy_core.ko的绝对路径
+NF_TPROXY_CORE="$(/opt/bin/find /lib/modules/ -iname "nf_tproxy_core.ko")"
+#
+# XT_TPROXY: The path to xt_TPROXY.ko
+# 设置自定义变量XT_TPROXY为文件xt_TPROXY.ko的绝对路径
+XT_TPROXY="$(/opt/bin/find /lib/modules/ -iname "xt_TPROXY.ko")"
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ *--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ---------*"
+#
+########## END ##########
+#
+#
+########## UNSET TRANSPARENT PROXY ##########
+#
+# Check if TProxy modules exist
+# 检查TProxy模块是否存在
+if [ -n "${NF_TPROXY_CORE}" ] && [ -n "${XT_TPROXY}" ]
+then
+    # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+    # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+    USER_DEFINED_CHAIN_NAME="XRAY_TPROXY"
+    #
+    # Configure DNS
+    # 配置DNS
+    /opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
+    /opt/bin/rm -f "${ENTWARE_DNSMASQD}/xray_dns_tproxy.conf"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
+    #
+    # Check if chain ${USER_DEFINED_CHAIN_NAME} exists
+    # 检查${USER_DEFINED_CHAIN_NAME}链是否存在
+    if [ -n "$(iptables -t mangle -nvL | /opt/bin/grep ''"Chain ${USER_DEFINED_CHAIN_NAME}"'')" ]
+    then
+        # Check if chain ${USER_DEFINED_CHAIN_NAME} is referenced by chain PREROUTING
+        # 检查${USER_DEFINED_CHAIN_NAME}链是否被PREROUTING链所引用
+        if [ -n "$(iptables -t mangle -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')" ]
+        then
+            # Disable chain ${USER_DEFINED_CHAIN_NAME}
+            # 禁用${USER_DEFINED_CHAIN_NAME}链
+            iptables -t mangle -D PREROUTING -j "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        fi
+        #
+        # Flush chain ${USER_DEFINED_CHAIN_NAME}
+        # 清空${USER_DEFINED_CHAIN_NAME}链
+        iptables -t mangle -F "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        #
+        # Remove chain ${USER_DEFINED_CHAIN_NAME}
+        # 删除${USER_DEFINED_CHAIN_NAME}链
+        iptables -t mangle -X "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        #
+        # Check if chain ${USER_DEFINED_CHAIN_NAME}_MASK is referenced by chain OUTPUT
+        # 检查${USER_DEFINED_CHAIN_NAME}_MASK链是否被OUTPUT链所引用
+        if [ -n "$(iptables -t mangle -nvL OUTPUT | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}_MASK"'')" ]
+        then
+            # Disable chain ${USER_DEFINED_CHAIN_NAME}_MASK
+            # 禁用${USER_DEFINED_CHAIN_NAME}_MASK链
+            iptables -t mangle -D OUTPUT -p tcp -j "${USER_DEFINED_CHAIN_NAME}_MASK" 2> /dev/null
+            iptables -t mangle -D OUTPUT -p udp -j "${USER_DEFINED_CHAIN_NAME}_MASK" 2> /dev/null
+        fi
+        #
+        # Flush chain ${USER_DEFINED_CHAIN_NAME}_MASK
+        # 清空${USER_DEFINED_CHAIN_NAME}_MASK链
+        iptables -t mangle -F "${USER_DEFINED_CHAIN_NAME}_MASK" 2> /dev/null
+        #
+        # Remove chain ${USER_DEFINED_CHAIN_NAME}_MASK
+        # 删除${USER_DEFINED_CHAIN_NAME}_MASK链
+        iptables -t mangle -X "${USER_DEFINED_CHAIN_NAME}_MASK" 2> /dev/null
+    fi
+    #
+    # Remove IP route and rules
+    # 删除IP路由及规则
+    ip route del local 0.0.0.0/0 dev lo table "${ROUTING_TABLE}" 2> /dev/null
+    ip rule del fwmark "${ROUTING_MARK}" table "${ROUTING_TABLE}" 2> /dev/null
+    #
+else
+    # USER_DEFINED_CHAIN_NAME: Name of the user-defined chain
+    # 设置自定义变量USER_DEFINED_CHAIN_NAME为防火墙自定义链名
+    USER_DEFINED_CHAIN_NAME="XRAY_REDIRECT"
+    #
+    # Configure DNS
+    # 配置DNS
+    /opt/bin/mv -f "/tmp/resolv.dnsmasq.bak" "/tmp/resolv.dnsmasq"
+    /opt/bin/rm -f "${ENTWARE_DNSMASQD}/xray_dns_redirect.conf"
+    /opt/bin/dnsmasq.d_refresh > /dev/null 2>&1
+    #
+    # Check if chain ${USER_DEFINED_CHAIN_NAME} exists
+    # 检查${USER_DEFINED_CHAIN_NAME}链是否存在
+    if [ -n "$(iptables -t nat -nvL | /opt/bin/grep ''"Chain ${USER_DEFINED_CHAIN_NAME}"'')" ]
+    then
+        # Check if chain ${USER_DEFINED_CHAIN_NAME} is referenced by chain PREROUTING
+        # 检查${USER_DEFINED_CHAIN_NAME}链是否被PREROUTING链所引用
+        if [ -n "$(iptables -t nat -nvL PREROUTING | /opt/bin/grep ''"${USER_DEFINED_CHAIN_NAME}"'')" ]
+        then
+            # Disable chain ${USER_DEFINED_CHAIN_NAME}
+            # 禁用${USER_DEFINED_CHAIN_NAME}链
+            iptables -t nat -D PREROUTING -p tcp -j "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        fi
+        #
+        # Flush chain ${USER_DEFINED_CHAIN_NAME}
+        # 清空${USER_DEFINED_CHAIN_NAME}链
+        iptables -t nat -F "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        #
+        # Remove chain ${USER_DEFINED_CHAIN_NAME}
+        # 删除${USER_DEFINED_CHAIN_NAME}链
+        iptables -t nat -X "${USER_DEFINED_CHAIN_NAME}" 2> /dev/null
+        #
+    fi
+fi
+#
+########## END ##########
+#
+#
+########## NOTIFICATION ##########
+#
+/opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
+#
+exit 0
+#
+########## END ##########

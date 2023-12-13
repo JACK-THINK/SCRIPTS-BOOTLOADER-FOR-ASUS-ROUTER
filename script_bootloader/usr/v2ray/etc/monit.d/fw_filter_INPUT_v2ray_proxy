@@ -1,4 +1,0 @@
-check program FW_PORT_OPENING_V2RAY_PROXY with path "/opt/bin/fwd enable /opt/etc/fw.d/v2ray_proxy_open" every 6 cycles
-    start program = "/opt/bin/fwd enable /opt/etc/fw.d/v2ray_proxy_open"
-    stop program = "/opt/bin/fwd disable /opt/etc/fw.d/v2ray_proxy_open"
-    if status == 1 then alert

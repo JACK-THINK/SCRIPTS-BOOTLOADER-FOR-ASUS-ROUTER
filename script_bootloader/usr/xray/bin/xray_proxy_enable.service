@@ -7,7 +7,7 @@
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="FILE-BROWSER"
+SERVICE_NAME="XRAY-PROXY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -23,9 +23,9 @@ SBL_SYS_USR="${USB_MOUNT_POINT}/script_bootloader/usr"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT="${SBL_SYS_USR}/filebrowser"
+PRIVATE_ROOT="${SBL_SYS_USR}/xray"
 #
-# PRIVATE_ETC: The directory which contains all the WORKING DIRECTORYs related to this program
+# PRIVATE_ETC: The directory which contains all the configuration files related to this program
 # 设置自定义变量PRIVATE_ETC为此程序配置文件目录
 PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 #
@@ -33,9 +33,9 @@ PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
-# FILEBROWSER_PID_FILE: The path to filebrowser.pid
-# 设置自定义变量FILEBROWSER_PID_FILE为文件filebrowser.pid的绝对路径
-FILEBROWSER_PID_FILE="/var/run/filebrowser.pid"
+# XRAY_PROXY_PID_FILE: The path to xray_proxy.pid
+# 设置自定义变量XRAY_PROXY_PID_FILE为文件xray_proxy.pid的绝对路径
+XRAY_PROXY_PID_FILE="/var/run/xray_proxy.pid"
 #
 ########## END ##########
 #
@@ -47,22 +47,20 @@ FILEBROWSER_PID_FILE="/var/run/filebrowser.pid"
 ########## END ##########
 #
 #
-########## CHECK AND ENABLE FILE-BROWSER ##########
+########## CHECK AND ENABLE XRAY ##########
 #
-# Check if ${PRIVATE_USR}/filebrowser and ${PRIVATE_ETC}/filebrowser.db exist
-# 检查文件${PRIVATE_USR}/filebrowser和${PRIVATE_ETC}/filebrowser.db是否存在
-if [ -e "${PRIVATE_USR}/filebrowser" ] && [ -e "${PRIVATE_ETC}/filebrowser.db" ]
+# Check if ${PRIVATE_USR}/xray and ${PRIVATE_ETC}/config_proxy.json exist
+# 检查文件${PRIVATE_USR}/xray和文件${PRIVATE_ETC}/config_proxy.json是否存在
+if [ -e "${PRIVATE_USR}/xray" ] && [ -e "${PRIVATE_ETC}/config_proxy.json" ]
 then
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: ALL THE PREREQUISITES ARE MET"
     #
-    # Load ${PRIVATE_USR}/filebrowser
-    # 如果文件${PRIVATE_USR}/filebrowser和${PRIVATE_ETC}/filebrowser.db存在，则执行
-    /opt/bin/nohup "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/filebrowser.db" &> /dev/null &
+    # Load ${PRIVATE_USR}/xray
+    # 如果文件${PRIVATE_USR}/xray存在，则执行
+    /opt/bin/nohup "${PRIVATE_USR}/xray" run -config "${PRIVATE_ETC}/config_proxy.json" &> /dev/null &
     /opt/bin/sleep 10
-    PID="$(pidof filebrowser)"
-    /opt/bin/echo "${PID}" > "${FILEBROWSER_PID_FILE}"
-    #
-    /opt/bin/monit start "FW_PORT_OPENING_FILE_BROWSER"
+    PID="$(pidof xray)"
+    /opt/bin/echo "${PID}" > "${XRAY_PROXY_PID_FILE}"
     #
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;42;37mSUCCESS\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #
@@ -70,7 +68,7 @@ then
     #
 else
     # Do nothing but prompt the user
-    # 如果文件${PRIVATE_USR}/filebrowser或目录${PRIVATE_ETC}不存在，则执行
+    # 如果文件${PRIVATE_USR}/xray不存在，则执行
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NOT ALL THE PREREQUISITES ARE MET"
     /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
     #

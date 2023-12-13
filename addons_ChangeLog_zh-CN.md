@@ -1,5 +1,55 @@
 # 更新日志
 
+## 版本19.00（2023-12-13）
+
+#### 新增
+
+1. 新增网络代理插件xray
+
+#### 变更
+
+1. 更新AdGuard Home
+2. 更新ariang
+3. 更新caddy
+4. 更新filebrowser
+5. 更新samba
+6. 更新syncthing
+7. 更新webdav
+
+#### 删除
+
+1. shadowsocks-libev
+2. v2ray
+
+#### 插件列表
+
+| 插件名称          | 版本     | 简介                                                |
+| ----------------- | -------- | --------------------------------------------------- |
+| AdGuard Home      | 在线安装 | AdGuard Home全网广告拦截与反跟踪软件                |
+| ali_ddns          |          | 阿里云DDNS                                          |
+| aliyun-cli        | 在线安装 | 全功能阿里云命令行工具 CLI（Alibaba Cloud CLI）     |
+| aria2             | 在线安装 | aria2下载工具                                       |
+| ariang            | 在线安装 | aria2图形界面                                       |
+| bash              | 在线安装 | 全功能bash shell                                    |
+| caddy             | 在线安装 | Web服务器                                           |
+| debian            | 在线安装 | Debian的chroot环境。可安装Debian系统下大部分软件包  |
+| filebrowser       | 在线安装 | 私有云盘服务器                                      |
+| freemem           |          | 自动清理内存工具                                    |
+| he_ddns           |          | HE DDNS（DNS服务商为[HE.NET](https://dns.he.net/)） |
+| ipmitool          | 在线安装 | IPMI管理工具（仅开通lan, lanplus接口）              |
+| mailx             | 在线安装 | 邮件系统                                            |
+| ntpd              | 在线安装 | 授时服务器                                          |
+| onu_access        |          | 允许访问光猫管理页面                                |
+| openssh_server    | 在线安装 | OpenSSH服务器                                       |
+| overture          | 在线安装 | DNS服务器                                           |
+| samba             | 在线安装 | SAMBA服务器                                         |
+| syncthing         | 在线安装 | 开源分布式同步工具                                  |
+| thermometer       | 在线安装 | CPU、WLAN温度监控工具                               |
+| vlmcsd            | 1113     | 给予巨硬套装活力                                    |
+| webdav            | 在线安装 | webdav服务器                                        |
+| wol               |          | 定时开机                                            |
+| xray              | 在线安装 | xray网络代理                                        |
+
 ## 版本18.11（2023-01-25）
 
 #### 新增

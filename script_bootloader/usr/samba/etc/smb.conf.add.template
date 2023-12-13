@@ -39,7 +39,7 @@
 
 [ROUTER_MODEL-SMB-SHARE]
         comment = Samba Share on ROUTER_MODEL
-        path = /home/root
+        path = /home
         writable = yes
         browseable = yes
         #

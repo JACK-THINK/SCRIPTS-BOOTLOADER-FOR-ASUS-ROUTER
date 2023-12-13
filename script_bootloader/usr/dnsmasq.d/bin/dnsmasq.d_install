@@ -135,7 +135,7 @@ then
                 /opt/bin/echo "bogus-priv" >> "${ENTWARE_DNSMASQD}/dnsmasq_extended.conf"
             fi
             #
-            if [ -z "$(/opt/bin/grep -e '^local=\/'"${LOCAL_DOMAIN}"'\/' "${FMW_DNSMASQ_CONF}")" ]
+            if [ -z "$(/opt/bin/grep -e '^local=/'"${LOCAL_DOMAIN}"'/' "${FMW_DNSMASQ_CONF}")" ]
             then
                 /opt/bin/echo "local=/${LOCAL_DOMAIN}/" >> "${ENTWARE_DNSMASQD}/dnsmasq_extended.conf"
             fi

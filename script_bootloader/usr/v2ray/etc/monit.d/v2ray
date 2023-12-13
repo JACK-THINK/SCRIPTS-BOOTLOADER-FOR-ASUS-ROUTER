@@ -1,4 +1,0 @@
-check process V2RAY with pidfile '/var/run/v2ray.pid'
-    start program = "/opt/script_bootloader/usr/v2ray/bin/v2ray_enable.service"
-    stop program = "/opt/script_bootloader/usr/v2ray/bin/v2ray_disable.service"
-    if does not exist then restart

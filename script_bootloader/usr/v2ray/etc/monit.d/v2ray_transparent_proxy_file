@@ -1,4 +1,0 @@
-check file V2RAY_TRANSPARENT_PROXY path "/var/run/v2ray_transparent_proxy_enable_file" every 6 cycles
-    start program = "/opt/script_bootloader/usr/v2ray/bin/v2ray_transparent_proxy_enable_file.service" with timeout 120 seconds
-    stop program = "/opt/script_bootloader/usr/v2ray/bin/v2ray_transparent_proxy_disable_file.service" with timeout 120 seconds
-    if does not exist then alert

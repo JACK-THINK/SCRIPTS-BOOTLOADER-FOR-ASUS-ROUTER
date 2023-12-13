@@ -14,7 +14,7 @@ ROUTER_MODEL="$(nvram get model)"
 #
 # NAME OF THE SERVICE
 # 服务名称
-SERVICE_NAME="FILE-BROWSER"
+SERVICE_NAME="XRAY"
 #
 # FUNCTION OF THE SERVICE
 # 服务功能
@@ -42,7 +42,7 @@ ENTWARE_FWD="${ENTWARE_ETC}/fw.d"
 #
 # PRIVATE_ROOT: The root directory for this program
 # 设置自定义变量PRIVATE_ROOT为此程序根目录
-PRIVATE_ROOT="${SBL_SYS_USR}/filebrowser"
+PRIVATE_ROOT="${SBL_SYS_USR}/xray"
 #
 # PRIVATE_ALTERNATIVE: The directory which contains all the alternatives
 # 设置自定义变量PRIVATE_ALTERNATIVE为此程序备用文件目录
@@ -60,9 +60,9 @@ PRIVATE_ETC="${PRIVATE_ROOT}/etc"
 # 设置自定义变量PRIVATE_USR为此程序外部软件资源目录
 PRIVATE_USR="${PRIVATE_ROOT}/usr"
 #
-# LATEST_VERSION: Version of the latest filebrowser
-# 设置自定义变量LATEST_VERSION为最新版filebrowser的版本号
-LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/filebrowser/filebrowser/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
+# LATEST_VERSION: Version of the latest xray-core
+# 设置自定义变量LATEST_VERSION为最新版xray-core的版本号
+LATEST_VERSION="$(/opt/bin/curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | /opt/bin/sed -E -n -e 's/^[[:space:]]*\"tag_name\":[[:space:]]*\"(.*)\".*/\1/p')"
 #
 # OPERATING_SYSTEM: Operating system of the ASUS Router
 # 设置自定义变量OPERATING_SYSTEM为华硕路由器系统
@@ -72,17 +72,13 @@ OPERATING_SYSTEM="$(/opt/bin/uname | /opt/bin/sed -E 's/[[:upper:]]/\l&/g')"
 # 设置自定义变量ROUTER_ARCHITECTURE为华硕路由器架构
 case "$(/opt/bin/uname -m)" in
     "aarch64")
-        ROUTER_ARCHITECTURE="arm64"
+        ROUTER_ARCHITECTURE="arm64-v8a"
         ;;
     "armv7l")
-        ROUTER_ARCHITECTURE="armv5"
+        ROUTER_ARCHITECTURE="arm32-v5"
         ;;
     "mips")
-        ROUTER_ARCHITECTURE="mipsle"
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: ${ROUTER_ARCHITECTURE} IS NOT SUPPORTED TEMPORARILY"
-        /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
-        #
-        exit 6
+        ROUTER_ARCHITECTURE="mips32le"
         ;;
     *)
         # Do nothing but prompt the user
@@ -94,28 +90,13 @@ case "$(/opt/bin/uname -m)" in
         ;;
 esac
 #
-# DOWNLOAD_LINK: Download link of the latest filebrowser
-# 设置自定义变量DOWNLOAD_LINK为最新版filebrowser的下载链接
-DOWNLOAD_LINK="https://github.com/filebrowser/filebrowser/releases/download/${LATEST_VERSION}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
+# DOWNLOAD_LINK: Download link of the latest xray-core
+# 设置自定义变量DOWNLOAD_LINK为最新版xray-core的下载链接
+DOWNLOAD_LINK="https://github.com/XTLS/Xray-core/releases/download/${LATEST_VERSION}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
 #
-# ADMINUSER: The administrator of the router
-# 设置环境变量ADMINUSER为路由器管理页面的登陆帐号
-ADMINUSER="$(nvram get sbl_username)"
-#
-# ADMINPASSWORD: The administrator's password of the router
-# 设置环境变量ADMINPASSWORD为路由器管理页面的登陆密码
-ADMINPASSWORD="$(nvram get sbl_password)"
-#
-# LANGUAGE: Preferred language set by user
-# 设置环境变量LANGUAGE为用户首选语言
-case "$(nvram get preferred_lang)" in
-    "CN")
-        LANGUAGE="zh-cn"
-        ;;
-    *)
-        LANGUAGE="en"
-        ;;
-esac
+# DNS_PORT: Port of the XRAY-DNS
+# 设置自定义变量DNS_PORT为XRAY-DNS的接收端口
+DNS_PORT="2053"
 #
 ########## END ##########
 #
@@ -127,7 +108,7 @@ esac
 ########## END ##########
 #
 #
-########## INSTALL FILE-BROWSER ##########
+########## INSTALL XRAY ##########
 #
 # Check if ENTWARE_ENABLE SERVICE has been loaded
 # 检查ENTWARE_ENABLE SERVICE是否已启用
@@ -141,9 +122,9 @@ then
     then
         /opt/bin/echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: MONIT MANAGEMENT SYSTEM HAS BEEN DEPLOYED"
         #
-        # Remove vestigial filebrowser package
-        # 删除遗留的filebrowser包
-        /opt/bin/rm -f "${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
+        # Remove vestigial xray-core package
+        # 删除遗留的xray-core包
+        /opt/bin/rm -f "${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
         #
         # Check if ${PRIVATE_ALTERNATIVE}/version exists
         # 检查文件${PRIVATE_ALTERNATIVE}/version是否存在
@@ -152,21 +133,21 @@ then
             # Prepare to install offline
             # 准备离线安装
             LATEST_VERSION="$(/opt/bin/head -n 1 "${PRIVATE_ALTERNATIVE}/version")"
-            /opt/bin/cp -f "${PRIVATE_ALTERNATIVE}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz" "${PRIVATE_BIN}"
+            /opt/bin/cp -f "${PRIVATE_ALTERNATIVE}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" "${PRIVATE_BIN}"
             #
         else
-            # Download filebrowser package
-            # 下载filebrowser包
+            # Download xray-core package
+            # 下载xray-core包
             /opt/bin/wget-ssl -c -t 10 -T 120 --no-cookies --no-check-certificate -P "${PRIVATE_BIN}" "${DOWNLOAD_LINK}"
             #
-            # Check if ${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz exists
-            # 检查文件${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz是否存在
-            if [ ! -s "${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz" ]
+            # Check if ${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip exists
+            # 检查文件${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip是否存在
+            if [ ! -s "${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" ]
             then
                 /opt/bin/echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: CONNECTION FAILED"
                 /opt/bin/echo -e "($(basename $0)): $$ \033[1;41;37mFAILURE\033[0m: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
                 #
-                /opt/bin/rm -f "${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
+                /opt/bin/rm -f "${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
                 #
                 exit 5
             fi
@@ -177,33 +158,55 @@ then
         # 创建${PRIVATE_USR}目录
         /opt/bin/mkdir "${PRIVATE_USR}"
         #
-        # Unzip filebrowser package
-        # 解压filebrowser包
-        /opt/bin/tar -xzvf "${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz" -C "${PRIVATE_USR}"
+        # Unzip xray-core package
+        # 解压xray-core包
+        /opt/bin/unzip "${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip" -d "${PRIVATE_USR}"
         #
-        # Remove filebrowser package
-        # 删除filebrowser包
-        /opt/bin/rm -f "${PRIVATE_BIN}/${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}-filebrowser.tar.gz"
+        # Remove xray-core package
+        # 删除xray-core包
+        /opt/bin/rm -f "${PRIVATE_BIN}/Xray-${OPERATING_SYSTEM}-${ROUTER_ARCHITECTURE}.zip"
         #
-        # Configure filebrowser
-        # 配置filebrowser
-        "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/filebrowser.db" config init --address "0.0.0.0" --auth.method "json" --branding.disableExternal --locale "${LANGUAGE}" --port "35248" --root "/home" --sorting.by "name" --viewMode "list"
+        # Change the mode of the files
+        # 更改文件权限
+        /opt/bin/chmod 555 "${PRIVATE_USR}"/xray
+        /opt/bin/chmod 644 "${PRIVATE_USR}/geosite.dat"
+        /opt/bin/chmod 644 "${PRIVATE_USR}/geoip.dat"
         #
-        "${PRIVATE_USR}/filebrowser" --database "${PRIVATE_ETC}/filebrowser.db" users add "${ADMINUSER}" "${ADMINPASSWORD}" --perm.admin --scope "/root"
+        # Configure xray
+        # 配置xray
+        "${PRIVATE_BIN}/xray_configure"
+        #
+        # Configure dnsmasq.d
+        # 配置dnsmasq.d
+        if [ ! -d "${PRIVATE_ETC}/dnsmasq.d" ]
+        then
+            /opt/bin/mkdir "${PRIVATE_ETC}/dnsmasq.d"
+        fi
+        #
+        /opt/bin/echo -e "server=8.8.8.8" > "${PRIVATE_ETC}/dnsmasq.d/xray_dns_tproxy.conf"
+        /opt/bin/echo -e "server=127.0.0.1#${DNS_PORT}" > "${PRIVATE_ETC}/dnsmasq.d/xray_dns_redirect.conf"
         #
         # Configure fwd
         # 配置fwd
-        /opt/bin/cp -f "${PRIVATE_ETC}/fw.d/filebrowser_open" "${ENTWARE_FWD}"
+        /opt/bin/cp -f "${PRIVATE_ETC}/fw.d/xray_proxy_open" "${ENTWARE_FWD}"
         #
         # Configure monit
         # 配置monit
-        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/filebrowser" "${ENTWARE_MONITD}"
-        /opt/bin/chmod 600 "${ENTWARE_MONITD}/filebrowser"
-        /opt/bin/mv -f "${ENTWARE_MONITD}/filebrowser" "${ENTWARE_MONITD}/filebrowser.on"
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/xray_proxy" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/xray_proxy"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/xray_proxy" "${ENTWARE_MONITD}/xray_proxy.on"
         #
-        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_filter_INPUT_filebrowser" "${ENTWARE_MONITD}"
-        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser"
-        /opt/bin/mv -f "${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser" "${ENTWARE_MONITD}/fw_filter_INPUT_filebrowser.on"
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/fw_filter_INPUT_xray_proxy" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/fw_filter_INPUT_xray_proxy"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/fw_filter_INPUT_xray_proxy" "${ENTWARE_MONITD}/fw_filter_INPUT_xray_proxy.on"
+        #
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/xray_transparent_proxy_file" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/xray_transparent_proxy_file"
+        /opt/bin/mv -f "${ENTWARE_MONITD}/xray_transparent_proxy_file" "${ENTWARE_MONITD}/xray_transparent_proxy_file.on"
+        #
+        /opt/bin/cp -f "${PRIVATE_ETC}/monit.d/xray_transparent_proxy_prog" "${ENTWARE_MONITD}"
+        /opt/bin/chmod 600 "${ENTWARE_MONITD}/xray_transparent_proxy_prog"
+        #/opt/bin/mv -f "${ENTWARE_MONITD}/xray_transparent_proxy_prog" "${ENTWARE_MONITD}/xray_transparent_proxy_prog.on"
         #
         /opt/bin/monit reload
         #

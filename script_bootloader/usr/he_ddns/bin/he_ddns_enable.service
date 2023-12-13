@@ -35,7 +35,13 @@ PRIVATE_VAR="${PRIVATE_ROOT}/var"
 #
 # LOGFILE: The log file
 # 设置自定义变量LOGFILE为日志文件
-LOGFILE="${PRIVATE_VAR}/log.txt"
+LOGFILE="${PRIVATE_VAR}/log.tsv"
+#
+if [ ! -f "${LOGFILE}" ]
+then
+    /opt/bin/rm -rf "${LOGFILE}"
+    /opt/bin/echo -e "DATE\tTIME\tSTATUS\tDETAILS\tNOTES" > "${LOGFILE}"
+fi
 #
 # WAN0_GW_IFNAME: The interface name of WAN0 gateway
 # 设置自定义变量WAN0_GW_IFNAME为WAN0网关设备名
@@ -117,9 +123,9 @@ FAIL_COUNT=0
 # 测试WAN连接
 while [ ${FAIL_COUNT} -lt 3 ]
 do
-    RESULT_1_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.bing.com" 2> /dev/null | grep "100%")"
-    RESULT_2_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.alibaba.com" 2> /dev/null | grep "100%")"
-    RESULT_3_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.baidu.com" 2> /dev/null | grep "100%")"
+    RESULT_1_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.bing.com" 2> /dev/null | /opt/bin/grep "100%")"
+    RESULT_2_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.alibaba.com" 2> /dev/null | /opt/bin/grep "100%")"
+    RESULT_3_OF_CONNECTION_TEST="$(ping -q -c 1 -s 32 -W 5 "www.baidu.com" 2> /dev/null | /opt/bin/grep "100%")"
     #
     if [ -z "${RESULT_1_OF_CONNECTION_TEST}"] || [ -z "${RESULT_2_OF_CONNECTION_TEST}"] || [ -z "${RESULT_3_OF_CONNECTION_TEST}"]
     then
@@ -142,7 +148,10 @@ do
             #
             if [ ${FAIL_COUNT} -ge 3 ]
             then
-                /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] CAN NOT GET IP ADDRESS" | /opt/bin/tee -a "${LOGFILE}"
+                /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] CAN NOT GET IP ADDRESS"
+                #
+                FAIL_DATE_FMT="$(/opt/bin/echo -e "${FAIL_DATE}" | /opt/bin/sed -E -n -e 's/[[:space:]]+/\t/p')"
+                /opt/bin/echo -e "${FAIL_DATE_FMT}\tFAILURE\tCAN NOT GET IP ADDRESS" >> "${LOGFILE}"
                 #
                 exit 2
             fi
@@ -160,7 +169,10 @@ do
         #
         if [ ${FAIL_COUNT} -ge 3 ]
         then
-            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] NO CONNECTION" | /opt/bin/tee -a "${LOGFILE}"
+            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] NO CONNECTION"
+            #
+            FAIL_DATE_FMT="$(/opt/bin/echo -e "${FAIL_DATE}" | /opt/bin/sed -E -n -e 's/[[:space:]]+/\t/p')"
+            /opt/bin/echo -e "${FAIL_DATE_FMT}\tFAILURE\tNO CONNECTION" >> "${LOGFILE}"
             #
             exit 1
         fi
@@ -183,33 +195,48 @@ do
         #
         # GET IPv4
         # GET方法更新IPv4
-        RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${EXTERNAL_IPV4_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]+.*/\1/p')"
+        RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${EXTERNAL_IPV4_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]*.*/\1/p')"
         #
         # GET IPv6
         # GET方法更新IPv6
-        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${EXTERNAL_IPV6_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]+.*/\1/p')"
+        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update?hostname=${FQDN}&password=${DDNS_PASSWORD}&myip=${EXTERNAL_IPV6_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]*.*/\1/p')"
         #
         # POST IPv4
         # POST方法更新IPv4
-        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${EXTERNAL_IPV4_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]+.*/\1/p')"
+        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${EXTERNAL_IPV4_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]*.*/\1/p')"
         #
         # POST IPv6
         # POST方法更新IPv6
-        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${EXTERNAL_IPV6_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]+.*/\1/p')"
+        #RESULT_OF_DDNS_UPDATE="$(/opt/bin/curl -s -k "https://dyn.dns.he.net/nic/update" -d "hostname=${FQDN}" -d "password=${DDNS_PASSWORD}" -d "myip=${EXTERNAL_IPV6_ADDRESS}" | /opt/bin/sed -E -n -e 's/([[:alpha:]]+)[[:space:]]*.*/\1/p')"
         #
         case "${RESULT_OF_DDNS_UPDATE}" in
             "good")
-                /opt/bin/echo -e "SUCCESS: [$(/opt/bin/date "+%F %T")] ${FQDN} 👉 ${EXTERNAL_IPV4_ADDRESS}" | /opt/bin/tee -a "${LOGFILE}"
+                /opt/bin/echo -e "SUCCESS: [$(/opt/bin/date "+%F %T")] ${FQDN} 👉 ${EXTERNAL_IPV4_ADDRESS}"
+                #
+                /opt/bin/echo -e "$(/opt/bin/date "+%F%t%T")\tSUCCESS\t${FQDN} 👉 ${EXTERNAL_IPV4_ADDRESS}" >> "${LOGFILE}"
+                #
+                exit 0
                 ;;
             "nochg")
                 /opt/bin/echo -e "NO-CHANGES: ${FQDN} 👉 ${EXTERNAL_IPV4_ADDRESS}"
+                #
+                exit 0
+                ;;
+            "badauth")
+                /opt/bin/echo -e "FAILURE: [$(/opt/bin/date "+%F %T")] BAD AUTHENTICATION"
+                #
+                /opt/bin/echo -e "$(/opt/bin/date "+%F%t%T")\tFAILURE\tBAD AUTHENTICATION" >> "${LOGFILE}"
+                #
+                exit 4
+                ;;
+            *)
+                /opt/bin/echo -e "FAILURE: [$(/opt/bin/date "+%F %T")] UNKNOWN ERROR"
+                #
+                /opt/bin/echo -e "$(/opt/bin/date "+%F%t%T")\tFAILURE\tUNKNOWN ERROR" >> "${LOGFILE}"
+                #
+                exit 5
                 ;;
         esac
-        #
-        FAIL_DATE=""
-        FAIL_COUNT=0
-        #
-        exit 0
         #
     else
         if [ -z "${FAIL_DATE}" ]
@@ -223,7 +250,10 @@ do
         then
             # Send an email as notification
             # 如果${WAN0_GW_IPV4_ADDRESS}与${EXTERNAL_IPV4_ADDRESS}不等，则执行
-            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] EXTERNAL_IP(${EXTERNAL_IPV4_ADDRESS}) WAN0_GW_IP(${WAN0_GW_IPV4_ADDRESS})" | /opt/bin/tee -a "${LOGFILE}"
+            /opt/bin/echo -e "FAILURE: [${FAIL_DATE}] EXTERNAL_IP(${EXTERNAL_IPV4_ADDRESS}) WAN0_GW_IP(${WAN0_GW_IPV4_ADDRESS})"
+            #
+            FAIL_DATE_FMT="$(/opt/bin/echo -e "${FAIL_DATE}" | /opt/bin/sed -E -n -e 's/[[:space:]]+/\t/p')"
+            /opt/bin/echo -e "${FAIL_DATE_FMT}\tFAILURE\tEXTERNAL_IP(${EXTERNAL_IPV4_ADDRESS}) WAN0_GW_IP(${WAN0_GW_IPV4_ADDRESS})" >> "${LOGFILE}"
             #
             # Prepare mail contents
             # 准备邮件内容

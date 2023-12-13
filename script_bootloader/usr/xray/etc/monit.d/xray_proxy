@@ -1,0 +1,4 @@
+check process XRAY_PROXY with pidfile '/var/run/xray_proxy.pid'
+    start program = "/opt/script_bootloader/usr/xray/bin/xray_proxy_enable.service"
+    stop program = "/opt/script_bootloader/usr/xray/bin/xray_proxy_disable.service"
+    if does not exist then restart

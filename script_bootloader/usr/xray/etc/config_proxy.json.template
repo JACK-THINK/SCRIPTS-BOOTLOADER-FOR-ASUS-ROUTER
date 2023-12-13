@@ -1,0 +1,323 @@
+{
+    "inbounds":
+    [
+        {
+            "listen": "0.0.0.0",
+            "port": 1080,
+            "protocol": "socks",
+            "settings":
+            {
+                "auth": "noauth",
+                "udp": true,
+                "ip": "127.0.0.1",
+                "userLevel": 0
+            },
+            "tag": "inbound_socks_LAN_to_VPS"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 9080,
+            "protocol": "http",
+            "settings":
+            {
+                "timeout": 300,
+                "allowTransparent": false,
+                "userLevel": 0
+            },
+            "tag": "inbound_http_LAN_to_VPS"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 2053,
+            "protocol": "dokodemo-door",
+            "settings":
+            {
+                "address": "<UPSTREAM_DNS_IP>",
+                "port": 53,
+                "network": "tcp,udp",
+                "timeout": 300,
+                "followRedirect": false,
+                "userLevel": 0
+            },
+            "tag": "inbound_dokodemo_LAN(DNS)_to_VPS"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 45154,
+            "protocol": "dokodemo-door",
+            "settings":
+            {
+                "network": "tcp,udp",
+                "timeout": 30,
+                "followRedirect": true,
+                "userLevel": 0
+            },
+            "streamSettings":
+            {
+                "sockopt":
+                {
+                    "tproxy": "redirect"
+                }
+            },
+            "tag": "inbound_dokodemo_LAN(Redirect)_to_VPS"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 55155,
+            "protocol": "dokodemo-door",
+            "settings":
+            {
+                "network": "tcp,udp",
+                "timeout": 30,
+                "followRedirect": true,
+                "userLevel": 0
+            },
+            "streamSettings":
+            {
+                "sockopt":
+                {
+                    "tproxy": "tproxy"
+                }
+            },
+            "tag": "inbound_dokodemo_LAN(TProxy)_to_VPS"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 22815,
+            "protocol": "vmess",
+            "settings":
+            {
+                "clients":
+                [
+                    {
+                        "id": "<INBOUND_VMESS_ID>",
+                        "level": 0
+                    }
+                ]
+            },
+            "streamSettings":
+            {
+                "network": "tcp",
+                "security": "none",
+                "tcpSettings":
+                {
+                    "header":
+                    {
+                        "type": "http",
+                        "response":
+                        {
+                            "version": "1.1",
+                            "status": "200",
+                            "reason": "OK",
+                            "headers":
+                            {
+                                "Content-Type":
+                                [
+                                    "application/octet-stream",
+                                    "video/mpeg"
+                                ],
+                                "Transfer-Encoding":
+                                [
+                                    "chunked"
+                                ],
+                                "Connection":
+                                [
+                                    "keep-alive"
+                                ],
+                                "Pragma": "no-cache"
+                            }
+                        }
+                    }
+                }
+            },
+            "tag": "inbound_vmess_WAN_to_LAN"
+        },
+        {
+            "listen": "0.0.0.0",
+            "port": 22816,
+            "protocol": "vmess",
+            "settings":
+            {
+                "clients":
+                [
+                    {
+                        "id": "<INBOUND_VMESS_ID>",
+                        "level": 0
+                    }
+                ]
+            },
+            "streamSettings":
+            {
+                "network": "tcp",
+                "security": "none",
+                "tcpSettings":
+                {
+                    "header":
+                    {
+                        "type": "http",
+                        "response":
+                        {
+                            "version": "1.1",
+                            "status": "200",
+                            "reason": "OK",
+                            "headers":
+                            {
+                                "Content-Type":
+                                [
+                                    "application/octet-stream",
+                                    "video/mpeg"
+                                ],
+                                "Transfer-Encoding":
+                                [
+                                    "chunked"
+                                ],
+                                "Connection":
+                                [
+                                    "keep-alive"
+                                ],
+                                "Pragma": "no-cache"
+                            }
+                        }
+                    }
+                }
+            },
+            "tag": "inbound_vmess_WAN_to_VPS"
+        }
+    ],
+    "outbounds":
+    [
+        {
+            "sendThrough": "0.0.0.0",
+            "protocol": "vless",
+            "settings":
+            {
+                "vnext":
+                [
+                    {
+                        "address": "<IP_OR_DOMAIN_OF_XRAY_SERVER>",
+                        "port": 443,
+                        "users":
+                        [
+                            {
+                                "id": "<OUTBOUND_VLESS_ID>",
+                                "encryption": "none",
+                                "flow": "xtls-rprx-vision",
+                                "level": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            "tag": "outbound_vless_VPS",
+            "streamSettings":
+            {
+                "network": "tcp",
+                "security": "reality",
+                "realitySettings":
+                {
+                    "serverName": "www.magnite.com",
+                    "fingerprint": "random",
+                    "shortID": "",
+                    "publicKey": "<OUTBOUND_VLESS_REALITY_PUBLIC_KEY>",
+                    "spiderX": ""
+                }
+            }
+        },
+        {
+            "sendThrough": "0.0.0.0",
+            "protocol": "freedom",
+            "settings":
+            {
+                "domainStrategy": "AsIs",
+                "userLevel": 0
+            },
+            "tag": "outbound_freedom_LAN"
+        }
+    ],
+    "routing":
+    {
+        "domainStrategy": "AsIs",
+        "domainMatcher": "hybrid",
+        "rules":
+        [
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_socks_LAN_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_http_LAN_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_dokodemo_LAN(DNS)_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_dokodemo_LAN(Redirect)_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_dokodemo_LAN(TProxy)_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_vmess_WAN_to_LAN"
+                ],
+                "outboundTag": "outbound_freedom_LAN"
+            },
+            {
+                "type": "field",
+                "inboundTag":
+                [
+                    "inbound_vmess_WAN_to_VPS"
+                ],
+                "outboundTag": "outbound_vless_VPS"
+            }
+        ]
+    },
+    "policy":
+    {
+        "levels":
+        {
+            "0":
+            {
+                "handshake": 4,
+                "connIdle": 300,
+                "uplinkOnly": 2,
+                "downlinkOnly": 5,
+                "statsUserUplink": false,
+                "statsUserDownlink": false
+            }
+        },
+        "system":
+        {
+            "statsInboundUplink": false,
+            "statsInboundDownlink": false,
+            "statsOutboundUplink": false,
+            "statsOutboundDownlink": false
+        }
+    }
+}

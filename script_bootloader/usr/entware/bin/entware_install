@@ -129,11 +129,11 @@ fi
 # 根据路由器架构，自动安装适当版本的Entware
 case "$(uname -m)" in
     "aarch64")
-        if [ -e "${PRIVATE_USR}/entware_repo_aarch64-k3.10.tar.gz" ]
+        if [ -e "${PRIVATE_USR}"/*entware_repo_aarch64-k3.10.tar.gz ]
         then
             echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
             #
-            tar -xzvf "${PRIVATE_USR}/entware_repo_aarch64-k3.10.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            tar -xzvf "${PRIVATE_USR}"/*entware_repo_aarch64-k3.10.tar.gz -C "${PRIVATE_USR}" > /dev/null 2>&1
             #
             if [ ${?} -ne 0 ]
             then
@@ -165,11 +165,11 @@ case "$(uname -m)" in
         fi
         ;;
     "armv7l")
-        if [ -e "${PRIVATE_USR}/entware_repo_armv7sf-k2.6.tar.gz" ]
+        if [ -e "${PRIVATE_USR}"/*entware_repo_armv7sf-k2.6.tar.gz ]
         then
             echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
             #
-            tar -xzvf "${PRIVATE_USR}/entware_repo_armv7sf-k2.6.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            tar -xzvf "${PRIVATE_USR}"/*entware_repo_armv7sf-k2.6.tar.gz -C "${PRIVATE_USR}" > /dev/null 2>&1
             #
             if [ ${?} -ne 0 ]
             then
@@ -201,11 +201,11 @@ case "$(uname -m)" in
         fi
         ;;
     "mips")
-        if [ -e "${PRIVATE_USR}/entware_repo_mipsel.tar.gz" ]
+        if [ -e "${PRIVATE_USR}"/*entware_repo_mipsel.tar.gz ]
         then
             echo -e "($(basename $0)): $$ \033[1;44;37mINFO\033[0m: OFFLINE PACKAGE HAS BEEN FOUND"
             #
-            tar -xzvf "${PRIVATE_USR}/entware_repo_mipsel.tar.gz" -C "${PRIVATE_USR}" > /dev/null 2>&1
+            tar -xzvf "${PRIVATE_USR}"/*entware_repo_mipsel.tar.gz -C "${PRIVATE_USR}" > /dev/null 2>&1
             #
             if [ ${?} -ne 0 ]
             then

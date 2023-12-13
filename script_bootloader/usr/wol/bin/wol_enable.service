@@ -54,7 +54,7 @@ PC1="XX:XX:XX:XX:XX:XX"
 #
 ########## ENABLE CRONTAB ##########
 #
-/opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}"
+/opt/bin/chmod 600 "/var/spool/cron/crontabs/${ADMINUSER}" 2> /dev/null
 #
 ########## END ##########
 #

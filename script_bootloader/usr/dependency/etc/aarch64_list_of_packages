@@ -132,6 +132,7 @@ boost-test
 boost-thread
 boost-timer
 boost-type_erasure
+boost-url
 boost-wave
 boost-wserialization
 perl
@@ -311,6 +312,7 @@ python3-email
 python3-et_xmlfile
 python3-hyperlink
 python3-idna
+python3-ifaddr
 python3-incremental
 python3-jdcal
 python3-lib2to3
@@ -324,6 +326,7 @@ python3-markupsafe
 python3-msgpack
 python3-multiprocessing
 python3-ncurses
+python3-newt
 python3-openpyxl
 python3-openssl
 python3-packaging

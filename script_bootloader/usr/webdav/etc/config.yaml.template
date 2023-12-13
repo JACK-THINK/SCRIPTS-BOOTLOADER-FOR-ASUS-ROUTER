@@ -8,7 +8,7 @@ key: key.pem
 prefix: /
 
 # Default user settings (will be merged)
-scope: /root
+scope: /home/root
 modify: true
 rules: []
 
@@ -29,4 +29,4 @@ cors:
 users:
   - username: ADMINUSER
     password: ADMINPASSWORD
-    scope: /root
+    scope: /home/root
