@@ -2,9 +2,36 @@
 #
 # 此程序在卸载U盘前，结束从U盘中加载的可执行程序的进程，并消除Entware运行环境，防止卸载U盘失败
 #
-########## CHECK ASUS ROUTER MODEL ##########
+########## PROHIBIT REDUNDANT INSTANCE ##########
+#
+# Enable lock 3
+# 启用三号锁
+chmod 000 "${0}"
 #
 ROUTER_MODEL="$(nvram get model)"
+#
+# NAME OF THE SERVICE
+# 服务名称
+SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
+#
+# FUNCTION OF THE SERVICE
+# 服务功能
+SERVICE_FUNCTION="HALT"
+#
+# Detect lock 4
+# 检测四号锁
+if [ -e "/var/run/script_bootloader_halt" ]
+then
+    # Stop and Exit
+    # 如果文件/var/run/script_bootloader_halt存在，则该程序终止
+    logger -st "($(basename $0))" $$ "NOTICE: ${SERVICE_NAME} IS KILLED"
+    #
+    chmod 777 "${0}"
+    #
+    exit 1
+else
+    logger -st "($(basename $0))" $$ "*--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
+fi
 #
 ########## END ##########
 #
@@ -13,14 +40,6 @@ ROUTER_MODEL="$(nvram get model)"
 #
 # 设置自定义变量
 # 当该程序运行结束，此处设置的变量自动取消
-#
-# NAME OF THE SERVICE
-# 服务名称
-SERVICE_NAME="SCRIPTS-BOOTLOADER-FOR-ASUS-ROUTER"
-#
-# FUNCTION OF THE SERVICE
-# 服务功能
-SERVICE_FUNCTION="SHUTDOWN"
 #
 # USB_MOUNT_POINT: The mount point of the USB flash drive
 # 设置自定义变量USB_MOUNT_POINT为U盘挂载点
@@ -70,13 +89,6 @@ checkAndLoadComponent()
 ########## END ##########
 #
 #
-########## NOTIFICATION ##########
-#
-logger -st "($(basename $0))" $$ "*--------- ${SERVICE_FUNCTION} ${SERVICE_NAME} ON ${ROUTER_MODEL} ---------*"
-#
-########## END ##########
-#
-#
 ########## UNLOAD COMPONENTS ##########
 #
 # Set working directory to /tmp
@@ -89,7 +101,7 @@ if [ "$(which monit)" == "/opt/bin/monit" ]
 then
     monit stop all
     #
-    for MONIT_SERVICE in $(monit -vB summary | grep -E '[[:space:]]+Name[[:space:]]+=[[:space:]]+' | sed -E -n -e 's#([^=]+=[[:space:]]+)([^[:space:]]+$)#\2#p')
+    for MONIT_SERVICE in $(monit -vB summary | sed -E -n -e 's#^[^=]+[[:space:]]+Name[[:space:]]+=[[:space:]]+([^[:space:]]+.*)$#\1#p')
     do
         while [ "$(monit -B status "${MONIT_SERVICE}" | sed -E -n -e 's/^[[:space:]]*status[[:space:]]+(.*)/\1/p')" != "Not monitored" ]
         do
@@ -121,7 +133,7 @@ fi
 # 禁用由${SBL_SYS_BIN}/list_of_user_custom_scripts管理的全部自定义脚本
 echo '#!/bin/sh' > "${SERVICES_TO_DISABLE}"
 echo "SBL_SYS_USR=\"${SBL_SYS_USR}\"" >> "${SERVICES_TO_DISABLE}"
-grep -e '^\"\${SBL_SYS_USR}' "${SBL_SYS_BIN}/list_of_user_custom_scripts" | sed 's/_enable/_disable/' >> "${SERVICES_TO_DISABLE}"
+grep -e '^"\${SBL_SYS_USR}' "${SBL_SYS_BIN}/list_of_user_custom_scripts" | sed 's/_enable/_disable/' >> "${SERVICES_TO_DISABLE}"
 #
 chmod 777 "${SERVICES_TO_DISABLE}"
 #
@@ -164,8 +176,20 @@ sleep 10
 #
 logger -st "($(basename $0))" $$ "SUCCESS: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 #
+# Enable lock 4
+# 启用四号锁
+echo "Enable lock 4" > "/var/run/script_bootloader_halt"
+#
+# Disable lock 3
+# 禁用三号锁
+chmod 777 "${0}"
+#
+# Disable lock 1
+# 禁用一号锁
+chmod 777 "${SBL_SYS_BIN}/script_bootloader_usb_mount"
+#
 # Disable lock 2
 # 禁用二号锁
-rm -f "/var/run/script_bootloader.pid"
+rm -f "/var/run/script_bootloader_boot"
 #
 ########## END ##########

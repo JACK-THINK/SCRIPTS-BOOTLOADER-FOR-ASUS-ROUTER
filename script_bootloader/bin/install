@@ -248,6 +248,31 @@ then
         exit 4
     fi
     #
+    # Create user scripts in Asuswrt-Merlin firmware if nvram variable jffs2_scripts exists
+    # 如果nvram变量jffs2_scripts存在，则创建梅林固件用户脚本
+    if [ -n "$(nvram get jffs2_scripts)" ]
+    then
+        if [ ! -d "/jffs/scripts" ]
+        then
+            mkdir "/jffs/scripts"
+        fi
+        #
+        for USER_SCRIPT_IN_MERLIN in "services-start" "services-stop" "service-event" "service-event-end" "wan-event" "wan-start" "firewall-start" "nat-start" "init-start" "pre-mount" "post-mount" "unmount" "dhcpc-event" "openvpn-event" "ddns-start" "update-notification" "qos-start" "wgserver-stop" "wgserver-start" "wgclient-stop" "wgclient-start"
+        do
+            if [ -e "${SBL_SYS_USR}/jffs/scripts/${USER_SCRIPT_IN_MERLIN}" ]
+            then
+                if [ -e "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}" ]
+                then
+                    mv -f "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}" "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}_prev"
+                fi
+                #
+                cp -pf "${SBL_SYS_USR}/jffs/scripts/${USER_SCRIPT_IN_MERLIN}" "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}"
+                chown -R 0:0 "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}"
+                chmod -R 777 "/jffs/scripts/${USER_SCRIPT_IN_MERLIN}"
+            fi
+        done
+    fi
+    #
 else
     # Stop and Exit
     # 如果两个文件不同时存在，则该程序终止

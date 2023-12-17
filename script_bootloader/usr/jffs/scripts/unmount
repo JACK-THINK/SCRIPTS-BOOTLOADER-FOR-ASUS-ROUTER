@@ -1,0 +1,6 @@
+#!/bin/sh
+USB_MOUNT_POINT="$(nvram get script_usbmount | sed 's/\/script_bootloader.*//')"
+if [ -n "${USB_MOUNT_POINT}" ] && [ "${1}" == "${USB_MOUNT_POINT}" ]
+then
+    "${USB_MOUNT_POINT}/script_bootloader/bin/script_bootloader_usb_umount"
+fi

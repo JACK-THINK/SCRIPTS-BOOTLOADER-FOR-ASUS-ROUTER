@@ -20,10 +20,10 @@ SERVICE_FUNCTION="BOOT"
 #
 # Detect lock 2
 # 检测二号锁
-if [ -e "/var/run/script_bootloader.pid" ]
+if [ -e "/var/run/script_bootloader_boot" ]
 then
     # Stop and Exit
-    # 如果文件/var/run/script_bootloader.pid存在，则该程序终止
+    # 如果文件/var/run/script_bootloader_boot存在，则该程序终止
     logger -st "($(basename $0))" $$ "NOTICE: ${SERVICE_NAME} IS WORKING"
     #
     chmod 777 "${0}"
@@ -188,10 +188,18 @@ logger -st "($(basename $0))" $$ "SUCCESS: ${SERVICE_FUNCTION} ${SERVICE_NAME}"
 #
 # Enable lock 2
 # 启用二号锁
-echo "Enable lock 2" > "/var/run/script_bootloader.pid"
+echo "Enable lock 2" > "/var/run/script_bootloader_boot"
 #
 # Disable lock 1
 # 禁用一号锁
 chmod 777 "${0}"
+#
+# Disable lock 3
+# 禁用三号锁
+chmod 777 "${SBL_SYS_BIN}/script_bootloader_usb_umount"
+#
+# Disable lock 4
+# 禁用四号锁
+rm -f "/var/run/script_bootloader_halt"
 #
 ########## END ##########

@@ -109,7 +109,7 @@ then
     # 禁用MONIT MANAGEMENT SYSTEM及其全部服务
     if [ "$(which monit)" == "/opt/bin/monit" ]
     then
-        for MONIT_SERVICE in $(/opt/bin/monit -vB summary | /opt/bin/grep -E '[[:space:]]+Name[[:space:]]+=[[:space:]]+' | /opt/bin/sed -E -n -e 's#([^=]+=[[:space:]]+)([^[:space:]]+$)#\2#p')
+        for MONIT_SERVICE in $(/opt/bin/monit -vB summary | /opt/bin/sed -E -n -e 's#^[^=]+[[:space:]]+Name[[:space:]]+=[[:space:]]+([^[:space:]]+.*)$#\1#p')
         do
             /opt/bin/monit stop "${MONIT_SERVICE}"
             #
