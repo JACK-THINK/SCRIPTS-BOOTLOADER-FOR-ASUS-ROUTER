@@ -50,6 +50,27 @@ else
             ;;
         1)
             USB_MOUNT_POINT="$(find / -name 'script_bootloader' | sed 's#/script_bootloader##')"
+            #
+            USB_DRIVE_PARTITION="$(mount | sed -E -n -e 's#^([^[:space:]]+)[[:space:]]+on[[:space:]]+'"${USB_MOUNT_POINT}"'.*#\1#p')"
+            #
+            USB_DRIVE_PARTITION_TYPE="$(mount | sed -E -n -e 's#.*[[:space:]]+'"${USB_MOUNT_POINT}"'[[:space:]]+type[[:space:]]+(ext[[:digit:]])[[:space:]]+.*#\1#p')"
+            #
+            case "${USB_DRIVE_PARTITION_TYPE}" in
+                "ext3")
+                    nvram set usb_ext_opt="barrier=1,data=ordered"
+                    nvram commit
+                    ;;
+                "ext4")
+                    nvram set usb_ext_opt="barrier=1,data=journal"
+                    nvram commit
+                    ;;
+            esac
+            #
+            umount -f "${USB_MOUNT_POINT}"
+            sleep 10
+            #
+            mount "${USB_DRIVE_PARTITION}" "${USB_MOUNT_POINT}"
+            sleep 10
             ;;
         *)
             echo -e "($(basename $0)): $$ \033[1;43;31mNOTICE\033[0m: NUMBER OF DIRECTORY script_bootloader MUST BE ONE"
